@@ -122,9 +122,9 @@ function esc(str) {
 
 function nicheRow(num, label, anchor, isBonus) {
   if (isBonus) {
-    return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.background=\'#3d2e2a\';" onmouseout="this.style.background=\'#2a1f1c\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(label)+'</span></a>';
+    return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.background=\'#3d2e2a\';" onmouseout="this.style.background=\'#2a1f1c\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(label)+'</span></a>';
   }
-  return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#f5eddf\';" onmouseout="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#fff\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
+  return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#f5eddf\';" onmouseout="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#fff\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;border:1px solid rgba(255,255,255,0.3);">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
 }
 
 var bonusOn = true;
@@ -157,8 +157,8 @@ document.getElementById('gen-btn').addEventListener('click', function() {
 
   var html =
     '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
-    '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #dea193;">'+
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0 0 0.6rem;">DFY Niche Club</p>'+
+    '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #fff;">'+
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#fff;margin:0 0 0.6rem;opacity:0.7;">DFY Niche Club</p>'+
     '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'+
     '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'+
     '</div>'+
