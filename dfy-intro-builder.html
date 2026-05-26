@@ -6,11 +6,11 @@
 <title>DFY Intro Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--db:#2a1f1c;--cream:#f5eddf;--gold:#c9a96e;--rose:#dea193;--border:#ead9d5;--light-bg:#fdf7f2;--mid:#5a4a45;--muted:#c4b0a8;}
+:root{--db:#2a1f1c;--cream:#f5eddf;--gold:#dea193;--rose:#dea193;--border:#ead9d5;--light-bg:#fdf7f2;--mid:#5a4a45;--muted:#c4b0a8;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 4rem;}
 .page-header{text-align:center;margin-bottom:2rem;}
-.page-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#c9a96e;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
+.page-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
 h1{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
 .page-sub{font-size:13px;color:#c4b0a8;}
 .card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
@@ -18,24 +18,24 @@ h1{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#
 .card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
 .field-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;}
 .field-input{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;background:#fdf7f2;outline:none;}
-.field-input:focus{border-color:#c9a96e;}
+.field-input:focus{border-color:#dea193;}
 .niche-row{display:grid;grid-template-columns:80px 1fr 36px;gap:8px;align-items:center;margin-bottom:8px;}
-.niche-num{background:#2a1f1c;color:#c9a96e;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;font-family:'Jost',sans-serif;}
+.niche-num{background:#2a1f1c;color:#dea193;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;font-family:'Jost',sans-serif;}
 .toggle-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#c4b0a8;}
 .toggle-btn.active{border-color:#dea193;color:#dea193;}
-.toggle-btn:hover{border-color:#c9a96e;}
+.toggle-btn:hover{border-color:#dea193;}
 .bonus-row{display:grid;grid-template-columns:80px 1fr 36px;gap:8px;align-items:center;margin-top:4px;}
 .bonus-num{background:#dea193;color:#2a1f1c;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;font-family:'Jost',sans-serif;}
 .hint{font-size:11px;color:#c4b0a8;margin-top:6px;font-style:italic;}
-.gen-btn{display:block;width:100%;max-width:700px;margin:0 auto 2rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#c9a96e;border:2px solid #c9a96e;padding:15px;border-radius:40px;cursor:pointer;}
-.gen-btn:hover{background:#c9a96e;color:#2a1f1c;}
+.gen-btn{display:block;width:100%;max-width:700px;margin:0 auto 2rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;border:2px solid #dea193;padding:15px;border-radius:40px;cursor:pointer;}
+.gen-btn:hover{background:#dea193;color:#2a1f1c;}
 #output-section{display:none;max-width:700px;margin:0 auto;}
 .output-actions{display:flex;gap:12px;margin-bottom:1.5rem;justify-content:center;}
 .action-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;}
-.action-btn.primary{background:#2a1f1c;color:#c9a96e;}
+.action-btn.primary{background:#2a1f1c;color:#dea193;}
 .action-btn.secondary{background:transparent;color:#2a1f1c;}
 .preview-frame{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;}
-.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#c9a96e;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #c9a96e;display:none;z-index:9999;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;}
 </style>
 </head>
 <body>
@@ -122,9 +122,9 @@ function esc(str) {
 
 function nicheRow(num, label, anchor, isBonus) {
   if (isBonus) {
-    return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #c9a96e;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.background=\'#3d2e2a\';" onmouseout="this.style.background=\'#2a1f1c\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(label)+'</span></a>';
+    return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.background=\'#3d2e2a\';" onmouseout="this.style.background=\'#2a1f1c\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(label)+'</span></a>';
   }
-  return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #c9a96e;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#f5eddf\';" onmouseout="this.style.borderLeftColor=\'#c9a96e\';this.style.background=\'#fff\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
+  return '<a href="#'+anchor+'" onclick="document.getElementById(\''+anchor+'\')?.scrollIntoView({behavior:\'smooth\',block:\'start\'}); return false;" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;" onmouseover="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#f5eddf\';" onmouseout="this.style.borderLeftColor=\'#dea193\';this.style.background=\'#fff\';"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
 }
 
 var bonusOn = true;
@@ -157,8 +157,8 @@ document.getElementById('gen-btn').addEventListener('click', function() {
 
   var html =
     '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
-    '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #c9a96e;">'+
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.6rem;">DFY Niche Club</p>'+
+    '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #dea193;">'+
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0 0 0.6rem;">DFY Niche Club</p>'+
     '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'+
     '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'+
     '</div>'+
@@ -166,7 +166,7 @@ document.getElementById('gen-btn').addEventListener('click', function() {
     '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'+
     '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section — so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'+
     '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 1.2rem;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'+
-    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#c9a96e;padding:10px 28px;border-radius:30px;border:1.5px solid #c9a96e;">Let\'s Do This!</span>'+
+    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'+
     '</div>'+
     '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">'+
     '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Niche</p>'+
