@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motivational Monday Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--db:#2a1f1c;--cream:#f5eddf;--rose:#dea193;--border:#ead9d5;--light-bg:#fdf7f2;--mid:#5a4a45;--muted:#c4b0a8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f5ede8;min-height:100vh;padding:2rem 1rem 5rem;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.page-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#fff;background:var(--rose);padding:5px 18px;border-radius:20px;margin-bottom:0.75rem;}
+h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--db);margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:var(--muted);}
+.card{background:#fff;border-radius:16px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.2rem;max-width:760px;margin-left:auto;margin-right:auto;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--db);margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:1.2rem;}
+.field-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);margin-bottom:4px;display:block;}
+.field-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Jost',sans-serif;font-size:14px;color:var(--db);background:var(--light-bg);outline:none;transition:border-color 0.2s;margin-bottom:1.2rem;}
+.field-input:focus{border-color:var(--rose);}
+.field-input:last-child{margin-bottom:0;}
+textarea.field-input{resize:vertical;min-height:260px;line-height:1.8;}
+.hint{font-size:11px;color:var(--muted);margin-top:-0.8rem;margin-bottom:1.2rem;font-style:italic;}
+.gen-btn{display:block;width:100%;max-width:760px;margin:0 auto 2rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--rose);color:#fff;border:none;padding:16px;border-radius:40px;cursor:pointer;}
+.gen-btn:hover{background:#c47d6e;}
+#output-section{display:none;max-width:760px;margin:0 auto;}
+.output-actions{display:flex;gap:12px;margin-bottom:1.5rem;justify-content:center;flex-wrap:wrap;}
+.action-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:none;}
+.action-btn.primary{background:var(--db);color:var(--rose);}
+.action-btn.secondary{background:var(--rose);color:#fff;}
+.preview-frame{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--db);color:var(--rose);font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid var(--rose);display:none;z-index:9999;}
+.back-top{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--rose);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;}
+</style>
+</head>
+<body>
+<div id="top"></div>
+
+<div class="page-header">
+  <div class="page-badge">DFY Niche Club</div>
+  <h1>Motivational Monday Builder</h1>
+  <p class="page-sub">Enter your content and generate the styled HTML for your Systeme.io block.</p>
+</div>
+
+<div class="card">
+  <p class="card-title">This Week's Post</p>
+  <p class="card-sub">Fill in your title, image, and post content</p>
+
+  <label class="field-label" for="f-title">Post Title</label>
+  <input class="field-input" id="f-title" placeholder="e.g. What Your First 100 Sales Will Teach You That Nothing Else Can">
+
+
+
+  <label class="field-label" for="f-body">Post Content</label>
+  <textarea class="field-input" id="f-body" placeholder="Paste or type your full post here...&#10;&#10;Each paragraph separated by a blank line will get its own styled paragraph in the output.&#10;&#10;Bold text: wrap words in **double asterisks** and they'll appear bold."></textarea>
+  <p class="hint" style="margin-top:0.4rem;">Separate paragraphs with a blank line. Wrap text in **asterisks** to make it bold.</p>
+</div>
+
+<button class="gen-btn" id="gen-btn">✨ Generate My Monday Post</button>
+
+<div id="output-section">
+  <div class="output-actions">
+    <button class="action-btn primary" id="copy-html-btn">Copy HTML for Systeme.io</button>
+    <button class="action-btn secondary" id="back-top-btn">Back to Top ↑</button>
+  </div>
+  <div class="preview-frame" id="preview-frame"></div>
+</div>
+
+<div class="toast" id="toast">HTML Copied!</div>
+<button class="back-top" id="back-top-fixed" title="Back to top">↑</button>
+
+<script>
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatBody(text) {
+  var paragraphs = text.split(/\n\s*\n/).map(function(p){ return p.trim(); }).filter(Boolean);
+  return paragraphs.map(function(p) {
+    var escaped = esc(p);
+    escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    escaped = escaped.replace(/\n/g, '<br>');
+    return '<p style="font-family:Jost,sans-serif;font-size:16px;color:#5a4a45;line-height:1.8;margin:0 0 1.1rem;">'+escaped+'</p>';
+  }).join('');
+}
+
+document.getElementById('gen-btn').addEventListener('click', function() {
+  var title = document.getElementById('f-title').value.trim();
+  var img = 'https://d1yei2z3i6k35z.cloudfront.net/10270628/695a7e36e4a11_DFYCourseImages1.png';
+  var body = document.getElementById('f-body').value;
+
+  if (!title && !body) { alert('Fill in at least a title and some content!'); return; }
+
+  var bodyHtml = formatBody(body);
+
+  var html =
+    '<div style="font-family:Jost,sans-serif;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
+
+    '<div style="background:#2a1f1c;padding:1.8rem 2rem;text-align:center;border-bottom:3px solid #fff;">'+
+    '<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin:0 0 0.5rem;">Motivational Monday</p>'+
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#f5eddf;line-height:1.3;margin:0;">'+esc(title)+'</h2>'+
+    '</div>'+
+
+    (img ?
+      '<div style="width:100%;overflow:hidden;max-height:420px;">'+
+      '<img src="'+img+'" alt="Motivational Monday" style="width:100%;display:block;object-fit:cover;">'+
+      '</div>'
+    : '') +
+
+    '<div style="padding:2rem 2rem 1.5rem;">'+
+    bodyHtml+
+    '<p style="font-family:Playfair Display,serif;font-size:15px;font-style:italic;color:#dea193;margin:1.5rem 0 0;border-top:1px solid #ead9d5;padding-top:1.2rem;">Have a great week! — Dania</p>'+
+    '</div>'+
+    '</div>';
+
+  document.getElementById('preview-frame').innerHTML = html;
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('copy-html-btn').addEventListener('click', function() {
+  var html = document.getElementById('preview-frame').innerHTML;
+  var ta = document.createElement('textarea');
+  ta.value = html;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    var t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(function(){ t.style.display='none'; }, 2500);
+  } catch(e) { alert('Press Ctrl+C / Cmd+C to copy'); }
+  document.body.removeChild(ta);
+});
+
+function goTop() { document.getElementById('top').scrollIntoView({behavior:'smooth'}); }
+document.getElementById('back-top-btn').addEventListener('click', goTop);
+document.getElementById('back-top-fixed').addEventListener('click', goTop);
+</script>
+</body>
+</html>
