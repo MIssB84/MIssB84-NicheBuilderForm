@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Digital Product Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--db:#2a1f1c;--cream:#f5eddf;--gold:#c9a96e;--rose:#dea193;--border:#ead9d5;--light-bg:#fdf7f2;--mid:#5a4a45;--muted:#c4b0a8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f5ede8;min-height:100vh;padding:2rem 1rem 5rem;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.page-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#fff;background:var(--rose);padding:5px 18px;border-radius:20px;margin-bottom:0.75rem;}
+h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--db);margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:var(--muted);}
+.card{background:#fff;border-radius:16px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.2rem;max-width:760px;margin-left:auto;margin-right:auto;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--db);margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:1.2rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-full{grid-column:1/-1;}
+.field-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);margin-bottom:4px;display:block;}
+.field-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Jost',sans-serif;font-size:14px;color:var(--db);background:var(--light-bg);outline:none;transition:border-color 0.2s;}
+.field-input:focus{border-color:var(--rose);}
+textarea.field-input{resize:vertical;min-height:80px;line-height:1.6;}
+.tool-locked{background:var(--db);color:var(--cream);font-size:13px;font-weight:600;padding:10px 14px;border-radius:10px;font-family:'Jost',sans-serif;}
+.style-row{display:grid;grid-template-columns:220px 1fr;gap:10px;align-items:center;margin-bottom:10px;}
+.gen-btn{display:block;width:100%;max-width:760px;margin:0 auto 2rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--rose);color:#fff;border:none;padding:16px;border-radius:40px;cursor:pointer;transition:background 0.2s;}
+.gen-btn:hover{background:#c47d6e;}
+#output-section{display:none;max-width:760px;margin:0 auto;}
+.output-actions{display:flex;gap:12px;margin-bottom:1.5rem;justify-content:center;flex-wrap:wrap;}
+.action-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:none;transition:all 0.2s;}
+.action-btn.primary{background:var(--db);color:var(--gold);}
+.action-btn.primary:hover{background:var(--gold);color:var(--db);}
+.action-btn.secondary{background:var(--rose);color:#fff;}
+.action-btn.secondary:hover{background:#c47d6e;}
+.preview-frame{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--db);color:var(--gold);font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid var(--gold);display:none;z-index:9999;}
+.back-top{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--rose);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;box-shadow:0 2px 8px rgba(222,161,147,0.4);}
+</style>
+</head>
+<body>
+<div id="top"></div>
+
+<div class="page-header">
+  <div class="page-badge">DFY Niche Club</div>
+  <h1>Digital Product Builder</h1>
+  <p class="page-sub">Fill in your digital product niche info and generate the styled HTML for your Systeme.io block.</p>
+</div>
+
+<div class="card">
+  <p class="card-title">The Basics</p>
+  <p class="card-sub">Niche stats and info</p>
+  <div class="form-grid">
+    <div>
+      <label class="field-label" for="f-num">Niche Number</label>
+      <input class="field-input" id="f-num" placeholder="e.g. 1">
+    </div>
+    <div>
+      <label class="field-label" for="f-keyword">Keyword</label>
+      <input class="field-input" id="f-keyword" placeholder="e.g. Funny Goose Bathroom Printable Wall Art">
+    </div>
+    <div>
+      <label class="field-label" for="f-comp">Competition</label>
+      <input class="field-input" id="f-comp" placeholder="e.g. 572">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div>
+        <label class="field-label" for="f-price-low">Low Price $</label>
+        <input class="field-input" id="f-price-low" placeholder="e.g. 2.74">
+      </div>
+      <div>
+        <label class="field-label" for="f-price-high">High Price $</label>
+        <input class="field-input" id="f-price-high" placeholder="e.g. 7.50">
+      </div>
+    </div>
+    <div class="form-full">
+      <label class="field-label" for="f-note">Listing Notes</label>
+      <input class="field-input" id="f-note" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <p class="card-title">Real Etsy Listing Examples</p>
+  <p class="card-sub">Right-click each Etsy listing image on Etsy, click "Copy Image Address", paste below</p>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div>
+      <label class="field-label" for="f-l1">Listing 1 Image URL</label>
+      <input class="field-input" id="f-l1" placeholder="https://i.etsystatic.com/...">
+    </div>
+    <div>
+      <label class="field-label" for="f-l2">Listing 2 Image URL</label>
+      <input class="field-input" id="f-l2" placeholder="https://i.etsystatic.com/...">
+    </div>
+    <div>
+      <label class="field-label" for="f-l3">Listing 3 Image URL</label>
+      <input class="field-input" id="f-l3" placeholder="https://i.etsystatic.com/...">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <p class="card-title">How to Add Value</p>
+  <p class="card-sub">Each tip gets its own styled box in the output</p>
+  <div class="form-grid">
+    <div class="form-full">
+      <label class="field-label" for="f-tip1">Tip 1</label>
+      <input class="field-input" id="f-tip1" placeholder="e.g. Switch up the color story with warm cream and terracotta">
+    </div>
+    <div class="form-full">
+      <label class="field-label" for="f-tip2">Tip 2</label>
+      <input class="field-input" id="f-tip2" placeholder="e.g. Layer in a secondary prop like a rubber duck or tiny robe">
+    </div>
+    <div class="form-full">
+      <label class="field-label" for="f-tip3">Tip 3</label>
+      <input class="field-input" id="f-tip3" placeholder="e.g. Make sure the goose expression is doing the work">
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <p class="card-title">Titles &amp; Tags</p>
+  <p class="card-sub">Members can copy each title individually and copy all tags at once</p>
+  <div class="form-grid">
+    <div class="form-full">
+      <label class="field-label" for="f-t1">Title 1</label>
+      <input class="field-input" id="f-t1" placeholder="Full Etsy title, Keywords Here, Digital Download">
+    </div>
+    <div class="form-full">
+      <label class="field-label" for="f-t2">Title 2</label>
+      <input class="field-input" id="f-t2" placeholder="Full Etsy title, Keywords Here, Digital Download">
+    </div>
+    <div class="form-full">
+      <label class="field-label" for="f-t3">Title 3</label>
+      <input class="field-input" id="f-t3" placeholder="Full Etsy title, Keywords Here, Digital Download">
+    </div>
+    <div class="form-full">
+      <label class="field-label" for="f-tags">Tags (comma separated)</label>
+      <textarea class="field-input" id="f-tags" placeholder="Funny Bathroom Art, Quirky Bathroom Sign, Goose Lover Gift..."></textarea>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<button class="gen-btn" id="gen-btn">✨ Generate My Digital Product HTML</button>
+
+<div id="output-section">
+  <div class="output-actions">
+    <button class="action-btn primary" id="copy-html-btn">Copy HTML for Systeme.io</button>
+    <button class="action-btn secondary" id="back-top-btn">Back to Top ↑</button>
+  </div>
+  <div class="preview-frame" id="preview-frame"></div>
+</div>
+
+<div class="toast" id="toast">HTML Copied!</div>
+<button class="back-top" id="back-top-fixed" title="Back to top">↑</button>
+
+<script>
+var listingTitles = [];
+var allTags = [];
+
+function copyText(text, btn, original) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    btn.textContent = 'Copied!';
+    setTimeout(function(){ btn.textContent = original; }, 2000);
+  } catch(e) {
+    btn.textContent = 'Try Ctrl+C';
+    setTimeout(function(){ btn.textContent = original; }, 2000);
+  }
+  document.body.removeChild(ta);
+}
+
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+var S = {
+  header:'background:#2a1f1c;padding:1.4rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:3px solid #dea193;',
+  badge:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,0.15);border:1px solid rgba(222,161,147,0.4);padding:4px 12px;border-radius:20px;white-space:nowrap;font-family:Jost,sans-serif;',
+  title:'font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#f5eddf;line-height:1.2;margin:0;',
+  body:'padding:1.2rem 1.5rem;background:#fdf7f2;',
+  statsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.2rem;',
+  stat:'background:#2a1f1c;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #dea193;',
+  statLbl:'font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;font-family:Jost,sans-serif;',
+  statVal:'font-family:Playfair Display,serif;font-size:1rem;font-weight:600;color:#f5eddf;margin:0;',
+  block:'margin-bottom:1.2rem;background:#fff;border-radius:10px;border:1px solid #ead9d5;overflow:hidden;',
+  blockHead:'background:#2a1f1c;padding:0.65rem 1.2rem;',
+  blockLbl:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;margin:0;',
+  blockBody:'padding:1.1rem 1.3rem;',
+  noteBox:'background:rgba(222,161,147,0.1);border:1px solid rgba(222,161,147,0.35);border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:0.75rem;font-size:15px;color:#5a4a45;line-height:1.6;font-family:Jost,sans-serif;',
+  tipBox:'background:#fdf7f2;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:0.75rem;font-size:15px;color:#5a4a45;line-height:1.6;font-family:Jost,sans-serif;',
+  titleItem:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;',
+  titleItemLast:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;',
+  titleDot:'width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;margin-top:3px;',
+  titleText:'font-size:15px;color:#5a4a45;line-height:1.6;font-family:Jost,sans-serif;flex:1;',
+  copyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid #dea193;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;',
+  tagsWrap:'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;',
+  tag:'background:#2a1f1c;color:#f5eddf;font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid rgba(222,161,147,0.3);font-family:Jost,sans-serif;',
+  copyAll:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#dea193;color:#fff;border:none;padding:8px 20px;border-radius:20px;cursor:pointer;',
+  promptWrap:'position:relative;',
+  promptBox:'background:#2a1f1c;border-radius:8px;padding:1.1rem 1.3rem 1.1rem 1.3rem;border-left:3px solid #dea193;',
+  promptText:'font-size:15px;color:#f5eddf;line-height:1.7;font-style:italic;font-family:Jost,sans-serif;margin:0 0 0.75rem;',
+  promptCopyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid rgba(222,161,147,0.5);padding:5px 14px;border-radius:20px;cursor:pointer;',
+  styleItem:'display:flex;align-items:flex-start;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;',
+  styleItemLast:'display:flex;align-items:flex-start;gap:10px;',
+  styleDot:'width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;margin-top:2px;',
+  styleText:'font-size:15px;color:#5a4a45;line-height:1.6;font-family:Jost,sans-serif;',
+  listingsSec:'background:#2a1f1c;padding:1.2rem 1.5rem 1.5rem;',
+  listingsLbl:'font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin-bottom:0.8rem;font-family:Jost,sans-serif;',
+  listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
+  listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:8px;',
+  listingNoImg:'aspect-ratio:4/3;background:rgba(245,237,223,0.07);border:1.5px dashed rgba(222,161,147,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c4b0a8;font-family:Jost,sans-serif;',
+  listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;'
+};
+
+function generateDrop() {
+  var num = document.getElementById('f-num').value || '1';
+  var keyword = document.getElementById('f-keyword').value || '—';
+  var comp = document.getElementById('f-comp').value || '—';
+  var pLow = document.getElementById('f-price-low').value;
+  var pHigh = document.getElementById('f-price-high').value;
+  var price = (pLow && pHigh) ? '$'+pLow+' \u2013 $'+pHigh : (pLow?'$'+pLow:(pHigh?'$'+pHigh:'—'));
+  var note = document.getElementById('f-note').value || '';
+  var l1 = document.getElementById('f-l1').value.trim();
+  var l2 = document.getElementById('f-l2').value.trim();
+  var l3 = document.getElementById('f-l3').value.trim();
+
+  var tipsArr = [
+    document.getElementById('f-tip1').value.trim(),
+    document.getElementById('f-tip2').value.trim(),
+    document.getElementById('f-tip3').value.trim()
+  ].filter(Boolean);
+
+  listingTitles = [
+    document.getElementById('f-t1').value,
+    document.getElementById('f-t2').value,
+    document.getElementById('f-t3').value
+  ];
+  allTags = (document.getElementById('f-tags').value||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+
+  var tipsHtml = '';
+  tipsArr.forEach(function(t){
+    tipsHtml += '<div style="'+S.tipBox+'">'+esc(t)+'</div>';
+  });
+  if (!tipsHtml) tipsHtml = '<div style="'+S.tipBox+'">No tips added.</div>';
+
+  var validTitles = listingTitles.filter(Boolean);
+  var titlesHtml = '';
+  validTitles.forEach(function(t, i) {
+    var isLast = i === validTitles.length - 1;
+    titlesHtml += '<div style="'+(isLast?S.titleItemLast:S.titleItem)+'"><div style="display:flex;align-items:flex-start;gap:10px;flex:1;"><div style="'+S.titleDot+'"></div><p style="'+S.titleText+'">'+esc(t)+'</p></div><button style="'+S.copyBtn+'" onclick="cpTitle('+i+',this)">Copy</button></div>';
+  });
+  if (!titlesHtml) titlesHtml = '<p style="'+S.titleText+'">No titles added.</p>';
+
+  var tagsHtml = '';
+  allTags.forEach(function(t){tagsHtml += '<span style="'+S.tag+'">'+esc(t)+'</span>';});
+
+  var html =
+    '<div style="font-family:Jost,sans-serif;background:#fdf7f2;">'+
+    '<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(num)+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>'+
+
+    '<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p>'+
+    '<div style="'+S.listingsGrid+'">'+
+    '<div>'+(l1?'<img style="'+S.listingImg+'" src="'+l1+'" alt="Listing 1">':'<div style="'+S.listingNoImg+'">No image</div>')+'<p style="'+S.listingLbl+'">Listing 1</p></div>'+
+    '<div>'+(l2?'<img style="'+S.listingImg+'" src="'+l2+'" alt="Listing 2">':'<div style="'+S.listingNoImg+'">No image</div>')+'<p style="'+S.listingLbl+'">Listing 2</p></div>'+
+    '<div>'+(l3?'<img style="'+S.listingImg+'" src="'+l3+'" alt="Listing 3">':'<div style="'+S.listingNoImg+'">No image</div>')+'<p style="'+S.listingLbl+'">Listing 3</p></div>'+
+    '</div></div>'+
+    '<div style="'+S.body+'">'+
+    '<div style="'+S.statsGrid+'">'+
+    '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Keyword</p><p style="'+S.statVal+'">'+esc(keyword)+'</p></div>'+
+    '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Competition</p><p style="'+S.statVal+'">'+esc(comp)+'</p></div>'+
+    '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Price Range</p><p style="'+S.statVal+'">'+esc(price)+'</p></div>'+
+    '</div>'+
+    (note ? '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>' : '')+
+    '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>'+
+    '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>'+
+    '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" id="o-copy-all-btn" onclick="cpAllTags()">Copy All Tags</button></div></div>'+
+    '</div></div>';
+
+  document.getElementById('preview-frame').innerHTML = html;
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({behavior:'smooth'});
+}
+
+function cpTitle(idx, btn) {
+  copyText(listingTitles[idx]||'', btn, 'Copy');
+}
+
+
+function cpAllTags() {
+  var btn = document.getElementById('o-copy-all-btn');
+  copyText(allTags.join(', '), btn, 'Copy All Tags');
+}
+
+document.getElementById('gen-btn').addEventListener('click', generateDrop);
+
+document.getElementById('copy-html-btn').addEventListener('click', function() {
+  var html = document.getElementById('preview-frame').innerHTML;
+  var ta = document.createElement('textarea');
+  ta.value = html;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    document.execCommand('copy');
+    var t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(function(){t.style.display='none';},2500);
+  } catch(e) { alert('Press Ctrl+C / Cmd+C to copy'); }
+  document.body.removeChild(ta);
+});
+
+function goTop() { document.getElementById('top').scrollIntoView({behavior:'smooth'}); }
+document.getElementById('back-top-btn').addEventListener('click', goTop);
+document.getElementById('back-top-fixed').addEventListener('click', goTop);
+</script>
+</body>
+</html>
