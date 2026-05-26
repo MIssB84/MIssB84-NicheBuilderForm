@@ -19,7 +19,6 @@ h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:v
 .field-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);margin-bottom:4px;display:block;}
 .field-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Jost',sans-serif;font-size:14px;color:var(--db);background:var(--light-bg);outline:none;transition:border-color 0.2s;margin-bottom:1.2rem;}
 .field-input:focus{border-color:var(--rose);}
-.field-input:last-child{margin-bottom:0;}
 textarea.field-input{resize:vertical;min-height:260px;line-height:1.8;}
 .hint{font-size:11px;color:var(--muted);margin-top:-0.8rem;margin-bottom:1.2rem;font-style:italic;}
 .gen-btn{display:block;width:100%;max-width:760px;margin:0 auto 2rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--rose);color:#fff;border:none;padding:16px;border-radius:40px;cursor:pointer;}
@@ -45,24 +44,22 @@ textarea.field-input{resize:vertical;min-height:260px;line-height:1.8;}
 
 <div class="card">
   <p class="card-title">This Week's Post</p>
-  <p class="card-sub">Fill in your title, image, and post content</p>
+  <p class="card-sub">Fill in your title and post content</p>
 
   <label class="field-label" for="f-title">Post Title</label>
   <input class="field-input" id="f-title" placeholder="e.g. What Your First 100 Sales Will Teach You That Nothing Else Can">
 
-
-
   <label class="field-label" for="f-body">Post Content</label>
-  <textarea class="field-input" id="f-body" placeholder="Paste or type your full post here...&#10;&#10;Each paragraph separated by a blank line will get its own styled paragraph in the output.&#10;&#10;Bold text: wrap words in **double asterisks** and they'll appear bold."></textarea>
-  <p class="hint" style="margin-top:0.4rem;">Separate paragraphs with a blank line. Wrap text in **asterisks** to make it bold.</p>
+  <textarea class="field-input" id="f-body" placeholder="Paste or type your full post here...&#10;&#10;Separate paragraphs with a blank line.&#10;&#10;Wrap text in **double asterisks** to make it bold."></textarea>
+  <p class="hint" style="margin-top:0.4rem;">Separate paragraphs with a blank line. Wrap text in **asterisks** to bold it.</p>
 </div>
 
-<button class="gen-btn" id="gen-btn">✨ Generate My Monday Post</button>
+<button class="gen-btn" id="gen-btn">Generate My Monday Post</button>
 
 <div id="output-section">
   <div class="output-actions">
     <button class="action-btn primary" id="copy-html-btn">Copy HTML for Systeme.io</button>
-    <button class="action-btn secondary" id="back-top-btn">Back to Top ↑</button>
+    <button class="action-btn secondary" id="back-top-btn">Back to Top</button>
   </div>
   <div class="preview-frame" id="preview-frame"></div>
 </div>
@@ -71,6 +68,8 @@ textarea.field-input{resize:vertical;min-height:260px;line-height:1.8;}
 <button class="back-top" id="back-top-fixed" title="Back to top">↑</button>
 
 <script>
+var IMG = 'https://d1yei2z3i6k35z.cloudfront.net/10270628/695a7e36e4a11_DFYCourseImages1.png';
+
 function esc(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -81,13 +80,12 @@ function formatBody(text) {
     var escaped = esc(p);
     escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     escaped = escaped.replace(/\n/g, '<br>');
-    return '<p style="font-family:Jost,sans-serif;font-size:16px;color:#5a4a45;line-height:1.8;margin:0 0 1.1rem;">'+escaped+'</p>';
+    return '<p style="font-family:Jost,sans-serif;font-size:16px;color:#5a4a45;line-height:1.8;margin:0 0 1.2rem;">'+escaped+'</p>';
   }).join('');
 }
 
 document.getElementById('gen-btn').addEventListener('click', function() {
   var title = document.getElementById('f-title').value.trim();
-  var img = 'https://d1yei2z3i6k35z.cloudfront.net/10270628/695a7e36e4a11_DFYCourseImages1.png';
   var body = document.getElementById('f-body').value;
 
   if (!title && !body) { alert('Fill in at least a title and some content!'); return; }
@@ -96,21 +94,17 @@ document.getElementById('gen-btn').addEventListener('click', function() {
 
   var html =
     '<div style="font-family:Jost,sans-serif;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
-
     '<div style="background:#2a1f1c;padding:1.8rem 2rem;text-align:center;border-bottom:3px solid #fff;">'+
     '<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin:0 0 0.5rem;">Motivational Monday</p>'+
     '<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#f5eddf;line-height:1.3;margin:0;">'+esc(title)+'</h2>'+
     '</div>'+
-
-    (img ?
-      '<div style="width:100%;">'+
-      '<img src="'+img+'" alt="Motivational Monday" style="width:100%;display:block;object-fit:cover;">'+
-      '</div>'
-    : '') +
-
+    '<div style="width:100%;"><img src="'+IMG+'" alt="Motivational Monday" style="width:100%;display:block;"></div>'+
     '<div style="padding:2rem 2rem 1.5rem;">'+
     bodyHtml+
-    '<p style="font-family:Playfair Display,serif;font-size:15px;font-style:italic;color:#dea193;margin:1.5rem 0 0;border-top:1px solid #ead9d5;padding-top:1.2rem;">Have a great week! — Dania</p>'+
+    '<div style="border-top:1px solid #ead9d5;padding-top:1.4rem;margin-top:1rem;">'+
+    '<p style="font-family:Playfair Display,serif;font-size:22px;font-style:italic;color:#dea193;margin:0 0 0.3rem;">Have a great week! &#129505;</p>'+
+    '<p style="font-family:Playfair Display,serif;font-size:22px;font-style:italic;color:#dea193;margin:0;">Dania</p>'+
+    '</div>'+
     '</div>'+
     '</div>';
 
