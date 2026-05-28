@@ -401,7 +401,8 @@ function buildNicheBase(n, num, keyword, comp, price, note, l1, l2, l3, tipsArr,
   var tagsHtml=''; tags.forEach(function(t){ tagsHtml+='<span style="'+S.tag+'">'+esc(t)+'</span>'; });
   var tagStr=esc(tags.join(', ')).replace(/'/g,'\\\'');
 
-  var html='<div style="font-family:Jost,sans-serif;background:#fdf7f2;">';
+  var anchorId = n==='bonus' ? 'niche-bonus' : 'niche-'+n;
+  var html='<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">';
   html+='<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(String(n))+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>';
   html+='<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p>';
   html+='<div style="'+S.listingsGrid+'">';
@@ -488,6 +489,7 @@ function generateAINiche(n){
 
 function generateDPNiche(n){
   var keyword=v('n'+n+'-kw')||'—';
+  var anchorId = n==='bonus' ? 'niche-bonus' : 'niche-'+n;
   var comp=v('n'+n+'-comp')||'—';
   var plo=v('n'+n+'-plo'); var phi=v('n'+n+'-phi');
   var price=(plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
@@ -499,6 +501,7 @@ function generateDPNiche(n){
   var nLabel = n==='bonus' ? 'Bonus' : 'Niche '+n;
 
   var html=buildNicheBase(nLabel, n, keyword, comp, price, note, l1, l2, l3, tipsArr, titlesArr, tags);
+  html = html.replace('<div style="font-family:Jost,sans-serif;background:#fdf7f2;">', '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">');
   html+='</div></div>';
   html+='<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
 
