@@ -106,15 +106,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   <p class="hint" id="bonus-hint">Bonus is ON — click ✕ to hide it this week</p>
 </div>
 
-<button class="gen-btn" id="gen-intro-btn">✨ Generate Intro HTML</button>
-<div class="out-section" id="out-intro">
-  <div class="out-card">
-    <div class="out-head"><span class="out-title">Weekly Intro</span><button class="copy-btn" onclick="copyOut('intro-code')">Copy HTML</button></div>
-    <div class="out-prev" id="intro-prev"></div>
-  </div>
-  <textarea id="intro-code" style="display:none;"></textarea>
-  <button class="back-form-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form ↑</button>
-</div>
+
 
 <!-- ==================== NICHES 1,2,3,5,6,7: AI DROP ==================== -->
 <script>
@@ -131,7 +123,7 @@ var DP_NICHES = [
   {n:'bonus', label:'Bonus'}
 ];
 var GEN_TOOLS = [
-  {id:'dalle',    name:'Dall-E',      link:'https://www.mydesigns.io/?via=dania'},
+  {id:'recraft',  name:'Recraft',     link:'https://www.mydesigns.io/?via=dania'},
   {id:'ideogram', name:'Ideogram',    link:'https://www.mydesigns.io/?via=dania'},
   {id:'midj',     name:'Midjourney',  link:'https://www.mydesigns.io/?via=dania'},
   {id:'kittl',    name:'Kittl',       link:'https://kittl.com?ref=dania'},
@@ -148,6 +140,20 @@ var GEN_TOOLS = [
 
 <!-- ==================== NICHE 4: DIGITAL PRODUCT ==================== -->
 <div id="dp-niche-sections"></div>
+
+<!-- ==================== GENERATE ALL ==================== -->
+<div style="max-width:760px;margin:2rem auto 1rem;">
+  <button class="gen-btn" id="gen-all-btn" onclick="generateAll()">✨ Generate Complete Weekly HTML</button>
+</div>
+
+<div class="out-section" id="out-all">
+  <div class="out-card">
+    <div class="out-head"><span class="out-title">Your Complete Weekly Drop</span><button class="copy-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button></div>
+    <div class="out-prev" id="all-prev"></div>
+  </div>
+  <textarea id="all-code" style="display:none;"></textarea>
+  <button class="back-form-btn" onclick="document.getElementById('top').scrollIntoView({behavior:'smooth'})">Back to Form ↑</button>
+</div>
 
 <!-- ==================== SAVE BAR ==================== -->
 <div class="save-bar">
@@ -235,13 +241,7 @@ function buildAINicheSections(){
     html += '</div></div>';
 
     // Generate button and output
-    html += '<button class="gen-btn" id="gen-n'+n+'-btn" onclick="generateAINiche('+n+')">✨ Generate Niche '+n+' HTML</button>';
-    html += '<div class="out-section" id="out-n'+n+'">';
-    html += '<div class="out-card"><div class="out-head"><span class="out-title">Niche '+n+' HTML</span><button class="copy-btn" onclick="copyOut(\'n'+n+'-code\')">Copy HTML</button></div>';
-    html += '<div class="out-prev" id="n'+n+'-prev"></div></div>';
-    html += '<textarea id="n'+n+'-code" style="display:none;"></textarea>';
-    html += '<button class="back-form-btn" onclick="document.getElementById(\'top\').scrollIntoView({behavior:\'smooth\'})">Back to Form ↑</button>';
-    html += '</div>';
+
 
     container.innerHTML += html;
   });
@@ -287,13 +287,7 @@ function buildDPNicheSections(){
     html += '<div><label class="fl">Tags (comma separated)</label><textarea class="fi" id="n'+n+'-tags" placeholder="Tag 1, Tag 2, Tag 3..."></textarea></div>';
     html += '</div></div>';
 
-    html += '<button class="gen-btn" onclick="generateDPNiche(\''+n+'\')">✨ Generate '+label+' HTML</button>';
-    html += '<div class="out-section" id="out-n'+n+'">';
-    html += '<div class="out-card"><div class="out-head"><span class="out-title">'+label+' HTML</span><button class="copy-btn" onclick="copyOut(\'n'+n+'-code\')">Copy HTML</button></div>';
-    html += '<div class="out-prev" id="n'+n+'-prev"></div></div>';
-    html += '<textarea id="n'+n+'-code" style="display:none;"></textarea>';
-    html += '<button class="back-form-btn" onclick="document.getElementById(\'top\').scrollIntoView({behavior:\'smooth\'})">Back to Form ↑</button>';
-    html += '</div>';
+
 
     container.innerHTML += html;
   });
@@ -489,10 +483,7 @@ function generateAINiche(n){
   html+='</div></div>';
   html+='<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
 
-  document.getElementById('n'+n+'-code').value=html;
-  document.getElementById('n'+n+'-prev').innerHTML=html;
-  document.getElementById('out-n'+n).style.display='block';
-  document.getElementById('out-n'+n).scrollIntoView({behavior:'smooth'});
+  return html;
 }
 
 function generateDPNiche(n){
@@ -511,10 +502,7 @@ function generateDPNiche(n){
   html+='</div></div>';
   html+='<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
 
-  document.getElementById('n'+n+'-code').value=html;
-  document.getElementById('n'+n+'-prev').innerHTML=html;
-  document.getElementById('out-n'+n).style.display='block';
-  document.getElementById('out-n'+n).scrollIntoView({behavior:'smooth'});
+  return html;
 }
 
 // Intro generator
@@ -533,7 +521,7 @@ function nicheRow(num, label, anchor, isBonus){
   return '<a href="#'+anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;border:1px solid rgba(255,255,255,0.3);">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
 }
 
-document.getElementById('gen-intro-btn').addEventListener('click', function(){
+function generateIntro(){
   var date=v('intro-date')||'DATE';
   var niches=[
     {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
@@ -567,10 +555,7 @@ document.getElementById('gen-intro-btn').addEventListener('click', function(){
     navHtml+
     '</div></div>';
 
-  document.getElementById('intro-code').value=html;
-  document.getElementById('intro-prev').innerHTML=html;
-  document.getElementById('out-intro').style.display='block';
-  document.getElementById('out-intro').scrollIntoView({behavior:'smooth'});
+  return html;
 });
 
 // Auto save
@@ -581,6 +566,31 @@ document.addEventListener('input',function(){
 });
 
 window.addEventListener('beforeunload',function(e){ if(isDirty){e.preventDefault();e.returnValue='';} });
+
+function generateAll(){
+  var parts = [];
+  parts.push(generateIntro());
+  AI_NICHES.forEach(function(niche){ parts.push(generateAINiche(niche.n)); });
+  DP_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    parts.push(generateDPNiche(niche.n));
+  });
+  var combined = parts.filter(Boolean).join('\n');
+  document.getElementById('all-code').value = combined;
+  document.getElementById('all-prev').innerHTML = combined;
+  document.getElementById('out-all').style.display = 'block';
+  document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var el = document.getElementById('all-code');
+  var ta = document.createElement('textarea');
+  ta.value = el.value; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
+  catch(e){ toast('Copy failed — try Ctrl+C'); }
+  document.body.removeChild(ta);
+}
 
 loadData();
 </script>
