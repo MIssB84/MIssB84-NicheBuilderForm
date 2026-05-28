@@ -77,9 +77,8 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <div class="card">
   <p class="card-title">Week Info</p>
   <p class="card-sub">Sets the header for your lesson.</p>
-  <div class="g2" style="margin-bottom:0;">
-    <div><label class="fl" for="f-date">Week Date</label><input class="fi" id="f-date" placeholder="e.g. June 2, 2026"></div>
-    <div><label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore"></div>
+  <div style="margin-bottom:0;">
+    <label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore">
   </div>
 </div>
 
@@ -168,7 +167,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 var SK='dfy_pc_v3';
 var isDirty=false;
 var allFields=[
-  'f-date','f-theme',
+  'f-theme',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -222,7 +221,6 @@ function clearAll(){
   isDirty=false;setStatus('unsaved','Cleared');updateProgress();toast('Week cleared.');
 }
 function buildHTML(){
-  var date=v('f-date')||'DATE';
   var theme=v('f-theme')||'THEME';
   var gname=v('g-name')||'Kittl';
   var gstyle=v('g-style');
@@ -242,7 +240,6 @@ function buildHTML(){
   html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>';
   html+='<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Prompt Drop</h2>';
   html+='<p style="font-size:14px;font-weight:600;color:#dea193;margin:0 0 0.3rem;">'+esc(theme)+'</p>';
-  html+='<p style="font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>';
   html+='</div>';
   html+='<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">';
   html+='<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
@@ -288,8 +285,7 @@ function buildHTML(){
 }
 function generate(){
   var theme=v('f-theme');
-  var date=v('f-date');
-  if(!theme||!date){toast('Please fill in the date and theme first.');return;}
+  if(!theme){toast('Please fill in the theme first.');return;}
   var html=buildHTML();
   document.getElementById('out-code').value=html;
   document.getElementById('out-preview').innerHTML=html;
