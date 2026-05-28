@@ -366,10 +366,12 @@ function buildHTML(){
       html+='<p style="font-family:Playfair Display,serif;font-size:16px;font-style:italic;color:#f5eddf;line-height:1.85;text-align:center;margin-bottom:1.5rem;" id="'+pid+'">'+esc(text)+'</p>';
       html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);}catch(e){}window.getSelection().removeAllRanges();" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>';
       html+='</div>';
-      if(img){
+      var gen=v(id+'-gen').trim();
+      var genLabel=gen?('<a href="'+kittlLink+'" target="_blank" style="color:#c9a96e;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">'+gen+'</a>'):'';
+      if(img||genLabel){
         html+='<div style="margin-top:1rem;text-align:center;">';
-        html+='<img src="'+img+'" alt="Example result" style="width:100%;max-width:480px;border-radius:10px;border:1px solid #ead9d5;display:block;margin:0 auto;">';
-
+        if(img) html+='<img src="'+img+'" alt="Example result" style="width:100%;max-width:480px;border-radius:10px;border:1px solid #ead9d5;display:block;margin:0 auto;">';
+        if(genLabel) html+='<p style="margin-top:8px;">'+genLabel+'</p>';
         html+='</div>';
       }
       html+='</div>';
