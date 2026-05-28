@@ -13,49 +13,40 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
 .page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
 .page-sub{font-size:13px;color:#c4b0a8;}
-
-/* Section dividers */
-.section-header{max-width:760px;margin:2.5rem auto 1rem;display:flex;align-items:center;gap:14px;}
-.section-header-line{flex:1;height:1px;background:#ead9d5;}
-.section-header-label{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#2a1f1c;white-space:nowrap;padding:0 4px;}
-.section-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-left:8px;}
-.badge-ai{background:#2a1f1c;color:#dea193;}
-.badge-dp{background:#dea193;color:#fff;}
-
+.sec-head{max-width:760px;margin:2.5rem auto 1rem;display:flex;align-items:center;gap:14px;}
+.sec-line{flex:1;height:1px;background:#ead9d5;}
+.sec-label{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#2a1f1c;white-space:nowrap;padding:0 4px;}
+.sec-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:6px;}
+.tag-ai{background:#2a1f1c;color:#dea193;}
+.tag-dp{background:#dea193;color:#fff;}
 .card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.2rem;max-width:760px;margin-left:auto;margin-right:auto;}
 .card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#2a1f1c;margin-bottom:0.2rem;}
 .card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
 .fl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;}
+.fl-note{font-weight:400;text-transform:none;letter-spacing:0;color:#c4b0a8;font-size:11px;}
 .fi{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;}
 .fi:focus{border-color:#dea193;}
 textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .full{grid-column:1/-1;}
-
 .niche-row{display:grid;grid-template-columns:80px 1fr 36px;gap:8px;align-items:center;margin-bottom:8px;}
-.niche-num{background:#2a1f1c;color:#dea193;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;font-family:'Jost',sans-serif;}
-.bonus-num{background:#dea193;color:#2a1f1c;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;font-family:'Jost',sans-serif;}
+.niche-num{background:#2a1f1c;color:#dea193;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;}
+.bonus-num{background:#dea193;color:#2a1f1c;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;}
 .toggle-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#c4b0a8;}
 .toggle-btn.active{border-color:#dea193;color:#dea193;}
 .hint{font-size:11px;color:#c4b0a8;margin-top:6px;font-style:italic;}
-
-.gen-images-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px;}
+.img-field-wrap{margin-bottom:10px;}
+.img-thumb{width:100%;max-height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
+.img-thumb.show{display:block;}
+.img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+.gen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .gen-slot{display:flex;flex-direction:column;gap:4px;}
 .gen-name{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;}
-.img-thumb{width:100%;max-height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:4px;display:none;}
-.img-thumb.visible{display:block;}
-.img-error{font-size:10px;color:#e07070;margin-top:4px;display:none;}
-.preview-niche-btn{display:block;width:100%;max-width:760px;margin:0 auto 1rem;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#dea193;border:2px solid #dea193;padding:12px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
-.preview-niche-btn:hover{background:#dea193;color:#2a1f1c;}
-.niche-preview-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(42,31,28,0.85);z-index:1000;overflow-y:auto;padding:2rem 1rem;}
-.niche-preview-inner{background:#fff;border-radius:14px;max-width:760px;margin:0 auto;overflow:hidden;}
-.niche-preview-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
-.niche-preview-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
-.niche-preview-close{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(222,161,147,0.4);color:#dea193;padding:6px 16px;border-radius:20px;cursor:pointer;}
-.niche-preview-close:hover{background:#dea193;color:#2a1f1c;}
-.niche-preview-body{padding:1.25rem;}
-
+.tool-locked{background:#2a1f1c;color:#f5eddf;font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;}
+.preview-btn{display:block;width:100%;max-width:760px;margin:0.5rem auto 1rem;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#dea193;border:2px solid #dea193;padding:12px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
+.preview-btn:hover{background:#dea193;color:#2a1f1c;}
+.gen-all-btn{display:block;width:100%;max-width:760px;margin:2rem auto 1rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;border:2px solid #dea193;padding:15px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
+.gen-all-btn:hover{background:#dea193;color:#2a1f1c;}
 .save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;z-index:100;}
 .save-status{font-size:12px;color:#c4b0a8;display:flex;align-items:center;gap:6px;}
 .sdot{width:6px;height:6px;border-radius:50%;background:#c4b0a8;}
@@ -64,45 +55,42 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:9px 20px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all 0.2s;}
 .sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}
 .sbtn-save:hover{background:#dea193;color:#2a1f1c;}
-.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}
-.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
 .sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
 .sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
-
-.out-section{display:none;max-width:760px;margin:0 auto 2rem;}
-.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
+.out-wrap{display:none;max-width:760px;margin:0 auto 2rem;}
+.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1rem;}
 .out-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
-.out-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
-.copy-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:8px 22px;border-radius:30px;cursor:pointer;transition:all 0.2s;}
+.out-head-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.copy-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:8px 22px;border-radius:30px;cursor:pointer;}
 .copy-btn:hover{background:#bb7d72;color:#fff;}
 .out-prev{padding:1.25rem;}
-.back-form-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;display:block;margin:0 auto 3rem;}
-
+.back-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;display:block;margin:0 auto 3rem;}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(42,31,28,0.88);z-index:200;overflow-y:auto;padding:2rem 1rem;}
+.modal-inner{background:#fff;border-radius:14px;max-width:760px;margin:0 auto;overflow:hidden;}
+.modal-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.modal-close{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(222,161,147,0.4);color:#dea193;padding:6px 16px;border-radius:20px;cursor:pointer;}
+.modal-close:hover{background:#dea193;color:#2a1f1c;}
+.modal-body{padding:1.25rem;}
 .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
-
-.gen-btn{display:block;width:100%;max-width:760px;margin:0 auto 1rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;border:2px solid #dea193;padding:15px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
-.gen-btn:hover{background:#dea193;color:#2a1f1c;}
 </style>
 </head>
 <body>
 <div id="top"></div>
-
 <div class="page-header">
   <div class="badge">DFY Niche Club</div>
   <h1 class="page-title">Master Weekly Builder</h1>
   <p class="page-sub">Build your full weekly drop in one place. Progress saves automatically.</p>
 </div>
 
-<!-- ==================== SECTION 1: INTRO ==================== -->
-<div class="section-header"><div class="section-header-line"></div><span class="section-header-label">Section 1: Weekly Intro</span><div class="section-header-line"></div></div>
-
+<!-- SECTION 1: INTRO -->
+<div class="sec-head"><div class="sec-line"></div><span class="sec-label">Section 1: Weekly Intro</span><div class="sec-line"></div></div>
 <div class="card">
   <p class="card-title">Week Info</p>
   <p class="card-sub">Just the date — that's the only thing that changes every single week.</p>
   <label class="fl" for="intro-date">Week Date</label>
   <input class="fi" id="intro-date" placeholder="e.g. Week of June 2, 2026">
 </div>
-
 <div class="card">
   <p class="card-title">Niche List</p>
   <p class="card-sub">Update any niche name that changed this week. Toggle the ✕ to hide the Bonus niche if you're not including it.</p>
@@ -118,67 +106,24 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   <p class="hint" id="bonus-hint">Bonus is ON — click ✕ to hide it this week</p>
 </div>
 
+<!-- AI NICHE SECTIONS (1,2,3,5,6,7) -->
+<div id="ai-sections"></div>
 
+<!-- DP NICHE SECTIONS (4, bonus) -->
+<div id="dp-sections"></div>
 
-<!-- ==================== NICHES 1,2,3,5,6,7: AI DROP ==================== -->
-<script>
-var AI_NICHES = [
-  {n:1, label:'Printable Wall Art'},
-  {n:2, label:'PNG'},
-  {n:3, label:'Frame TV Art'},
-  {n:5, label:'Printable Wall Art'},
-  {n:6, label:'PNG'},
-  {n:7, label:'Frame TV Art'}
-];
-var DP_NICHES = [
-  {n:4, label:'Printable (Journal/Checklist/Planner)'},
-  {n:'bonus', label:'Bonus'}
-];
-var GEN_TOOLS = [
-  {id:'recraft',  name:'Recraft',     link:'https://www.mydesigns.io/?via=dania'},
-  {id:'ideogram', name:'Ideogram',    link:'https://www.mydesigns.io/?via=dania'},
-  {id:'midj',     name:'Midjourney',  link:'https://www.mydesigns.io/?via=dania'},
-  {id:'kittl',    name:'Kittl',       link:'https://kittl.com?ref=dania'},
-  {id:'canva',    name:'Canva Dream Lab', link:'https://www.mydesigns.io/?via=dania'},
-  {id:'leo',      name:'Leonardo',    link:'https://galaxyai.io/?ref=dania'},
-  {id:'nano',     name:'Nano Banana', link:'https://www.mydesigns.io/?via=dania'},
-  {id:'seed',     name:'Seedream V3', link:'https://galaxyai.io/?ref=dania'},
-  {id:'gpt2',     name:'GPT Image 2', link:'https://www.mydesigns.io/?via=dania'}
-];
-</script>
-
-<!-- AI niche sections injected here -->
-<div id="ai-niche-sections"></div>
-
-<!-- ==================== NICHE 4: DIGITAL PRODUCT ==================== -->
-<div id="dp-niche-sections"></div>
-
-<!-- ==================== NICHE PREVIEW MODAL ==================== -->
-<div class="niche-preview-modal" id="niche-preview-modal">
-  <div class="niche-preview-inner">
-    <div class="niche-preview-head">
-      <span class="niche-preview-title" id="niche-preview-title">Niche Preview</span>
-      <button class="niche-preview-close" onclick="closeNichePreview()">Close ✕</button>
-    </div>
-    <div class="niche-preview-body" id="niche-preview-body"></div>
-  </div>
-</div>
-
-<!-- ==================== GENERATE ALL ==================== -->
-<div style="max-width:760px;margin:2rem auto 1rem;">
-  <button class="gen-btn" id="gen-all-btn" onclick="generateAll()">✨ Generate Complete Weekly HTML</button>
-</div>
-
-<div class="out-section" id="out-all">
+<!-- GENERATE ALL -->
+<button class="gen-all-btn" onclick="generateAll()">✨ Generate Complete Weekly HTML</button>
+<div class="out-wrap" id="out-all">
   <div class="out-card">
-    <div class="out-head"><span class="out-title">Your Complete Weekly Drop</span><button class="copy-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button></div>
+    <div class="out-head"><span class="out-head-title">Your Complete Weekly Drop</span><button class="copy-btn" onclick="copyAll()">Copy HTML</button></div>
     <div class="out-prev" id="all-prev"></div>
   </div>
   <textarea id="all-code" style="display:none;"></textarea>
-  <button class="back-form-btn" onclick="document.getElementById('top').scrollIntoView({behavior:'smooth'})">Back to Form ↑</button>
+  <button class="back-btn" onclick="document.getElementById('top').scrollIntoView({behavior:'smooth'})">Back to Form ↑</button>
 </div>
 
-<!-- ==================== SAVE BAR ==================== -->
+<!-- SAVE BAR -->
 <div class="save-bar">
   <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
   <div class="sbtns">
@@ -187,41 +132,99 @@ var GEN_TOOLS = [
   </div>
 </div>
 
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Preview</span>
+      <button class="modal-close" onclick="closeModal()">Close ✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-var SK = 'dfy_master_v1';
+var SK = 'dfy_master_v2';
 var isDirty = false;
+var bonusOn = true;
+
+var AI_NICHES = [
+  {n:1,label:'Printable Wall Art'},
+  {n:2,label:'PNG'},
+  {n:3,label:'Frame TV Art'},
+  {n:5,label:'Printable Wall Art'},
+  {n:6,label:'PNG'},
+  {n:7,label:'Frame TV Art'}
+];
+var DP_NICHES = [
+  {n:4,label:'Printable (Journal/Checklist/Planner)'},
+  {n:'bonus',label:'Bonus'}
+];
+var GEN_TOOLS = [
+  {id:'recraft',  name:'Recraft',        url:'https://www.mydesigns.io/?via=dania'},
+  {id:'ideogram', name:'Ideogram',       url:'https://www.mydesigns.io/?via=dania'},
+  {id:'midj',     name:'Midjourney',     url:'https://www.mydesigns.io/?via=dania'},
+  {id:'kittl',    name:'Kittl',          url:'https://kittl.com?ref=dania'},
+  {id:'canva',    name:'Canva Dream Lab', url:'https://www.mydesigns.io/?via=dania'},
+  {id:'leo',      name:'Leonardo',       url:'https://galaxyai.io/?ref=dania'},
+  {id:'nano',     name:'Nano Banana',    url:'https://www.mydesigns.io/?via=dania'},
+  {id:'seed',     name:'Seedream V3',    url:'https://galaxyai.io/?ref=dania'},
+  {id:'gpt2',     name:'GPT Image 2',    url:'https://www.mydesigns.io/?via=dania'}
+];
 
 function v(id){ return (document.getElementById(id)||{}).value||''; }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(function(){t.style.display='none';},2500); }
-function setStatus(state,txt){ document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved'); document.getElementById('stxt').textContent=txt; }
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(function(){t.style.display='none';},2500); }
+function setStatus(s,t){ document.getElementById('sdot').className='sdot '+(s==='saved'?'saved':'unsaved'); document.getElementById('stxt').textContent=t; }
 
-// Build AI niche sections
-function buildAINicheSections(){
-  var container = document.getElementById('ai-niche-sections');
+// IMAGE THUMBNAILS
+function updateThumb(inputId){
+  var input = document.getElementById(inputId);
+  if(!input) return;
+  var url = input.value.trim();
+  var thumb = document.getElementById('thumb-'+inputId);
+  var err = document.getElementById('err-'+inputId);
+  if(!thumb) return;
+  if(!url){ thumb.className='img-thumb'; thumb.src=''; if(err) err.style.display='none'; return; }
+  thumb.onload = function(){ thumb.className='img-thumb show'; if(err) err.style.display='none'; };
+  thumb.onerror = function(){ thumb.className='img-thumb'; if(err) err.style.display='block'; };
+  thumb.src = url;
+}
+
+function imgField(id, placeholder, label){
+  return '<div class="img-field-wrap">'
+    + '<label class="fl">' + label + '</label>'
+    + '<input class="fi" id="' + id + '" placeholder="' + placeholder + '" oninput="updateThumb(\'' + id + '\')">'
+    + '<img class="img-thumb" id="thumb-' + id + '">'
+    + '<span class="img-error" id="err-' + id + '">Image not found — check URL</span>'
+    + '</div>';
+}
+
+// BUILD AI NICHE SECTIONS
+function buildAISections(){
+  var c = document.getElementById('ai-sections');
+  var html = '';
   AI_NICHES.forEach(function(niche){
     var n = niche.n;
-    var html = '';
-    html += '<div class="section-header"><div class="section-header-line"></div><span class="section-header-label">Niche '+n+': AI Drop</span><span class="section-badge badge-ai">With AI Prompts</span><div class="section-header-line"></div></div>';
+    html += '<div class="sec-head"><div class="sec-line"></div><span class="sec-label">Niche ' + n + ': AI Drop</span><span class="sec-tag tag-ai">With AI Prompts</span><div class="sec-line"></div></div>';
 
-    // Basics card
-    html += '<div class="card"><p class="card-title">Niche '+n+' — The Basics</p><p class="card-sub">Niche stats and info</p>';
+    // Basics
+    html += '<div class="card"><p class="card-title">Niche ' + n + ' — Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(this is the exact trending keyword to use)</span></label><input class="fi" id="n' + n + '-kw" placeholder="e.g. Funny Goose Bathroom Printable Wall Art"></div>';
     html += '<div class="g2">';
-    html += '<div class="full"><label class="fl">Keyword <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#c4b0a8;">(this is the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Funny Goose Bathroom Printable Wall Art"></div>';
-    html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" placeholder="e.g. 572"></div>';
-    html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" placeholder="e.g. 2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" placeholder="e.g. 7.50"></div></div>';
-    html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n'+n+'-note" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
+    html += '<div><label class="fl">Competition</label><input class="fi" id="n' + n + '-comp" placeholder="e.g. 572"></div>';
+    html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n' + n + '-plo" placeholder="2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n' + n + '-phi" placeholder="7.50"></div></div>';
+    html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n' + n + '-note" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
     html += '</div></div>';
 
-    // Listing examples
+    // Listings
     html += '<div class="card"><p class="card-title">Real Etsy Listing Examples</p><p class="card-sub">Right-click each Etsy listing image, click Copy Image Address, paste below</p>';
-    html += '<div style="display:flex;flex-direction:column;gap:12px;">';
-    html += '<div><label class="fl">Listing 1 Image URL</label><input class="fi img-url-input" id="n'+n+'-l1" placeholder="https://i.etsystatic.com/..." data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-l1"><span class="img-error" id="err-n'+n+'-l1">Image not found</span></div>';
-    html += '<div><label class="fl">Listing 2 Image URL</label><input class="fi img-url-input" id="n'+n+'-l2" placeholder="https://i.etsystatic.com/..." data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-l2"><span class="img-error" id="err-n'+n+'-l2">Image not found</span></div>';
-    html += '<div><label class="fl">Listing 3 Image URL</label><input class="fi img-url-input" id="n'+n+'-l3" placeholder="https://i.etsystatic.com/..." data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-l3"><span class="img-error" id="err-n'+n+'-l3">Image not found</span></div>';
-    html += '</div></div>';
+    html += imgField('n'+n+'-l1','https://i.etsystatic.com/...','Listing 1 Image URL');
+    html += imgField('n'+n+'-l2','https://i.etsystatic.com/...','Listing 2 Image URL');
+    html += imgField('n'+n+'-l3','https://i.etsystatic.com/...','Listing 3 Image URL');
+    html += '</div>';
 
     // Tips
     html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Each tip gets its own styled box in the output</p>';
@@ -232,7 +235,7 @@ function buildAINicheSections(){
     html += '</div></div>';
 
     // Titles & Tags
-    html += '<div class="card"><p class="card-title">Titles &amp; Tags</p><p class="card-sub">Members can copy each title individually and copy all tags at once</p>';
+    html += '<div class="card"><p class="card-title">Titles &amp; Tags</p><p class="card-sub">Members can copy each title and all tags at once</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div><label class="fl">Title 1</label><input class="fi" id="n'+n+'-t1" placeholder="Full Etsy title, Keywords Here, Digital Download"></div>';
     html += '<div><label class="fl">Title 2</label><input class="fi" id="n'+n+'-t2" placeholder="Full Etsy title, Keywords Here, Digital Download"></div>';
@@ -244,57 +247,58 @@ function buildAINicheSections(){
     html += '<div class="card"><p class="card-title">Prompt &amp; Notes</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div><label class="fl">AI Image Prompt</label><textarea class="fi" style="min-height:100px;" id="n'+n+'-prompt" placeholder="Your full AI image prompt goes here..."></textarea></div>';
-    html += '<div><label class="fl">Important Notes (one per line)</label><textarea class="fi" id="n'+n+'-notes" placeholder="Do not use Silly Goose as it is trademarked&#10;Canva did not like the word Booty so I changed it to Bum"></textarea></div>';
+    html += '<div><label class="fl">Important Notes (one per line — leave blank if none)</label><textarea class="fi" id="n'+n+'-notes" placeholder="e.g. Do not use Silly Goose as it is trademarked"></textarea></div>';
     html += '</div></div>';
 
     // Styles Used
     html += '<div class="card"><p class="card-title">Styles Used</p><p class="card-sub">Tool names are locked in — just enter the style for each one</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
-    html += '<div class="g2"><div style="background:#2a1f1c;color:#f5eddf;font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;">Ideogram</div><input class="fi" id="n'+n+'-s-ideogram" placeholder="e.g. Auto"></div>';
-    html += '<div class="g2"><div style="background:#2a1f1c;color:#f5eddf;font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;">Kittl (Flux 1.1 Pro Ultra)</div><input class="fi" id="n'+n+'-s-kittl" placeholder="e.g. Cozy Support"></div>';
-    html += '<div class="g2"><div style="background:#2a1f1c;color:#f5eddf;font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;">Canva Dream Lab</div><input class="fi" id="n'+n+'-s-canva" placeholder="e.g. Smart"></div>';
+    html += '<div class="g2"><div class="tool-locked">Ideogram</div><input class="fi" id="n'+n+'-s-ideogram" placeholder="e.g. Auto"></div>';
+    html += '<div class="g2"><div class="tool-locked">Kittl (Flux 1.1 Pro Ultra)</div><input class="fi" id="n'+n+'-s-kittl" placeholder="e.g. Cozy Support"></div>';
+    html += '<div class="g2"><div class="tool-locked">Canva Dream Lab</div><input class="fi" id="n'+n+'-s-canva" placeholder="e.g. Smart"></div>';
     html += '</div></div>';
 
     // Generator Images
-    html += '<div class="card"><p class="card-title">Generator Result Images</p><p class="card-sub">Enter the image URL for each generator result. All link to your affiliate links in the output.</p>';
-    html += '<div class="gen-images-grid">';
+    html += '<div class="card"><p class="card-title">Generator Result Images</p><p class="card-sub">Paste image URL for each generator. Thumbnails appear instantly so you can verify.</p>';
+    html += '<div class="gen-grid">';
     GEN_TOOLS.forEach(function(g){
-      html += '<div class="gen-slot"><span class="gen-name">'+g.name+'</span><input class="fi img-url-input" id="n'+n+'-img-'+g.id+'" placeholder="Image URL" style="font-size:12px;padding:7px 10px;" data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-'+g.id+'"><span class="img-error" id="err-n'+n+'-'+g.id+'">Not found</span></div>';
+      html += '<div class="gen-slot"><span class="gen-name">' + g.name + '</span>';
+      html += '<input class="fi" id="n'+n+'-img-'+g.id+'" placeholder="Image URL" style="font-size:12px;padding:7px 10px;" oninput="updateThumb(\'n'+n+'-img-'+g.id+'\')">';
+      html += '<img class="img-thumb" id="thumb-n'+n+'-img-'+g.id+'">';
+      html += '<span class="img-error" id="err-n'+n+'-img-'+g.id+'">Not found</span>';
+      html += '</div>';
     });
     html += '</div></div>';
 
-    // Generate button and output
-
-
-    html += '<button class="preview-niche-btn" onclick="previewNiche('+n+',false)">Preview Niche '+n+' ↗</button>';
-    container.innerHTML += html;
+    // Preview button
+    html += '<button class="preview-btn" onclick="previewNiche(' + n + ',false)">Preview Niche ' + n + ' ↗</button>';
   });
+  c.innerHTML = html;
 }
 
-// Build DP niche sections
-function buildDPNicheSections(){
-  var container = document.getElementById('dp-niche-sections');
+// BUILD DP NICHE SECTIONS
+function buildDPSections(){
+  var c = document.getElementById('dp-sections');
+  var html = '';
   DP_NICHES.forEach(function(niche){
     var n = niche.n;
     var isBonus = n === 'bonus';
-    var label = isBonus ? 'Bonus' : 'Niche '+n;
-    var html = '';
-    html += '<div class="section-header"><div class="section-header-line"></div><span class="section-header-label">'+label+': Digital Product</span><span class="section-badge badge-dp">No AI Prompts</span><div class="section-header-line"></div></div>';
+    var label = isBonus ? 'Bonus' : 'Niche ' + n;
+    html += '<div class="sec-head"><div class="sec-line"></div><span class="sec-label">' + label + ': Digital Product</span><span class="sec-tag tag-dp">No AI Prompts</span><div class="sec-line"></div></div>';
 
-    html += '<div class="card"><p class="card-title">'+label+' — The Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="card"><p class="card-title">' + label + ' — Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(this is the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Dog Mom Checklist Printable"></div>';
     html += '<div class="g2">';
-    html += '<div class="full"><label class="fl">Keyword <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#c4b0a8;">(this is the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Dog Mom Checklist Printable"></div>';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" placeholder="e.g. 572"></div>';
-    html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" placeholder="e.g. 2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" placeholder="e.g. 7.50"></div></div>';
+    html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" placeholder="2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" placeholder="7.50"></div></div>';
     html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n'+n+'-note" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
     html += '</div></div>';
 
     html += '<div class="card"><p class="card-title">Real Etsy Listing Examples</p><p class="card-sub">Right-click each Etsy listing image, click Copy Image Address, paste below</p>';
-    html += '<div style="display:flex;flex-direction:column;gap:12px;">';
-    html += '<div><label class="fl">Listing 1 Image URL</label><input class="fi img-url-input" id="n'+n+'-l1" placeholder="https://i.etsystatic.com/..." data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-l1"><span class="img-error" id="err-n'+n+'-l1">Image not found</span></div>';
-    html += '<div><label class="fl">Listing 2 Image URL</label><input class="fi img-url-input" id="n'+n+'-l2" placeholder="https://i.etsystatic.com/..." data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-l2"><span class="img-error" id="err-n'+n+'-l2">Image not found</span></div>';
-    html += '<div><label class="fl">Listing 3 Image URL</label><input class="fi img-url-input" id="n'+n+'-l3" placeholder="https://i.etsystatic.com/..." data-thumbinput="1"><img class="img-thumb" id="thumb-n'+n+'-l3"><span class="img-error" id="err-n'+n+'-l3">Image not found</span></div>';
-    html += '</div></div>';
+    html += imgField('n'+n+'-l1','https://i.etsystatic.com/...','Listing 1 Image URL');
+    html += imgField('n'+n+'-l2','https://i.etsystatic.com/...','Listing 2 Image URL');
+    html += imgField('n'+n+'-l3','https://i.etsystatic.com/...','Listing 3 Image URL');
+    html += '</div>';
 
     html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Each tip gets its own styled box in the output</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
@@ -303,7 +307,7 @@ function buildDPNicheSections(){
     html += '<div><label class="fl">Tip 3</label><input class="fi" id="n'+n+'-tip3" placeholder="e.g. Use a bold font for contrast"></div>';
     html += '</div></div>';
 
-    html += '<div class="card"><p class="card-title">Titles &amp; Tags</p><p class="card-sub">Members can copy each title individually and copy all tags at once</p>';
+    html += '<div class="card"><p class="card-title">Titles &amp; Tags</p><p class="card-sub">Members can copy each title and all tags at once</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div><label class="fl">Title 1</label><input class="fi" id="n'+n+'-t1" placeholder="Full Etsy title, Keywords Here, Digital Download"></div>';
     html += '<div><label class="fl">Title 2</label><input class="fi" id="n'+n+'-t2" placeholder="Full Etsy title, Keywords Here, Digital Download"></div>';
@@ -311,86 +315,12 @@ function buildDPNicheSections(){
     html += '<div><label class="fl">Tags (comma separated)</label><textarea class="fi" id="n'+n+'-tags" placeholder="Tag 1, Tag 2, Tag 3..."></textarea></div>';
     html += '</div></div>';
 
-
-
-    var isBonus = n === 'bonus';
-    html += '<button class="preview-niche-btn" onclick="previewNiche(''+n+'','+isBonus+')">Preview '+label+' ↗</button>';
-    container.innerHTML += html;
+    html += '<button class="preview-btn" onclick="previewNiche(\'' + n + '\',' + (isBonus?'true':'false') + ')">Preview ' + label + ' ↗</button>';
   });
+  c.innerHTML = html;
 }
 
-buildAINicheSections();
-buildDPNicheSections();
-
-// Attach thumbnail update events via delegation
-document.addEventListener('input', function(e){
-  if(e.target && e.target.getAttribute('data-thumbinput')){
-    var thumbId = 'thumb-' + e.target.id;
-    updateThumb(e.target, thumbId);
-  }
-});
-
-// Collect all field IDs for save/load
-function getAllFieldIds(){
-  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
-  AI_NICHES.forEach(function(niche){
-    var n = niche.n;
-    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
-    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
-  });
-  DP_NICHES.forEach(function(niche){
-    var n = niche.n;
-    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
-  });
-  return ids;
-}
-
-function saveData(){
-  var data={};
-  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
-  data['bonus-on'] = bonusOn ? '1' : '0';
-  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved just now'); toast('Progress saved!'); }
-  catch(e){ toast('Could not save'); }
-}
-
-function loadData(){
-  try{
-    var raw=localStorage.getItem(SK);
-    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
-    var data=JSON.parse(raw);
-    getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el&&data[id]!==undefined) el.value=data[id]; });
-    if(data['bonus-on']==='0'){ bonusOn=false; document.getElementById('bonus-toggle').textContent='+'; document.getElementById('bonus-toggle').classList.remove('active'); document.getElementById('bonus-hint').textContent='Bonus is OFF — click + to include it this week'; }
-    setStatus('saved','Progress loaded');
-    // Restore thumbnails for any saved image URLs
-    document.querySelectorAll('.img-url-input').forEach(function(input){
-      if(input.value.trim()){
-        var thumbId = 'thumb-' + input.id;
-        updateThumb(input, thumbId);
-      }
-    });
-  }catch(e){ setStatus('unsaved','Could not load'); }
-}
-
-function clearAll(){
-  if(!confirm('Clear all data for this week?'))return;
-  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
-  localStorage.removeItem(SK);
-  document.querySelectorAll('.out-section').forEach(function(el){ el.style.display='none'; });
-  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.');
-}
-
-function copyOut(id){
-  var el=document.getElementById(id);
-  if(!el)return;
-  var ta=document.createElement('textarea');
-  ta.value=el.value; ta.style.position='fixed'; ta.style.opacity='0';
-  document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
-  catch(e){ toast('Copy failed — try Ctrl+C'); }
-  document.body.removeChild(ta);
-}
-
-// Shared styles object
+// SHARED OUTPUT STYLES
 var S = {
   header:'background:#2a1f1c;padding:1.4rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:3px solid #dea193;',
   badge:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,0.15);border:1px solid rgba(222,161,147,0.4);padding:4px 12px;border-radius:20px;white-space:nowrap;font-family:Jost,sans-serif;',
@@ -427,58 +357,68 @@ var S = {
   backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;'
 };
 
-function buildNicheBase(n, num, keyword, comp, price, note, l1, l2, l3, tipsArr, titlesArr, tags){
-  var tipsHtml=''; tipsArr.forEach(function(t){ if(t) tipsHtml+='<div style="'+S.tipBox+'">'+esc(t)+'</div>'; });
-  if(!tipsHtml) tipsHtml='<div style="'+S.tipBox+'">No tips added.</div>';
-
-  var validTitles=titlesArr.filter(Boolean);
-  var titlesHtml='';
-  validTitles.forEach(function(t,i){
-    var isLast=i===validTitles.length-1;
-    titlesHtml+='<div style="'+(isLast?S.titleItemLast:S.titleItem)+'"><div style="display:flex;align-items:flex-start;gap:10px;flex:1;"><div style="'+S.titleDot+'"></div><p style="'+S.titleText+'">'+esc(t)+'</p></div><button style="'+S.copyBtn+'" onclick="cpT(this,\''+esc(t).replace(/'/g,'\\\'').replace(/"/g,'&quot;')+'\')">Copy</button></div>';
-  });
-  if(!titlesHtml) titlesHtml='<p style="'+S.titleText+'">No titles added.</p>';
-
-  var tagsHtml=''; tags.forEach(function(t){ tagsHtml+='<span style="'+S.tag+'">'+esc(t)+'</span>'; });
-  var tagStr=esc(tags.join(', ')).replace(/'/g,'\\\'');
-
-  var anchorId = n==='bonus' ? 'niche-bonus' : 'niche-'+n;
-  var html='<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">';
-  html+='<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(String(n))+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>';
-  html+='<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p>';
-  html+='<div style="'+S.listingsGrid+'">';
-  [l1,l2,l3].forEach(function(img,i){ html+='<div>'+(img?'<img style="'+S.listingImg+'" src="'+img+'" alt="Listing '+(i+1)+'">':'<div style="'+S.listingNoImg+'">No image</div>')+'<p style="'+S.listingLbl+'">Listing '+(i+1)+'</p></div>'; });
-  html+='</div></div>';
-  html+='<div style="'+S.body+'">';
-  html+='<div style="'+S.statsGrid+'">';
-  html+='<div style="'+S.stat+'"><p style="'+S.statLbl+'">Keyword</p><p style="'+S.statVal+'">'+esc(keyword)+'</p></div>';
-  html+='<div style="'+S.stat+'"><p style="'+S.statLbl+'">Competition</p><p style="'+S.statVal+'">'+esc(comp)+'</p></div>';
-  html+='<div style="'+S.stat+'"><p style="'+S.statLbl+'">Price Range</p><p style="'+S.statVal+'">'+esc(price)+'</p></div>';
-  html+='</div>';
-  if(note) html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
-  html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
-  html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
-  html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" onclick="cpT(this,\''+tagStr+'\')">Copy All Tags</button></div></div>';
-  return html;
-}
-
-function cpT(btn, text){
+function cpText(btn, text, orig){
   var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
   document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=btn.textContent==='Copied!'?'Copy':btn.textContent;},2000); }
+  try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
   catch(e){}
   document.body.removeChild(ta);
 }
 
-function generateAINiche(n){
-  var keyword=v('n'+n+'-kw')||'—';
-  var comp=v('n'+n+'-comp')||'—';
-  var plo=v('n'+n+'-plo'); var phi=v('n'+n+'-phi');
-  var price=(plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
-  var note=v('n'+n+'-note');
+function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l3, tips, titles, tags){
+  var tipsHtml = '';
+  tips.forEach(function(t){ if(t) tipsHtml += '<div style="'+S.tipBox+'">'+esc(t)+'</div>'; });
+
+  var validTitles = titles.filter(Boolean);
+  var titlesHtml = '';
+  validTitles.forEach(function(t, i){
+    var isLast = i === validTitles.length - 1;
+    var escaped = t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    titlesHtml += '<div style="'+(isLast?S.titleItemLast:S.titleItem)+'">'
+      + '<div style="display:flex;align-items:flex-start;gap:10px;flex:1;">'
+      + '<div style="'+S.titleDot+'"></div>'
+      + '<p style="'+S.titleText+'">'+esc(t)+'</p>'
+      + '</div>'
+      + '<button style="'+S.copyBtn+'" onclick="cpText(this,\''+escaped+'\',\'Copy\')">Copy</button>'
+      + '</div>';
+  });
+
+  var tagsHtml = '';
+  tags.forEach(function(t){ tagsHtml += '<span style="'+S.tag+'">'+esc(t)+'</span>'; });
+  var allTagsStr = tags.join(', ').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+  var html = '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">';
+  html += '<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(String(nicheNum))+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>';
+  html += '<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p>';
+  html += '<div style="'+S.listingsGrid+'">';
+  [l1,l2,l3].forEach(function(img,i){
+    html += '<div>';
+    html += img ? '<img style="'+S.listingImg+'" src="'+img+'" alt="Listing '+(i+1)+'">' : '<div style="'+S.listingNoImg+'">No image</div>';
+    html += '<p style="'+S.listingLbl+'">Listing '+(i+1)+'</p></div>';
+  });
+  html += '</div></div>';
+  html += '<div style="'+S.body+'">';
+  html += '<div style="'+S.statsGrid+'">';
+  html += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Keyword</p><p style="'+S.statVal+'">'+esc(keyword)+'</p></div>';
+  html += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Competition</p><p style="'+S.statVal+'">'+esc(comp)+'</p></div>';
+  html += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Price Range</p><p style="'+S.statVal+'">'+esc(price)+'</p></div>';
+  html += '</div>';
+  if(note) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
+  if(tipsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
+  if(titlesHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
+  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" onclick="cpText(this,\''+allTagsStr+'\',\'Copy All Tags\')">Copy All Tags</button></div></div>';
+  return html;
+}
+
+function buildAINicheHTML(n){
+  var keyword = v('n'+n+'-kw')||'—';
+  var comp = v('n'+n+'-comp')||'—';
+  var plo = v('n'+n+'-plo'); var phi = v('n'+n+'-phi');
+  var price = (plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
+  var note = v('n'+n+'-note');
   var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
-  var tipsArr=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
-  var titlesArr=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
   var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
   var prompt=v('n'+n+'-prompt');
   var notesArr=(v('n'+n+'-notes')||'').split('\n').map(function(t){return t.trim();}).filter(Boolean);
@@ -486,167 +426,134 @@ function generateAINiche(n){
   var sKittl=v('n'+n+'-s-kittl')||'—';
   var sCanva=v('n'+n+'-s-canva')||'—';
 
-  var html=buildNicheBase(n, n, keyword, comp, price, note, l1, l2, l3, tipsArr, titlesArr, tags);
+  var html = buildBaseHTML('niche-'+n, n, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
 
   if(prompt){
-    var pid='pr'+n;
-    html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
-    html+='<div style="'+S.promptBox+'"><p style="'+S.promptText+'" id="'+pid+'">'+esc(prompt)+'</p>';
-    html+='<button style="'+S.promptCopyBtn+'" onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');this.textContent=\'Copied!\';var b=this;setTimeout(function(){b.textContent=\'Copy Prompt\';},2000);}catch(e){}window.getSelection().removeAllRanges();">Copy Prompt</button>';
-    html+='</div></div></div>';
+    var pid = 'pr'+n;
+    var escapedPrompt = prompt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="'+S.promptBox+'">';
+    html += '<p style="'+S.promptText+'" id="'+pid+'">'+esc(prompt)+'</p>';
+    html += '<button style="'+S.promptCopyBtn+'" onclick="cpText(this,\''+escapedPrompt+'\',\'Copy Prompt\')">Copy Prompt</button>';
+    html += '</div></div></div>';
   }
 
   if(notesArr.length){
     var notesHtml=''; notesArr.forEach(function(n2){ notesHtml+='<div style="'+S.noteBox+'">'+esc(n2)+'</div>'; });
-    html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
   }
 
-  html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
-  html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
-  html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
-  html+='<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
-  html+='</div></div>';
+  html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
+  html += '</div></div>';
 
-  // Generator results grid
-  var hasAnyImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
-  if(hasAnyImg){
-    html+='<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
-    html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
+  var hasImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
+  if(hasImg){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
     GEN_TOOLS.forEach(function(g){
-      var img=v('n'+n+'-img-'+g.id).trim();
-      html+='<div style="text-align:center;">';
-      if(img) html+='<img src="'+img+'" alt="'+esc(g.name)+'" style="width:100%;border-radius:8px;border:1px solid #ead9d5;display:block;margin-bottom:6px;">';
-      html+='<a href="'+g.link+'" target="_blank" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;text-decoration:none;font-family:Jost,sans-serif;">'+esc(g.name)+'</a>';
-      html+='</div>';
+      var img = v('n'+n+'-img-'+g.id).trim();
+      html += '<div style="text-align:center;">';
+      if(img) html += '<img src="'+img+'" alt="'+esc(g.name)+'" style="width:100%;border-radius:8px;border:1px solid #ead9d5;display:block;margin-bottom:6px;">';
+      html += '<a href="'+g.url+'" target="_blank" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;text-decoration:none;font-family:Jost,sans-serif;">'+esc(g.name)+'</a>';
+      html += '</div>';
     });
-    html+='</div></div></div>';
+    html += '</div></div></div>';
   }
 
-  html+='</div></div>';
-  html+='<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
-
+  html += '</div></div>';
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
   return html;
 }
 
-function generateDPNiche(n){
-  var keyword=v('n'+n+'-kw')||'—';
-  var anchorId = n==='bonus' ? 'niche-bonus' : 'niche-'+n;
-  var comp=v('n'+n+'-comp')||'—';
-  var plo=v('n'+n+'-plo'); var phi=v('n'+n+'-phi');
-  var price=(plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
-  var note=v('n'+n+'-note');
+function buildDPNicheHTML(n){
+  var isBonus = n === 'bonus';
+  var nicheLabel = isBonus ? 'Bonus' : n;
+  var anchorId = isBonus ? 'niche-bonus' : 'niche-'+n;
+  var keyword = v('n'+n+'-kw')||'—';
+  var comp = v('n'+n+'-comp')||'—';
+  var plo = v('n'+n+'-plo'); var phi = v('n'+n+'-phi');
+  var price = (plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
+  var note = v('n'+n+'-note');
   var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
-  var tipsArr=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
-  var titlesArr=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
   var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
-  var nLabel = n==='bonus' ? 'Bonus' : 'Niche '+n;
 
-  var html=buildNicheBase(nLabel, n, keyword, comp, price, note, l1, l2, l3, tipsArr, titlesArr, tags);
-  html = html.replace('<div style="font-family:Jost,sans-serif;background:#fdf7f2;">', '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">');
-  html+='</div></div>';
-  html+='<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
-
+  var html = buildBaseHTML(anchorId, nicheLabel, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+  html += '</div></div>';
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">&#8593; Back to Top</a></div>';
   return html;
 }
 
-// Intro generator
-var bonusOn = true;
-document.getElementById('bonus-toggle').addEventListener('click', function(){
-  bonusOn=!bonusOn;
-  this.textContent=bonusOn?'✕':'+';
-  this.classList.toggle('active',bonusOn);
-  document.getElementById('bonus-hint').textContent=bonusOn?'Bonus is ON — click ✕ to hide it this week':'Bonus is OFF — click + to include it this week';
-});
-
-function nicheRow(num, label, anchor, isBonus){
-  if(isBonus){
-    return '<a href="#'+anchor+'" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(label)+'</span></a>';
-  }
-  return '<a href="#'+anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;border:1px solid rgba(255,255,255,0.3);">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
-}
-
-function generateIntro(){
-  var date=v('intro-date')||'DATE';
-  var niches=[
+function buildIntroHTML(){
+  var date = v('intro-date')||'DATE';
+  var niches = [
     {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
     {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
     {num:'Niche 3',label:v('intro-n3'),anchor:'niche-3'},
     {num:'Niche 4',label:v('intro-n4'),anchor:'niche-4'},
     {num:'Niche 5',label:v('intro-n5'),anchor:'niche-5'},
     {num:'Niche 6',label:v('intro-n6'),anchor:'niche-6'},
-    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'},
+    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'}
   ];
-  var navHtml='';
-  niches.forEach(function(n){ navHtml+=nicheRow(n.num,n.label,n.anchor,false); });
-  var bonusVal=v('intro-bonus').trim();
-  if(bonusOn&&bonusVal) navHtml+=nicheRow('Bonus',bonusVal,'niche-bonus',true);
-
-  var html=
-    '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
-    '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #fff;">'+
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#fff;margin:0 0 0.6rem;opacity:0.7;">DFY Niche Club</p>'+
-    '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'+
-    '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'+
-    '</div>'+
-    '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'+
-    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'+
-    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section — so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'+
-    '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 1.2rem;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'+
-    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'+
-    '</div>'+
-    '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">'+
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Niche</p>'+
-    navHtml+
-    '</div></div>';
-
-  return html;
-}
-
-// Auto save
-var autoTimer;
-document.addEventListener('input',function(){
-  isDirty=true; setStatus('unsaved','Unsaved changes');
-  clearTimeout(autoTimer); autoTimer=setTimeout(function(){saveData();},3000);
-});
-
-window.addEventListener('beforeunload',function(e){ if(isDirty){e.preventDefault();e.returnValue='';} });
-
-function updateThumb(input, thumbId){
-  if(!thumbId) thumbId = 'thumb-' + input.id;
-  var url = input.value.trim();
-  var thumb = document.getElementById(thumbId);
-  var errId = thumbId.replace('thumb-','err-');
-  var err = document.getElementById(errId);
-  if(!thumb) return;
-  if(!url){ thumb.className='img-thumb'; thumb.src=''; if(err) err.style.display='none'; return; }
-  thumb.onload = function(){ thumb.className='img-thumb visible'; if(err) err.style.display='none'; };
-  thumb.onerror = function(){ thumb.className='img-thumb'; if(err) err.style.display='block'; };
-  thumb.src = url;
+  var navHtml = '';
+  niches.forEach(function(n){
+    navHtml += '<a href="#'+n.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(n.num)+'</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(n.label)+'</span>'
+      + '</a>';
+  });
+  if(bonusOn){
+    var bonusVal = v('intro-bonus').trim();
+    if(bonusVal) navHtml += '<a href="#niche-bonus" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
+      + '</a>';
+  }
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+    + '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#fff;margin:0 0 0.6rem;opacity:0.7;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
+    + '</div>'
+    + '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section — so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 1.2rem;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
+    + '</div>'
+    + '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Niche</p>'
+    + navHtml
+    + '</div></div>';
 }
 
 function previewNiche(n, isDP){
-  var html = isDP ? generateDPNiche(n) : generateAINiche(n);
+  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
   var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
-  document.getElementById('niche-preview-title').textContent = label+' Preview';
-  document.getElementById('niche-preview-body').innerHTML = html;
-  document.getElementById('niche-preview-modal').style.display = 'block';
+  document.getElementById('modal-title').textContent = label + ' Preview';
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
 
-function closeNichePreview(){
-  document.getElementById('niche-preview-modal').style.display = 'none';
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
   document.body.style.overflow = '';
 }
 
 function generateAll(){
   var parts = [];
-  parts.push(generateIntro());
-  AI_NICHES.forEach(function(niche){ parts.push(generateAINiche(niche.n)); });
+  parts.push(buildIntroHTML());
+  AI_NICHES.forEach(function(niche){ parts.push(buildAINicheHTML(niche.n)); });
   DP_NICHES.forEach(function(niche){
     if(niche.n === 'bonus' && !bonusOn) return;
-    parts.push(generateDPNiche(niche.n));
+    parts.push(buildDPNicheHTML(niche.n));
   });
-  var combined = parts.filter(Boolean).join('\n');
+  var combined = parts.join('\n');
   document.getElementById('all-code').value = combined;
   document.getElementById('all-prev').innerHTML = combined;
   document.getElementById('out-all').style.display = 'block';
@@ -654,15 +561,95 @@ function generateAll(){
 }
 
 function copyAll(){
-  var el = document.getElementById('all-code');
   var ta = document.createElement('textarea');
-  ta.value = el.value; ta.style.position='fixed'; ta.style.opacity='0';
+  ta.value = document.getElementById('all-code').value;
+  ta.style.position='fixed'; ta.style.opacity='0';
   document.body.appendChild(ta); ta.select();
   try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
   catch(e){ toast('Copy failed — try Ctrl+C'); }
   document.body.removeChild(ta);
 }
 
+// SAVE / LOAD
+function getAllFieldIds(){
+  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
+  AI_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
+  });
+  DP_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
+  });
+  return ids;
+}
+
+function saveData(){
+  var data = {};
+  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  data['bonus-on'] = bonusOn ? '1' : '0';
+  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved just now'); toast('Progress saved!'); }
+  catch(e){ toast('Could not save'); }
+}
+
+function loadData(){
+  try{
+    var raw = localStorage.getItem(SK);
+    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    getAllFieldIds().forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && data[id] !== undefined) el.value = data[id];
+    });
+    if(data['bonus-on'] === '0'){
+      bonusOn = false;
+      document.getElementById('bonus-toggle').textContent = '+';
+      document.getElementById('bonus-toggle').classList.remove('active');
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF — click + to include it this week';
+    }
+    setStatus('saved','Progress loaded');
+    // Restore thumbnails
+    getAllFieldIds().forEach(function(id){
+      if(id.indexOf('-img-') > -1 || id.indexOf('-l1') > -1 || id.indexOf('-l2') > -1 || id.indexOf('-l3') > -1){
+        var el = document.getElementById(id);
+        if(el && el.value.trim()) updateThumb(id);
+      }
+    });
+  }catch(e){ setStatus('unsaved','Could not load'); }
+}
+
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  // Clear thumbnails
+  document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
+  document.querySelectorAll('.img-error').forEach(function(e){ e.style.display='none'; });
+  localStorage.removeItem(SK);
+  document.getElementById('out-all').style.display='none';
+  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.');
+}
+
+// BONUS TOGGLE
+document.getElementById('bonus-toggle').addEventListener('click', function(){
+  bonusOn = !bonusOn;
+  this.textContent = bonusOn ? '✕' : '+';
+  this.classList.toggle('active', bonusOn);
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON — click ✕ to hide it this week' : 'Bonus is OFF — click + to include it this week';
+});
+
+// AUTO SAVE
+var autoTimer;
+document.addEventListener('input', function(){
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+});
+
+window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+
+// INIT
+buildAISections();
+buildDPSections();
 loadData();
 </script>
 </body>
