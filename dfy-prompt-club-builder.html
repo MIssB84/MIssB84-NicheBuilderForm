@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Prompt Club Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 5rem;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:#c4b0a8;}
+.card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
+.fl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;}
+.fi:focus{border-color:#dea193;}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.prod-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
+.prod-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.prod-left{display:flex;align-items:center;gap:10px;}
+.prod-icon{width:32px;height:32px;border-radius:8px;background:#2a1f1c;display:flex;align-items:center;justify-content:center;}
+.prod-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#2a1f1c;}
+.pdots{display:flex;gap:4px;align-items:center;}
+.dot{width:8px;height:8px;border-radius:50%;background:#ead9d5;transition:background 0.2s;}
+.dot.on{background:#dea193;}.dot.done{background:#7a9e7e;}
+.plabel{font-size:11px;font-weight:600;color:#c4b0a8;margin-left:6px;}
+.slot{background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;}
+.slot-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;display:block;}
+.slot textarea{width:100%;border:none;background:transparent;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;outline:none;resize:vertical;min-height:70px;line-height:1.6;}
+.slot input.url{width:100%;border:1.5px solid #ead9d5;border-radius:6px;padding:7px 10px;font-family:'Jost',sans-serif;font-size:12px;color:#2a1f1c;background:#fff;outline:none;margin-top:8px;}
+.slot input.url:focus{border-color:#dea193;}
+.prog-bar-wrap{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1rem 1.5rem;max-width:700px;margin:0 auto 1.5rem;display:flex;align-items:center;gap:16px;}
+.prog-track{flex:1;background:#ead9d5;border-radius:10px;height:6px;overflow:hidden;}
+.prog-fill{height:100%;background:#dea193;border-radius:10px;transition:width 0.3s;width:0%;}
+.prog-count{font-size:12px;color:#c4b0a8;white-space:nowrap;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;z-index:100;}
+.save-status{font-size:12px;color:#c4b0a8;display:flex;align-items:center;gap:6px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:#c4b0a8;}
+.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
+.sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:9px 20px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all 0.2s;}
+.sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}
+.sbtn-save:hover{background:#dea193;color:#2a1f1c;}
+.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}
+.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
+.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
+.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+.sbtns{display:flex;gap:10px;}
+#out{display:none;max-width:700px;margin:0 auto;}
+.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
+.out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.out-card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.copy-all-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:10px 28px;border-radius:30px;cursor:pointer;transition:all 0.2s;}
+.copy-all-btn:hover{background:#bb7d72;color:#fff;}
+.out-preview{padding:1.5rem;}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="badge">DFY Prompt Club</div>
+  <h1 class="page-title">Weekly Prompt Builder</h1>
+  <p class="page-sub">Fill in across the week. Your progress saves automatically.</p>
+</div>
+
+<div class="prog-bar-wrap">
+  <span style="font-size:12px;font-weight:600;color:#5a4a45;white-space:nowrap;">Weekly progress</span>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  <span class="prog-count" id="prog-count">0 of 12 prompts</span>
+</div>
+
+<div class="card">
+  <p class="card-title">Week Info</p>
+  <p class="card-sub">Sets the header for your lesson.</p>
+  <div class="g2" style="margin-bottom:0;">
+    <div><label class="fl" for="f-date">Week Date</label><input class="fi" id="f-date" placeholder="e.g. June 2, 2026"></div>
+    <div><label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore"></div>
+  </div>
+</div>
+
+
+
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div>
+      <span class="prod-name">Wall Art</span>
+    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-wa"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-wa">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-1-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-2-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-3-img" placeholder="Image URL (add when ready)"></div>
+</div>
+
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3" stroke-linecap="round"/></svg></div>
+      <span class="prod-name">Frame TV Art</span>
+    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-ft"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-ft">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-1-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-2-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-3-img" placeholder="Image URL (add when ready)"></div>
+</div>
+
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg></div>
+      <span class="prod-name">PNG</span>
+    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-png"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-png">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-1-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-2-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-3-img" placeholder="Image URL (add when ready)"></div>
+</div>
+
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><path d="M7 3h10l-1 16a2 2 0 01-2 2H10a2 2 0 01-2-2L7 3z"/><path d="M6 7h12"/></svg></div>
+      <span class="prod-name">Tumbler Wraps</span>
+    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-tb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-tb">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-1-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-2-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-3-img" placeholder="Image URL (add when ready)"></div>
+</div>
+
+<div style="height:80px;"></div>
+
+<div id="out">
+  <div class="out-card">
+    <div class="out-card-head">
+      <span class="out-card-title">Your HTML — ready to paste into Systeme.io</span>
+      <button class="copy-all-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button>
+    </div>
+    <div class="out-preview" id="out-preview"></div>
+  </div>
+  <textarea id="out-code" style="display:none;"></textarea>
+  <div style="text-align:center;margin-bottom:2rem;">
+    <button style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form</button>
+  </div>
+</div>
+
+<div class="save-bar">
+  <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
+  <div class="sbtns">
+    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear Week</button>
+    <button class="sbtn sbtn-save" onclick="saveData()">Save Progress</button>
+    <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SK='dfy_pc_v3';
+var isDirty=false;
+var allFields=[
+  'f-date','f-theme',
+  'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
+  'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
+  'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
+  'tb-1','tb-1-img','tb-2','tb-2-img','tb-3','tb-3-img'
+];
+var sections=[
+  {key:'wa',name:'Wall Art',anchor:'section-wall-art',ids:['wa-1','wa-2','wa-3']},
+  {key:'ft',name:'Frame TV Art',anchor:'section-frame-tv-art',ids:['ft-1','ft-2','ft-3']},
+  {key:'png',name:'PNG',anchor:'section-png',ids:['png-1','png-2','png-3']},
+  {key:'tb',name:'Tumbler Wraps',anchor:'section-tumbler-wraps',ids:['tb-1','tb-2','tb-3']}
+];
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+function updateProgress(){
+  var total=0;
+  sections.forEach(function(s){
+    var filled=s.ids.filter(function(id){return v(id).trim().length>0;}).length;
+    total+=filled;
+    var dots=document.getElementById('dots-'+s.key).querySelectorAll('.dot');
+    dots.forEach(function(d,i){d.className='dot'+(i<filled?(filled===3?' done':' on'):'');});
+    var lbl=document.getElementById('lbl-'+s.key);
+    lbl.textContent=filled+'/3';
+    lbl.style.color=filled===3?'#7a9e7e':'#c4b0a8';
+  });
+  document.getElementById('prog-fill').style.width=Math.round((total/12)*100)+'%';
+  document.getElementById('prog-fill').style.background=total===12?'#7a9e7e':'#dea193';
+  document.getElementById('prog-count').textContent=total+' of 12 prompts';
+}
+function saveData(){
+  var data={};
+  allFields.forEach(function(id){data[id]=v(id);});
+  try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved','Saved just now');toast('Progress saved!');}
+  catch(e){toast('Could not save');}
+}
+function loadData(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(!raw){setStatus('unsaved','Nothing saved yet');return;}
+    var data=JSON.parse(raw);
+    allFields.forEach(function(id){var el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
+    setStatus('saved','Progress loaded');updateProgress();
+  }catch(e){setStatus('unsaved','Could not load');}
+}
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  allFields.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  localStorage.removeItem(SK);
+  document.getElementById('out').style.display='none';
+  isDirty=false;setStatus('unsaved','Cleared');updateProgress();toast('Week cleared.');
+}
+function buildHTML(){
+  var date=v('f-date')||'DATE';
+  var theme=v('f-theme')||'THEME';
+  var gname=v('g-name')||'Kittl';
+  var gstyle=v('g-style');
+  var glabel=gname+(gstyle?' \u2014 '+gstyle:'');
+
+  var nav='';
+  sections.forEach(function(s){
+    var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
+    if(!hasAny)return;
+    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;"><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:13px;color:#c4b0a8;">&#8595;</span></a>';
+  });
+
+  var html='<div style="font-family:Jost,sans-serif;">';
+
+  html+='<div style="background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;margin-bottom:2rem;">';
+  html+='<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;">';
+  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Prompt Drop</h2>';
+  html+='<p style="font-size:14px;font-weight:600;color:#dea193;margin:0 0 0.3rem;">'+esc(theme)+'</p>';
+  html+='<p style="font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>';
+  html+='</div>';
+  html+='<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">';
+  html+='<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
+
+  html+='<span style="display:inline-block;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>';
+  html+='</div>';
+  html+='<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">';
+  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Product Type</p>';
+  html+=nav;
+  html+='</div></div>';
+
+  sections.forEach(function(s){
+    var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
+    if(!hasAny)return;
+    html+='<div id="'+s.anchor+'" style="padding:2rem 0 0.5rem;">';
+    html+='<span style="font-size:11px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>';
+    html+='<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+s.name+'</h2>';
+    html+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
+    s.ids.forEach(function(id,i){
+      var text=v(id).trim();
+      if(!text)return;
+      var img=v(id+'-img').trim();
+      var pid='p'+s.key+(i+1);
+      html+='<div style="margin-bottom:2.5rem;">';
+      html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;margin-bottom:0.75rem;">Prompt '+(i+1)+'</p>';
+      html+='<div style="background:#2a1f1c;border-radius:16px;padding:2rem 2rem 1.5rem;">';
+      html+='<p style="font-family:Playfair Display,serif;font-size:16px;font-style:italic;color:#f5eddf;line-height:1.85;text-align:center;margin-bottom:1.5rem;" id="'+pid+'">'+esc(text)+'</p>';
+      html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);}catch(e){}window.getSelection().removeAllRanges();" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>';
+      html+='</div>';
+      if(img){
+        html+='<div style="margin-top:1rem;text-align:center;">';
+        html+='<img src="'+img+'" alt="Example result" style="width:100%;max-width:480px;border-radius:10px;border:1px solid #ead9d5;display:block;margin:0 auto;">';
+
+        html+='</div>';
+      }
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+
+  html+='</div>';
+  return html;
+}
+function generate(){
+  var theme=v('f-theme');
+  var date=v('f-date');
+  if(!theme||!date){toast('Please fill in the date and theme first.');return;}
+  var html=buildHTML();
+  document.getElementById('out-code').value=html;
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+function copyAll(){
+  var code=document.getElementById('out-code').value;
+  var btn=document.getElementById('copy-all-btn');
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=code;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent='Copied!';
+    setTimeout(function(){btn.textContent='Copy HTML';},2500);
+    toast('HTML copied! Paste into Systeme.io.');
+  }catch(e){toast('Select all text in the box and copy manually.');}
+}
+allFields.forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('input',function(){isDirty=true;setStatus('unsaved','Unsaved changes');updateProgress();});
+});
+var autoTimer;
+document.addEventListener('input',function(){clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData();},3000);});
+window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
+loadData();updateProgress();
+</script>
+</body>
+</html>
