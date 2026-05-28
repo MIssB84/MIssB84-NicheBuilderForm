@@ -681,6 +681,9 @@ document.addEventListener('input', function(){
 
 window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
 
+// Save every 60 seconds automatically regardless of activity
+setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
+
 // INIT
 buildAISections();
 buildDPSections();
