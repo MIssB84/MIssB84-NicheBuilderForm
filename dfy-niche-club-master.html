@@ -180,8 +180,7 @@ function buildAINicheSections(){
     // Basics card
     html += '<div class="card"><p class="card-title">Niche '+n+' — The Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="g2">';
-    html += '<div><label class="fl">Niche Name</label><input class="fi" id="n'+n+'-name" placeholder="e.g. Funny Goose Bathroom Wall Art"></div>';
-    html += '<div><label class="fl">Keyword</label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Funny Goose Bathroom Printable Wall Art"></div>';
+    html += '<div class="full"><label class="fl">Keyword <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#c4b0a8;">(this is the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Funny Goose Bathroom Printable Wall Art"></div>';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" placeholder="e.g. 572"></div>';
     html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" placeholder="e.g. 2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" placeholder="e.g. 7.50"></div></div>';
     html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n'+n+'-note" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
@@ -260,8 +259,7 @@ function buildDPNicheSections(){
 
     html += '<div class="card"><p class="card-title">'+label+' — The Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="g2">';
-    html += '<div><label class="fl">Niche Name</label><input class="fi" id="n'+n+'-name" placeholder="e.g. Dog Mom Checklist Printable"></div>';
-    html += '<div><label class="fl">Keyword</label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Dog Mom Checklist Printable"></div>';
+    html += '<div class="full"><label class="fl">Keyword <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#c4b0a8;">(this is the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Dog Mom Checklist Printable"></div>';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" placeholder="e.g. 572"></div>';
     html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" placeholder="e.g. 2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" placeholder="e.g. 7.50"></div></div>';
     html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n'+n+'-note" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
@@ -309,12 +307,12 @@ function getAllFieldIds(){
   var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
   AI_NICHES.forEach(function(niche){
     var n = niche.n;
-    ids = ids.concat(['n'+n+'-name','n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
     GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
   });
   DP_NICHES.forEach(function(niche){
     var n = niche.n;
-    ids = ids.concat(['n'+n+'-name','n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
   });
   return ids;
 }
