@@ -357,7 +357,9 @@ var S = {
   backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;'
 };
 
-function cpText(btn, text, orig){
+function cpText(btn, orig){
+  var text = btn.getAttribute('data-copy');
+  if(!text) return;
   var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
   document.body.appendChild(ta); ta.select();
   try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
@@ -373,19 +375,18 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
   var titlesHtml = '';
   validTitles.forEach(function(t, i){
     var isLast = i === validTitles.length - 1;
-    var escaped = t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     titlesHtml += '<div style="'+(isLast?S.titleItemLast:S.titleItem)+'">'
       + '<div style="display:flex;align-items:flex-start;gap:10px;flex:1;">'
       + '<div style="'+S.titleDot+'"></div>'
       + '<p style="'+S.titleText+'">'+esc(t)+'</p>'
       + '</div>'
-      + '<button style="'+S.copyBtn+'" onclick="cpText(this,\''+escaped+'\',\'Copy\')">Copy</button>'
+      + '<button style="'+S.copyBtn+'" data-copy="'+esc(t)+'" onclick="cpText(this,&quot;Copy&quot;)">Copy</button>'
       + '</div>';
   });
 
   var tagsHtml = '';
   tags.forEach(function(t){ tagsHtml += '<span style="'+S.tag+'">'+esc(t)+'</span>'; });
-  var allTagsStr = tags.join(', ').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  var allTagsStr = esc(tags.join(', '));
 
   var html = '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">';
   html += '<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(String(nicheNum))+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>';
@@ -406,7 +407,7 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
   if(note) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
   if(tipsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
   if(titlesHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
-  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" onclick="cpText(this,\''+allTagsStr+'\',\'Copy All Tags\')">Copy All Tags</button></div></div>';
+  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+allTagsStr+'" onclick="cpText(this,&quot;Copy All Tags&quot;)">Copy All Tags</button></div></div>';
   return html;
 }
 
@@ -430,11 +431,10 @@ function buildAINicheHTML(n){
 
   if(prompt){
     var pid = 'pr'+n;
-    var escapedPrompt = prompt.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
     html += '<div style="'+S.promptBox+'">';
     html += '<p style="'+S.promptText+'" id="'+pid+'">'+esc(prompt)+'</p>';
-    html += '<button style="'+S.promptCopyBtn+'" onclick="cpText(this,\''+escapedPrompt+'\',\'Copy Prompt\')">Copy Prompt</button>';
+    html += '<button style="'+S.promptCopyBtn+'" data-copy="'+esc(prompt)+'" onclick="cpText(this,&quot;Copy Prompt&quot;)">Copy Prompt</button>';
     html += '</div></div></div>';
   }
 
