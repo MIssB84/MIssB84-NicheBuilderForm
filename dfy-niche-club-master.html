@@ -366,6 +366,7 @@ function cpText(btn, orig){
   catch(e){}
   document.body.removeChild(ta);
 }
+function dCp(b){ cpText(b, b.textContent); }
 
 function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l3, tips, titles, tags){
   var tipsHtml = '';
@@ -513,7 +514,7 @@ function buildIntroHTML(){
       + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
       + '</a>';
   }
-  return '<script>function dCp(b){var t=document.createElement("textarea");t.value=b.getAttribute("data-copy");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();try{document.execCommand("copy");var o=b.textContent;b.textContent="Copied!";setTimeout(function(){b.textContent=o;},2000);}catch(e){}document.body.removeChild(t);}<\/script><div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
     + '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #fff;">'
     + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#fff;margin:0 0 0.6rem;opacity:0.7;">DFY Niche Club</p>'
     + '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'
@@ -532,7 +533,7 @@ function buildIntroHTML(){
 }
 
 function previewNiche(n, isDP){
-  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
+  var html = DCP_SCRIPT + (isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n));
   var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
   document.getElementById('modal-title').textContent = label + ' Preview';
   document.getElementById('modal-body').innerHTML = html;
@@ -545,8 +546,11 @@ function closeModal(){
   document.body.style.overflow = '';
 }
 
+var DCP_SCRIPT = '<script>function dCp(b){var t=document.createElement("textarea");t.value=b.getAttribute("data-copy");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();try{document.execCommand("copy");var o=b.textContent;b.textContent="Copied!";setTimeout(function(){b.textContent=o;},2000);}catch(e){}document.body.removeChild(t);}<\/script>';
+
 function generateAll(){
   var parts = [];
+  parts.push(DCP_SCRIPT);
   parts.push(buildIntroHTML());
   AI_NICHES.forEach(function(niche){ parts.push(buildAINicheHTML(niche.n)); });
   DP_NICHES.forEach(function(niche){
