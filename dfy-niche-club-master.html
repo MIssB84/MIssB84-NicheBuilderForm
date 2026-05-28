@@ -36,8 +36,8 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .toggle-btn.active{border-color:#dea193;color:#dea193;}
 .hint{font-size:11px;color:#c4b0a8;margin-top:6px;font-style:italic;}
 .img-field-wrap{margin-bottom:10px;}
-.img-thumb{width:100%;max-height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
-.img-thumb.show{display:block;}
+.img-thumb{width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
+.img-thumb.show{display:inline-block;}
 .img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
 .gen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 .gen-slot{display:flex;flex-direction:column;gap:4px;}
@@ -212,7 +212,7 @@ function buildAISections(){
 
     // Basics
     html += '<div class="card"><p class="card-title">Niche ' + n + ' — Basics</p><p class="card-sub">Niche stats and info</p>';
-    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(this is the exact trending keyword to use)</span></label><input class="fi" id="n' + n + '-kw" placeholder="e.g. Funny Goose Bathroom Printable Wall Art"></div>';
+    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(this is the exact trending keyword to use — type your niche in front)</span></label><input class="fi" id="n' + n + '-kw" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
     html += '<div class="g2">';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n' + n + '-comp" placeholder="e.g. 572"></div>';
     html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n' + n + '-plo" placeholder="2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n' + n + '-phi" placeholder="7.50"></div></div>';
@@ -609,6 +609,8 @@ function loadData(){
       document.getElementById('bonus-hint').textContent = 'Bonus is OFF — click + to include it this week';
     }
     setStatus('saved','Progress loaded');
+    // Sync intro niche names to keyword fields on load
+    Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
     // Restore thumbnails
     getAllFieldIds().forEach(function(id){
       if(id.indexOf('-img-') > -1 || id.indexOf('-l1') > -1 || id.indexOf('-l2') > -1 || id.indexOf('-l3') > -1){
@@ -638,6 +640,38 @@ document.getElementById('bonus-toggle').addEventListener('click', function(){
   document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON — click ✕ to hide it this week' : 'Bonus is OFF — click + to include it this week';
 });
 
+// AUTO POPULATE KEYWORD FIELDS FROM INTRO NICHE LIST
+var introToNiche = {
+  'intro-n1': 1,
+  'intro-n2': 2,
+  'intro-n3': 3,
+  'intro-n5': 5,
+  'intro-n6': 6,
+  'intro-n7': 7
+};
+
+function syncNicheKeyword(introId){
+  var nicheNum = introToNiche[introId];
+  if(!nicheNum) return;
+  var kwEl = document.getElementById('n' + nicheNum + '-kw');
+  if(!kwEl) return;
+  // Only auto populate if the keyword field is empty or matches a previous intro value
+  var introVal = document.getElementById(introId).value;
+  if(!kwEl.value || kwEl.value === kwEl.getAttribute('data-intro-val')){
+    kwEl.value = introVal;
+    kwEl.setAttribute('data-intro-val', introVal);
+  }
+}
+
+Object.keys(introToNiche).forEach(function(introId){
+  var el = document.getElementById(introId);
+  if(el){
+    el.addEventListener('input', function(){ syncNicheKeyword(introId); });
+    // Set initial data-intro-val
+    el.addEventListener('change', function(){ syncNicheKeyword(introId); });
+  }
+});
+
 // AUTO SAVE
 var autoTimer;
 document.addEventListener('input', function(){
@@ -651,6 +685,8 @@ window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefau
 buildAISections();
 buildDPSections();
 loadData();
+// Initial sync of intro niche names to keyword fields
+Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
 </script>
 </body>
 </html>
