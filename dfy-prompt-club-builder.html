@@ -77,18 +77,8 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <div class="card">
   <p class="card-title">Week Info</p>
   <p class="card-sub">Sets the header for your lesson.</p>
-  <div class="g2" style="margin-bottom:0;">
-    <div><label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore"></div>
-    <div><label class="fl" for="f-generator">Generator Used</label>
-      <select class="fi" id="f-generator">
-        <option value="">Select a generator...</option>
-        <option value="Ideogram">Ideogram</option>
-        <option value="Recraft">Recraft</option>
-        <option value="Midjourney">Midjourney</option>
-        <option value="Nano Banana">Nano Banana</option>
-        <option value="GPT Image 2">GPT Image 2</option>
-      </select>
-    </div>
+  <div style="margin-bottom:0;">
+    <label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore">
   </div>
 </div>
 
@@ -102,9 +92,33 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-wa"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-wa">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-1-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-2-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-3-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-1-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="wa-1-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-2-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="wa-2-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-3-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="wa-3-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
 </div>
 
 <div class="prod-card">
@@ -115,9 +129,33 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-ft"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-ft">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-1-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-2-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-3-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-1-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="ft-1-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-2-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="ft-2-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-3-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="ft-3-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
 </div>
 
 <div class="prod-card">
@@ -128,9 +166,33 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-png"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-png">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-1-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-2-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-3-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-1-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="png-1-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-2-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="png-2-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-3-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="png-3-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
 </div>
 
 <div class="prod-card">
@@ -141,9 +203,33 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-tb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-tb">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-1-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-2-img" placeholder="Image URL (add when ready)"></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-3-img" placeholder="Image URL (add when ready)"></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-1-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="tb-1-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-2-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="tb-2-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-3-img" placeholder="Image URL (add when ready)">
+      <select class="fi gen-select" id="tb-3-gen" style="margin-top:8px;font-size:12px;padding:7px 10px;">
+        <option value="">Generator used...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select></div>
 </div>
 
 <div style="height:80px;"></div>
@@ -177,11 +263,11 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 var SK='dfy_pc_v3';
 var isDirty=false;
 var allFields=[
-  'f-theme','f-generator',
-  'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
-  'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
-  'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
-  'tb-1','tb-1-img','tb-2','tb-2-img','tb-3','tb-3-img'
+  'f-theme',
+  'wa-1','wa-1-img','wa-1-gen','wa-2','wa-2-img','wa-2-gen','wa-3','wa-3-img','wa-3-gen',
+  'ft-1','ft-1-img','ft-1-gen','ft-2','ft-2-img','ft-2-gen','ft-3','ft-3-img','ft-3-gen',
+  'png-1','png-1-img','png-1-gen','png-2','png-2-img','png-2-gen','png-3','png-3-img','png-3-gen',
+  'tb-1','tb-1-img','tb-1-gen','tb-2','tb-2-img','tb-2-gen','tb-3','tb-3-img','tb-3-gen'
 ];
 var sections=[
   {key:'wa',name:'Wall Art',anchor:'section-wall-art',ids:['wa-1','wa-2','wa-3']},
@@ -232,9 +318,7 @@ function clearAll(){
 }
 function buildHTML(){
   var theme=v('f-theme')||'THEME';
-  var generator=v('f-generator')||'';
   var kittlLink='https://kittl.com?ref=dania';
-  var genLabel=generator?('<a href="'+kittlLink+'" target="_blank" style="color:#c9a96e;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">'+generator+'</a>'):'';
   var gname=v('g-name')||'Kittl';
   var gstyle=v('g-style');
   var glabel=gname+(gstyle?' \u2014 '+gstyle:'');
