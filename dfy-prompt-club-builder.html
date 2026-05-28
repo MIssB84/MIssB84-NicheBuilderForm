@@ -77,8 +77,18 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <div class="card">
   <p class="card-title">Week Info</p>
   <p class="card-sub">Sets the header for your lesson.</p>
-  <div style="margin-bottom:0;">
-    <label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore">
+  <div class="g2" style="margin-bottom:0;">
+    <div><label class="fl" for="f-theme">Theme</label><input class="fi" id="f-theme" placeholder="e.g. Cottagecore"></div>
+    <div><label class="fl" for="f-generator">Generator Used</label>
+      <select class="fi" id="f-generator">
+        <option value="">Select a generator...</option>
+        <option value="Ideogram">Ideogram</option>
+        <option value="Recraft">Recraft</option>
+        <option value="Midjourney">Midjourney</option>
+        <option value="Nano Banana">Nano Banana</option>
+        <option value="GPT Image 2">GPT Image 2</option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -167,7 +177,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 var SK='dfy_pc_v3';
 var isDirty=false;
 var allFields=[
-  'f-theme',
+  'f-theme','f-generator',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -222,6 +232,9 @@ function clearAll(){
 }
 function buildHTML(){
   var theme=v('f-theme')||'THEME';
+  var generator=v('f-generator')||'';
+  var kittlLink='https://kittl.com?ref=dania';
+  var genLabel=generator?('<a href="'+kittlLink+'" target="_blank" style="color:#c9a96e;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">'+generator+'</a>'):'';
   var gname=v('g-name')||'Kittl';
   var gstyle=v('g-style');
   var glabel=gname+(gstyle?' \u2014 '+gstyle:'');
