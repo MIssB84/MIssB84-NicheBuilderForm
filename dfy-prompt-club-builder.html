@@ -30,7 +30,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .plabel{font-size:11px;font-weight:600;color:#c4b0a8;margin-left:6px;}
 .slot{background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;}
 .slot-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;display:block;}
-.slot textarea{width:100%;border:1.5px solid #dea193;border-radius:8px;background:#fff;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;outline:none;resize:vertical;min-height:70px;line-height:1.6;padding:8px 10px;}
+.slot textarea{width:100%;border:1.5px solid #dea193;border-radius:8px;background:#fff;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;outline:none;resize:vertical;min-height:140px;line-height:1.6;padding:8px 10px;}
 .slot input.url{width:100%;border:1.5px solid #ead9d5;border-radius:6px;padding:7px 10px;font-family:'Jost',sans-serif;font-size:12px;color:#2a1f1c;background:#fff;outline:none;margin-top:8px;}
 .slot input.url:focus{border-color:#dea193;}
 .img-thumb{width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
@@ -100,9 +100,15 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-wa"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-wa">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-1-img')"><img class="img-thumb" id="thumb-wa-1-img"><span class="img-err" id="err-wa-1-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-2-img')"><img class="img-thumb" id="thumb-wa-2-img"><span class="img-err" id="err-wa-2-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-3-img')"><img class="img-thumb" id="thumb-wa-3-img"><span class="img-err" id="err-wa-3-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="wa-1-img" placeholder="Image URL" oninput="updateThumb('wa-1-img')"><img class="img-thumb" id="thumb-wa-1-img"><span class="img-err" id="err-wa-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="wa-2-img" placeholder="Image URL" oninput="updateThumb('wa-2-img')"><img class="img-thumb" id="thumb-wa-2-img"><span class="img-err" id="err-wa-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="wa-3-img" placeholder="Image URL" oninput="updateThumb('wa-3-img')"><img class="img-thumb" id="thumb-wa-3-img"><span class="img-err" id="err-wa-3-img">Image not found</span></div>
+  </div>
   <button class="preview-section-btn" onclick="previewSection('wa')">Preview Wall Art Prompts ↗</button>
 </div>
 
@@ -115,9 +121,15 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-ft"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-ft">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-1-img')"><img class="img-thumb" id="thumb-ft-1-img"><span class="img-err" id="err-ft-1-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-2-img')"><img class="img-thumb" id="thumb-ft-2-img"><span class="img-err" id="err-ft-2-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-3-img')"><img class="img-thumb" id="thumb-ft-3-img"><span class="img-err" id="err-ft-3-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="ft-1-img" placeholder="Image URL" oninput="updateThumb('ft-1-img')"><img class="img-thumb" id="thumb-ft-1-img"><span class="img-err" id="err-ft-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="ft-2-img" placeholder="Image URL" oninput="updateThumb('ft-2-img')"><img class="img-thumb" id="thumb-ft-2-img"><span class="img-err" id="err-ft-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="ft-3-img" placeholder="Image URL" oninput="updateThumb('ft-3-img')"><img class="img-thumb" id="thumb-ft-3-img"><span class="img-err" id="err-ft-3-img">Image not found</span></div>
+  </div>
   <button class="preview-section-btn" onclick="previewSection('ft')">Preview Frame TV Art Prompts ↗</button>
 </div>
 
@@ -130,9 +142,15 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-png"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-png">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-1-img')"><img class="img-thumb" id="thumb-png-1-img"><span class="img-err" id="err-png-1-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-2-img')"><img class="img-thumb" id="thumb-png-2-img"><span class="img-err" id="err-png-2-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-3-img')"><img class="img-thumb" id="thumb-png-3-img"><span class="img-err" id="err-png-3-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="png-1-img" placeholder="Image URL" oninput="updateThumb('png-1-img')"><img class="img-thumb" id="thumb-png-1-img"><span class="img-err" id="err-png-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="png-2-img" placeholder="Image URL" oninput="updateThumb('png-2-img')"><img class="img-thumb" id="thumb-png-2-img"><span class="img-err" id="err-png-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="png-3-img" placeholder="Image URL" oninput="updateThumb('png-3-img')"><img class="img-thumb" id="thumb-png-3-img"><span class="img-err" id="err-png-3-img">Image not found</span></div>
+  </div>
   <button class="preview-section-btn" onclick="previewSection('png')">Preview PNG Prompts ↗</button>
 </div>
 
@@ -145,9 +163,15 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-tb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-tb">0/3</span></div>
   </div>
-  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-1-img')"><img class="img-thumb" id="thumb-tb-1-img"><span class="img-err" id="err-tb-1-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-2-img')"><img class="img-thumb" id="thumb-tb-2-img"><span class="img-err" id="err-tb-2-img">Image not found</span></div>
-  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-3-img')"><img class="img-thumb" id="thumb-tb-3-img"><span class="img-err" id="err-tb-3-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="tb-1-img" placeholder="Image URL" oninput="updateThumb('tb-1-img')"><img class="img-thumb" id="thumb-tb-1-img"><span class="img-err" id="err-tb-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="tb-2-img" placeholder="Image URL" oninput="updateThumb('tb-2-img')"><img class="img-thumb" id="thumb-tb-2-img"><span class="img-err" id="err-tb-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="tb-3-img" placeholder="Image URL" oninput="updateThumb('tb-3-img')"><img class="img-thumb" id="thumb-tb-3-img"><span class="img-err" id="err-tb-3-img">Image not found</span></div>
+  </div>
   <button class="preview-section-btn" onclick="previewSection('tb')">Preview Tumbler Wrap Prompts ↗</button>
 </div>
 
