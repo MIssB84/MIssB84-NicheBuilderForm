@@ -292,18 +292,17 @@ function buildSectionHTML(s){
     html+='<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">';
     html+='<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="'+pid+'">'+esc(text)+'</p>';
 
-    // Prominent Copy Prompt button
+    // Copy Prompt button - solid pink background
     html+='<div style="text-align:center;">';
-    html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';b.style.borderColor=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'transparent\';b.style.borderColor=\'#dea193\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:transparent;color:#dea193;border:2px solid #dea193;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>';
+    html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>';
     html+='</div>';
     html+='</div>';
 
-    // Image below with visual connector dot
+    // Image below with visual connector
     if(img){
       html+='<div style="display:flex;flex-direction:column;align-items:center;">';
       html+='<div style="width:2px;height:16px;background:rgba(201,169,110,0.4);"></div>';
       html+='<img src="'+img+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #ead9d5;display:block;">';
-      html+='<p style="margin-top:10px;font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;">Example result via <a href="'+kittlLink+'" target="_blank" style="color:#c9a96e;text-decoration:none;">Kittl</a></p>';
       html+='</div>';
     }
 
@@ -337,7 +336,7 @@ function buildHTML(){
   sections.forEach(function(s){
     var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
     if(!hasAny)return;
-    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:13px 18px;text-decoration:none;margin-bottom:8px;transition:background 0.15s;"><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:13px;color:#c4b0a8;">&#8595;</span></a>';
+    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:5px solid #dea193;border-radius:10px;padding:18px 22px;text-decoration:none;margin-bottom:10px;"><span style="font-family:Jost,sans-serif;font-size:17px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:16px;color:#c4b0a8;">&#8595;</span></a>';
   });
 
   var html='<div style="font-family:Jost,sans-serif;">';
