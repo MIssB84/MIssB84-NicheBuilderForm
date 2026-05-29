@@ -53,7 +53,6 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
 .sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
 .sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
-.sbtns{display:flex;gap:10px;}
 #out{display:none;max-width:700px;margin:0 auto;}
 .out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
 .out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
@@ -101,24 +100,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-wa"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-wa">0/3</span></div>
   </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 1</span>
-    <textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea>
-    <input class="url" id="wa-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-1-img')">
-    <img class="img-thumb" id="thumb-wa-1-img"><span class="img-err" id="err-wa-1-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 2</span>
-    <textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea>
-    <input class="url" id="wa-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-2-img')">
-    <img class="img-thumb" id="thumb-wa-2-img"><span class="img-err" id="err-wa-2-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 3</span>
-    <textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea>
-    <input class="url" id="wa-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-3-img')">
-    <img class="img-thumb" id="thumb-wa-3-img"><span class="img-err" id="err-wa-3-img">Image not found</span>
-  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-1-img')"><img class="img-thumb" id="thumb-wa-1-img"><span class="img-err" id="err-wa-1-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-2-img')"><img class="img-thumb" id="thumb-wa-2-img"><span class="img-err" id="err-wa-2-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea><input class="url" id="wa-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('wa-3-img')"><img class="img-thumb" id="thumb-wa-3-img"><span class="img-err" id="err-wa-3-img">Image not found</span></div>
   <button class="preview-section-btn" onclick="previewSection('wa')">Preview Wall Art Prompts ↗</button>
 </div>
 
@@ -131,24 +115,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-ft"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-ft">0/3</span></div>
   </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 1</span>
-    <textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea>
-    <input class="url" id="ft-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-1-img')">
-    <img class="img-thumb" id="thumb-ft-1-img"><span class="img-err" id="err-ft-1-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 2</span>
-    <textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea>
-    <input class="url" id="ft-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-2-img')">
-    <img class="img-thumb" id="thumb-ft-2-img"><span class="img-err" id="err-ft-2-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 3</span>
-    <textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea>
-    <input class="url" id="ft-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-3-img')">
-    <img class="img-thumb" id="thumb-ft-3-img"><span class="img-err" id="err-ft-3-img">Image not found</span>
-  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-1-img')"><img class="img-thumb" id="thumb-ft-1-img"><span class="img-err" id="err-ft-1-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-2-img')"><img class="img-thumb" id="thumb-ft-2-img"><span class="img-err" id="err-ft-2-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea><input class="url" id="ft-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('ft-3-img')"><img class="img-thumb" id="thumb-ft-3-img"><span class="img-err" id="err-ft-3-img">Image not found</span></div>
   <button class="preview-section-btn" onclick="previewSection('ft')">Preview Frame TV Art Prompts ↗</button>
 </div>
 
@@ -161,24 +130,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-png"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-png">0/3</span></div>
   </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 1</span>
-    <textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea>
-    <input class="url" id="png-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-1-img')">
-    <img class="img-thumb" id="thumb-png-1-img"><span class="img-err" id="err-png-1-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 2</span>
-    <textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea>
-    <input class="url" id="png-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-2-img')">
-    <img class="img-thumb" id="thumb-png-2-img"><span class="img-err" id="err-png-2-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 3</span>
-    <textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea>
-    <input class="url" id="png-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-3-img')">
-    <img class="img-thumb" id="thumb-png-3-img"><span class="img-err" id="err-png-3-img">Image not found</span>
-  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-1-img')"><img class="img-thumb" id="thumb-png-1-img"><span class="img-err" id="err-png-1-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-2-img')"><img class="img-thumb" id="thumb-png-2-img"><span class="img-err" id="err-png-2-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea><input class="url" id="png-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('png-3-img')"><img class="img-thumb" id="thumb-png-3-img"><span class="img-err" id="err-png-3-img">Image not found</span></div>
   <button class="preview-section-btn" onclick="previewSection('png')">Preview PNG Prompts ↗</button>
 </div>
 
@@ -191,24 +145,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     </div>
     <div style="display:flex;align-items:center;"><div class="pdots" id="dots-tb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-tb">0/3</span></div>
   </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 1</span>
-    <textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea>
-    <input class="url" id="tb-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-1-img')">
-    <img class="img-thumb" id="thumb-tb-1-img"><span class="img-err" id="err-tb-1-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 2</span>
-    <textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea>
-    <input class="url" id="tb-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-2-img')">
-    <img class="img-thumb" id="thumb-tb-2-img"><span class="img-err" id="err-tb-2-img">Image not found</span>
-  </div>
-  <div class="slot">
-    <span class="slot-label">Prompt 3</span>
-    <textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea>
-    <input class="url" id="tb-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-3-img')">
-    <img class="img-thumb" id="thumb-tb-3-img"><span class="img-err" id="err-tb-3-img">Image not found</span>
-  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-1-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-1-img')"><img class="img-thumb" id="thumb-tb-1-img"><span class="img-err" id="err-tb-1-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-2-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-2-img')"><img class="img-thumb" id="thumb-tb-2-img"><span class="img-err" id="err-tb-2-img">Image not found</span></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea><input class="url" id="tb-3-img" placeholder="Image URL (add when ready)" oninput="updateThumb('tb-3-img')"><img class="img-thumb" id="thumb-tb-3-img"><span class="img-err" id="err-tb-3-img">Image not found</span></div>
   <button class="preview-section-btn" onclick="previewSection('tb')">Preview Tumbler Wrap Prompts ↗</button>
 </div>
 
@@ -253,6 +192,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <script>
 var SK='dfy_pc_v4';
 var isDirty=false;
+var kittlLink='https://kittl.com?ref=dania';
 
 var allFields=[
   'f-theme',
@@ -274,7 +214,6 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
 
-// THUMBNAIL
 function updateThumb(inputId){
   var input=document.getElementById(inputId);
   if(!input)return;
@@ -288,7 +227,6 @@ function updateThumb(inputId){
   thumb.src=url;
 }
 
-// PROGRESS
 function updateProgress(){
   var total=0;
   sections.forEach(function(s){
@@ -305,7 +243,6 @@ function updateProgress(){
   document.getElementById('prog-count').textContent=total+' of 12 prompts';
 }
 
-// SAVE / LOAD
 function saveData(){
   var data={};
   allFields.forEach(function(id){data[id]=v(id);});
@@ -320,7 +257,6 @@ function loadData(){
     allFields.forEach(function(id){var el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
     setStatus('saved','Progress loaded');
     updateProgress();
-    // Restore thumbnails
     allFields.forEach(function(id){
       if(id.indexOf('-img')>-1){var el=document.getElementById(id);if(el&&el.value.trim())updateThumb(id);}
     });
@@ -336,40 +272,52 @@ function clearAll(){
   isDirty=false;setStatus('unsaved','Cleared');updateProgress();toast('Week cleared.');
 }
 
-// BUILD SECTION HTML (used for both preview and final output)
 function buildSectionHTML(s){
   var html='';
   html+='<div id="'+s.anchor+'" style="padding:2rem 0 0.5rem;">';
-  html+='<span style="font-size:11px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>';
+  html+='<span style="font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>';
   html+='<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+s.name+'</h2>';
   html+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
+
   s.ids.forEach(function(id,i){
     var text=v(id).trim();
     if(!text)return;
     var img=v(id+'-img').trim();
-    var gen=v(id+'-gen').trim();
     var pid='p'+s.key+(i+1);
-    var genLabel=gen?('<a href="'+kittlLink+'" target="_blank" style="color:#c9a96e;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">'+gen+'</a>'):'';
-    html+='<div style="margin-bottom:2.5rem;">';
-    html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;margin-bottom:0.75rem;">Prompt '+(i+1)+'</p>';
-    html+='<div style="background:#2a1f1c;border-radius:16px;padding:2rem 2rem 1.5rem;">';
-    html+='<p style="font-family:Playfair Display,serif;font-size:19px;font-style:italic;color:#f5eddf;line-height:1.9;text-align:center;margin-bottom:1.5rem;" id="'+pid+'">'+esc(text)+'</p>';
-    html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);}catch(e){}window.getSelection().removeAllRanges();" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>';
+
+    html+='<div style="margin-bottom:3rem;">';
+    html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;">Prompt '+(i+1)+'</p>';
+
+    // Prompt card - upright Jost, larger, better line-height
+    html+='<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">';
+    html+='<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="'+pid+'">'+esc(text)+'</p>';
+
+    // Prominent Copy Prompt button
+    html+='<div style="text-align:center;">';
+    html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';b.style.borderColor=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'transparent\';b.style.borderColor=\'#dea193\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:transparent;color:#dea193;border:2px solid #dea193;border-radius:10px;font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>';
     html+='</div>';
-    if(img||genLabel){
-      html+='<div style="margin-top:1rem;text-align:center;">';
-      if(img)html+='<img src="'+img+'" alt="Example result" style="width:100%;border-radius:10px;border:1px solid #ead9d5;display:block;margin:0 auto;">';
-      if(genLabel)html+='<p style="margin-top:8px;">'+genLabel+'</p>';
+    html+='</div>';
+
+    // Image below with visual connector dot
+    if(img){
+      html+='<div style="display:flex;flex-direction:column;align-items:center;">';
+      html+='<div style="width:2px;height:16px;background:rgba(201,169,110,0.4);"></div>';
+      html+='<img src="'+img+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #ead9d5;display:block;">';
+      html+='<p style="margin-top:10px;font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;">Example result via <a href="'+kittlLink+'" target="_blank" style="color:#c9a96e;text-decoration:none;">Kittl</a></p>';
       html+='</div>';
     }
+
     html+='</div>';
   });
-  html+='<div style="text-align:center;padding:1rem 0 2rem;"><a href="#" style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;">&#8593; Back to Top</a></div>';
+
+  // Back to top - larger and easier to find
+  html+='<div style="text-align:center;padding:1.5rem 0 2.5rem;">';
+  html+='<a href="#" style="font-family:Jost,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;text-decoration:none;border:1.5px solid rgba(201,169,110,0.35);padding:9px 22px;border-radius:30px;">&#8593; Back to Top</a>';
+  html+='</div>';
   html+='</div>';
   return html;
 }
 
-// PREVIEW SECTION MODAL
 function previewSection(key){
   var s=sections.find(function(x){return x.key===key;});
   if(!s)return;
@@ -383,39 +331,43 @@ function closeModal(){
   document.body.style.overflow='';
 }
 
-// BUILD FULL HTML
 function buildHTML(){
   var theme=v('f-theme')||'THEME';
   var nav='';
   sections.forEach(function(s){
     var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
     if(!hasAny)return;
-    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;"><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:13px;color:#c4b0a8;">&#8595;</span></a>';
+    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:13px 18px;text-decoration:none;margin-bottom:8px;transition:background 0.15s;"><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:13px;color:#c4b0a8;">&#8595;</span></a>';
   });
 
   var html='<div style="font-family:Jost,sans-serif;">';
+
+  // Header block
   html+='<div style="background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;margin-bottom:2rem;">';
-  html+='<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;">';
+  html+='<div style="background:#2a1f1c;padding:2.25rem 2rem 1.75rem;text-align:center;">';
   html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>';
-  html+='<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Prompt Drop</h2>';
-  html+='<p style="font-size:14px;font-weight:600;color:#dea193;margin:0 0 0.3rem;">'+esc(theme)+'</p>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.5rem;line-height:1.2;">This Week\'s Prompt Drop</h2>';
+  html+='<p style="font-size:15px;font-weight:600;color:#dea193;margin:0;letter-spacing:0.03em;">'+esc(theme)+'</p>';
   html+='</div>';
-  html+='<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">';
-  html+='<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
-  html+='<span style="display:inline-block;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>';
+
+  html+='<div style="padding:2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
+  html+='<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:11px 30px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>';
   html+='</div>';
-  html+='<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">';
-  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Product Type</p>';
+
+  html+='<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Product Type</p>';
   html+=nav;
   html+='</div></div>';
 
+  // Sections
   sections.forEach(function(s){
     var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
     if(!hasAny)return;
     html+=buildSectionHTML(s);
   });
 
-
+  // Tools footer
   html+='<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;border:1px solid #ead9d5;padding:2rem;margin-top:2rem;text-align:center;">';
   html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.75rem;">Tools I Use</p>';
   html+='<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.5rem;">These are my favorite tools for creating bestselling digital designs. I use them every week to generate the prompts inside this club.</p>';
