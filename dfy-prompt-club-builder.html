@@ -84,12 +84,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   <span class="prog-count" id="prog-count">0 of 12 prompts</span>
 </div>
 
-<div class="card">
-  <p class="card-title">Week Info</p>
-  <p class="card-sub">Sets the header for your lesson.</p>
-  <label class="fl" for="f-theme">Theme</label>
-  <input class="fi" id="f-theme" placeholder="e.g. Nautical Coastal">
-</div>
+<div id="form-top"></div>
 
 <!-- WALL ART -->
 <div class="prod-card">
@@ -110,6 +105,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="wa-3-img" placeholder="Image URL" oninput="updateThumb('wa-3-img')"><img class="img-thumb" id="thumb-wa-3-img"><span class="img-err" id="err-wa-3-img">Image not found</span></div>
   </div>
   <button class="preview-section-btn" onclick="previewSection('wa')">Preview Wall Art Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
 </div>
 
 <!-- FRAME TV ART -->
@@ -131,6 +127,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="ft-3-img" placeholder="Image URL" oninput="updateThumb('ft-3-img')"><img class="img-thumb" id="thumb-ft-3-img"><span class="img-err" id="err-ft-3-img">Image not found</span></div>
   </div>
   <button class="preview-section-btn" onclick="previewSection('ft')">Preview Frame TV Art Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
 </div>
 
 <!-- PNG -->
@@ -152,6 +149,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="png-3-img" placeholder="Image URL" oninput="updateThumb('png-3-img')"><img class="img-thumb" id="thumb-png-3-img"><span class="img-err" id="err-png-3-img">Image not found</span></div>
   </div>
   <button class="preview-section-btn" onclick="previewSection('png')">Preview PNG Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
 </div>
 
 <!-- TUMBLER WRAPS -->
@@ -173,6 +171,14 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="tb-3-img" placeholder="Image URL" oninput="updateThumb('tb-3-img')"><img class="img-thumb" id="thumb-tb-3-img"><span class="img-err" id="err-tb-3-img">Image not found</span></div>
   </div>
   <button class="preview-section-btn" onclick="previewSection('tb')">Preview Tumbler Wrap Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
+</div>
+
+<div class="card">
+  <p class="card-title">Week Info</p>
+  <p class="card-sub">Enter the final theme name from your Claude session. This sets the header for your lesson.</p>
+  <label class="fl" for="f-theme">Theme Name</label>
+  <input class="fi" id="f-theme" placeholder="e.g. Cottagecore Mushrooms">
 </div>
 
 <div style="height:80px;"></div>
