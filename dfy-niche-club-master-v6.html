@@ -498,7 +498,8 @@ var S = {
   listingNoImg:'aspect-ratio:4/3;background:rgba(245,237,223,0.07);border:1.5px dashed rgba(222,161,147,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c4b0a8;font-family:Jost,sans-serif;',
   listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;',
   backTop:'text-align:center;padding:1.5rem 0 0.5rem;',
-  backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;'
+  backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;',
+  sectionNav:'text-align:right;padding:6px 4px 14px;'
 };
 
 function cpText(btn, orig){
@@ -548,6 +549,8 @@ function buildNicheHTML(n){
   var nicheLabel = isBonus ? 'Bonus' : n;
   var anchorId = isBonus ? 'niche-bonus' : 'niche-'+n;
   var keyword = v('n'+n+'-kw').trim();
+  var backLinkLabel = isBonus ? 'Bonus: ' : 'Niche '+n+': ';
+  var backLink = '<div style="'+S.sectionNav+'"><a href="#'+anchorId+'" style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;">Back to '+esc(backLinkLabel)+esc(keyword)+'</a></div>';
   var comp = v('n'+n+'-comp').trim();
   var plo = v('n'+n+'-plo').trim();
   var phi = v('n'+n+'-phi').trim();
@@ -626,17 +629,17 @@ function buildNicheHTML(n){
     html += '</div>';
   }
 
-  if(note) html += '<div id="'+anchorId+'-notes" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
-  if(tipsHtml) html += '<details id="'+anchorId+'-tips" style="'+S.block+'margin-bottom:1.2rem;"><summary style="'+S.blockHead+'list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;"><p style="'+S.blockLbl+'margin:0;">How to Add Value</p><span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;">Click to expand</span></summary><div style="'+S.blockBody+'">'+tipsHtml+'</div></details>';
-  if(titlesHtml) html += '<div id="'+anchorId+'-titles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
-  if(tagsHtml) html += '<div id="'+anchorId+'-tags" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+esc(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>';
+  if(note) html += '<div id="'+anchorId+'-notes" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>'+backLink;
+  if(tipsHtml) html += '<div id="'+anchorId+'-tips" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>'+backLink;
+  if(titlesHtml) html += '<div id="'+anchorId+'-titles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>'+backLink;
+  if(tagsHtml) html += '<div id="'+anchorId+'-tags" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+esc(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>'+backLink;
 
   if(prompt){
     html += '<div id="'+anchorId+'-prompt" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
     html += '<div style="'+S.promptBox+'">';
     html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
     html += '<button style="'+S.promptCopyBtn+'" data-copy="'+esc(prompt)+'" onclick="dCp(this)">Copy Prompt</button>';
-    html += '</div></div></div>';
+    html += '</div></div></div>'+backLink;
   }
 
   if(notesArr.length){
@@ -646,11 +649,11 @@ function buildNicheHTML(n){
 
   // Styles used — only if at least one is filled
   if(sIdeo||sKittl||sCanva){
-    html += '<details id="'+anchorId+'-styles" style="'+S.block+'margin-bottom:1.2rem;"><summary style="'+S.blockHead+'list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;"><p style="'+S.blockLbl+'margin:0;">Styles Used</p><span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;">Click to expand</span></summary><div style="'+S.blockBody+'">';
+    html += '<div id="'+anchorId+'-styles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
     if(sIdeo) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
     if(sKittl) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
     if(sCanva) html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
-    html += '</div></details>';
+    html += '</div></div>'+backLink;
   }
 
   // Generator results — only images that have URLs
@@ -663,7 +666,7 @@ function buildNicheHTML(n){
       html += '<div style="text-align:center;"><img src="'+img+'" alt="'+esc(g.name)+'" style="width:100%;border-radius:8px;border:1px solid #ead9d5;display:block;margin-bottom:6px;">';
       html += '<a href="'+g.url+'" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;text-decoration:none;font-family:Jost,sans-serif;">'+esc(g.name)+'</a></div>';
     });
-    html += '</div></div></div>';
+    html += '</div></div></div>'+backLink;
   }
 
   html += '</div></div>';
