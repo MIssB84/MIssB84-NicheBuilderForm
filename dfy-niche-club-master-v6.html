@@ -107,6 +107,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .kw-ref-val{font-size:13px;font-weight:600;color:#dea193;flex:1;margin:0 10px;}
 .kw-ref-btn{font-family:'Jost',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid rgba(222,161,147,0.5);padding:4px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;}
 .kw-ref-btn:hover{background:#dea193;color:#2a1f1c;}
+.collapse-all-bar{max-width:760px;margin:1rem auto 0;display:flex;gap:10px;justify-content:flex-end;}
+.collapse-all-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1.5px solid #ead9d5;color:#5a4a45;padding:7px 16px;border-radius:30px;cursor:pointer;transition:all 0.2s;}
+.collapse-all-btn:hover{border-color:#dea193;color:#dea193;}
 </style>
 </head>
 <body>
@@ -150,6 +153,10 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 </div>
 
 <!-- ALL NICHE SECTIONS -->
+<div class="collapse-all-bar">
+  <button class="collapse-all-btn" onclick="collapseAll()">Collapse All</button>
+  <button class="collapse-all-btn" onclick="expandAll()">Expand All</button>
+</div>
 <div id="all-sections"></div>
 
 <!-- GENERATE ALL -->
@@ -824,6 +831,24 @@ function updateProgress(){
   var done = Object.values(completedNiches).filter(Boolean).length;
   document.getElementById('prog-count').textContent = done + ' / ' + total;
   document.getElementById('prog-fill').style.width = Math.round((done/total)*100) + '%';
+}
+
+function collapseAll(){
+  ALL_NICHES.forEach(function(niche){
+    var id = niche.n === 'bonus' ? 'bonus' : niche.n;
+    var body = document.getElementById('sec-'+id);
+    var icon = document.getElementById('icon-'+id);
+    if(body){ body.classList.add('collapsed'); if(icon) icon.style.transform='rotate(-90deg)'; }
+  });
+}
+
+function expandAll(){
+  ALL_NICHES.forEach(function(niche){
+    var id = niche.n === 'bonus' ? 'bonus' : niche.n;
+    var body = document.getElementById('sec-'+id);
+    var icon = document.getElementById('icon-'+id);
+    if(body){ body.classList.remove('collapsed'); if(icon) icon.style.transform=''; }
+  });
 }
 
 // Bonus toggle
