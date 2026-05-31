@@ -484,35 +484,35 @@ function formatTip(raw){
 
 // SHARED OUTPUT STYLES — matches original working output exactly
 var S = {
-  header:'background:#2a1f1c;padding:1.4rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:3px solid #dea193;',
-  badge:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,0.15);border:1px solid rgba(222,161,147,0.4);padding:4px 12px;border-radius:20px;white-space:nowrap;font-family:Jost,sans-serif;',
-  title:'font-family:Playfair Display,serif;font-size:1.9rem;font-weight:700;color:#f5eddf;line-height:1.2;margin:0;',
-  body:'padding:1.2rem 1.5rem;background:#fdf7f2;',
-  statsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.2rem;',
-  stat:'background:#2a1f1c;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #dea193;',
+  header:'background:#2a1f1c;padding:22px 32px;display:flex;align-items:center;gap:16px;border-bottom:3px solid #dea193;',
+  badge:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#3d2e2a;border:1px solid #c4846e;padding:4px 12px;border-radius:20px;white-space:nowrap;font-family:Jost,sans-serif;',
+  title:'font-family:Playfair Display,serif;font-size:30px;font-weight:700;color:#f5eddf;line-height:1.2;margin:0;',
+  body:'padding:19px 24px;background:#fdf7f2;',
+  statsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:19px;',
+  stat:'background:#2a1f1c;border-radius:10px;padding:16px 19px;border-left:3px solid #dea193;',
   statLbl:'font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;font-family:Jost,sans-serif;',
-  statVal:'font-family:Playfair Display,serif;font-size:1.2rem;font-weight:600;color:#f5eddf;margin:0;',
-  block:'margin-bottom:1.2rem;background:#fff;border-radius:10px;border:1px solid #ead9d5;overflow:hidden;',
-  blockHead:'background:#2a1f1c;padding:0.65rem 1.2rem;',
+  statVal:'font-family:Playfair Display,serif;font-size:19px;font-weight:600;color:#f5eddf;margin:0;',
+  block:'margin-bottom:19px;background:#fff;border-radius:10px;border:1px solid #ead9d5;overflow:hidden;',
+  blockHead:'background:#2a1f1c;padding:10px 19px;',
   blockLbl:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;margin:0;',
-  blockBody:'padding:1.1rem 1.3rem;',
-  noteBox:'background:rgba(222,161,147,0.1);border:1px solid rgba(222,161,147,0.35);border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
-  tipBox:'background:#fdf7f2;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
-  titleItem:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;',
+  blockBody:'padding:18px 21px;',
+  noteBox:'background:#f5e8e3;border:1px solid #c4846e;border-radius:8px;padding:14px 18px;margin-bottom:12px;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
+  tipBox:'background:#fdf7f2;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:0 8px 8px 0;padding:16px 19px;margin-bottom:12px;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
+  titleItem:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;',
   titleItemLast:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;',
   titleDot:'width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;margin-top:3px;',
   titleText:'font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;flex:1;',
-  tagsWrap:'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;',
-  tag:'background:#2a1f1c;color:#f5eddf;font-size:14px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid rgba(222,161,147,0.3);font-family:Jost,sans-serif;',
-  promptBox:'background:#2a1f1c;border-radius:8px;padding:1.1rem 1.3rem;border-left:3px solid #dea193;',
+  tagsWrap:'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;',
+  tag:'background:#2a1f1c;color:#f5eddf;font-size:14px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid #c4846e;font-family:Jost,sans-serif;',
+  promptBox:'background:#2a1f1c;border-radius:8px;padding:18px 21px;border-left:3px solid #dea193;',
   promptText:'font-size:17px;color:#f5eddf;line-height:1.9;font-style:italic;font-family:Jost,sans-serif;margin:0;',
-  listingsSec:'background:#2a1f1c;padding:1.2rem 1.5rem 1.5rem;',
-  listingsLbl:'font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin-bottom:0.8rem;font-family:Jost,sans-serif;',
+  listingsSec:'background:#2a1f1c;padding:19px 24px 24px;',
+  listingsLbl:'font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin-bottom:13px;font-family:Jost,sans-serif;',
   listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
   listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:8px;',
-  listingNoImg:'aspect-ratio:4/3;background:rgba(245,237,223,0.07);border:1.5px dashed rgba(222,161,147,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c4b0a8;font-family:Jost,sans-serif;',
+  listingNoImg:'aspect-ratio:4/3;background:#3d2e2a;border:1.5px dashed #c4846e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c4b0a8;font-family:Jost,sans-serif;',
   listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;',
-  backTop:'text-align:center;padding:1.5rem 0 0.5rem;',
+  backTop:'text-align:center;padding:24px 0 8px;',
   backTopLink:'display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#f5eddf;background:#2a1f1c;border:2px solid #dea193;padding:12px 28px;border-radius:30px;text-decoration:none;'
 };
 
@@ -550,7 +550,7 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
   tags.forEach(function(t){ tagsHtml += '<span style="'+S.tag+'">'+esc(t)+'</span>'; });
   var allTagsStr = tags.join(', ');
 
-  var html = '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#2a1f1c;padding:1.5rem 1rem;">'
+  var html = '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#2a1f1c;padding:24px 16px;">'
     + '<div style="background:#fdf7f2;border-radius:14px;overflow:hidden;max-width:800px;margin:0 auto;">';
   html += '<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(String(nicheNum))+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>';
   html += '<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p>';
@@ -605,8 +605,8 @@ function buildAINicheHTML(n){
   }
 
   html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
-  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
-  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
   html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
   html += '</div></div>';
 
@@ -680,19 +680,19 @@ function buildIntroHTML(){
       + '</a>';
   }
   return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
-    + '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #fff;">'
-    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#fff;margin:0 0 0.6rem;opacity:0.7;">DFY Niche Club</p>'
-    + '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<div style="background:#2a1f1c;padding:32px 32px 24px;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 10px;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:32px;font-weight:700;color:#f5eddf;margin:0 0 6px;line-height:1.2;">This Week\'s Niche Drop</h2>'
     + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
     + '</div>'
-    + '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
-    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
-    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section &mdash; so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
-    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 1.2rem;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<div style="padding:29px 32px;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section &mdash; so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 19px;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
     + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
     + '</div>'
-    + '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">'
-    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Niche</p>'
+    + '<div style="padding:24px 32px 29px;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 16px;text-align:center;">Jump to a Niche</p>'
     + navHtml
     + '</div></div>';
 }
