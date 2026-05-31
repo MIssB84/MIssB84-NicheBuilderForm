@@ -509,6 +509,8 @@ var S = {
   promptBox:'background:#2a1f1c;border-radius:8px;padding:1.1rem 1.3rem;border-left:3px solid #dea193;',
   promptText:'font-size:17px;color:#f5eddf;line-height:1.9;font-style:italic;font-family:Jost,sans-serif;margin:0 0 0.75rem;',
   promptCopyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid rgba(222,161,147,0.5);padding:5px 14px;border-radius:20px;cursor:pointer;',
+  copyInput:'width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:Jost,sans-serif;font-size:14px;color:#2a1f1c;background:#fdf7f2;cursor:text;',
+  copyTextarea:'width:100%;border:1.5px solid rgba(222,161,147,0.4);border-radius:8px;padding:9px 13px;font-family:Jost,sans-serif;font-size:14px;color:#f5eddf;background:rgba(255,255,255,0.07);cursor:text;resize:none;line-height:1.6;',
   listingsSec:'background:#2a1f1c;padding:1.2rem 1.5rem 1.5rem;',
   listingsLbl:'font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin-bottom:0.8rem;font-family:Jost,sans-serif;',
   listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
@@ -540,20 +542,20 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
 
   var validTitles = titles.filter(Boolean);
   var titlesHtml = '';
+  // No JS copy buttons — use click-to-select inputs (Systeme.io safe)
   validTitles.forEach(function(t, i){
     var isLast = i === validTitles.length - 1;
     titlesHtml += '<div style="'+(isLast?S.titleItemLast:S.titleItem)+'">'
       + '<div style="display:flex;align-items:flex-start;gap:10px;flex:1;">'
       + '<div style="'+S.titleDot+'"></div>'
-      + '<p style="'+S.titleText+'">'+esc(t)+'</p>'
+      + '<input readonly onclick="this.select();" value="'+esc(t)+'" style="'+S.copyInput+'">'
       + '</div>'
-      + '<button style="'+S.copyBtn+'" data-copy="'+esc(t)+'" onclick="dCp(this)">Copy</button>'
       + '</div>';
   });
 
   var tagsHtml = '';
   tags.forEach(function(t){ tagsHtml += '<span style="'+S.tag+'">'+esc(t)+'</span>'; });
-  var allTagsStr = esc(tags.join(', '));
+  var allTagsStr = tags.join(', ');
 
   var html = '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#2a1f1c;padding:1.5rem 1rem;">'
     + '<div style="background:#fdf7f2;border-radius:14px;overflow:hidden;max-width:800px;margin:0 auto;">';
@@ -575,7 +577,7 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
   if(note) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
   if(tipsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
   if(titlesHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
-  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+allTagsStr+'" onclick="dCp(this)">Copy All Tags</button></div></div>';
+  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;font-family:Jost,sans-serif;">Click to select all tags</p><input readonly onclick="this.select();" value="'+allTagsStr+'" style="'+S.copyInput+'"></div></div>';
   return html;
 }
 
@@ -598,11 +600,11 @@ function buildAINicheHTML(n){
   var html = buildBaseHTML('niche-'+n, n, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
 
   if(prompt){
-    var pid = 'pr'+n;
     html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
     html += '<div style="'+S.promptBox+'">';
-    html += '<p style="'+S.promptText+'" id="'+pid+'">'+esc(prompt)+'</p>';
-    html += '<button style="'+S.promptCopyBtn+'" data-copy="'+esc(prompt)+'" onclick="dCp(this)">Copy Prompt</button>';
+    html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
+    html += '<p style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(196,176,168,0.8);margin-bottom:6px;font-family:Jost,sans-serif;">Click to select prompt</p>';
+    html += '<textarea readonly onclick="this.select();" rows="3" style="'+S.copyTextarea+'">'+esc(prompt)+'</textarea>';
     html += '</div></div></div>';
   }
 
@@ -705,7 +707,7 @@ function buildIntroHTML(){
 }
 
 function previewNiche(n, isDP){
-  var html = DCP_SCRIPT + (isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n));
+  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
   var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
   document.getElementById('modal-title').textContent = label + ' Preview';
   document.getElementById('modal-body').innerHTML = html;
@@ -722,7 +724,6 @@ var DCP_SCRIPT = '<script>function dCp(b){var t=document.createElement("textarea
 
 function generateAll(){
   var parts = [];
-  parts.push(DCP_SCRIPT);
   parts.push(buildIntroHTML());
   AI_NICHES.forEach(function(niche){ parts.push(buildAINicheHTML(niche.n)); });
   DP_NICHES.forEach(function(niche){
