@@ -316,11 +316,13 @@ var nicheToIntro = {
   5:'intro-n5', 6:'intro-n6', 7:'intro-n7', 'bonus':'intro-bonus'
 };
 function updateKwRef(n){
-  var el = document.getElementById('kw-ref-val-'+n);
-  if(!el) return;
   var introId = nicheToIntro[n] || nicheToIntro[parseInt(n)];
   var introEl = document.getElementById(introId);
-  el.textContent = (introEl && introEl.value) ? introEl.value : '—';
+  var val = (introEl && introEl.value) ? introEl.value : '—';
+  var el1 = document.getElementById('kw-ref-val-'+n);
+  var el2 = document.getElementById('kw-ref-listings-'+n);
+  if(el1) el1.textContent = val;
+  if(el2) el2.textContent = val;
   updateReadyDot(n);
 }
 
@@ -365,6 +367,11 @@ function buildAllSections(){
 
     // Listings
     html += '<div class="card"><p class="card-title">Real Etsy Listing Examples</p><p class="card-sub">Right-click each listing image, click Copy Image Address, paste below</p>';
+    html += '<div class="kw-ref-box" style="margin-bottom:12px;">';
+    html += '<span class="kw-ref-label">Keyword</span>';
+    html += '<span class="kw-ref-val" id="kw-ref-listings-'+n+'">'+(v('n'+n+'-kw')||'—')+'</span>';
+    html += '<button class="kw-ref-btn" onclick="copyKwRef(\''+n+'\')">Copy</button>';
+    html += '</div>';
     html += imgField('n'+n+'-l1','https://i.etsystatic.com/...','Listing 1 Image URL', tabIdx++);
     html += imgField('n'+n+'-l2','https://i.etsystatic.com/...','Listing 2 Image URL', tabIdx++);
     html += imgField('n'+n+'-l3','https://i.etsystatic.com/...','Listing 3 Image URL', tabIdx++);
@@ -373,11 +380,11 @@ function buildAllSections(){
     // Tips
     html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon. e.g. Pro Tip: your text here</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
-    html += '<div><label class="fl">Tip 1</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip1" tabindex="'+tabIdx+'" placeholder="Pro Tip: Switch up the color story"></textarea></div>';
+    html += '<div><label class="fl">Tip 1</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip1" tabindex="'+tabIdx+'" placeholder="Pro Tip: Switch up the color story" oninput="stripSpecial(this)"></textarea></div>';
     tabIdx++;
-    html += '<div><label class="fl">Tip 2</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip2" tabindex="'+tabIdx+'" placeholder="Color Story: Layer in a secondary prop"></textarea></div>';
+    html += '<div><label class="fl">Tip 2</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip2" tabindex="'+tabIdx+'" placeholder="Color Story: Layer in a secondary prop" oninput="stripSpecial(this)"></textarea></div>';
     tabIdx++;
-    html += '<div><label class="fl">Tip 3</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip3" tabindex="'+tabIdx+'" placeholder="Style Note: Make the expression do the work"></textarea></div>';
+    html += '<div><label class="fl">Tip 3</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip3" tabindex="'+tabIdx+'" placeholder="Style Note: Make the expression do the work" oninput="stripSpecial(this)"></textarea></div>';
     tabIdx++;
     html += '</div></div>';
 
@@ -400,7 +407,7 @@ function buildAllSections(){
     tabIdx++;
     // Tags
     html += '<div><label class="fl">Tags (comma separated)</label>';
-    html += '<textarea class="fi" id="n'+n+'-tags" tabindex="'+tabIdx+'" placeholder="Tag 1, Tag 2, Tag 3..." oninput="updateTagWarnings(\''+n+'\')"></textarea>';
+    html += '<textarea class="fi" id="n'+n+'-tags" tabindex="'+tabIdx+'" placeholder="Tag 1, Tag 2, Tag 3..." oninput="stripSpecial(this);updateTagWarnings(\''+n+'\')"></textarea>';
     tabIdx++;
     html += '<span class="tag-warn" id="tag-warn-'+n+'"></span></div>';
     html += '</div></div>';
@@ -408,7 +415,7 @@ function buildAllSections(){
     // Prompt & Notes
     html += '<div class="card"><p class="card-title">Prompt &amp; Notes</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
-    html += '<div><label class="fl">AI Image Prompt</label><textarea class="fi" style="min-height:100px;" id="n'+n+'-prompt" tabindex="'+tabIdx+'" placeholder="Your full AI image prompt goes here..."></textarea></div>';
+    html += '<div><label class="fl">AI Image Prompt</label><textarea class="fi" style="min-height:100px;" id="n'+n+'-prompt" tabindex="'+tabIdx+'" placeholder="Your full AI image prompt goes here..." oninput="stripSpecial(this)"></textarea></div>';
     tabIdx++;
     html += '<div><label class="fl">Important Notes (one per line — leave blank if none)</label><textarea class="fi" id="n'+n+'-notes" tabindex="'+tabIdx+'" placeholder="e.g. Do not use Silly Goose as it is trademarked"></textarea></div>';
     tabIdx++;
@@ -517,12 +524,21 @@ function formatTip(raw){
   return esc(t);
 }
 
+function stripSpecial(el){
+  var pos = el.selectionStart;
+  var cleaned = el.value.replace(/[^\x20-\x7E\n]/g, '');
+  if(cleaned !== el.value){
+    el.value = cleaned;
+    el.selectionStart = el.selectionEnd = pos;
+  }
+}
+
 function cleanTags(raw){
   return raw.split(',').map(function(t){
     return t.trim()
-      .replace(/[^\x20-\x7E]/g, '') // strip non-ASCII / special chars
-      .replace(/[,\-\s]+$/, '')      // strip trailing commas, dashes, spaces
-      .replace(/^[,\-\s]+/, '')      // strip leading commas, dashes, spaces
+      .replace(/[^\x20-\x7E]/g, '')
+      .replace(/[,\-\s]+$/, '')
+      .replace(/^[,\-\s]+/, '')
       .trim();
   }).filter(Boolean);
 }
@@ -589,13 +605,34 @@ function buildNicheHTML(n){
   if(price) statsHtml += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Price Range</p><p style="'+S.statVal+'">'+esc(price)+'</p></div>';
   if(statsHtml) html += '<div style="'+S.statsGrid+'">'+statsHtml+'</div>';
 
-  if(note) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
-  if(tipsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
-  if(titlesHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
-  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+esc(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>';
+  // Build jump menu — only show pills for sections that have content
+  var hasImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
+  var jumpItems = [];
+  if(note) jumpItems.push({id:anchorId+'-notes', label:'Listing Notes'});
+  if(tipsHtml) jumpItems.push({id:anchorId+'-tips', label:'How to Add Value'});
+  if(titlesHtml) jumpItems.push({id:anchorId+'-titles', label:'Titles'});
+  if(tagsHtml) jumpItems.push({id:anchorId+'-tags', label:'Tags'});
+  if(prompt) jumpItems.push({id:anchorId+'-prompt', label:'AI Prompt'});
+  if(notesArr.length) jumpItems.push({id:anchorId+'-important', label:'Important Notes'});
+  if(sIdeo||sKittl||sCanva) jumpItems.push({id:anchorId+'-styles', label:'Styles Used'});
+  if(hasImg) jumpItems.push({id:anchorId+'-results', label:'Generator Results'});
+
+  if(jumpItems.length > 0){
+    html += '<div style="padding:12px 16px;background:#fff;border-bottom:1px solid #ead9d5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">';
+    html += '<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;font-family:Jost,sans-serif;margin-right:4px;">Jump to:</span>';
+    jumpItems.forEach(function(item){
+      html += '<a href="#'+item.id+'" style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:5px 14px;border-radius:20px;text-decoration:none;border:1px solid rgba(222,161,147,0.4);">'+esc(item.label)+'</a>';
+    });
+    html += '</div>';
+  }
+
+  if(note) html += '<div id="'+anchorId+'-notes" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
+  if(tipsHtml) html += '<details id="'+anchorId+'-tips" style="'+S.block+'margin-bottom:1.2rem;"><summary style="'+S.blockHead+'list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;"><p style="'+S.blockLbl+'margin:0;">How to Add Value</p><span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;">Click to expand</span></summary><div style="'+S.blockBody+'">'+tipsHtml+'</div></details>';
+  if(titlesHtml) html += '<div id="'+anchorId+'-titles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
+  if(tagsHtml) html += '<div id="'+anchorId+'-tags" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+esc(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>';
 
   if(prompt){
-    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
+    html += '<div id="'+anchorId+'-prompt" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
     html += '<div style="'+S.promptBox+'">';
     html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
     html += '<button style="'+S.promptCopyBtn+'" data-copy="'+esc(prompt)+'" onclick="dCp(this)">Copy Prompt</button>';
@@ -604,22 +641,21 @@ function buildNicheHTML(n){
 
   if(notesArr.length){
     var notesHtml=''; notesArr.forEach(function(n2){ notesHtml+='<div style="'+S.noteBox+'">'+esc(n2)+'</div>'; });
-    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
+    html += '<div id="'+anchorId+'-important" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
   }
 
   // Styles used — only if at least one is filled
   if(sIdeo||sKittl||sCanva){
-    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
+    html += '<details id="'+anchorId+'-styles" style="'+S.block+'margin-bottom:1.2rem;"><summary style="'+S.blockHead+'list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;"><p style="'+S.blockLbl+'margin:0;">Styles Used</p><span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;">Click to expand</span></summary><div style="'+S.blockBody+'">';
     if(sIdeo) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
     if(sKittl) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
     if(sCanva) html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
-    html += '</div></div>';
+    html += '</div></details>';
   }
 
   // Generator results — only images that have URLs
-  var hasImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
   if(hasImg){
-    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
+    html += '<div id="'+anchorId+'-results" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
     html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
     GEN_TOOLS.forEach(function(g){
       var img = v('n'+n+'-img-'+g.id).trim();
