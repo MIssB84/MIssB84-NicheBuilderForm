@@ -373,11 +373,11 @@ function buildAllSections(){
     // Tips
     html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon. e.g. Pro Tip: your text here</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
-    html += '<div><label class="fl">Tip 1</label><input class="fi" id="n'+n+'-tip1" tabindex="'+tabIdx+'" placeholder="Pro Tip: Switch up the color story"></div>';
+    html += '<div><label class="fl">Tip 1</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip1" tabindex="'+tabIdx+'" placeholder="Pro Tip: Switch up the color story"></textarea></div>';
     tabIdx++;
-    html += '<div><label class="fl">Tip 2</label><input class="fi" id="n'+n+'-tip2" tabindex="'+tabIdx+'" placeholder="Color Story: Layer in a secondary prop"></div>';
+    html += '<div><label class="fl">Tip 2</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip2" tabindex="'+tabIdx+'" placeholder="Color Story: Layer in a secondary prop"></textarea></div>';
     tabIdx++;
-    html += '<div><label class="fl">Tip 3</label><input class="fi" id="n'+n+'-tip3" tabindex="'+tabIdx+'" placeholder="Style Note: Make the expression do the work"></div>';
+    html += '<div><label class="fl">Tip 3</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-tip3" tabindex="'+tabIdx+'" placeholder="Style Note: Make the expression do the work"></textarea></div>';
     tabIdx++;
     html += '</div></div>';
 
@@ -390,13 +390,13 @@ function buildAllSections(){
     html += '</div>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     // Title 1
-    html += '<div><label class="fl">Title 1</label><input class="fi" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div>';
+    html += '<div><label class="fl">Title 1</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"></textarea><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div>';
     tabIdx++;
     // Title 2
-    html += '<div><label class="fl">Title 2</label><input class="fi" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div>';
+    html += '<div><label class="fl">Title 2</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"></textarea><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div>';
     tabIdx++;
     // Title 3
-    html += '<div><label class="fl">Title 3</label><input class="fi" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
+    html += '<div><label class="fl">Title 3</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"></textarea><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
     tabIdx++;
     // Tags
     html += '<div><label class="fl">Tags (comma separated)</label>';
@@ -507,7 +507,9 @@ function dCp(b){ cpText(b, b.textContent); }
 
 function formatTip(raw){
   if(!raw) return '';
-  var t = raw.trim().replace(/[,\-\s]+$/, ''); // strip trailing symbols
+  var t = raw.trim()
+    .replace(/[^\x20-\x7E]/g, '') // strip non-ASCII / special chars
+    .replace(/[,\-\s]+$/, '');     // strip trailing symbols
   var colonIdx = t.indexOf(':');
   if(colonIdx > 0 && colonIdx < 40){
     return '<strong>'+esc(t.substring(0,colonIdx+1))+'</strong>'+esc(t.substring(colonIdx+1));
@@ -516,7 +518,13 @@ function formatTip(raw){
 }
 
 function cleanTags(raw){
-  return raw.split(',').map(function(t){ return t.trim().replace(/[,\-\s]+$/, '').replace(/^[,\-\s]+/, ''); }).filter(Boolean);
+  return raw.split(',').map(function(t){
+    return t.trim()
+      .replace(/[^\x20-\x7E]/g, '') // strip non-ASCII / special chars
+      .replace(/[,\-\s]+$/, '')      // strip trailing commas, dashes, spaces
+      .replace(/^[,\-\s]+/, '')      // strip leading commas, dashes, spaces
+      .trim();
+  }).filter(Boolean);
 }
 
 function buildNicheHTML(n){
