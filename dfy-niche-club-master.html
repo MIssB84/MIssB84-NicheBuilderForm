@@ -542,13 +542,12 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
 
   var validTitles = titles.filter(Boolean);
   var titlesHtml = '';
-  // No JS copy buttons — use click-to-select inputs (Systeme.io safe)
   validTitles.forEach(function(t, i){
     var isLast = i === validTitles.length - 1;
     titlesHtml += '<div style="'+(isLast?S.titleItemLast:S.titleItem)+'">'
       + '<div style="display:flex;align-items:flex-start;gap:10px;flex:1;">'
       + '<div style="'+S.titleDot+'"></div>'
-      + '<input readonly onclick="this.select();" value="'+esc(t)+'" style="'+S.copyInput+'">'
+      + '<p style="'+S.titleText+'">'+esc(t)+'</p>'
       + '</div>'
       + '</div>';
   });
@@ -577,7 +576,7 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
   if(note) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
   if(tipsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
   if(titlesHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
-  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><p style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;font-family:Jost,sans-serif;">Click to select all tags</p><input readonly onclick="this.select();" value="'+allTagsStr+'" style="'+S.copyInput+'"></div></div>';
+  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><p style="font-size:12px;color:#c4b0a8;font-family:Jost,sans-serif;margin-top:4px;">All tags: '+esc(allTagsStr)+'</p></div></div>';
   return html;
 }
 
@@ -603,8 +602,6 @@ function buildAINicheHTML(n){
     html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
     html += '<div style="'+S.promptBox+'">';
     html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
-    html += '<p style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(196,176,168,0.8);margin-bottom:6px;font-family:Jost,sans-serif;">Click to select prompt</p>';
-    html += '<textarea readonly onclick="this.select();" rows="3" style="'+S.copyTextarea+'">'+esc(prompt)+'</textarea>';
     html += '</div></div></div>';
   }
 
