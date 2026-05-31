@@ -94,9 +94,8 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .back-to-top-bar{max-width:760px;margin:1.5rem auto 0;text-align:right;}
 .back-to-top-bar a{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#dea193;text-decoration:none;background:#2a1f1c;padding:8px 18px;border-radius:30px;border:1.5px solid #dea193;}
 .back-to-top-bar a:hover{background:#dea193;color:#2a1f1c;}
-/* Char counter */
-.char-wrap{position:relative;}
-.char-count{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:600;color:#c4b0a8;pointer-events:none;}
+/* Char counter - below field */
+.char-count{font-size:10px;font-weight:600;color:#c4b0a8;text-align:right;display:block;margin-top:3px;}
 .char-count.over{color:#e07070;}
 /* Tag warning */
 .tag-warn{font-size:11px;color:#e07070;margin-top:4px;display:none;}
@@ -237,6 +236,7 @@ function syncNicheKeyword(introId){
   if(!n) return;
   var el = document.getElementById('n'+n+'-kw');
   if(el) el.value = document.getElementById(introId).value;
+  updateKwRef(n);
   updateReadyDot(n);
 }
 
@@ -310,10 +310,17 @@ function copyKwRef(n){
   document.body.removeChild(ta);
 }
 
-// Update kw ref display live
+// Update kw ref display - reads directly from intro menu field
+var nicheToIntro = {
+  1:'intro-n1', 2:'intro-n2', 3:'intro-n3', 4:'intro-n4',
+  5:'intro-n5', 6:'intro-n6', 7:'intro-n7', 'bonus':'intro-bonus'
+};
 function updateKwRef(n){
   var el = document.getElementById('kw-ref-val-'+n);
-  if(el) el.textContent = v('n'+n+'-kw') || '—';
+  if(!el) return;
+  var introId = nicheToIntro[n] || nicheToIntro[parseInt(n)];
+  var introEl = document.getElementById(introId);
+  el.textContent = (introEl && introEl.value) ? introEl.value : '—';
   updateReadyDot(n);
 }
 
@@ -342,7 +349,7 @@ function buildAllSections(){
     // Basics
     html += '<div class="card"><p class="card-title">'+label+' — Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(auto-filled from the menu above)</span></label>';
-    html += '<input class="fi" id="n'+n+'-kw" oninput="updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
+    html += '<input class="fi" id="n'+n+'-kw" oninput="syncNicheKeyword(\'intro-n'+n+'\');updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
     tabIdx++;
     html += '<div class="g2">';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" tabindex="'+tabIdx+'" placeholder="e.g. 572"></div>';
@@ -382,13 +389,13 @@ function buildAllSections(){
     html += '</div>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     // Title 1
-    html += '<div><label class="fl">Title 1</label><div class="char-wrap"><input class="fi" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div></div>';
+    html += '<div><label class="fl">Title 1</label><div class="char-wrap"><input class="fi" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div>';
     tabIdx++;
     // Title 2
-    html += '<div><label class="fl">Title 2</label><div class="char-wrap"><input class="fi" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div></div>';
+    html += '<div><label class="fl">Title 2</label><div class="char-wrap"><input class="fi" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div>';
     tabIdx++;
     // Title 3
-    html += '<div><label class="fl">Title 3</label><div class="char-wrap"><input class="fi" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div></div>';
+    html += '<div><label class="fl">Title 3</label><div class="char-wrap"><input class="fi" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
     tabIdx++;
     // Tags
     html += '<div><label class="fl">Tags (comma separated)</label>';
@@ -872,8 +879,12 @@ setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
 // INIT
 buildAllSections();
 loadData();
-// Initial sync of intro values to keyword fields
-Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+// Sync intro values to keyword fields and kw ref boxes
+Object.keys(introToNiche).forEach(function(introId){
+  syncNicheKeyword(introId);
+  var n = introToNiche[introId];
+  updateKwRef(n);
+});
 </script>
 </body>
 </html>
