@@ -681,11 +681,7 @@ function syncNicheKeyword(introId){
   if(!nicheNum) return;
   var kwEl = document.getElementById('n' + nicheNum + '-kw');
   if(!kwEl) return;
-  var introVal = document.getElementById(introId).value;
-  if(!kwEl.value || kwEl.value === kwEl.getAttribute('data-intro-val')){
-    kwEl.value = introVal;
-    kwEl.setAttribute('data-intro-val', introVal);
-  }
+  kwEl.value = document.getElementById(introId).value;
 }
 
 Object.keys(introToNiche).forEach(function(introId){
