@@ -137,7 +137,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <div class="sec-head"><div class="sec-line"></div><span class="sec-label">Section 1: Weekly Intro</span><div class="sec-line"></div></div>
 <div class="card">
   <p class="card-title">Week Info</p>
-  <p class="card-sub">Just the date — that's the only thing that changes every single week.</p>
+  <p class="card-sub">Just the date - that's the only thing that changes every single week.</p>
   <label class="fl" for="intro-date">Week Date</label>
   <input class="fi" id="intro-date" placeholder="e.g. Week of June 2, 2026">
 </div>
@@ -154,7 +154,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
     <div class="niche-row"><div class="niche-num">Niche 7</div><input class="fi" id="intro-n7" value="Frame TV Art"><div style="width:36px;"></div></div>
     <div style="height:1px;background:#ead9d5;width:376px;margin:4px 0;"></div>
     <div class="niche-row"><div class="bonus-num">Bonus</div><input class="fi" id="intro-bonus" value="Tumbler/Digital Invitation/Journal/Coloring Pages/Checklist"><button class="toggle-btn active" id="bonus-toggle">✕</button></div>
-    <p class="hint" id="bonus-hint" style="text-align:center;">Bonus is ON — click ✕ to hide it this week</p>
+    <p class="hint" id="bonus-hint" style="text-align:center;">Bonus is ON - click ✕ to hide it this week</p>
   </div>
 </div>
 
@@ -318,7 +318,7 @@ function imgField(id, placeholder, label){
     + '<label class="fl">' + label + '</label>'
     + '<input class="fi" id="' + id + '" placeholder="' + placeholder + '" oninput="updateThumb(\'' + id + '\')">'
     + '<img class="img-thumb" id="thumb-' + id + '">'
-    + '<span class="img-err" id="err-' + id + '">Image not found — check URL</span>'
+    + '<span class="img-err" id="err-' + id + '">Image not found - check URL</span>'
     + '</div>';
 }
 
@@ -342,8 +342,8 @@ function buildAISections(){
     html += '<div class="niche-section-body" id="section-body-'+n+'">';
 
     // Basics
-    html += '<div class="card"><p class="card-title">Niche '+n+' — Basics</p><p class="card-sub">Niche stats and info</p>';
-    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(the exact trending keyword — type your niche in front)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
+    html += '<div class="card"><p class="card-title">Niche '+n+' - Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(the exact trending keyword - type your niche in front)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
     html += '<div class="g2">';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" placeholder="e.g. 572"></div>';
     html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" placeholder="2.74"></div><div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" placeholder="7.50"></div></div>';
@@ -358,7 +358,7 @@ function buildAISections(){
     html += '</div>';
 
     // Tips
-    html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon — it will render bold in the output. Example: <strong>Pro Tip:</strong> then your tip text.</p>';
+    html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon - it will render bold in the output. Example: <strong>Pro Tip:</strong> then your tip text.</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div><label class="fl">Tip 1</label><input class="fi" id="n'+n+'-tip1" placeholder="Pro Tip: Switch up the color story"></div>';
     html += '<div><label class="fl">Tip 2</label><input class="fi" id="n'+n+'-tip2" placeholder="Color Story: Layer in a secondary prop"></div>';
@@ -378,11 +378,11 @@ function buildAISections(){
     html += '<div class="card"><p class="card-title">Prompt &amp; Notes</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div><label class="fl">AI Image Prompt</label><textarea class="fi" style="min-height:100px;" id="n'+n+'-prompt" placeholder="Your full AI image prompt goes here..."></textarea></div>';
-    html += '<div><label class="fl">Important Notes (one per line — leave blank if none)</label><textarea class="fi" id="n'+n+'-notes" placeholder="e.g. Do not use Silly Goose as it is trademarked"></textarea></div>';
+    html += '<div><label class="fl">Important Notes (one per line - leave blank if none)</label><textarea class="fi" id="n'+n+'-notes" placeholder="e.g. Do not use Silly Goose as it is trademarked"></textarea></div>';
     html += '</div></div>';
 
     // Styles Used
-    html += '<div class="card"><p class="card-title">Styles Used</p><p class="card-sub">Tool names are locked in — just enter the style for each one</p>';
+    html += '<div class="card"><p class="card-title">Styles Used</p><p class="card-sub">Tool names are locked in - just enter the style for each one</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div class="g2"><div class="tool-locked">Ideogram</div><input class="fi" id="n'+n+'-s-ideogram" placeholder="e.g. Auto"></div>';
     html += '<div class="g2"><div class="tool-locked">Kittl (Flux 1.1 Pro Ultra)</div><input class="fi" id="n'+n+'-s-kittl" placeholder="e.g. Cozy Support"></div>';
@@ -434,7 +434,7 @@ function buildDPSections(){
 
     html += '<div class="niche-section-body" id="section-body-'+sectionId+'">';
 
-    html += '<div class="card"><p class="card-title">'+label+' — Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="card"><p class="card-title">'+label+' - Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Dog Mom Checklist Printable"></div>';
     html += '<div class="g2">';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" placeholder="e.g. 572"></div>';
@@ -448,7 +448,7 @@ function buildDPSections(){
     html += imgField('n'+n+'-l3','https://i.etsystatic.com/...','Listing 3 Image URL');
     html += '</div>';
 
-    html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon — it will render bold in the output. Example: <strong>Pro Tip:</strong> then your tip text.</p>';
+    html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon - it will render bold in the output. Example: <strong>Pro Tip:</strong> then your tip text.</p>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     html += '<div><label class="fl">Tip 1</label><input class="fi" id="n'+n+'-tip1" placeholder="Pro Tip: Add a color variation"></div>';
     html += '<div><label class="fl">Tip 2</label><input class="fi" id="n'+n+'-tip2" placeholder="Bundle Idea: Pair with another printable"></div>';
@@ -487,7 +487,7 @@ function formatTip(raw){
   return esc(raw);
 }
 
-// SHARED OUTPUT STYLES — matches original working output exactly
+// SHARED OUTPUT STYLES - matches original working output exactly
 var S = {
   header:'background:#2a1f1c;padding:22px 32px;display:flex;align-items:center;gap:16px;border-bottom:3px solid #dea193;',
   badge:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#3d2e2a;border:1px solid #c4846e;padding:4px 12px;border-radius:20px;white-space:nowrap;font-family:Jost,sans-serif;',
@@ -580,10 +580,10 @@ function buildBaseHTML(anchorId, nicheNum, keyword, comp, price, note, l1, l2, l
 }
 
 function buildAINicheHTML(n){
-  var keyword = v('n'+n+'-kw')||'—';
-  var comp = v('n'+n+'-comp')||'—';
+  var keyword = v('n'+n+'-kw')||'-';
+  var comp = v('n'+n+'-comp')||'-';
   var plo = v('n'+n+'-plo'); var phi = v('n'+n+'-phi');
-  var price = (plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
+  var price = (plo&&phi)?':(plo?'$'+plo:(phi?'$'+phi:'-'));
   var note = v('n'+n+'-note');
   var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
   var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
@@ -591,9 +591,9 @@ function buildAINicheHTML(n){
   var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
   var prompt=v('n'+n+'-prompt');
   var notesArr=(v('n'+n+'-notes')||'').split('\n').map(function(t){return t.trim();}).filter(Boolean);
-  var sIdeo=v('n'+n+'-s-ideogram')||'—';
-  var sKittl=v('n'+n+'-s-kittl')||'—';
-  var sCanva=v('n'+n+'-s-canva')||'—';
+  var sIdeo=v('n'+n+'-s-ideogram')||'-';
+  var sKittl=v('n'+n+'-s-kittl')||'-';
+  var sCanva=v('n'+n+'-s-canva')||'-';
 
   var html = buildBaseHTML('niche-'+n, n, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
 
@@ -632,7 +632,7 @@ function buildAINicheHTML(n){
 
   html += '</div></div>';
   html += '</div>'; // close inner rounded card
-  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">↑ Back to Top</a></div>';
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
   html += '</div>'; // close dark outer wrapper
   return html;
 }
@@ -641,10 +641,10 @@ function buildDPNicheHTML(n){
   var isBonus = n === 'bonus';
   var nicheLabel = isBonus ? 'Bonus' : n;
   var anchorId = isBonus ? 'niche-bonus' : 'niche-'+n;
-  var keyword = v('n'+n+'-kw')||'—';
-  var comp = v('n'+n+'-comp')||'—';
+  var keyword = v('n'+n+'-kw')||'-';
+  var comp = v('n'+n+'-comp')||'-';
   var plo = v('n'+n+'-plo'); var phi = v('n'+n+'-phi');
-  var price = (plo&&phi)?'$'+plo+' \u2013 $'+phi:(plo?'$'+plo:(phi?'$'+phi:'—'));
+  var price = (plo&&phi)?'$'+plo+' - $'+phi:(plo?'$'+plo:(phi?'$'+phi:'-'));
   var note = v('n'+n+'-note');
   var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
   var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
@@ -654,7 +654,7 @@ function buildDPNicheHTML(n){
   var html = buildBaseHTML(anchorId, nicheLabel, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
   html += '</div></div>';
   html += '</div>'; // close inner rounded card
-  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">↑ Back to Top</a></div>';
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
   html += '</div>'; // close dark outer wrapper
   return html;
 }
@@ -692,7 +692,7 @@ function buildIntroHTML(){
     + '</div>'
     + '<div style="padding:29px 32px;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
     + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
-    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section &mdash; so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section, so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
     + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 19px;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
     + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
     + '</div>'
@@ -773,7 +773,7 @@ function copyAll(){
   ta.style.position='fixed'; ta.style.opacity='0';
   document.body.appendChild(ta); ta.select();
   try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
-  catch(e){ toast('Copy failed — try Ctrl+C'); }
+  catch(e){ toast('Copy failed - try Ctrl+C'); }
   document.body.removeChild(ta);
 }
 
@@ -828,7 +828,7 @@ function loadData(){
       bonusOn = false;
       document.getElementById('bonus-toggle').textContent = '+';
       document.getElementById('bonus-toggle').classList.remove('active');
-      document.getElementById('bonus-hint').textContent = 'Bonus is OFF — click + to include it this week';
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF - click + to include it this week';
     }
     setStatus('saved','Progress loaded');
     Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
@@ -860,7 +860,1201 @@ document.getElementById('bonus-toggle').addEventListener('click', function(){
   bonusOn = !bonusOn;
   this.textContent = bonusOn ? '✕' : '+';
   this.classList.toggle('active', bonusOn);
-  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON — click ✕ to hide it this week' : 'Bonus is OFF — click + to include it this week';
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON - click ✕ to hide it this week' : 'Bonus is OFF - click + to include it this week';
+  updateProgress();
+});
+
+// AUTO POPULATE KEYWORD FIELDS
+var introToNiche = {
+  'intro-n1': 1,
+  'intro-n2': 2,
+  'intro-n3': 3,
+  'intro-n5': 5,
+  'intro-n6': 6,
+  'intro-n7': 7
+};
+
+function syncNicheKeyword(introId){
+  var nicheNum = introToNiche[introId];
+  if(!nicheNum) return;
+  var kwEl = document.getElementById('n' + nicheNum + '-kw');
+  if(!kwEl) return;
+  var introVal = document.getElementById(introId).value;
+  if(!kwEl.value || kwEl.value === kwEl.getAttribute('data-intro-val')){
+    kwEl.value = introVal;
+    kwEl.setAttribute('data-intro-val', introVal);
+  }
+}
+
+Object.keys(introToNiche).forEach(function(introId){
+  var el = document.getElementById(introId);
+  if(el){
+    el.addEventListener('input', function(){ syncNicheKeyword(introId); });
+    el.addEventListener('change', function(){ syncNicheKeyword(introId); });
+  }
+});
+
+// AUTO SAVE
+var autoTimer;
+document.addEventListener('input', function(){
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+});
+
+window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
+
+// INIT
+buildAISections();
+buildDPSections();
+loadData();
+Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+</script>
+</body>
+</html>
++plo+' - :(plo?'$'+plo:(phi?'$'+phi:'-'));
+  var note = v('n'+n+'-note');
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+  var prompt=v('n'+n+'-prompt');
+  var notesArr=(v('n'+n+'-notes')||'').split('\n').map(function(t){return t.trim();}).filter(Boolean);
+  var sIdeo=v('n'+n+'-s-ideogram')||'-';
+  var sKittl=v('n'+n+'-s-kittl')||'-';
+  var sCanva=v('n'+n+'-s-canva')||'-';
+
+  var html = buildBaseHTML('niche-'+n, n, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+
+  if(prompt){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="'+S.promptBox+'">';
+    html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
+    html += '</div></div></div>';
+  }
+
+  if(notesArr.length){
+    var notesHtml=''; notesArr.forEach(function(n2){ notesHtml+='<div style="'+S.noteBox+'">'+esc(n2)+'</div>'; });
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
+  }
+
+  html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
+  html += '</div></div>';
+
+  var hasImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
+  if(hasImg){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
+    GEN_TOOLS.forEach(function(g){
+      var img = v('n'+n+'-img-'+g.id).trim();
+      if(!img) return;
+      html += '<div style="text-align:center;">';
+      html += '<img src="'+img+'" alt="'+esc(g.name)+'" style="width:100%;border-radius:8px;border:1px solid #ead9d5;display:block;margin-bottom:6px;">';
+      html += '<a href="'+g.url+'" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;text-decoration:none;font-family:Jost,sans-serif;">'+esc(g.name)+'</a>';
+      html += '</div>';
+    });
+    html += '</div></div></div>';
+  }
+
+  html += '</div></div>';
+  html += '</div>'; // close inner rounded card
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  html += '</div>'; // close dark outer wrapper
+  return html;
+}
+
+function buildDPNicheHTML(n){
+  var isBonus = n === 'bonus';
+  var nicheLabel = isBonus ? 'Bonus' : n;
+  var anchorId = isBonus ? 'niche-bonus' : 'niche-'+n;
+  var keyword = v('n'+n+'-kw')||'-';
+  var comp = v('n'+n+'-comp')||'-';
+  var plo = v('n'+n+'-plo'); var phi = v('n'+n+'-phi');
+  var price = (plo&&phi)?'$'+plo+' - $'+phi:(plo?'$'+plo:(phi?'$'+phi:'-'));
+  var note = v('n'+n+'-note');
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+
+  var html = buildBaseHTML(anchorId, nicheLabel, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+  html += '</div></div>';
+  html += '</div>'; // close inner rounded card
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  html += '</div>'; // close dark outer wrapper
+  return html;
+}
+
+function buildIntroHTML(){
+  var date = v('intro-date')||'DATE';
+  var niches = [
+    {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
+    {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
+    {num:'Niche 3',label:v('intro-n3'),anchor:'niche-3'},
+    {num:'Niche 4',label:v('intro-n4'),anchor:'niche-4'},
+    {num:'Niche 5',label:v('intro-n5'),anchor:'niche-5'},
+    {num:'Niche 6',label:v('intro-n6'),anchor:'niche-6'},
+    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'}
+  ];
+  var navHtml = '';
+  niches.forEach(function(n){
+    navHtml += '<a href="#'+n.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(n.num)+'</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(n.label)+'</span>'
+      + '</a>';
+  });
+  if(bonusOn){
+    var bonusVal = v('intro-bonus').trim();
+    if(bonusVal) navHtml += '<a href="#niche-bonus" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
+      + '</a>';
+  }
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+    + '<div style="background:#2a1f1c;padding:32px 32px 24px;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 10px;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:32px;font-weight:700;color:#f5eddf;margin:0 0 6px;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
+    + '</div>'
+    + '<div style="padding:29px 32px;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section, so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 19px;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
+    + '</div>'
+    + '<div style="padding:24px 32px 29px;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 16px;text-align:center;">Jump to a Niche</p>'
+    + navHtml
+    + '</div></div>';
+}
+
+function previewNiche(n, isDP){
+  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
+  var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
+  document.getElementById('modal-title').textContent = label + ' Preview';
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+
+function generateAll(){
+  var parts = [];
+  var niches = [];
+
+  var introPart = buildIntroHTML();
+  parts.push(introPart);
+  niches.push({label:'Intro', html: introPart});
+
+  AI_NICHES.forEach(function(niche){
+    var h = buildAINicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label:'Niche '+niche.n, html: h});
+  });
+  DP_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    var h = buildDPNicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label: niche.n === 'bonus' ? 'Bonus' : 'Niche '+niche.n, html: h});
+  });
+
+  var combined = parts.join('\n');
+  document.getElementById('all-code').value = combined;
+  document.getElementById('all-prev').innerHTML = combined;
+
+  // Build per-niche copy buttons
+  var btnWrap = document.getElementById('per-niche-btns');
+  btnWrap.innerHTML = '';
+  niches.forEach(function(niche, idx){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.style.cssText = 'font-size:11px;padding:6px 14px;margin:0;';
+    btn.textContent = niche.label;
+    btn.setAttribute('data-idx', idx);
+    btn.addEventListener('click', function(){
+      var orig = btn.textContent;
+      var ta = document.createElement('textarea');
+      ta.value = niche.html;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
+      catch(e){ toast('Copy failed'); }
+      document.body.removeChild(ta);
+    });
+    btnWrap.appendChild(btn);
+  });
+
+  document.getElementById('out-all').style.display = 'block';
+  document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('all-code').value;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
+  catch(e){ toast('Copy failed - try Ctrl+C'); }
+  document.body.removeChild(ta);
+}
+
+// SAVE / LOAD
+function getAllFieldIds(){
+  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
+  AI_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
+  });
+  DP_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
+  });
+  return ids;
+}
+
+function saveData(){
+  var data = {};
+  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  data['bonus-on'] = bonusOn ? '1' : '0';
+  data['completed'] = JSON.stringify(completedNiches);
+  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved'); toast('Progress saved!'); }
+  catch(e){ toast('Could not save'); }
+}
+
+function loadData(){
+  try{
+    var raw = localStorage.getItem(SK);
+    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    getAllFieldIds().forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && data[id] !== undefined) el.value = data[id];
+    });
+    if(data['completed']){
+      try{
+        completedNiches = JSON.parse(data['completed']);
+        Object.keys(completedNiches).forEach(function(key){
+          if(completedNiches[key]){
+            var n = key.replace('n','');
+            var btn = document.getElementById('complete-btn-'+n);
+            var badge = document.getElementById('complete-badge-'+n);
+            if(btn){ btn.textContent='✓ Complete'; btn.classList.add('done'); }
+            if(badge) badge.classList.add('show');
+          }
+        });
+      }catch(e){}
+    }
+    if(data['bonus-on'] === '0'){
+      bonusOn = false;
+      document.getElementById('bonus-toggle').textContent = '+';
+      document.getElementById('bonus-toggle').classList.remove('active');
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF - click + to include it this week';
+    }
+    setStatus('saved','Progress loaded');
+    Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+    getAllFieldIds().forEach(function(id){
+      if(id.indexOf('-img-') > -1 || id.indexOf('-l1') > -1 || id.indexOf('-l2') > -1 || id.indexOf('-l3') > -1){
+        var el = document.getElementById(id);
+        if(el && el.value.trim()) updateThumb(id);
+      }
+    });
+    updateProgress();
+  }catch(e){ setStatus('unsaved','Could not load'); }
+}
+
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
+  document.querySelectorAll('.img-err').forEach(function(e){ e.style.display='none'; });
+  completedNiches = {};
+  document.querySelectorAll('.nab-complete').forEach(function(b){ b.textContent='Mark Complete'; b.classList.remove('done'); });
+  document.querySelectorAll('.complete-badge').forEach(function(b){ b.classList.remove('show'); });
+  localStorage.removeItem(SK);
+  document.getElementById('out-all').style.display='none';
+  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.'); updateProgress();
+}
+
+// BONUS TOGGLE
+document.getElementById('bonus-toggle').addEventListener('click', function(){
+  bonusOn = !bonusOn;
+  this.textContent = bonusOn ? '✕' : '+';
+  this.classList.toggle('active', bonusOn);
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON - click ✕ to hide it this week' : 'Bonus is OFF - click + to include it this week';
+  updateProgress();
+});
+
+// AUTO POPULATE KEYWORD FIELDS
+var introToNiche = {
+  'intro-n1': 1,
+  'intro-n2': 2,
+  'intro-n3': 3,
+  'intro-n5': 5,
+  'intro-n6': 6,
+  'intro-n7': 7
+};
+
+function syncNicheKeyword(introId){
+  var nicheNum = introToNiche[introId];
+  if(!nicheNum) return;
+  var kwEl = document.getElementById('n' + nicheNum + '-kw');
+  if(!kwEl) return;
+  var introVal = document.getElementById(introId).value;
+  if(!kwEl.value || kwEl.value === kwEl.getAttribute('data-intro-val')){
+    kwEl.value = introVal;
+    kwEl.setAttribute('data-intro-val', introVal);
+  }
+}
+
+Object.keys(introToNiche).forEach(function(introId){
+  var el = document.getElementById(introId);
+  if(el){
+    el.addEventListener('input', function(){ syncNicheKeyword(introId); });
+    el.addEventListener('change', function(){ syncNicheKeyword(introId); });
+  }
+});
+
+// AUTO SAVE
+var autoTimer;
+document.addEventListener('input', function(){
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+});
+
+window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
+
+// INIT
+buildAISections();
+buildDPSections();
+loadData();
+Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+</script>
+</body>
+</html>
++phi:(plo?'$'+plo:(phi?'$'+phi:'-'));
+  var note = v('n'+n+'-note');
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+  var prompt=v('n'+n+'-prompt');
+  var notesArr=(v('n'+n+'-notes')||'').split('\n').map(function(t){return t.trim();}).filter(Boolean);
+  var sIdeo=v('n'+n+'-s-ideogram')||'-';
+  var sKittl=v('n'+n+'-s-kittl')||'-';
+  var sCanva=v('n'+n+'-s-canva')||'-';
+
+  var html = buildBaseHTML('niche-'+n, n, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+
+  if(prompt){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="'+S.promptBox+'">';
+    html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
+    html += '</div></div></div>';
+  }
+
+  if(notesArr.length){
+    var notesHtml=''; notesArr.forEach(function(n2){ notesHtml+='<div style="'+S.noteBox+'">'+esc(n2)+'</div>'; });
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
+  }
+
+  html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
+  html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
+  html += '</div></div>';
+
+  var hasImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
+  if(hasImg){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
+    GEN_TOOLS.forEach(function(g){
+      var img = v('n'+n+'-img-'+g.id).trim();
+      if(!img) return;
+      html += '<div style="text-align:center;">';
+      html += '<img src="'+img+'" alt="'+esc(g.name)+'" style="width:100%;border-radius:8px;border:1px solid #ead9d5;display:block;margin-bottom:6px;">';
+      html += '<a href="'+g.url+'" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;text-decoration:none;font-family:Jost,sans-serif;">'+esc(g.name)+'</a>';
+      html += '</div>';
+    });
+    html += '</div></div></div>';
+  }
+
+  html += '</div></div>';
+  html += '</div>'; // close inner rounded card
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  html += '</div>'; // close dark outer wrapper
+  return html;
+}
+
+function buildDPNicheHTML(n){
+  var isBonus = n === 'bonus';
+  var nicheLabel = isBonus ? 'Bonus' : n;
+  var anchorId = isBonus ? 'niche-bonus' : 'niche-'+n;
+  var keyword = v('n'+n+'-kw')||'-';
+  var comp = v('n'+n+'-comp')||'-';
+  var plo = v('n'+n+'-plo'); var phi = v('n'+n+'-phi');
+  var price = (plo&&phi)?':(plo?'$'+plo:(phi?'$'+phi:'-'));
+  var note = v('n'+n+'-note');
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+
+  var html = buildBaseHTML(anchorId, nicheLabel, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+  html += '</div></div>';
+  html += '</div>'; // close inner rounded card
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  html += '</div>'; // close dark outer wrapper
+  return html;
+}
+
+function buildIntroHTML(){
+  var date = v('intro-date')||'DATE';
+  var niches = [
+    {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
+    {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
+    {num:'Niche 3',label:v('intro-n3'),anchor:'niche-3'},
+    {num:'Niche 4',label:v('intro-n4'),anchor:'niche-4'},
+    {num:'Niche 5',label:v('intro-n5'),anchor:'niche-5'},
+    {num:'Niche 6',label:v('intro-n6'),anchor:'niche-6'},
+    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'}
+  ];
+  var navHtml = '';
+  niches.forEach(function(n){
+    navHtml += '<a href="#'+n.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(n.num)+'</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(n.label)+'</span>'
+      + '</a>';
+  });
+  if(bonusOn){
+    var bonusVal = v('intro-bonus').trim();
+    if(bonusVal) navHtml += '<a href="#niche-bonus" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
+      + '</a>';
+  }
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+    + '<div style="background:#2a1f1c;padding:32px 32px 24px;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 10px;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:32px;font-weight:700;color:#f5eddf;margin:0 0 6px;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
+    + '</div>'
+    + '<div style="padding:29px 32px;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section, so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 19px;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
+    + '</div>'
+    + '<div style="padding:24px 32px 29px;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 16px;text-align:center;">Jump to a Niche</p>'
+    + navHtml
+    + '</div></div>';
+}
+
+function previewNiche(n, isDP){
+  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
+  var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
+  document.getElementById('modal-title').textContent = label + ' Preview';
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+
+function generateAll(){
+  var parts = [];
+  var niches = [];
+
+  var introPart = buildIntroHTML();
+  parts.push(introPart);
+  niches.push({label:'Intro', html: introPart});
+
+  AI_NICHES.forEach(function(niche){
+    var h = buildAINicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label:'Niche '+niche.n, html: h});
+  });
+  DP_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    var h = buildDPNicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label: niche.n === 'bonus' ? 'Bonus' : 'Niche '+niche.n, html: h});
+  });
+
+  var combined = parts.join('\n');
+  document.getElementById('all-code').value = combined;
+  document.getElementById('all-prev').innerHTML = combined;
+
+  // Build per-niche copy buttons
+  var btnWrap = document.getElementById('per-niche-btns');
+  btnWrap.innerHTML = '';
+  niches.forEach(function(niche, idx){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.style.cssText = 'font-size:11px;padding:6px 14px;margin:0;';
+    btn.textContent = niche.label;
+    btn.setAttribute('data-idx', idx);
+    btn.addEventListener('click', function(){
+      var orig = btn.textContent;
+      var ta = document.createElement('textarea');
+      ta.value = niche.html;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
+      catch(e){ toast('Copy failed'); }
+      document.body.removeChild(ta);
+    });
+    btnWrap.appendChild(btn);
+  });
+
+  document.getElementById('out-all').style.display = 'block';
+  document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('all-code').value;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
+  catch(e){ toast('Copy failed - try Ctrl+C'); }
+  document.body.removeChild(ta);
+}
+
+// SAVE / LOAD
+function getAllFieldIds(){
+  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
+  AI_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
+  });
+  DP_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
+  });
+  return ids;
+}
+
+function saveData(){
+  var data = {};
+  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  data['bonus-on'] = bonusOn ? '1' : '0';
+  data['completed'] = JSON.stringify(completedNiches);
+  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved'); toast('Progress saved!'); }
+  catch(e){ toast('Could not save'); }
+}
+
+function loadData(){
+  try{
+    var raw = localStorage.getItem(SK);
+    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    getAllFieldIds().forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && data[id] !== undefined) el.value = data[id];
+    });
+    if(data['completed']){
+      try{
+        completedNiches = JSON.parse(data['completed']);
+        Object.keys(completedNiches).forEach(function(key){
+          if(completedNiches[key]){
+            var n = key.replace('n','');
+            var btn = document.getElementById('complete-btn-'+n);
+            var badge = document.getElementById('complete-badge-'+n);
+            if(btn){ btn.textContent='✓ Complete'; btn.classList.add('done'); }
+            if(badge) badge.classList.add('show');
+          }
+        });
+      }catch(e){}
+    }
+    if(data['bonus-on'] === '0'){
+      bonusOn = false;
+      document.getElementById('bonus-toggle').textContent = '+';
+      document.getElementById('bonus-toggle').classList.remove('active');
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF - click + to include it this week';
+    }
+    setStatus('saved','Progress loaded');
+    Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+    getAllFieldIds().forEach(function(id){
+      if(id.indexOf('-img-') > -1 || id.indexOf('-l1') > -1 || id.indexOf('-l2') > -1 || id.indexOf('-l3') > -1){
+        var el = document.getElementById(id);
+        if(el && el.value.trim()) updateThumb(id);
+      }
+    });
+    updateProgress();
+  }catch(e){ setStatus('unsaved','Could not load'); }
+}
+
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
+  document.querySelectorAll('.img-err').forEach(function(e){ e.style.display='none'; });
+  completedNiches = {};
+  document.querySelectorAll('.nab-complete').forEach(function(b){ b.textContent='Mark Complete'; b.classList.remove('done'); });
+  document.querySelectorAll('.complete-badge').forEach(function(b){ b.classList.remove('show'); });
+  localStorage.removeItem(SK);
+  document.getElementById('out-all').style.display='none';
+  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.'); updateProgress();
+}
+
+// BONUS TOGGLE
+document.getElementById('bonus-toggle').addEventListener('click', function(){
+  bonusOn = !bonusOn;
+  this.textContent = bonusOn ? '✕' : '+';
+  this.classList.toggle('active', bonusOn);
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON - click ✕ to hide it this week' : 'Bonus is OFF - click + to include it this week';
+  updateProgress();
+});
+
+// AUTO POPULATE KEYWORD FIELDS
+var introToNiche = {
+  'intro-n1': 1,
+  'intro-n2': 2,
+  'intro-n3': 3,
+  'intro-n5': 5,
+  'intro-n6': 6,
+  'intro-n7': 7
+};
+
+function syncNicheKeyword(introId){
+  var nicheNum = introToNiche[introId];
+  if(!nicheNum) return;
+  var kwEl = document.getElementById('n' + nicheNum + '-kw');
+  if(!kwEl) return;
+  var introVal = document.getElementById(introId).value;
+  if(!kwEl.value || kwEl.value === kwEl.getAttribute('data-intro-val')){
+    kwEl.value = introVal;
+    kwEl.setAttribute('data-intro-val', introVal);
+  }
+}
+
+Object.keys(introToNiche).forEach(function(introId){
+  var el = document.getElementById(introId);
+  if(el){
+    el.addEventListener('input', function(){ syncNicheKeyword(introId); });
+    el.addEventListener('change', function(){ syncNicheKeyword(introId); });
+  }
+});
+
+// AUTO SAVE
+var autoTimer;
+document.addEventListener('input', function(){
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+});
+
+window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
+
+// INIT
+buildAISections();
+buildDPSections();
+loadData();
+Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+</script>
+</body>
+</html>
++plo+' - :(plo?'$'+plo:(phi?'$'+phi:'-'));
+  var note = v('n'+n+'-note');
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+
+  var html = buildBaseHTML(anchorId, nicheLabel, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+  html += '</div></div>';
+  html += '</div>'; // close inner rounded card
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  html += '</div>'; // close dark outer wrapper
+  return html;
+}
+
+function buildIntroHTML(){
+  var date = v('intro-date')||'DATE';
+  var niches = [
+    {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
+    {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
+    {num:'Niche 3',label:v('intro-n3'),anchor:'niche-3'},
+    {num:'Niche 4',label:v('intro-n4'),anchor:'niche-4'},
+    {num:'Niche 5',label:v('intro-n5'),anchor:'niche-5'},
+    {num:'Niche 6',label:v('intro-n6'),anchor:'niche-6'},
+    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'}
+  ];
+  var navHtml = '';
+  niches.forEach(function(n){
+    navHtml += '<a href="#'+n.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(n.num)+'</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(n.label)+'</span>'
+      + '</a>';
+  });
+  if(bonusOn){
+    var bonusVal = v('intro-bonus').trim();
+    if(bonusVal) navHtml += '<a href="#niche-bonus" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
+      + '</a>';
+  }
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+    + '<div style="background:#2a1f1c;padding:32px 32px 24px;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 10px;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:32px;font-weight:700;color:#f5eddf;margin:0 0 6px;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
+    + '</div>'
+    + '<div style="padding:29px 32px;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section, so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 19px;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
+    + '</div>'
+    + '<div style="padding:24px 32px 29px;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 16px;text-align:center;">Jump to a Niche</p>'
+    + navHtml
+    + '</div></div>';
+}
+
+function previewNiche(n, isDP){
+  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
+  var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
+  document.getElementById('modal-title').textContent = label + ' Preview';
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+
+function generateAll(){
+  var parts = [];
+  var niches = [];
+
+  var introPart = buildIntroHTML();
+  parts.push(introPart);
+  niches.push({label:'Intro', html: introPart});
+
+  AI_NICHES.forEach(function(niche){
+    var h = buildAINicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label:'Niche '+niche.n, html: h});
+  });
+  DP_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    var h = buildDPNicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label: niche.n === 'bonus' ? 'Bonus' : 'Niche '+niche.n, html: h});
+  });
+
+  var combined = parts.join('\n');
+  document.getElementById('all-code').value = combined;
+  document.getElementById('all-prev').innerHTML = combined;
+
+  // Build per-niche copy buttons
+  var btnWrap = document.getElementById('per-niche-btns');
+  btnWrap.innerHTML = '';
+  niches.forEach(function(niche, idx){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.style.cssText = 'font-size:11px;padding:6px 14px;margin:0;';
+    btn.textContent = niche.label;
+    btn.setAttribute('data-idx', idx);
+    btn.addEventListener('click', function(){
+      var orig = btn.textContent;
+      var ta = document.createElement('textarea');
+      ta.value = niche.html;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
+      catch(e){ toast('Copy failed'); }
+      document.body.removeChild(ta);
+    });
+    btnWrap.appendChild(btn);
+  });
+
+  document.getElementById('out-all').style.display = 'block';
+  document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('all-code').value;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
+  catch(e){ toast('Copy failed - try Ctrl+C'); }
+  document.body.removeChild(ta);
+}
+
+// SAVE / LOAD
+function getAllFieldIds(){
+  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
+  AI_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
+  });
+  DP_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
+  });
+  return ids;
+}
+
+function saveData(){
+  var data = {};
+  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  data['bonus-on'] = bonusOn ? '1' : '0';
+  data['completed'] = JSON.stringify(completedNiches);
+  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved'); toast('Progress saved!'); }
+  catch(e){ toast('Could not save'); }
+}
+
+function loadData(){
+  try{
+    var raw = localStorage.getItem(SK);
+    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    getAllFieldIds().forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && data[id] !== undefined) el.value = data[id];
+    });
+    if(data['completed']){
+      try{
+        completedNiches = JSON.parse(data['completed']);
+        Object.keys(completedNiches).forEach(function(key){
+          if(completedNiches[key]){
+            var n = key.replace('n','');
+            var btn = document.getElementById('complete-btn-'+n);
+            var badge = document.getElementById('complete-badge-'+n);
+            if(btn){ btn.textContent='✓ Complete'; btn.classList.add('done'); }
+            if(badge) badge.classList.add('show');
+          }
+        });
+      }catch(e){}
+    }
+    if(data['bonus-on'] === '0'){
+      bonusOn = false;
+      document.getElementById('bonus-toggle').textContent = '+';
+      document.getElementById('bonus-toggle').classList.remove('active');
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF - click + to include it this week';
+    }
+    setStatus('saved','Progress loaded');
+    Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+    getAllFieldIds().forEach(function(id){
+      if(id.indexOf('-img-') > -1 || id.indexOf('-l1') > -1 || id.indexOf('-l2') > -1 || id.indexOf('-l3') > -1){
+        var el = document.getElementById(id);
+        if(el && el.value.trim()) updateThumb(id);
+      }
+    });
+    updateProgress();
+  }catch(e){ setStatus('unsaved','Could not load'); }
+}
+
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
+  document.querySelectorAll('.img-err').forEach(function(e){ e.style.display='none'; });
+  completedNiches = {};
+  document.querySelectorAll('.nab-complete').forEach(function(b){ b.textContent='Mark Complete'; b.classList.remove('done'); });
+  document.querySelectorAll('.complete-badge').forEach(function(b){ b.classList.remove('show'); });
+  localStorage.removeItem(SK);
+  document.getElementById('out-all').style.display='none';
+  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.'); updateProgress();
+}
+
+// BONUS TOGGLE
+document.getElementById('bonus-toggle').addEventListener('click', function(){
+  bonusOn = !bonusOn;
+  this.textContent = bonusOn ? '✕' : '+';
+  this.classList.toggle('active', bonusOn);
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON - click ✕ to hide it this week' : 'Bonus is OFF - click + to include it this week';
+  updateProgress();
+});
+
+// AUTO POPULATE KEYWORD FIELDS
+var introToNiche = {
+  'intro-n1': 1,
+  'intro-n2': 2,
+  'intro-n3': 3,
+  'intro-n5': 5,
+  'intro-n6': 6,
+  'intro-n7': 7
+};
+
+function syncNicheKeyword(introId){
+  var nicheNum = introToNiche[introId];
+  if(!nicheNum) return;
+  var kwEl = document.getElementById('n' + nicheNum + '-kw');
+  if(!kwEl) return;
+  var introVal = document.getElementById(introId).value;
+  if(!kwEl.value || kwEl.value === kwEl.getAttribute('data-intro-val')){
+    kwEl.value = introVal;
+    kwEl.setAttribute('data-intro-val', introVal);
+  }
+}
+
+Object.keys(introToNiche).forEach(function(introId){
+  var el = document.getElementById(introId);
+  if(el){
+    el.addEventListener('input', function(){ syncNicheKeyword(introId); });
+    el.addEventListener('change', function(){ syncNicheKeyword(introId); });
+  }
+});
+
+// AUTO SAVE
+var autoTimer;
+document.addEventListener('input', function(){
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+});
+
+window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
+
+// INIT
+buildAISections();
+buildDPSections();
+loadData();
+Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+</script>
+</body>
+</html>
++phi:(plo?'$'+plo:(phi?'$'+phi:'-'));
+  var note = v('n'+n+'-note');
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1'),v('n'+n+'-tip2'),v('n'+n+'-tip3')];
+  var titles=[v('n'+n+'-t1'),v('n'+n+'-t2'),v('n'+n+'-t3')];
+  var tags=(v('n'+n+'-tags')||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+
+  var html = buildBaseHTML(anchorId, nicheLabel, keyword, comp, price, note, l1, l2, l3, tips, titles, tags);
+  html += '</div></div>';
+  html += '</div>'; // close inner rounded card
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  html += '</div>'; // close dark outer wrapper
+  return html;
+}
+
+function buildIntroHTML(){
+  var date = v('intro-date')||'DATE';
+  var niches = [
+    {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
+    {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
+    {num:'Niche 3',label:v('intro-n3'),anchor:'niche-3'},
+    {num:'Niche 4',label:v('intro-n4'),anchor:'niche-4'},
+    {num:'Niche 5',label:v('intro-n5'),anchor:'niche-5'},
+    {num:'Niche 6',label:v('intro-n6'),anchor:'niche-6'},
+    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'}
+  ];
+  var navHtml = '';
+  niches.forEach(function(n){
+    navHtml += '<a href="#'+n.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(n.num)+'</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(n.label)+'</span>'
+      + '</a>';
+  });
+  if(bonusOn){
+    var bonusVal = v('intro-bonus').trim();
+    if(bonusVal) navHtml += '<a href="#niche-bonus" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
+      + '</a>';
+  }
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+    + '<div style="background:#2a1f1c;padding:32px 32px 24px;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 10px;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:32px;font-weight:700;color:#f5eddf;margin:0 0 6px;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
+    + '</div>'
+    + '<div style="padding:29px 32px;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 16px;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section, so you can move fast <em>and</em> smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 19px;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
+    + '</div>'
+    + '<div style="padding:24px 32px 29px;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 16px;text-align:center;">Jump to a Niche</p>'
+    + navHtml
+    + '</div></div>';
+}
+
+function previewNiche(n, isDP){
+  var html = isDP ? buildDPNicheHTML(n) : buildAINicheHTML(n);
+  var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
+  document.getElementById('modal-title').textContent = label + ' Preview';
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+
+function generateAll(){
+  var parts = [];
+  var niches = [];
+
+  var introPart = buildIntroHTML();
+  parts.push(introPart);
+  niches.push({label:'Intro', html: introPart});
+
+  AI_NICHES.forEach(function(niche){
+    var h = buildAINicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label:'Niche '+niche.n, html: h});
+  });
+  DP_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    var h = buildDPNicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label: niche.n === 'bonus' ? 'Bonus' : 'Niche '+niche.n, html: h});
+  });
+
+  var combined = parts.join('\n');
+  document.getElementById('all-code').value = combined;
+  document.getElementById('all-prev').innerHTML = combined;
+
+  // Build per-niche copy buttons
+  var btnWrap = document.getElementById('per-niche-btns');
+  btnWrap.innerHTML = '';
+  niches.forEach(function(niche, idx){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.style.cssText = 'font-size:11px;padding:6px 14px;margin:0;';
+    btn.textContent = niche.label;
+    btn.setAttribute('data-idx', idx);
+    btn.addEventListener('click', function(){
+      var orig = btn.textContent;
+      var ta = document.createElement('textarea');
+      ta.value = niche.html;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
+      catch(e){ toast('Copy failed'); }
+      document.body.removeChild(ta);
+    });
+    btnWrap.appendChild(btn);
+  });
+
+  document.getElementById('out-all').style.display = 'block';
+  document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('all-code').value;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
+  catch(e){ toast('Copy failed - try Ctrl+C'); }
+  document.body.removeChild(ta);
+}
+
+// SAVE / LOAD
+function getAllFieldIds(){
+  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
+  AI_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags','n'+n+'-prompt','n'+n+'-notes','n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
+  });
+  DP_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note','n'+n+'-l1','n'+n+'-l2','n'+n+'-l3','n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3','n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags']);
+  });
+  return ids;
+}
+
+function saveData(){
+  var data = {};
+  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  data['bonus-on'] = bonusOn ? '1' : '0';
+  data['completed'] = JSON.stringify(completedNiches);
+  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved'); toast('Progress saved!'); }
+  catch(e){ toast('Could not save'); }
+}
+
+function loadData(){
+  try{
+    var raw = localStorage.getItem(SK);
+    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    getAllFieldIds().forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && data[id] !== undefined) el.value = data[id];
+    });
+    if(data['completed']){
+      try{
+        completedNiches = JSON.parse(data['completed']);
+        Object.keys(completedNiches).forEach(function(key){
+          if(completedNiches[key]){
+            var n = key.replace('n','');
+            var btn = document.getElementById('complete-btn-'+n);
+            var badge = document.getElementById('complete-badge-'+n);
+            if(btn){ btn.textContent='✓ Complete'; btn.classList.add('done'); }
+            if(badge) badge.classList.add('show');
+          }
+        });
+      }catch(e){}
+    }
+    if(data['bonus-on'] === '0'){
+      bonusOn = false;
+      document.getElementById('bonus-toggle').textContent = '+';
+      document.getElementById('bonus-toggle').classList.remove('active');
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF - click + to include it this week';
+    }
+    setStatus('saved','Progress loaded');
+    Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+    getAllFieldIds().forEach(function(id){
+      if(id.indexOf('-img-') > -1 || id.indexOf('-l1') > -1 || id.indexOf('-l2') > -1 || id.indexOf('-l3') > -1){
+        var el = document.getElementById(id);
+        if(el && el.value.trim()) updateThumb(id);
+      }
+    });
+    updateProgress();
+  }catch(e){ setStatus('unsaved','Could not load'); }
+}
+
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
+  document.querySelectorAll('.img-err').forEach(function(e){ e.style.display='none'; });
+  completedNiches = {};
+  document.querySelectorAll('.nab-complete').forEach(function(b){ b.textContent='Mark Complete'; b.classList.remove('done'); });
+  document.querySelectorAll('.complete-badge').forEach(function(b){ b.classList.remove('show'); });
+  localStorage.removeItem(SK);
+  document.getElementById('out-all').style.display='none';
+  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.'); updateProgress();
+}
+
+// BONUS TOGGLE
+document.getElementById('bonus-toggle').addEventListener('click', function(){
+  bonusOn = !bonusOn;
+  this.textContent = bonusOn ? '✕' : '+';
+  this.classList.toggle('active', bonusOn);
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON - click ✕ to hide it this week' : 'Bonus is OFF - click + to include it this week';
   updateProgress();
 });
 
