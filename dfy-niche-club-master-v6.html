@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Niche Club Master Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--db:#2a1f1c;--cream:#f5eddf;--gold:#c9a96e;--rose:#dea193;--border:#ead9d5;--light:#fdf7f2;--mid:#5a4a45;--muted:#c4b0a8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 6rem;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:#c4b0a8;}
+.sec-line{flex:1;height:1px;background:#ead9d5;}
+.sec-label{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#2a1f1c;white-space:nowrap;padding:0 4px;}
+.sec-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:6px;}
+.tag-ai{background:#2a1f1c;color:#dea193;}
+.tag-dp{background:#dea193;color:#fff;}
+.card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.2rem;max-width:760px;margin-left:auto;margin-right:auto;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#2a1f1c;margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
+.fl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;}
+.fl-note{font-weight:400;text-transform:none;letter-spacing:0;color:#c4b0a8;font-size:11px;}
+.fi{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;}
+.fi:focus{border-color:#dea193;}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.full{grid-column:1/-1;}
+.niche-row{display:grid;grid-template-columns:80px 1fr 36px;gap:8px;align-items:center;margin-bottom:8px;}
+.niche-num{background:#2a1f1c;color:#dea193;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;}
+.bonus-num{background:#dea193;color:#2a1f1c;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:9px 8px;border-radius:8px;text-align:center;}
+.toggle-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:8px;width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:#c4b0a8;}
+.toggle-btn.active{border-color:#dea193;color:#dea193;}
+.hint{font-size:11px;color:#c4b0a8;margin-top:6px;font-style:italic;}
+.img-field-wrap{margin-bottom:10px;}
+.img-thumb{width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
+.img-thumb.show{display:inline-block;}
+.img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+.gen-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.gen-slot{display:flex;flex-direction:column;gap:4px;}
+.gen-name{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;}
+.tool-locked{background:#2a1f1c;color:#f5eddf;font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;}
+.preview-btn{display:block;width:100%;max-width:760px;margin:0.5rem auto 1rem;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#dea193;border:2px solid #dea193;padding:12px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
+.preview-btn:hover{background:#dea193;color:#2a1f1c;}
+.gen-all-btn{display:block;width:100%;max-width:760px;margin:2rem auto 1rem;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;border:2px solid #dea193;padding:15px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
+.gen-all-btn:hover{background:#dea193;color:#2a1f1c;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;z-index:100;}
+.save-status{font-size:12px;color:#c4b0a8;display:flex;align-items:center;gap:6px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:#c4b0a8;}
+.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
+.sbtns{display:flex;gap:10px;}
+.sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:9px 20px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all 0.2s;}
+.sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}
+.sbtn-save:hover{background:#dea193;color:#2a1f1c;}
+.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
+.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+.out-wrap{display:none;max-width:760px;margin:0 auto 2rem;}
+.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1rem;}
+.out-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.out-head-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.copy-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:8px 22px;border-radius:30px;cursor:pointer;}
+.copy-btn:hover{background:#bb7d72;color:#fff;}
+.out-prev{padding:1.25rem;}
+.back-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;display:block;margin:0 auto 3rem;}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(42,31,28,0.88);z-index:200;overflow-y:auto;padding:2rem 1rem;}
+.modal-inner{background:#fff;border-radius:14px;max-width:760px;margin:0 auto;overflow:hidden;}
+.modal-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.modal-close{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(222,161,147,0.4);color:#dea193;padding:6px 16px;border-radius:20px;cursor:pointer;}
+.modal-close:hover{background:#dea193;color:#2a1f1c;}
+.modal-body{padding:1.25rem;}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+/* Progress bar */
+.progress-wrap{max-width:760px;margin:0 auto 1.5rem;background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1rem 1.25rem;}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.progress-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;}
+.progress-count{font-size:13px;font-weight:700;color:#2a1f1c;}
+.progress-track{background:#f0e8df;border-radius:30px;height:10px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:30px;background:linear-gradient(90deg,#dea193,#c9a96e);transition:width 0.4s ease;width:0%;}
+/* Collapsible sections */
+.sec-head-btn{max-width:760px;margin:2.5rem auto 0;display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;}
+.sec-head-btn:hover .sec-label{color:#dea193;}
+.sec-collapse-icon{font-size:11px;color:#c4b0a8;transition:transform 0.2s;flex-shrink:0;}
+.sec-body{max-width:760px;margin:0 auto;}
+.sec-body.collapsed{display:none;}
+.sec-done-badge{display:none;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:#7a9e7e;color:#fff;padding:3px 10px;border-radius:20px;}
+.sec-done-badge.show{display:inline-block;}
+/* Field ready dot */
+.sec-ready-dot{width:8px;height:8px;border-radius:50%;background:#c4b0a8;display:inline-block;margin-left:4px;transition:background 0.3s;}
+.sec-ready-dot.ready{background:#7a9e7e;}
+/* Back to top */
+.back-to-top-bar{max-width:760px;margin:1.5rem auto 0;text-align:right;}
+.back-to-top-bar a{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#dea193;text-decoration:none;background:#2a1f1c;padding:8px 18px;border-radius:30px;border:1.5px solid #dea193;}
+.back-to-top-bar a:hover{background:#dea193;color:#2a1f1c;}
+/* Char counter */
+.char-wrap{position:relative;}
+.char-count{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:600;color:#c4b0a8;pointer-events:none;}
+.char-count.over{color:#e07070;}
+/* Tag warning */
+.tag-warn{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+.tag-warn.show{display:block;}
+/* Keyword ref box - builder only */
+.kw-ref-box{background:#2a1f1c;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.kw-ref-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;}
+.kw-ref-val{font-size:13px;font-weight:600;color:#dea193;flex:1;margin:0 10px;}
+.kw-ref-btn{font-family:'Jost',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid rgba(222,161,147,0.5);padding:4px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;}
+.kw-ref-btn:hover{background:#dea193;color:#2a1f1c;}
+</style>
+</head>
+<body>
+<div id="top"></div>
+<div class="page-header">
+  <div class="badge">DFY Niche Club</div>
+  <h1 class="page-title">Master Weekly Builder</h1>
+  <p class="page-sub">Build your full weekly drop in one place. Progress saves automatically.</p>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-top">
+    <span class="progress-label">Niches Complete</span>
+    <span class="progress-count" id="prog-count">0 / 8</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- SECTION 1: INTRO -->
+<div style="max-width:760px;margin:2.5rem auto 1rem;display:flex;align-items:center;gap:14px;"><div class="sec-line"></div><span class="sec-label">Section 1: Weekly Intro</span><div class="sec-line"></div></div>
+<div class="card">
+  <p class="card-title">Week Info</p>
+  <p class="card-sub">Just the date — that's the only thing that changes every single week.</p>
+  <label class="fl" for="intro-date">Week Date</label>
+  <input class="fi" id="intro-date" tabindex="1" placeholder="e.g. Week of June 2, 2026">
+</div>
+<div class="card">
+  <p class="card-title">Niche List</p>
+  <p class="card-sub">Update any niche name that changed this week. Toggle the X to hide the Bonus niche if you're not including it.</p>
+  <div class="niche-row"><div class="niche-num">Niche 1</div><input class="fi" id="intro-n1" value="Printable Wall Art" oninput="syncNicheKeyword('intro-n1')" tabindex="2"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 2</div><input class="fi" id="intro-n2" value="PNG" oninput="syncNicheKeyword('intro-n2')" tabindex="3"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 3</div><input class="fi" id="intro-n3" value="Frame TV Art" oninput="syncNicheKeyword('intro-n3')" tabindex="4"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 4</div><input class="fi" id="intro-n4" value="Printable (Journal/Checklist/Planner)" oninput="syncNicheKeyword('intro-n4')" tabindex="5"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 5</div><input class="fi" id="intro-n5" value="Printable Wall Art" oninput="syncNicheKeyword('intro-n5')" tabindex="6"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 6</div><input class="fi" id="intro-n6" value="PNG" oninput="syncNicheKeyword('intro-n6')" tabindex="7"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 7</div><input class="fi" id="intro-n7" value="Frame TV Art" oninput="syncNicheKeyword('intro-n7')" tabindex="8"><div style="width:36px;"></div></div>
+  <div style="height:1px;background:#ead9d5;margin:12px 0;"></div>
+  <div class="niche-row"><div class="bonus-num">Bonus</div><input class="fi" id="intro-bonus" value="Tumbler/Digital Invitation/Journal/Coloring Pages/Checklist" oninput="syncNicheKeyword('intro-bonus')" tabindex="9"><button class="toggle-btn active" id="bonus-toggle">X</button></div>
+  <p class="hint" id="bonus-hint">Bonus is ON — click X to hide it this week</p>
+</div>
+
+<!-- ALL NICHE SECTIONS -->
+<div id="all-sections"></div>
+
+<!-- GENERATE ALL -->
+<button class="gen-all-btn" onclick="generateAll()">Generate Complete Weekly HTML</button>
+<div class="out-wrap" id="out-all">
+  <div class="out-card">
+    <div class="out-head"><span class="out-head-title">Your Complete Weekly Drop</span><button class="copy-btn" onclick="copyAll()">Copy HTML</button></div>
+    <div class="out-prev" id="all-prev"></div>
+  </div>
+  <textarea id="all-code" style="display:none;"></textarea>
+  <button class="back-btn" onclick="document.getElementById('top').scrollIntoView({behavior:'smooth'})">Back to Form</button>
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
+  <div class="sbtns">
+    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear Week</button>
+    <button class="sbtn sbtn-save" onclick="saveData()">Save Progress</button>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Preview</span>
+      <button class="modal-close" onclick="closeModal()">Close X</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SK = 'dfy_master_v6';
+var isDirty = false;
+var bonusOn = true;
+var completedNiches = {};
+
+// All niches in order — 1,2,3,4,5,6,7,bonus
+var ALL_NICHES = [
+  {n:1, isDP:false},
+  {n:2, isDP:false},
+  {n:3, isDP:false},
+  {n:4, isDP:false},
+  {n:5, isDP:false},
+  {n:6, isDP:false},
+  {n:7, isDP:false},
+  {n:'bonus', isDP:false}
+];
+
+var GEN_TOOLS = [
+  {id:'recraft',  name:'1. Recraft',        url:'https://www.mydesigns.io/?via=dania'},
+  {id:'ideogram', name:'2. Ideogram',       url:'https://www.mydesigns.io/?via=dania'},
+  {id:'midj',     name:'3. Midjourney',     url:'https://www.mydesigns.io/?via=dania'},
+  {id:'kittl',    name:'4. Kittl',          url:'https://kittl.com?ref=dania'},
+  {id:'canva',    name:'5. Canva Dream Lab', url:'https://www.mydesigns.io/?via=dania'},
+  {id:'leo',      name:'6. Leonardo',       url:'https://galaxyai.io/?ref=dania'},
+  {id:'nano',     name:'7. Nano Banana',    url:'https://www.mydesigns.io/?via=dania'},
+  {id:'seed',     name:'8. Seedream V3',    url:'https://galaxyai.io/?ref=dania'},
+  {id:'gpt2',     name:'9. GPT Image 2',    url:'https://www.mydesigns.io/?via=dania'}
+];
+
+function v(id){ return (document.getElementById(id)||{}).value||''; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(function(){t.style.display='none';},2500); }
+function setStatus(s,t){ document.getElementById('sdot').className='sdot '+(s==='saved'?'saved':'unsaved'); document.getElementById('stxt').textContent=t; }
+
+// Sync intro niche name to keyword field
+var introToNiche = {
+  'intro-n1':1,'intro-n2':2,'intro-n3':3,'intro-n4':4,
+  'intro-n5':5,'intro-n6':6,'intro-n7':7,'intro-bonus':'bonus'
+};
+function syncNicheKeyword(introId){
+  var n = introToNiche[introId];
+  if(!n) return;
+  var el = document.getElementById('n'+n+'-kw');
+  if(el) el.value = document.getElementById(introId).value;
+  updateReadyDot(n);
+}
+
+// Image thumbnails
+function updateThumb(inputId){
+  var input = document.getElementById(inputId);
+  if(!input) return;
+  var url = input.value.trim();
+  var thumb = document.getElementById('thumb-'+inputId);
+  var err = document.getElementById('err-'+inputId);
+  if(!thumb) return;
+  if(!url){ thumb.className='img-thumb'; thumb.src=''; if(err) err.style.display='none'; return; }
+  thumb.onload = function(){ thumb.className='img-thumb show'; if(err) err.style.display='none'; };
+  thumb.onerror = function(){ thumb.className='img-thumb'; if(err) err.style.display='block'; };
+  thumb.src = url;
+}
+
+function imgField(id, placeholder, label, tabIdx){
+  return '<div class="img-field-wrap">'
+    + '<label class="fl">' + label + '</label>'
+    + '<input class="fi" id="' + id + '" placeholder="' + placeholder + '" oninput="updateThumb(\'' + id + '\')" tabindex="'+tabIdx+'">'
+    + '<img class="img-thumb" id="thumb-' + id + '">'
+    + '<span class="img-err" id="err-' + id + '">Image not found — check URL</span>'
+    + '</div>';
+}
+
+// Character counter for title fields
+function updateCharCount(inputId){
+  var val = v(inputId);
+  var countEl = document.getElementById('cc-'+inputId);
+  if(!countEl) return;
+  var len = val.length;
+  countEl.textContent = len + '/140';
+  countEl.className = 'char-count' + (len > 140 ? ' over' : '');
+}
+
+// Tag length warnings
+function updateTagWarnings(n){
+  var raw = v('n'+n+'-tags');
+  var tags = raw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  var over = tags.filter(function(t){ return t.length > 20; });
+  var warnEl = document.getElementById('tag-warn-'+n);
+  if(!warnEl) return;
+  if(over.length > 0){
+    warnEl.textContent = 'Tags over 20 chars: ' + over.map(function(t){ return '"'+t+'" ('+t.length+')'; }).join(', ');
+    warnEl.className = 'tag-warn show';
+  } else {
+    warnEl.className = 'tag-warn';
+  }
+  updateReadyDot(n);
+}
+
+// Field completion dot
+function updateReadyDot(n){
+  var dot = document.getElementById('ready-dot-'+n);
+  if(!dot) return;
+  var kw = v('n'+n+'-kw');
+  var t1 = v('n'+n+'-t1');
+  var tags = v('n'+n+'-tags');
+  dot.className = 'sec-ready-dot' + (kw && t1 && tags ? ' ready' : '');
+}
+
+// Keyword ref box copy
+function copyKwRef(n){
+  var kw = v('n'+n+'-kw');
+  if(!kw) return;
+  var ta = document.createElement('textarea');
+  ta.value = kw; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('Keyword copied!'); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+// Update kw ref display live
+function updateKwRef(n){
+  var el = document.getElementById('kw-ref-val-'+n);
+  if(el) el.textContent = v('n'+n+'-kw') || '—';
+  updateReadyDot(n);
+}
+
+// Build all niche sections in order
+function buildAllSections(){
+  var c = document.getElementById('all-sections');
+  var html = '';
+  var tabIdx = 10;
+
+  ALL_NICHES.forEach(function(niche){
+    var n = niche.n;
+    var isBonus = n === 'bonus';
+    var label = isBonus ? 'Bonus' : 'Niche ' + n;
+    var sectionId = isBonus ? 'bonus' : n;
+
+    html += '<div class="sec-head-btn" onclick="toggleSection(\''+sectionId+'\')">';
+    html += '<div class="sec-line"></div>';
+    html += '<span class="sec-label">'+label+'</span>';
+    html += '<span class="sec-ready-dot" id="ready-dot-'+n+'"></span>';
+    html += '<span class="sec-done-badge" id="done-badge-'+n+'">Done</span>';
+    html += '<span class="sec-collapse-icon" id="icon-'+sectionId+'">&#9660;</span>';
+    html += '<div class="sec-line"></div>';
+    html += '</div>';
+    html += '<div class="sec-body" id="sec-'+sectionId+'">';
+
+    // Basics
+    html += '<div class="card"><p class="card-title">'+label+' — Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(auto-filled from the menu above)</span></label>';
+    html += '<input class="fi" id="n'+n+'-kw" oninput="updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
+    tabIdx++;
+    html += '<div class="g2">';
+    html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" tabindex="'+tabIdx+'" placeholder="e.g. 572"></div>';
+    tabIdx++;
+    html += '<div class="g2"><div><label class="fl">Low Price $</label><input class="fi" id="n'+n+'-plo" tabindex="'+tabIdx+'" placeholder="2.74"></div>';
+    tabIdx++;
+    html += '<div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" tabindex="'+tabIdx+'" placeholder="7.50"></div></div>';
+    tabIdx++;
+    html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n'+n+'-note" tabindex="'+tabIdx+'" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
+    tabIdx++;
+    html += '</div></div>';
+
+    // Listings
+    html += '<div class="card"><p class="card-title">Real Etsy Listing Examples</p><p class="card-sub">Right-click each listing image, click Copy Image Address, paste below</p>';
+    html += imgField('n'+n+'-l1','https://i.etsystatic.com/...','Listing 1 Image URL', tabIdx++);
+    html += imgField('n'+n+'-l2','https://i.etsystatic.com/...','Listing 2 Image URL', tabIdx++);
+    html += imgField('n'+n+'-l3','https://i.etsystatic.com/...','Listing 3 Image URL', tabIdx++);
+    html += '</div>';
+
+    // Tips
+    html += '<div class="card"><p class="card-title">How to Add Value</p><p class="card-sub">Start each tip with the bold label before the colon. e.g. Pro Tip: your text here</p>';
+    html += '<div style="display:flex;flex-direction:column;gap:10px;">';
+    html += '<div><label class="fl">Tip 1</label><input class="fi" id="n'+n+'-tip1" tabindex="'+tabIdx+'" placeholder="Pro Tip: Switch up the color story"></div>';
+    tabIdx++;
+    html += '<div><label class="fl">Tip 2</label><input class="fi" id="n'+n+'-tip2" tabindex="'+tabIdx+'" placeholder="Color Story: Layer in a secondary prop"></div>';
+    tabIdx++;
+    html += '<div><label class="fl">Tip 3</label><input class="fi" id="n'+n+'-tip3" tabindex="'+tabIdx+'" placeholder="Style Note: Make the expression do the work"></div>';
+    tabIdx++;
+    html += '</div></div>';
+
+    // Titles & Tags with keyword ref box
+    html += '<div class="card"><p class="card-title">Titles &amp; Tags</p><p class="card-sub">Members can copy each title and all tags at once</p>';
+    html += '<div class="kw-ref-box">';
+    html += '<span class="kw-ref-label">Keyword</span>';
+    html += '<span class="kw-ref-val" id="kw-ref-val-'+n+'">'+(v('n'+n+'-kw')||'—')+'</span>';
+    html += '<button class="kw-ref-btn" onclick="copyKwRef(\''+n+'\')">Copy</button>';
+    html += '</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:10px;">';
+    // Title 1
+    html += '<div><label class="fl">Title 1</label><div class="char-wrap"><input class="fi" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div></div>';
+    tabIdx++;
+    // Title 2
+    html += '<div><label class="fl">Title 2</label><div class="char-wrap"><input class="fi" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div></div>';
+    tabIdx++;
+    // Title 3
+    html += '<div><label class="fl">Title 3</label><div class="char-wrap"><input class="fi" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div></div>';
+    tabIdx++;
+    // Tags
+    html += '<div><label class="fl">Tags (comma separated)</label>';
+    html += '<textarea class="fi" id="n'+n+'-tags" tabindex="'+tabIdx+'" placeholder="Tag 1, Tag 2, Tag 3..." oninput="updateTagWarnings(\''+n+'\')"></textarea>';
+    tabIdx++;
+    html += '<span class="tag-warn" id="tag-warn-'+n+'"></span></div>';
+    html += '</div></div>';
+
+    // Prompt & Notes
+    html += '<div class="card"><p class="card-title">Prompt &amp; Notes</p>';
+    html += '<div style="display:flex;flex-direction:column;gap:10px;">';
+    html += '<div><label class="fl">AI Image Prompt</label><textarea class="fi" style="min-height:100px;" id="n'+n+'-prompt" tabindex="'+tabIdx+'" placeholder="Your full AI image prompt goes here..."></textarea></div>';
+    tabIdx++;
+    html += '<div><label class="fl">Important Notes (one per line — leave blank if none)</label><textarea class="fi" id="n'+n+'-notes" tabindex="'+tabIdx+'" placeholder="e.g. Do not use Silly Goose as it is trademarked"></textarea></div>';
+    tabIdx++;
+    html += '</div></div>';
+
+    // Styles Used
+    html += '<div class="card"><p class="card-title">Styles Used</p><p class="card-sub">Tool names are locked in — just enter the style for each one</p>';
+    html += '<div style="display:flex;flex-direction:column;gap:10px;">';
+    html += '<div class="g2"><div class="tool-locked">Ideogram</div><input class="fi" id="n'+n+'-s-ideogram" tabindex="'+tabIdx+'" placeholder="e.g. Auto"></div>';
+    tabIdx++;
+    html += '<div class="g2"><div class="tool-locked">Kittl (Flux 1.1 Pro Ultra)</div><input class="fi" id="n'+n+'-s-kittl" tabindex="'+tabIdx+'" placeholder="e.g. Cozy Support"></div>';
+    tabIdx++;
+    html += '<div class="g2"><div class="tool-locked">Canva Dream Lab</div><input class="fi" id="n'+n+'-s-canva" tabindex="'+tabIdx+'" placeholder="e.g. Smart"></div>';
+    tabIdx++;
+    html += '</div></div>';
+
+    // Generator Images
+    html += '<div class="card"><p class="card-title">Generator Result Images</p><p class="card-sub">Paste image URL for each generator. Thumbnails appear instantly.</p>';
+    html += '<div class="gen-grid">';
+    GEN_TOOLS.forEach(function(g){
+      html += '<div class="gen-slot"><span class="gen-name">'+g.name+'</span>';
+      html += '<input class="fi" id="n'+n+'-img-'+g.id+'" placeholder="Image URL" style="font-size:12px;padding:7px 10px;" tabindex="'+tabIdx+'" oninput="updateThumb(\'n'+n+'-img-'+g.id+'\')">';
+      tabIdx++;
+      html += '<img class="img-thumb" id="thumb-n'+n+'-img-'+g.id+'">';
+      html += '<span class="img-err" id="err-n'+n+'-img-'+g.id+'">Not found</span>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+
+    // Action buttons
+    html += '<button class="preview-btn" onclick="previewNiche(\''+n+'\')">Preview '+label+'</button>';
+    html += '<button class="preview-btn" style="border-color:#7a9e7e;color:#7a9e7e;margin-top:-0.5rem;" id="complete-btn-'+n+'" onclick="toggleComplete(\''+n+'\')">Mark Complete</button>';
+    html += '<div class="back-to-top-bar"><a href="#top">Back to Top</a></div>';
+    html += '</div>'; // close sec-body
+  });
+
+  c.innerHTML = html;
+
+  // Restore char counts and kw refs after build
+  ALL_NICHES.forEach(function(niche){
+    var n = niche.n;
+    updateCharCount('n'+n+'-t1');
+    updateCharCount('n'+n+'-t2');
+    updateCharCount('n'+n+'-t3');
+    updateKwRef(n);
+    updateTagWarnings(n);
+  });
+}
+
+var S = {
+  header:'background:#2a1f1c;padding:1.4rem 2rem;display:flex;align-items:center;gap:1rem;border-bottom:3px solid #dea193;',
+  badge:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,0.15);border:1px solid rgba(222,161,147,0.4);padding:4px 12px;border-radius:20px;white-space:nowrap;font-family:Jost,sans-serif;',
+  title:'font-family:Playfair Display,serif;font-size:1.9rem;font-weight:700;color:#f5eddf;line-height:1.2;margin:0;',
+  body:'padding:1.2rem 1.5rem;background:#fdf7f2;',
+  statsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.2rem;',
+  stat:'background:#2a1f1c;border-radius:10px;padding:1rem 1.2rem;border-left:3px solid #dea193;',
+  statLbl:'font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;font-family:Jost,sans-serif;',
+  statVal:'font-family:Playfair Display,serif;font-size:1.2rem;font-weight:600;color:#f5eddf;margin:0;',
+  block:'margin-bottom:1.2rem;background:#fff;border-radius:10px;border:1px solid #ead9d5;overflow:hidden;',
+  blockHead:'background:#2a1f1c;padding:0.65rem 1.2rem;',
+  blockLbl:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;margin:0;',
+  blockBody:'padding:1.1rem 1.3rem;',
+  noteBox:'background:rgba(222,161,147,0.1);border:1px solid rgba(222,161,147,0.35);border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
+  tipBox:'background:#fdf7f2;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
+  titleItem:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;',
+  titleItemLast:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;',
+  titleDot:'width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;margin-top:3px;',
+  titleText:'font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;flex:1;',
+  tagsWrap:'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;',
+  tag:'background:#2a1f1c;color:#f5eddf;font-size:14px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid rgba(222,161,147,0.3);font-family:Jost,sans-serif;',
+  promptBox:'background:#2a1f1c;border-radius:8px;padding:1.1rem 1.3rem;border-left:3px solid #dea193;',
+  promptText:'font-size:17px;color:#f5eddf;line-height:1.9;font-style:italic;font-family:Jost,sans-serif;margin:0 0 0.75rem;',
+  promptCopyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid rgba(222,161,147,0.5);padding:5px 14px;border-radius:20px;cursor:pointer;',
+  copyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid #dea193;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;',
+  copyAll:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#dea193;color:#fff;border:none;padding:8px 20px;border-radius:20px;cursor:pointer;',
+  listingsSec:'background:#2a1f1c;padding:1.2rem 1.5rem 1.5rem;',
+  listingsLbl:'font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin-bottom:0.8rem;font-family:Jost,sans-serif;',
+  listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
+  listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:8px;',
+  listingNoImg:'aspect-ratio:4/3;background:rgba(245,237,223,0.07);border:1.5px dashed rgba(222,161,147,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c4b0a8;font-family:Jost,sans-serif;',
+  listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;',
+  backTop:'text-align:center;padding:1.5rem 0 0.5rem;',
+  backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;'
+};
+
+function cpText(btn, orig){
+  var text = btn.getAttribute('data-copy');
+  if(!text) return;
+  var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
+  catch(e){}
+  document.body.removeChild(ta);
+}
+function dCp(b){ cpText(b, b.textContent); }
+
+function formatTip(raw){
+  if(!raw) return '';
+  var t = raw.trim().replace(/[,\-\s]+$/, ''); // strip trailing symbols
+  var colonIdx = t.indexOf(':');
+  if(colonIdx > 0 && colonIdx < 40){
+    return '<strong>'+esc(t.substring(0,colonIdx+1))+'</strong>'+esc(t.substring(colonIdx+1));
+  }
+  return esc(t);
+}
+
+function cleanTags(raw){
+  return raw.split(',').map(function(t){ return t.trim().replace(/[,\-\s]+$/, '').replace(/^[,\-\s]+/, ''); }).filter(Boolean);
+}
+
+function buildNicheHTML(n){
+  var isBonus = n === 'bonus';
+  var nicheLabel = isBonus ? 'Bonus' : n;
+  var anchorId = isBonus ? 'niche-bonus' : 'niche-'+n;
+  var keyword = v('n'+n+'-kw').trim();
+  var comp = v('n'+n+'-comp').trim();
+  var plo = v('n'+n+'-plo').trim();
+  var phi = v('n'+n+'-phi').trim();
+  var price = (plo&&phi)?'$'+plo+' - $'+phi:(plo?'$'+plo:(phi?'$'+phi:''));
+  var note = v('n'+n+'-note').trim();
+  var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
+  var tips=[v('n'+n+'-tip1').trim(),v('n'+n+'-tip2').trim(),v('n'+n+'-tip3').trim()];
+  var titles=[v('n'+n+'-t1').trim(),v('n'+n+'-t2').trim(),v('n'+n+'-t3').trim()].filter(Boolean);
+  var tags=cleanTags(v('n'+n+'-tags'));
+  var prompt=v('n'+n+'-prompt').trim();
+  var notesArr=v('n'+n+'-notes').split('\n').map(function(t){return t.trim();}).filter(Boolean);
+  var sIdeo=v('n'+n+'-s-ideogram').trim();
+  var sKittl=v('n'+n+'-s-kittl').trim();
+  var sCanva=v('n'+n+'-s-canva').trim();
+
+  var tipsHtml = '';
+  tips.forEach(function(t){ if(t) tipsHtml += '<div style="'+S.tipBox+'">'+formatTip(t)+'</div>'; });
+
+  var titlesHtml = '';
+  titles.forEach(function(t, i){
+    var isLast = i === titles.length - 1;
+    titlesHtml += '<div style="'+(isLast?S.titleItemLast:S.titleItem)+'">'
+      + '<div style="display:flex;align-items:flex-start;gap:10px;flex:1;">'
+      + '<div style="'+S.titleDot+'"></div>'
+      + '<p style="'+S.titleText+'">'+esc(t)+'</p>'
+      + '</div>'
+      + '<button style="'+S.copyBtn+'" data-copy="'+esc(t)+'" onclick="dCp(this)">Copy</button>'
+      + '</div>';
+  });
+
+  var tagsHtml = '';
+  tags.forEach(function(t){ tagsHtml += '<span style="'+S.tag+'">'+esc(t)+'</span>'; });
+  var allTagsStr = tags.join(', ');
+
+  var html = '<div id="'+anchorId+'" style="font-family:Jost,sans-serif;background:#fdf7f2;">';
+  html += '<div style="'+S.header+'"><span style="'+S.badge+'">Niche '+esc(String(nicheLabel))+'</span><h2 style="'+S.title+'">'+esc(keyword)+'</h2></div>';
+
+  // Listings — only if at least one image exists
+  if(l1||l2||l3){
+    html += '<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p>';
+    html += '<div style="'+S.listingsGrid+'">';
+    [l1,l2,l3].forEach(function(img,i){
+      if(!img) return;
+      html += '<div><img style="'+S.listingImg+'" src="'+img+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p></div>';
+    });
+    html += '</div></div>';
+  }
+
+  html += '<div style="'+S.body+'">';
+
+  // Stats — only show fields that have values
+  var statsHtml = '';
+  if(keyword) statsHtml += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Keyword</p><p style="'+S.statVal+'">'+esc(keyword)+'</p></div>';
+  if(comp) statsHtml += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Competition</p><p style="'+S.statVal+'">'+esc(comp)+'</p></div>';
+  if(price) statsHtml += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Price Range</p><p style="'+S.statVal+'">'+esc(price)+'</p></div>';
+  if(statsHtml) html += '<div style="'+S.statsGrid+'">'+statsHtml+'</div>';
+
+  if(note) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>';
+  if(tipsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>';
+  if(titlesHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>';
+  if(tagsHtml) html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+esc(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>';
+
+  if(prompt){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="'+S.promptBox+'">';
+    html += '<p style="'+S.promptText+'">'+esc(prompt)+'</p>';
+    html += '<button style="'+S.promptCopyBtn+'" data-copy="'+esc(prompt)+'" onclick="dCp(this)">Copy Prompt</button>';
+    html += '</div></div></div>';
+  }
+
+  if(notesArr.length){
+    var notesHtml=''; notesArr.forEach(function(n2){ notesHtml+='<div style="'+S.noteBox+'">'+esc(n2)+'</div>'; });
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
+  }
+
+  // Styles used — only if at least one is filled
+  if(sIdeo||sKittl||sCanva){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
+    if(sIdeo) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
+    if(sKittl) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
+    if(sCanva) html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
+    html += '</div></div>';
+  }
+
+  // Generator results — only images that have URLs
+  var hasImg = GEN_TOOLS.some(function(g){ return v('n'+n+'-img-'+g.id).trim(); });
+  if(hasImg){
+    html += '<div style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Generator Results</p></div><div style="'+S.blockBody+'">';
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
+    GEN_TOOLS.forEach(function(g){
+      var img = v('n'+n+'-img-'+g.id).trim();
+      if(!img) return;
+      html += '<div style="text-align:center;"><img src="'+img+'" alt="'+esc(g.name)+'" style="width:100%;border-radius:8px;border:1px solid #ead9d5;display:block;margin-bottom:6px;">';
+      html += '<a href="'+g.url+'" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;text-decoration:none;font-family:Jost,sans-serif;">'+esc(g.name)+'</a></div>';
+    });
+    html += '</div></div></div>';
+  }
+
+  html += '</div></div>';
+  html += '<div style="'+S.backTop+'"><a href="#" style="'+S.backTopLink+'">Back to Top</a></div>';
+  return html;
+}
+
+function buildIntroHTML(){
+  var date = v('intro-date')||'DATE';
+  var niches = [
+    {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
+    {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
+    {num:'Niche 3',label:v('intro-n3'),anchor:'niche-3'},
+    {num:'Niche 4',label:v('intro-n4'),anchor:'niche-4'},
+    {num:'Niche 5',label:v('intro-n5'),anchor:'niche-5'},
+    {num:'Niche 6',label:v('intro-n6'),anchor:'niche-6'},
+    {num:'Niche 7',label:v('intro-n7'),anchor:'niche-7'}
+  ];
+  var navHtml = '';
+  niches.forEach(function(n){
+    navHtml += '<a href="#'+n.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(n.num)+'</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(n.label)+'</span>'
+      + '</a>';
+  });
+  if(bonusOn){
+    var bonusVal = v('intro-bonus').trim();
+    if(bonusVal) navHtml += '<a href="#niche-bonus" style="display:flex;align-items:center;gap:12px;background:#2a1f1c;border:1px solid #dea193;border-left:4px solid #fff;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;">'
+      + '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;white-space:nowrap;">Bonus</span>'
+      + '<span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#f5eddf;">'+esc(bonusVal)+'</span>'
+      + '</a>';
+  }
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'
+    + '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;border-bottom:3px solid #fff;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Niche Club</p>'
+    + '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">This Week\'s Niche Drop</h2>'
+    + '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>'
+    + '</div>'
+    + '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">Every single niche below was <strong style="color:#2a1f1c;">personally researched</strong> by me. These are <strong style="color:#2a1f1c;">low-competition, unsaturated, and currently trending</strong> ideas that are ready to plug into your shop.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">You\'ll also get curated <strong style="color:#2a1f1c;">AI prompts</strong> tailored to each applicable niche, plus <strong style="color:#2a1f1c;">strategic insights and real Etsy examples</strong> with every section so you can move fast and smart. If the product is text-based, I\'ll include layout ideas, styling tips, and example variations instead.</p>'
+    + '<p style="font-family:Jost,sans-serif;font-size:15px;font-weight:700;color:#2a1f1c;margin:0 0 1.2rem;">I\'ve already done the time-consuming part. All that\'s left is for you to take action.</p>'
+    + '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Do This!</span>'
+    + '</div>'
+    + '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">'
+    + '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Niche</p>'
+    + navHtml
+    + '</div></div>';
+}
+
+function previewNiche(n){
+  var html = DCP_SCRIPT + buildNicheHTML(n);
+  var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
+  document.getElementById('modal-title').textContent = label + ' Preview';
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+var DCP_SCRIPT = '<scr'+'ipt>function dCp(b){var t=document.createElement("textarea");t.value=b.getAttribute("data-copy");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();try{document.execCommand("copy");var o=b.textContent;b.textContent="Copied!";setTimeout(function(){b.textContent=o;},2000);}catch(e){}document.body.removeChild(t);}<\/scr'+'ipt>';
+
+function generateAll(){
+  var parts = [];
+  parts.push(DCP_SCRIPT);
+  parts.push(buildIntroHTML());
+  ALL_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    parts.push(buildNicheHTML(niche.n));
+  });
+  var combined = parts.join('\n');
+  document.getElementById('all-code').value = combined;
+  document.getElementById('all-prev').innerHTML = combined;
+  document.getElementById('out-all').style.display = 'block';
+  document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var ta = document.createElement('textarea');
+  ta.value = document.getElementById('all-code').value;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('HTML copied! Paste into Systeme.io.'); }
+  catch(e){ toast('Copy failed — try Ctrl+C'); }
+  document.body.removeChild(ta);
+}
+
+function getAllFieldIds(){
+  var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
+  ALL_NICHES.forEach(function(niche){
+    var n = niche.n;
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note',
+      'n'+n+'-l1','n'+n+'-l2','n'+n+'-l3',
+      'n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3',
+      'n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags',
+      'n'+n+'-prompt','n'+n+'-notes',
+      'n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+    GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
+  });
+  return ids;
+}
+
+function saveData(){
+  var data = {};
+  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  data['bonus-on'] = bonusOn ? '1' : '0';
+  data['completed'] = JSON.stringify(completedNiches);
+  try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved just now'); toast('Progress saved!'); }
+  catch(e){ toast('Could not save'); }
+}
+
+function loadData(){
+  try{
+    var raw = localStorage.getItem(SK);
+    if(!raw){ setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    getAllFieldIds().forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && data[id] !== undefined) el.value = data[id];
+    });
+    if(data['bonus-on'] === '0'){
+      bonusOn = false;
+      document.getElementById('bonus-toggle').textContent = '+';
+      document.getElementById('bonus-toggle').classList.remove('active');
+      document.getElementById('bonus-hint').textContent = 'Bonus is OFF — click + to include it this week';
+    }
+    if(data['completed']){
+      try{
+        completedNiches = JSON.parse(data['completed']);
+        Object.keys(completedNiches).forEach(function(n){
+          if(completedNiches[n]) restoreComplete(n);
+        });
+      }catch(e){}
+    }
+    setStatus('saved','Progress loaded');
+    // Restore thumbnails
+    getAllFieldIds().forEach(function(id){
+      if(id.indexOf('-img-')>-1||id.indexOf('-l1')>-1||id.indexOf('-l2')>-1||id.indexOf('-l3')>-1){
+        var el = document.getElementById(id);
+        if(el && el.value.trim()) updateThumb(id);
+      }
+    });
+    // Restore char counts, kw refs, tag warnings
+    ALL_NICHES.forEach(function(niche){
+      var n = niche.n;
+      updateCharCount('n'+n+'-t1');
+      updateCharCount('n'+n+'-t2');
+      updateCharCount('n'+n+'-t3');
+      updateKwRef(n);
+      updateTagWarnings(n);
+    });
+    updateProgress();
+  }catch(e){ setStatus('unsaved','Could not load'); }
+}
+
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
+  document.querySelectorAll('.img-err').forEach(function(e){ e.style.display='none'; });
+  completedNiches={};
+  ALL_NICHES.forEach(function(niche){ clearCompleteUI(niche.n); });
+  localStorage.removeItem(SK);
+  document.getElementById('out-all').style.display='none';
+  isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.');
+  updateProgress();
+}
+
+// Collapse/expand
+function toggleSection(id){
+  var body = document.getElementById('sec-'+id);
+  var icon = document.getElementById('icon-'+id);
+  if(!body) return;
+  var collapsed = body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', !collapsed);
+  if(icon) icon.style.transform = collapsed ? '' : 'rotate(-90deg)';
+}
+
+// Complete toggle
+function toggleComplete(n){
+  completedNiches[n] = !completedNiches[n];
+  if(completedNiches[n]){
+    restoreComplete(n);
+    // Auto collapse
+    var sectionId = n === 'bonus' ? 'bonus' : n;
+    var body = document.getElementById('sec-'+sectionId);
+    var icon = document.getElementById('icon-'+sectionId);
+    if(body){ body.classList.add('collapsed'); if(icon) icon.style.transform='rotate(-90deg)'; }
+  } else {
+    clearCompleteUI(n);
+  }
+  updateProgress();
+  isDirty=true; setStatus('unsaved','Unsaved changes');
+}
+
+function restoreComplete(n){
+  var btn = document.getElementById('complete-btn-'+n);
+  var badge = document.getElementById('done-badge-'+n);
+  if(btn){ btn.textContent='Completed!'; btn.style.background='#7a9e7e'; btn.style.color='#fff'; btn.style.borderColor='#7a9e7e'; }
+  if(badge) badge.classList.add('show');
+}
+
+function clearCompleteUI(n){
+  var btn = document.getElementById('complete-btn-'+n);
+  var badge = document.getElementById('done-badge-'+n);
+  if(btn){ btn.textContent='Mark Complete'; btn.style.background='transparent'; btn.style.color='#7a9e7e'; btn.style.borderColor='#7a9e7e'; }
+  if(badge) badge.classList.remove('show');
+}
+
+// Progress bar
+function updateProgress(){
+  var total = bonusOn ? 8 : 7;
+  var done = Object.values(completedNiches).filter(Boolean).length;
+  document.getElementById('prog-count').textContent = done + ' / ' + total;
+  document.getElementById('prog-fill').style.width = Math.round((done/total)*100) + '%';
+}
+
+// Bonus toggle
+document.getElementById('bonus-toggle').addEventListener('click', function(){
+  bonusOn = !bonusOn;
+  this.textContent = bonusOn ? 'X' : '+';
+  this.classList.toggle('active', bonusOn);
+  document.getElementById('bonus-hint').textContent = bonusOn ? 'Bonus is ON — click X to hide it this week' : 'Bonus is OFF — click + to include it this week';
+  updateProgress();
+});
+
+// Auto save
+var autoTimer;
+document.addEventListener('input', function(){
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+});
+window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
+
+// INIT
+buildAllSections();
+loadData();
+// Initial sync of intro values to keyword fields
+Object.keys(introToNiche).forEach(function(introId){ syncNicheKeyword(introId); });
+</script>
+</body>
+</html>
