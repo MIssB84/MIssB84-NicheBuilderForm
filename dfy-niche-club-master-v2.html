@@ -79,6 +79,13 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .progress-count{font-size:13px;font-weight:700;color:#2a1f1c;}
 .progress-track{background:#f0e8df;border-radius:30px;height:10px;overflow:hidden;}
 .progress-fill{height:100%;border-radius:30px;background:linear-gradient(90deg,#dea193,#c9a96e);transition:width 0.4s ease;width:0%;}
+.sec-head-btn{max-width:760px;margin:2.5rem auto 0;display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;}
+.sec-head-btn:hover .sec-label{color:#dea193;}
+.sec-collapse-icon{font-size:11px;color:#c4b0a8;transition:transform 0.2s;flex-shrink:0;}
+.sec-body{max-width:760px;margin:0 auto;}
+.sec-body.collapsed{display:none;}
+.sec-done-badge{display:none;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:#7a9e7e;color:#fff;padding:3px 10px;border-radius:20px;}
+.sec-done-badge.show{display:inline-block;}
 </style>
 </head>
 <body>
@@ -221,7 +228,15 @@ function buildAISections(){
   var html = '';
   AI_NICHES.forEach(function(niche){
     var n = niche.n;
-    html += '<div class="sec-head"><div class="sec-line"></div><span class="sec-label">Niche ' + n + ': AI Drop</span><span class="sec-tag tag-ai">With AI Prompts</span><div class="sec-line"></div></div>';
+    html += '<div class="sec-head-btn" onclick="toggleSection(\'ai-'+n+'\')">'
+          + '<div class="sec-line"></div>'
+          + '<span class="sec-label">Niche ' + n + ': AI Drop</span>'
+          + '<span class="sec-tag tag-ai">With AI Prompts</span>'
+          + '<span class="sec-done-badge" id="done-badge-'+n+'">Done</span>'
+          + '<span class="sec-collapse-icon" id="icon-ai-'+n+'">▼</span>'
+          + '<div class="sec-line"></div>'
+          + '</div>';
+    html += '<div class="sec-body" id="sec-ai-'+n+'">';
     html += '<div class="card"><p class="card-title">Niche ' + n + ' — Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(this is the exact trending keyword to use — type your niche in front)</span></label><input class="fi" id="n' + n + '-kw" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
     html += '<div class="g2">';
@@ -270,6 +285,7 @@ function buildAISections(){
     html += '</div></div>';
     html += '<button class="preview-btn" onclick="previewNiche(' + n + ',false)">Preview Niche ' + n + '</button>';
     html += '<button class="preview-btn" style="border-color:#7a9e7e;color:#7a9e7e;margin-top:-0.5rem;" id="complete-btn-'+n+'" onclick="toggleComplete(\''+n+'\')">Mark Complete</button>';
+    html += '</div>'; // close sec-body
   });
   c.innerHTML = html;
 }
@@ -281,7 +297,15 @@ function buildDPSections(){
     var n = niche.n;
     var isBonus = n === 'bonus';
     var label = isBonus ? 'Bonus' : 'Niche ' + n;
-    html += '<div class="sec-head"><div class="sec-line"></div><span class="sec-label">' + label + ': Digital Product</span><span class="sec-tag tag-dp">No AI Prompts</span><div class="sec-line"></div></div>';
+    html += '<div class="sec-head-btn" onclick="toggleSection(\'dp-'+n+'\')">'
+          + '<div class="sec-line"></div>'
+          + '<span class="sec-label">' + label + ': Digital Product</span>'
+          + '<span class="sec-tag tag-dp">No AI Prompts</span>'
+          + '<span class="sec-done-badge" id="done-badge-'+n+'">Done</span>'
+          + '<span class="sec-collapse-icon" id="icon-dp-'+n+'">▼</span>'
+          + '<div class="sec-line"></div>'
+          + '</div>';
+    html += '<div class="sec-body" id="sec-dp-'+n+'">';
     html += '<div class="card"><p class="card-title">' + label + ' — Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(this is the exact trending keyword to use)</span></label><input class="fi" id="n'+n+'-kw" placeholder="e.g. Dog Mom Checklist Printable"></div>';
     html += '<div class="g2">';
@@ -309,6 +333,7 @@ function buildDPSections(){
     html += '</div></div>';
     html += '<button class="preview-btn" onclick="previewNiche(\'' + n + '\',' + (isBonus?'true':'false') + ')">Preview ' + label + '</button>';
     html += '<button class="preview-btn" style="border-color:#7a9e7e;color:#7a9e7e;margin-top:-0.5rem;" id="complete-btn-'+n+'" onclick="toggleComplete(\''+n+'\')">Mark Complete</button>';
+    html += '</div>'; // close sec-body
   });
   c.innerHTML = html;
 }
@@ -673,23 +698,34 @@ document.addEventListener('input', function(){
 window.addEventListener('beforeunload', function(e){ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
 setInterval(function(){ if(isDirty){ saveData(); } }, 60000);
 
+function toggleSection(id){
+  var body = document.getElementById('sec-'+id);
+  var icon = document.getElementById('icon-'+id);
+  if(!body) return;
+  var collapsed = body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', !collapsed);
+  if(icon) icon.style.transform = collapsed ? '' : 'rotate(-90deg)';
+}
+
 var completedNiches = {};
 
 function toggleComplete(n){
   completedNiches[n] = !completedNiches[n];
   var btn = document.getElementById('complete-btn-'+n);
-  if(btn){
-    if(completedNiches[n]){
-      btn.textContent = 'Completed!';
-      btn.style.background = '#7a9e7e';
-      btn.style.color = '#fff';
-      btn.style.borderColor = '#7a9e7e';
-    } else {
-      btn.textContent = 'Mark Complete';
-      btn.style.background = 'transparent';
-      btn.style.color = '#7a9e7e';
-      btn.style.borderColor = '#7a9e7e';
-    }
+  var badge = document.getElementById('done-badge-'+n);
+  if(completedNiches[n]){
+    if(btn){ btn.textContent='Completed!'; btn.style.background='#7a9e7e'; btn.style.color='#fff'; btn.style.borderColor='#7a9e7e'; }
+    if(badge) badge.classList.add('show');
+    // Auto-collapse the section
+    var aiBody = document.getElementById('sec-ai-'+n);
+    var dpBody = document.getElementById('sec-dp-'+n);
+    var aiIcon = document.getElementById('icon-ai-'+n);
+    var dpIcon = document.getElementById('icon-dp-'+n);
+    if(aiBody){ aiBody.classList.add('collapsed'); if(aiIcon) aiIcon.style.transform='rotate(-90deg)'; }
+    if(dpBody){ dpBody.classList.add('collapsed'); if(dpIcon) dpIcon.style.transform='rotate(-90deg)'; }
+  } else {
+    if(btn){ btn.textContent='Mark Complete'; btn.style.background='transparent'; btn.style.color='#7a9e7e'; btn.style.borderColor='#7a9e7e'; }
+    if(badge) badge.classList.remove('show');
   }
   updateProgress();
   isDirty = true;
