@@ -717,7 +717,6 @@ function closeModal(){
   document.body.style.overflow = '';
 }
 
-var DCP_SCRIPT = '<script>function dCp(b){var t=document.createElement("textarea");t.value=b.getAttribute("data-copy");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();try{document.execCommand("copy");var o=b.textContent;b.textContent="Copied!";setTimeout(function(){b.textContent=o;},2000);}catch(e){}document.body.removeChild(t);}<\/script>';
 
 function generateAll(){
   var parts = [];
