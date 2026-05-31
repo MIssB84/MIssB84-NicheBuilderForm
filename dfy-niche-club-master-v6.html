@@ -341,15 +341,16 @@ function buildAllSections(){
     html += '<span class="sec-label">'+label+'</span>';
     html += '<span class="sec-ready-dot" id="ready-dot-'+n+'"></span>';
     html += '<span class="sec-done-badge" id="done-badge-'+n+'">Done</span>';
-    html += '<span class="sec-collapse-icon" id="icon-'+sectionId+'">&#9660;</span>';
+    html += '<span class="sec-collapse-icon" id="icon-'+sectionId+'" style="transform:rotate(-90deg)">&#9660;</span>';
     html += '<div class="sec-line"></div>';
     html += '</div>';
-    html += '<div class="sec-body" id="sec-'+sectionId+'">';
+    html += '<div class="sec-body collapsed" id="sec-'+sectionId+'">';
 
     // Basics
-    html += '<div class="card"><p class="card-title">'+label+' — Basics</p><p class="card-sub">Niche stats and info</p>';
+    html += '<div class="card"><p class="card-title">'+label+' Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(auto-filled from the menu above)</span></label>';
-    html += '<input class="fi" id="n'+n+'-kw" oninput="syncNicheKeyword(\'intro-n'+n+'\');updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
+    var introSyncId = isBonus ? 'intro-bonus' : 'intro-n'+n;
+    html += '<input class="fi" id="n'+n+'-kw" oninput="syncNicheKeyword(\''+introSyncId+'\');updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
     tabIdx++;
     html += '<div class="g2">';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" tabindex="'+tabIdx+'" placeholder="e.g. 572"></div>';
@@ -389,13 +390,13 @@ function buildAllSections(){
     html += '</div>';
     html += '<div style="display:flex;flex-direction:column;gap:10px;">';
     // Title 1
-    html += '<div><label class="fl">Title 1</label><div class="char-wrap"><input class="fi" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div>';
+    html += '<div><label class="fl">Title 1</label><input class="fi" id="n'+n+'-t1" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t1\');updateReadyDot(\''+n+'\')"><span class="char-count" id="cc-n'+n+'-t1">0/140</span></div>';
     tabIdx++;
     // Title 2
-    html += '<div><label class="fl">Title 2</label><div class="char-wrap"><input class="fi" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div>';
+    html += '<div><label class="fl">Title 2</label><input class="fi" id="n'+n+'-t2" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t2\')"><span class="char-count" id="cc-n'+n+'-t2">0/140</span></div>';
     tabIdx++;
     // Title 3
-    html += '<div><label class="fl">Title 3</label><div class="char-wrap"><input class="fi" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
+    html += '<div><label class="fl">Title 3</label><input class="fi" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
     tabIdx++;
     // Tags
     html += '<div><label class="fl">Tags (comma separated)</label>';
