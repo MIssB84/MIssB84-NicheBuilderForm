@@ -167,10 +167,15 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <button class="gen-all-btn" onclick="generateAll()">✨ Generate Complete Weekly HTML</button>
 <div class="out-wrap" id="out-all">
   <div class="out-card">
-    <div class="out-head"><span class="out-head-title">Your Complete Weekly Drop</span><button class="copy-btn" onclick="copyAll()">Copy HTML</button></div>
+    <div class="out-head"><span class="out-head-title">Your Complete Weekly Drop</span><button class="copy-btn" onclick="copyAll()">Copy All HTML</button></div>
+    <div style="padding:1rem 1.5rem;border-bottom:1px solid #ead9d5;background:#fdf7f2;">
+      <p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:10px;">Copy individual sections:</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;" id="per-niche-btns"></div>
+    </div>
     <div class="out-prev" id="all-prev"></div>
   </div>
   <textarea id="all-code" style="display:none;"></textarea>
+  <div id="niche-codes" style="display:none;"></div>
   <button class="back-btn" onclick="document.getElementById('top').scrollIntoView({behavior:'smooth'})">Back to Top ↑</button>
 </div>
 
@@ -714,15 +719,50 @@ function closeModal(){
 
 function generateAll(){
   var parts = [];
-  parts.push(buildIntroHTML());
-  AI_NICHES.forEach(function(niche){ parts.push(buildAINicheHTML(niche.n)); });
+  var niches = [];
+
+  var introPart = buildIntroHTML();
+  parts.push(introPart);
+  niches.push({label:'Intro', html: introPart});
+
+  AI_NICHES.forEach(function(niche){
+    var h = buildAINicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label:'Niche '+niche.n, html: h});
+  });
   DP_NICHES.forEach(function(niche){
     if(niche.n === 'bonus' && !bonusOn) return;
-    parts.push(buildDPNicheHTML(niche.n));
+    var h = buildDPNicheHTML(niche.n);
+    parts.push(h);
+    niches.push({label: niche.n === 'bonus' ? 'Bonus' : 'Niche '+niche.n, html: h});
   });
+
   var combined = parts.join('\n');
   document.getElementById('all-code').value = combined;
   document.getElementById('all-prev').innerHTML = combined;
+
+  // Build per-niche copy buttons
+  var btnWrap = document.getElementById('per-niche-btns');
+  btnWrap.innerHTML = '';
+  niches.forEach(function(niche, idx){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.style.cssText = 'font-size:11px;padding:6px 14px;margin:0;';
+    btn.textContent = niche.label;
+    btn.setAttribute('data-idx', idx);
+    btn.addEventListener('click', function(){
+      var orig = btn.textContent;
+      var ta = document.createElement('textarea');
+      ta.value = niche.html;
+      ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); btn.textContent='Copied!'; setTimeout(function(){btn.textContent=orig;},2000); }
+      catch(e){ toast('Copy failed'); }
+      document.body.removeChild(ta);
+    });
+    btnWrap.appendChild(btn);
+  });
+
   document.getElementById('out-all').style.display = 'block';
   document.getElementById('out-all').scrollIntoView({behavior:'smooth'});
 }
