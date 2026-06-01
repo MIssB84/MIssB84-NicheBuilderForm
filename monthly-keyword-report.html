@@ -22,7 +22,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .fi-sm:focus{border-color:#dea193;}
 .fi-sm.name-field{text-align:left;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-/* 5-col: name | month | avg | prev avg | del */
+/* 5-col: name | month | avg | prev mo avg | del */
 .prod-row{display:grid;grid-template-columns:1fr 88px 88px 88px 34px;gap:6px;align-items:center;margin-bottom:7px;}
 .prod-row-head{display:grid;grid-template-columns:1fr 88px 88px 88px 34px;gap:6px;align-items:center;margin-bottom:6px;}
 .col-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;text-align:center;}
@@ -118,13 +118,13 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <!-- PRODUCTS TABLE -->
 <div class="card">
   <p class="card-title" style="margin-bottom:0.2rem;">Product Keywords</p>
-  <p class="card-sub">Each row = one keyword. Prev Avg is last month's average — used to calculate the trend arrow.</p>
+  <p class="card-sub">Each row = one keyword. Prev Mo Avg is last month's average — used to calculate the trend arrow.</p>
 
   <div class="prod-row-head">
     <span class="col-label name-col">Product / Keyword</span>
     <span class="col-label">This Month</span>
     <span class="col-label">Avg Monthly</span>
-    <span class="col-label">Prev Avg</span>
+    <span class="col-label">Prev Mo Avg</span>
     <span></span>
   </div>
 
@@ -161,7 +161,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
       <button class="modal-close" onclick="closeModal()">Close ✕</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows but clear <strong style="color:#2a1f1c;">This Month</strong> and move your current <strong style="color:#2a1f1c;">Avg Monthly</strong> into <strong style="color:#2a1f1c;">Prev Avg</strong> automatically — so your trend arrows are ready to go.</p>
+      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows but clear <strong style="color:#2a1f1c;">This Month</strong> and move your current <strong style="color:#2a1f1c;">Avg Monthly</strong> into <strong style="color:#2a1f1c;">Prev Mo Avg</strong> automatically — so your trend arrows are ready to go.</p>
       <div class="row2" style="margin-bottom:1rem;">
         <div>
           <label class="fl" for="nm-month">New Month</label>
@@ -239,7 +239,7 @@ function addRow(data){
     '<input class="fi-sm name-field" data-field="name" placeholder="Product name" value="'+esc(data.name)+'">'+
     '<input class="fi-sm" data-field="month" placeholder="0" value="'+esc(data.month)+'">'+
     '<input class="fi-sm" data-field="avg" placeholder="0" value="'+esc(data.avg)+'">'+
-    '<input class="fi-sm" data-field="prev" placeholder="—" value="'+esc(data.prev)+'">'+
+    '<input class="fi-sm" data-field="prev" placeholder="Prev Mo" value="'+esc(data.prev)+'">'+
     '<button class="del-btn" onclick="delRow(this)" title="Remove">×</button>';
   list.appendChild(row);
   row.querySelectorAll('input').forEach(function(el){
