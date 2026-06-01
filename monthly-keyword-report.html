@@ -118,13 +118,13 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <!-- PRODUCTS TABLE -->
 <div class="card">
   <p class="card-title" style="margin-bottom:0.2rem;">Product Keywords</p>
-  <p class="card-sub">Each row = one keyword. Prev Mo Avg is last month's average — used to calculate the trend arrow.</p>
+  <p class="card-sub">Each row = one keyword. Prev Mo is last month's avg — drives the trend arrows. Product names are saved permanently; numbers reset each session.</p>
 
   <div class="prod-row-head">
     <span class="col-label name-col">Product / Keyword</span>
     <span class="col-label">This Month</span>
     <span class="col-label">Avg Monthly</span>
-    <span class="col-label">Prev Mo Avg</span>
+    <span class="col-label">Prev Mo</span>
     <span></span>
   </div>
 
@@ -161,7 +161,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
       <button class="modal-close" onclick="closeModal()">Close ✕</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows but clear <strong style="color:#2a1f1c;">This Month</strong> and move your current <strong style="color:#2a1f1c;">Avg Monthly</strong> into <strong style="color:#2a1f1c;">Prev Mo Avg</strong> automatically — so your trend arrows are ready to go.</p>
+      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows, move <strong style="color:#2a1f1c;">This Month</strong> searches into <strong style="color:#2a1f1c;">Prev Mo</strong>, and clear the number columns so you're ready to enter new data.</p>
       <div class="row2" style="margin-bottom:1rem;">
         <div>
           <label class="fl" for="nm-month">New Month</label>
@@ -288,41 +288,68 @@ function applyNewMonth(){
   var m=document.getElementById('nm-month').value.trim();
   var y=document.getElementById('nm-year').value.trim();
   if(!m||!y){toast('Please fill in month and year.');return;}
-  // Move avg → prev, clear month and avg
+  // Move THIS MONTH searches → Prev Mo, clear avg and month
   var rows=document.querySelectorAll('#products-list .prod-row');
   rows.forEach(function(row){
+    var monthField=row.querySelector('[data-field="month"]');
     var avgField=row.querySelector('[data-field="avg"]');
     var prevField=row.querySelector('[data-field="prev"]');
-    var monthField=row.querySelector('[data-field="month"]');
-    prevField.value=avgField.value; // current avg becomes prev
-    avgField.value='';              // clear avg for new month
-    monthField.value='';           // clear this month
+    prevField.value=monthField.value; // this month's searches become prev mo
+    monthField.value='';
+    avgField.value='';
   });
   document.getElementById('f-month').value=m;
   document.getElementById('f-year').value=y;
+  // Save product names + new prev values
+  saveProductNames();
   closeModal();
-  isDirty=true;setStatus('unsaved','Unsaved changes');
-  toast('Rolled over to '+m+' '+y+' — update your numbers!');
+  isDirty=false;setStatus('saved','Rolled over — enter new numbers');
+  toast('Rolled over to '+m+' '+y+' — enter your new numbers!');
+}
+
+// Save product names only (permanent)
+function saveProductNames(){
+  var products=getProducts();
+  var names=products.map(function(p){return{name:p.name,prev:p.prev};});
+  try{localStorage.setItem(SK+'_names',JSON.stringify(names));}catch(e){}
 }
 
 function saveData(){
-  var data={month:v('f-month'),year:v('f-year'),img:v('f-img'),products:getProducts()};
-  try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved','Saved just now');toast('Progress saved!');}
-  catch(e){toast('Could not save');}
+  // Only save product names + prev — never save month/avg numbers
+  saveProductNames();
+  // Save header info (month label + image) separately
+  var header={month:v('f-month'),year:v('f-year'),img:v('f-img')};
+  try{
+    localStorage.setItem(SK+'_header',JSON.stringify(header));
+    isDirty=false;setStatus('saved','Saved just now');toast('Saved!');
+  }catch(e){toast('Could not save');}
 }
 
 function loadData(){
   try{
-    var raw=localStorage.getItem(SK);
-    if(!raw){defaultProducts.forEach(function(p){addRow(p);});setStatus('unsaved','Nothing saved yet');return;}
-    var data=JSON.parse(raw);
-    document.getElementById('f-month').value=data.month||'';
-    document.getElementById('f-year').value=data.year||'';
-    document.getElementById('f-img').value=data.img||'';
-    if(data.img)updateThumb('f-img');
-    (data.products||[]).forEach(function(p){addRow(p);});
-    setStatus('saved','Progress loaded');
-  }catch(e){defaultProducts.forEach(function(p){addRow(p);});setStatus('unsaved','Could not load');}
+    // Load header
+    var hRaw=localStorage.getItem(SK+'_header');
+    if(hRaw){
+      var h=JSON.parse(hRaw);
+      document.getElementById('f-month').value=h.month||'';
+      document.getElementById('f-year').value=h.year||'';
+      document.getElementById('f-img').value=h.img||'';
+      if(h.img)updateThumb('f-img');
+    }
+    // Load product names (with prev, but blank month+avg)
+    var nRaw=localStorage.getItem(SK+'_names');
+    if(nRaw){
+      var names=JSON.parse(nRaw);
+      names.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:p.prev||''});});
+      setStatus('saved','Products loaded — enter this month\'s numbers');
+    } else {
+      defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:''});});
+      setStatus('unsaved','Nothing saved yet');
+    }
+  }catch(e){
+    defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:''});});
+    setStatus('unsaved','Could not load');
+  }
 }
 
 function clearAll(){
@@ -335,8 +362,9 @@ function clearAll(){
   document.getElementById('err-f-img').style.display='none';
   document.getElementById('products-list').innerHTML='';
   rowCount=0;
-  defaultProducts.forEach(function(p){addRow(p);});
-  localStorage.removeItem(SK);
+  defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:''});});
+  localStorage.removeItem(SK+'_names');
+  localStorage.removeItem(SK+'_header');
   document.getElementById('out').style.display='none';
   isDirty=false;setStatus('unsaved','Cleared');toast('Reset to defaults.');
 }
@@ -503,7 +531,7 @@ function copyAll(){
 var autoTimer;
 document.addEventListener('input',function(){
   isDirty=true;setStatus('unsaved','Unsaved changes');
-  clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData();},3000);
+  clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveProductNames();isDirty=false;setStatus('saved','Saved');},3000);
 });
 window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
 
