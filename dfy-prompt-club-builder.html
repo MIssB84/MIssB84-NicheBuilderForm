@@ -1,173 +1,452 @@
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Prompt Club Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  .bsf * { box-sizing: border-box; margin: 0; padding: 0; }
-  .bsf { font-family: 'Jost', sans-serif; background: #fdf7f2; }
-  .bsf-hero { background: #2a1f1c; padding: 3rem 2rem 2.8rem; text-align: center; }
-  .bsf-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: #c9a96e; margin-bottom: 1.2rem; display: block; }
-  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); line-height: 1.15; color: #f5eddf; margin-bottom: 1.2rem; font-weight: 700; }
-  .bsf-h1 em { color: #dea193; font-style: italic; }
-  .bsf-sub { font-size: 17px; font-weight: 300; color: #d9cfc8; line-height: 1.75; max-width: 500px; margin: 0 auto 2rem; }
-  .bsf-chips-section { margin-bottom: 1.8rem; }
-  .bsf-chips-label { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #c9a96e; margin-bottom: 14px; display: block; }
-  .bsf-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 600px; margin: 0 auto; }
-  .bsf-chip { background-color: #e8ddd6 !important; border: 2px solid #e8ddd6 !important; color: #2a1f1c !important; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 600; padding: 9px 20px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s; -webkit-appearance: none; appearance: none; }
-  .bsf-chip:hover { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
-  .bsf-chip.active { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
-  .bsf-divider { width: 60px; height: 1px; background: rgba(201,169,110,0.35); margin: 0 auto 1.8rem; }
-  .bsf-body { padding: 2.5rem 1.5rem 3rem; max-width: 640px; margin: 0 auto; }
-  .bsf-card { background: #ffffff !important; border: 1.5px solid #ead9d5 !important; border-radius: 24px; padding: 2.8rem 2.5rem; }
-  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #2a1f1c !important; text-align: center; margin-bottom: 6px; }
-  .bsf-card-sub { font-size: 15px; font-weight: 300; color: #7a6660 !important; text-align: center; margin-bottom: 2rem; }
-  .bsf-field { margin-bottom: 1.4rem; }
-  .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .bsf-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #2a1f1c !important; }
-  .bsf-optional { font-size: 11px; font-weight: 400; color: #b09a94 !important; font-style: italic; }
-  .bsf-input { width: 100%; padding: 18px 22px; border: 1.5px solid #ead9d5 !important; border-radius: 14px; font-family: 'Jost', sans-serif; font-size: 17px; font-weight: 300; color: #2a1f1c !important; background: #fdf7f2 !important; outline: none; transition: border-color 0.2s, background 0.2s; }
-  .bsf-input:focus { border-color: #dea193 !important; background: #fff !important; }
-  .bsf-input::placeholder { color: #c4b0a8 !important; }
-  .bsf-btn { width: 100%; padding: 20px; background-color: #dea193 !important; color: #2a1f1c !important; border: none !important; border-radius: 14px; font-family: 'Jost', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.5rem; -webkit-appearance: none; appearance: none; }
-  .bsf-btn:active { transform: scale(0.985); }
-  .bsf-confirm { display: none; margin-top: 1.8rem; padding: 1.4rem 1.6rem; background: #fdf7f2 !important; border: 1.5px solid #ead9d5 !important; border-radius: 14px; text-align: center; }
-  .bsf-confirm.show { display: block; animation: fadeUp 0.3s ease; }
-  .bsf-confirm-text { font-family: 'Playfair Display', serif; font-size: 17px; font-style: italic; color: #2a1f1c !important; margin-bottom: 4px; }
-  .bsf-confirm-sub { font-size: 13px; color: #b09a94 !important; font-weight: 300; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .bsf-bullets { display: flex; flex-direction: column; border-top: 1px solid #ead9d5; margin-top: 2.5rem; padding-top: 2rem; }
-  .bsf-bullet { display: flex; align-items: flex-start; gap: 14px; font-size: 16px; font-weight: 400; color: #2a1f1c !important; line-height: 1.65; padding: 14px 0; border-bottom: 1px solid #f0e8e4; }
-  .bsf-bullet:last-child { border-bottom: none; }
-  .bsf-bullet-num { width: 28px; height: 28px; border-radius: 50%; background-color: #2a1f1c !important; color: #f5eddf !important; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-  .bsf-dfy { background: #2a1f1c; padding: 4rem 2rem; text-align: center; }
-  .bsf-dfy-inner { max-width: 600px; margin: 0 auto; }
-  .bsf-dfy-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: #c9a96e; margin-bottom: 1rem; display: block; }
-  .bsf-dfy-h2 { font-family: 'Playfair Display', serif; font-size: clamp(24px, 4vw, 36px); line-height: 1.25; color: #f5eddf; margin-bottom: 1rem; font-weight: 700; }
-  .bsf-dfy-h2 em { color: #dea193; font-style: italic; }
-  .bsf-dfy-body { font-size: 16px; font-weight: 300; color: #d9cfc8; line-height: 1.8; margin-bottom: 2.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
-  .bsf-dfy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 2.5rem; text-align: left; }
-  .bsf-dfy-feature { background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); border-radius: 14px; padding: 1.1rem 1.25rem; }
-  .bsf-dfy-feature-title { font-size: 13px; font-weight: 600; color: #c9a96e; margin-bottom: 5px; }
-  .bsf-dfy-feature-desc { font-size: 13px; font-weight: 300; color: #d9cfc8; line-height: 1.5; }
-  .bsf-dfy-btn { display: inline-block; background-color: #dea193; color: #2a1f1c; text-decoration: none; font-family: 'Jost', sans-serif; font-size: 16px; font-weight: 700; padding: 18px 48px; border-radius: 14px; letter-spacing: 0.04em; transition: background-color 0.2s; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 5rem;font-size:87.5%;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:#c4b0a8;}
+.card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
+.fl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;}
+.fi:focus{border-color:#dea193;}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
+.prod-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
+.prod-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.prod-left{display:flex;align-items:center;gap:10px;}
+.prod-icon{width:32px;height:32px;border-radius:8px;background:#2a1f1c;display:flex;align-items:center;justify-content:center;}
+.prod-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#2a1f1c;}
+.pdots{display:flex;gap:4px;align-items:center;}
+.dot{width:8px;height:8px;border-radius:50%;background:#ead9d5;transition:background 0.2s;}
+.dot.on{background:#dea193;}.dot.done{background:#7a9e7e;}
+.plabel{font-size:11px;font-weight:600;color:#c4b0a8;margin-left:6px;}
+.slot{background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;}
+.slot-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;display:block;}
+.slot textarea{width:100%;border:1.5px solid #dea193;border-radius:8px;background:#fff;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;outline:none;resize:vertical;min-height:140px;line-height:1.6;padding:8px 10px;}
+.slot input.url{width:100%;border:1.5px solid #ead9d5;border-radius:6px;padding:7px 10px;font-family:'Jost',sans-serif;font-size:12px;color:#2a1f1c;background:#fff;outline:none;margin-top:8px;}
+.slot input.url:focus{border-color:#dea193;}
+.img-thumb{width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
+.img-thumb.show{display:block;}
+.img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+.prog-bar-wrap{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1rem 1.5rem;max-width:700px;margin:0 auto 1.5rem;display:flex;align-items:center;gap:16px;}
+.prog-track{flex:1;background:#ead9d5;border-radius:10px;height:6px;overflow:hidden;}
+.prog-fill{height:100%;background:#dea193;border-radius:10px;transition:width 0.3s;width:0%;}
+.prog-count{font-size:12px;color:#c4b0a8;white-space:nowrap;}
+.preview-section-btn{display:block;width:100%;max-width:700px;margin:0 auto 1rem;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#dea193;border:2px solid #dea193;padding:12px;border-radius:40px;cursor:pointer;transition:all 0.2s;}
+.preview-section-btn:hover{background:#dea193;color:#2a1f1c;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;z-index:100;}
+.save-status{font-size:12px;color:#c4b0a8;display:flex;align-items:center;gap:6px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:#c4b0a8;}
+.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
+.sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:9px 20px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all 0.2s;}
+.sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}
+.sbtn-save:hover{background:#dea193;color:#2a1f1c;}
+.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}
+.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
+.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
+.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+#out{display:none;max-width:700px;margin:0 auto;}
+.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
+.out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.out-card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.copy-all-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:10px 28px;border-radius:30px;cursor:pointer;transition:all 0.2s;}
+.copy-all-btn:hover{background:#bb7d72;color:#fff;}
+.out-preview{padding:1.5rem;}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(42,31,28,0.88);z-index:200;overflow-y:auto;padding:2rem 1rem;}
+.modal-inner{background:#fff;border-radius:14px;max-width:700px;margin:0 auto;overflow:hidden;}
+.modal-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.modal-close{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(222,161,147,0.4);color:#dea193;padding:6px 16px;border-radius:20px;cursor:pointer;}
+.modal-close:hover{background:#dea193;color:#2a1f1c;}
+.modal-body{padding:1.25rem;}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
 </style>
+</head>
+<body>
 
-<div class="bsf">
-  <div class="bsf-hero">
-    <span class="bsf-eyebrow">Members-only tool</span>
-    <h1 class="bsf-h1">Dania's Etsy <em>Bestseller</em><br>Finder</h1>
-    <p class="bsf-sub">Type your niche and go straight to Etsy listings that are already selling. No scrolling, no guessing.</p>
+<div class="page-header">
+  <div class="badge">DFY Prompt Club</div>
+  <h1 class="page-title">Weekly Prompt Builder</h1>
+  <p class="page-sub">Fill in across the week. Progress saves automatically.</p>
+</div>
 
-    <div class="bsf-chips-section">
-      <span class="bsf-chips-label">Quick-fill a niche</span>
-      <div class="bsf-chips" id="niche-chips">
-        <button class="bsf-chip" onclick="fillNiche(this,'teacher')">teacher</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'nurse')">nurse</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'boho')">boho</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'cottagecore')">cottagecore</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'retro')">retro</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'baseball mom')">baseball mom</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'mama')">mama</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'western')">western</button>
-        <button class="bsf-chip" onclick="fillNiche(this,'motivational')">motivational</button>
-      </div>
+<div class="prog-bar-wrap">
+  <span style="font-size:12px;font-weight:600;color:#5a4a45;white-space:nowrap;">Weekly progress</span>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  <span class="prog-count" id="prog-count">0 of 12 prompts</span>
+</div>
+
+<div id="form-top"></div>
+
+<!-- WALL ART -->
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div>
+      <span class="prod-name">Wall Art</span>
     </div>
-
-    <div class="bsf-divider"></div>
-
-    <div class="bsf-chips-section">
-      <span class="bsf-chips-label">Quick-fill a product type</span>
-      <div class="bsf-chips" id="product-chips">
-        <button class="bsf-chip" onclick="fillProduct(this,'png')">png</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'tumbler wrap')">tumbler wrap</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'wall art')">wall art</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'shirt')">shirt</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'sweatshirt')">sweatshirt</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'tote bag')">tote bag</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'mug')">mug</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'printable')">printable</button>
-        <button class="bsf-chip" onclick="fillProduct(this,'digital download')">digital download</button>
-      </div>
-    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-wa"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-wa">0/3</span></div>
   </div>
-
-  <div class="bsf-body">
-    <div class="bsf-card">
-      <p class="bsf-card-title">Find Bestsellers</p>
-      <p class="bsf-card-sub">Pick chips above or type your own. Product type is optional but sharpens results.</p>
-      <div class="bsf-field">
-        <div class="bsf-label-row"><span class="bsf-label">Niche</span></div>
-        <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. teacher, boho, mama"/>
-      </div>
-      <div class="bsf-field">
-        <div class="bsf-label-row">
-          <span class="bsf-label">Product Type</span>
-          <span class="bsf-optional">optional but helps a lot</span>
-        </div>
-        <input class="bsf-input" type="text" id="bsf-product" placeholder="e.g. png, tumbler wrap, shirt"/>
-      </div>
-      <button class="bsf-btn" id="bsf-main-btn" onclick="bsfGo()">Find Bestsellers</button>
-      <div class="bsf-confirm" id="bsf-confirm">
-        <p class="bsf-confirm-text">Opening your results on Etsy...</p>
-        <p class="bsf-confirm-sub">A new tab just opened with your bestseller search.</p>
-      </div>
-      <div class="bsf-bullets">
-        <div class="bsf-bullet"><div class="bsf-bullet-num">1</div><span>See what buyers are <strong>actually purchasing</strong> in your niche right now</span></div>
-        <div class="bsf-bullet"><div class="bsf-bullet-num">2</div><span>Get real inspiration for your <strong>next product drop</strong></span></div>
-        <div class="bsf-bullet"><div class="bsf-bullet-num">3</div><span><strong>Validate your idea</strong> before spending hours creating something nobody searches for</span></div>
-      </div>
-    </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="wa-1" placeholder="Paste your wall art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="wa-2" placeholder="Paste your wall art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="wa-3" placeholder="Paste your wall art prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="wa-1-img" placeholder="Image URL" oninput="updateThumb('wa-1-img')"><img class="img-thumb" id="thumb-wa-1-img"><span class="img-err" id="err-wa-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="wa-2-img" placeholder="Image URL" oninput="updateThumb('wa-2-img')"><img class="img-thumb" id="thumb-wa-2-img"><span class="img-err" id="err-wa-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="wa-3-img" placeholder="Image URL" oninput="updateThumb('wa-3-img')"><img class="img-thumb" id="thumb-wa-3-img"><span class="img-err" id="err-wa-3-img">Image not found</span></div>
   </div>
+  <button class="preview-section-btn" onclick="previewSection('wa')">Preview Wall Art Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
+</div>
 
-  <div class="bsf-dfy">
-    <div class="bsf-dfy-inner">
-      <span class="bsf-dfy-eyebrow">Want to go deeper?</span>
-      <h2 class="bsf-dfy-h2">Want the research <em>already done</em> for you?</h2>
-      <p class="bsf-dfy-body">This tool helps you spot what's selling. The DFY Niche Club takes it all the way. Every week I drop 7 fully researched, low-competition niches with everything you need to go from idea to listed without the guesswork.</p>
-      <div class="bsf-dfy-grid">
-        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">7 weekly niches</div><div class="bsf-dfy-feature-desc">Fresh, low-competition ideas every single week</div></div>
-        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Done-for-you SEO</div><div class="bsf-dfy-feature-desc">Titles and tags ready to copy and paste</div></div>
-        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Pricing insights</div><div class="bsf-dfy-feature-desc">Know exactly what to charge before you list</div></div>
-        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">AI image prompts</div><div class="bsf-dfy-feature-desc">Design direction included for every niche</div></div>
-        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Monthly live Q&amp;A</div><div class="bsf-dfy-feature-desc">Get your questions answered directly by Dania</div></div>
-        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Members-only resources</div><div class="bsf-dfy-feature-desc">Exclusive tools and content just for the club</div></div>
-      </div>
-      <a class="bsf-dfy-btn" id="bsf-dfy-link" href="https://www.thrivewithdania.com/" target="_blank">Learn More About the DFY Niche Club</a>
+<!-- FRAME TV ART -->
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3" stroke-linecap="round"/></svg></div>
+      <span class="prod-name">Frame TV Art</span>
     </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-ft"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-ft">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="ft-1" placeholder="Paste your Frame TV art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="ft-2" placeholder="Paste your Frame TV art prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="ft-3" placeholder="Paste your Frame TV art prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="ft-1-img" placeholder="Image URL" oninput="updateThumb('ft-1-img')"><img class="img-thumb" id="thumb-ft-1-img"><span class="img-err" id="err-ft-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="ft-2-img" placeholder="Image URL" oninput="updateThumb('ft-2-img')"><img class="img-thumb" id="thumb-ft-2-img"><span class="img-err" id="err-ft-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="ft-3-img" placeholder="Image URL" oninput="updateThumb('ft-3-img')"><img class="img-thumb" id="thumb-ft-3-img"><span class="img-err" id="err-ft-3-img">Image not found</span></div>
+  </div>
+  <button class="preview-section-btn" onclick="previewSection('ft')">Preview Frame TV Art Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
+</div>
+
+<!-- PNG -->
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg></div>
+      <span class="prod-name">PNG</span>
+    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-png"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-png">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="png-1" placeholder="Paste your PNG prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="png-2" placeholder="Paste your PNG prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="png-3" placeholder="Paste your PNG prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="png-1-img" placeholder="Image URL" oninput="updateThumb('png-1-img')"><img class="img-thumb" id="thumb-png-1-img"><span class="img-err" id="err-png-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="png-2-img" placeholder="Image URL" oninput="updateThumb('png-2-img')"><img class="img-thumb" id="thumb-png-2-img"><span class="img-err" id="err-png-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="png-3-img" placeholder="Image URL" oninput="updateThumb('png-3-img')"><img class="img-thumb" id="thumb-png-3-img"><span class="img-err" id="err-png-3-img">Image not found</span></div>
+  </div>
+  <button class="preview-section-btn" onclick="previewSection('png')">Preview PNG Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
+</div>
+
+<!-- TUMBLER WRAPS -->
+<div class="prod-card">
+  <div class="prod-head">
+    <div class="prod-left">
+      <div class="prod-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dea193" stroke-width="2"><path d="M7 3h10l-1 16a2 2 0 01-2 2H10a2 2 0 01-2-2L7 3z"/><path d="M6 7h12"/></svg></div>
+      <span class="prod-name">Tumbler Wraps</span>
+    </div>
+    <div style="display:flex;align-items:center;"><div class="pdots" id="dots-tb"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span class="plabel" id="lbl-tb">0/3</span></div>
+  </div>
+  <div class="slot"><span class="slot-label">Prompt 1</span><textarea id="tb-1" placeholder="Paste your tumbler wrap prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 2</span><textarea id="tb-2" placeholder="Paste your tumbler wrap prompt here..."></textarea></div>
+  <div class="slot"><span class="slot-label">Prompt 3</span><textarea id="tb-3" placeholder="Paste your tumbler wrap prompt here..."></textarea></div>
+  <div style="background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:1rem;margin-bottom:0.75rem;">
+    <span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:10px;display:block;">Image URLs</span>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 1</span><input class="url fi" id="tb-1-img" placeholder="Image URL" oninput="updateThumb('tb-1-img')"><img class="img-thumb" id="thumb-tb-1-img"><span class="img-err" id="err-tb-1-img">Image not found</span></div>
+    <div style="margin-bottom:8px;"><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 2</span><input class="url fi" id="tb-2-img" placeholder="Image URL" oninput="updateThumb('tb-2-img')"><img class="img-thumb" id="thumb-tb-2-img"><span class="img-err" id="err-tb-2-img">Image not found</span></div>
+    <div><span style="font-size:11px;font-weight:600;color:#5a4a45;display:block;margin-bottom:4px;">Prompt 3</span><input class="url fi" id="tb-3-img" placeholder="Image URL" oninput="updateThumb('tb-3-img')"><img class="img-thumb" id="thumb-tb-3-img"><span class="img-err" id="err-tb-3-img">Image not found</span></div>
+  </div>
+  <button class="preview-section-btn" onclick="previewSection('tb')">Preview Tumbler Wrap Prompts ↗</button>
+  <button class="preview-section-btn" style="border-color:#c4b0a8;color:#c4b0a8;margin-top:0;" onclick="document.getElementById('form-top').scrollIntoView({behavior:'smooth'})">↑ Back to Top</button>
+</div>
+
+<div class="card">
+  <p class="card-title">Week Info</p>
+  <p class="card-sub">Enter the final theme name from your Claude session. This sets the header for your lesson.</p>
+  <label class="fl" for="f-theme">Theme Name</label>
+  <input class="fi" id="f-theme" placeholder="e.g. Cottagecore Mushrooms">
+</div>
+
+<div style="height:80px;"></div>
+
+<div id="out">
+  <div class="out-card">
+    <div class="out-card-head">
+      <span class="out-card-title">Your HTML — ready to paste into Systeme.io</span>
+      <button class="copy-all-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button>
+    </div>
+    <div class="out-preview" id="out-preview"></div>
+  </div>
+  <textarea id="out-code" style="display:none;"></textarea>
+  <div style="text-align:center;margin-bottom:2rem;">
+    <button style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form</button>
   </div>
 </div>
 
+<div class="save-bar">
+  <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
+  <div class="sbtns">
+    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear Week</button>
+    <button class="sbtn sbtn-save" onclick="saveData()">Save Progress</button>
+    <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Preview</span>
+      <button class="modal-close" onclick="closeModal()">Close ✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-function fillNiche(el, val) {
-  document.getElementById('bsf-niche').value = val;
-  document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-}
-function fillProduct(el, val) {
-  document.getElementById('bsf-product').value = val;
-  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-}
-function bsfGo() {
-  var niche = document.getElementById('bsf-niche').value.trim();
-  var product = document.getElementById('bsf-product').value.trim();
-  if (!niche) { document.getElementById('bsf-niche').style.setProperty('border-color', '#dea193', 'important'); document.getElementById('bsf-niche').focus(); return; }
-  var q = encodeURIComponent(product ? niche + ' ' + product : niche);
-  window.open('https://www.etsy.com/search?q=' + q + '&order=most_relevant&is_best_seller=true', '_blank');
-  var conf = document.getElementById('bsf-confirm');
-  conf.classList.add('show');
-  setTimeout(function() { conf.classList.remove('show'); }, 4000);
-}
-document.getElementById('bsf-niche').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('bsf-product').focus(); });
-document.getElementById('bsf-product').addEventListener('keydown', function(e) { if (e.key === 'Enter') bsfGo(); });
+var SK='dfy_pc_v4';
+var isDirty=false;
+var kittlLink='https://kittl.com?ref=dania';
 
-var btn = document.getElementById('bsf-main-btn');
-btn.style.setProperty('background-color', '#dea193', 'important');
-btn.style.setProperty('color', '#2a1f1c', 'important');
-btn.addEventListener('mouseover', function() { this.style.setProperty('background-color', '#c97e6e', 'important'); this.style.setProperty('color', '#ffffff', 'important'); });
-btn.addEventListener('mouseout', function() { this.style.setProperty('background-color', '#dea193', 'important'); this.style.setProperty('color', '#2a1f1c', 'important'); });
+var allFields=[
+  'f-theme',
+  'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
+  'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
+  'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
+  'tb-1','tb-1-img','tb-2','tb-2-img','tb-3','tb-3-img'
+];
 
-var dfyBtn = document.getElementById('bsf-dfy-link');
-dfyBtn.style.setProperty('background-color', '#dea193', 'important');
-dfyBtn.style.setProperty('color', '#2a1f1c', 'important');
-dfyBtn.addEventListener('mouseover', function() { this.style.setProperty('background-color', '#c97e6e', 'important'); this.style.setProperty('color', '#ffffff', 'important'); });
-dfyBtn.addEventListener('mouseout', function() { this.style.setProperty('background-color', '#dea193', 'important'); this.style.setProperty('color', '#2a1f1c', 'important'); });
+var sections=[
+  {key:'wa', name:'Wall Art',       anchor:'section-wall-art',     ids:['wa-1','wa-2','wa-3']},
+  {key:'ft', name:'Frame TV Art',   anchor:'section-frame-tv-art', ids:['ft-1','ft-2','ft-3']},
+  {key:'png',name:'PNG',            anchor:'section-png',          ids:['png-1','png-2','png-3']},
+  {key:'tb', name:'Tumbler Wraps',  anchor:'section-tumbler-wraps',ids:['tb-1','tb-2','tb-3']}
+];
+
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+
+function updateThumb(inputId){
+  var input=document.getElementById(inputId);
+  if(!input)return;
+  var url=input.value.trim();
+  var thumb=document.getElementById('thumb-'+inputId);
+  var err=document.getElementById('err-'+inputId);
+  if(!thumb)return;
+  if(!url){thumb.className='img-thumb';thumb.src='';if(err)err.style.display='none';return;}
+  thumb.onload=function(){thumb.className='img-thumb show';if(err)err.style.display='none';};
+  thumb.onerror=function(){thumb.className='img-thumb';if(err)err.style.display='block';};
+  thumb.src=url;
+}
+
+function updateProgress(){
+  var total=0;
+  sections.forEach(function(s){
+    var filled=s.ids.filter(function(id){return v(id).trim().length>0;}).length;
+    total+=filled;
+    var dots=document.getElementById('dots-'+s.key).querySelectorAll('.dot');
+    dots.forEach(function(d,i){d.className='dot'+(i<filled?(filled===3?' done':' on'):'');});
+    var lbl=document.getElementById('lbl-'+s.key);
+    lbl.textContent=filled+'/3';
+    lbl.style.color=filled===3?'#7a9e7e':'#c4b0a8';
+  });
+  document.getElementById('prog-fill').style.width=Math.round((total/12)*100)+'%';
+  document.getElementById('prog-fill').style.background=total===12?'#7a9e7e':'#dea193';
+  document.getElementById('prog-count').textContent=total+' of 12 prompts';
+}
+
+function saveData(){
+  var data={};
+  allFields.forEach(function(id){data[id]=v(id);});
+  try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved','Saved just now');toast('Progress saved!');}
+  catch(e){toast('Could not save');}
+}
+function loadData(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(!raw){setStatus('unsaved','Nothing saved yet');return;}
+    var data=JSON.parse(raw);
+    allFields.forEach(function(id){var el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
+    setStatus('saved','Progress loaded');
+    updateProgress();
+    allFields.forEach(function(id){
+      if(id.indexOf('-img')>-1){var el=document.getElementById(id);if(el&&el.value.trim())updateThumb(id);}
+    });
+  }catch(e){setStatus('unsaved','Could not load');}
+}
+function clearAll(){
+  if(!confirm('Clear all data for this week?'))return;
+  allFields.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.querySelectorAll('.img-thumb').forEach(function(t){t.className='img-thumb';t.src='';});
+  document.querySelectorAll('.img-err').forEach(function(e){e.style.display='none';});
+  localStorage.removeItem(SK);
+  document.getElementById('out').style.display='none';
+  isDirty=false;setStatus('unsaved','Cleared');updateProgress();toast('Week cleared.');
+}
+
+function buildSectionHTML(s){
+  var html='';
+  html+='<div id="'+s.anchor+'" style="padding:2rem 0 0.5rem;">';
+  html+='<span style="font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+s.name+'</h2>';
+  html+='<div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
+
+  s.ids.forEach(function(id,i){
+    var text=v(id).trim();
+    if(!text)return;
+    var img=v(id+'-img').trim();
+    var pid='p'+s.key+(i+1);
+
+    html+='<div style="margin-bottom:3rem;">';
+    html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;">Prompt '+(i+1)+'</p>';
+
+    // Prompt card - upright Jost, larger, better line-height
+    html+='<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">';
+    html+='<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="'+pid+'">'+esc(text)+'</p>';
+
+    // Copy Prompt button - solid pink background
+    html+='<div style="text-align:center;">';
+    html+='<button onclick="var el=document.getElementById(\''+pid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>';
+    html+='</div>';
+    html+='</div>';
+
+    // Image below with visual connector
+    if(img){
+      html+='<div style="display:flex;flex-direction:column;align-items:center;">';
+      html+='<div style="width:2px;height:16px;background:rgba(201,169,110,0.4);"></div>';
+      html+='<img src="'+img+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #ead9d5;display:block;">';
+      html+='</div>';
+    }
+
+    html+='</div>';
+  });
+
+  // Back to top - larger and easier to find
+  html+='<div style="text-align:center;padding:1.5rem 0 2.5rem;">';
+  html+='<a href="#" style="font-family:Jost,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;text-decoration:none;border:1.5px solid rgba(201,169,110,0.35);padding:9px 22px;border-radius:30px;">&#8593; Back to Top</a>';
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+
+function previewSection(key){
+  var s=sections.find(function(x){return x.key===key;});
+  if(!s)return;
+  document.getElementById('modal-title').textContent=s.name+' Preview';
+  document.getElementById('modal-body').innerHTML=buildSectionHTML(s);
+  document.getElementById('modal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal').style.display='none';
+  document.body.style.overflow='';
+}
+
+function buildHTML(){
+  var theme=v('f-theme')||'THEME';
+  var nav='';
+  sections.forEach(function(s){
+    var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
+    if(!hasAny)return;
+    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:5px solid #dea193;border-radius:10px;padding:18px 22px;text-decoration:none;margin-bottom:10px;"><span style="font-family:Jost,sans-serif;font-size:17px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:16px;color:#c4b0a8;">&#8595;</span></a>';
+  });
+
+  var html='<div style="font-family:Jost,sans-serif;font-size:87.5%;">';
+
+  // Header block
+  html+='<div style="background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;margin-bottom:2rem;">';
+  html+='<div style="background:#2a1f1c;padding:2.25rem 2rem 1.75rem;text-align:center;">';
+  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.5rem;line-height:1.2;">This Week\'s Prompt Drop</h2>';
+  html+='<p style="font-size:15px;font-weight:600;color:#dea193;margin:0;letter-spacing:0.03em;">'+esc(theme)+'</p>';
+  html+='</div>';
+
+  html+='<div style="padding:2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
+  html+='<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:11px 30px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>';
+  html+='</div>';
+
+  html+='<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Product Type</p>';
+  html+=nav;
+  html+='</div></div>';
+
+  // Sections
+  sections.forEach(function(s){
+    var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
+    if(!hasAny)return;
+    html+=buildSectionHTML(s);
+  });
+
+  // Tools footer
+  html+='<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;border:1px solid #ead9d5;padding:2rem;margin-top:2rem;text-align:center;">';
+  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.75rem;">Tools I Use</p>';
+  html+='<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.5rem;">These are my favorite tools for creating bestselling digital designs. I use them every week to generate the prompts inside this club.</p>';
+  html+='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">';
+  html+='<a href="https://kittl.com?ref=dania" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 24px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;">Kittl</a>';
+  html+='<a href="https://affiliates.mydesigns.io/32714/161230" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 24px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;">MyDesigns</a>';
+  html+='<a href="https://galaxy.ai/?via=dania" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 24px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;">Galaxy AI</a>';
+  html+='</div></div>';
+  html+='</div>';
+  return html;
+}
+
+function generate(){
+  var theme=v('f-theme');
+  if(!theme){toast('Please fill in the theme first.');return;}
+  var html=buildHTML();
+  document.getElementById('out-code').value=html;
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var code=document.getElementById('out-code').value;
+  var btn=document.getElementById('copy-all-btn');
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=code;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent='Copied!';
+    setTimeout(function(){btn.textContent='Copy HTML';},2500);
+    toast('HTML copied! Paste into Systeme.io.');
+  }catch(e){toast('Copy failed — try Ctrl+C');}
+}
+
+allFields.forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('input',function(){isDirty=true;setStatus('unsaved','Unsaved changes');updateProgress();});
+});
+
+var autoTimer;
+document.addEventListener('input',function(){clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData();},3000);});
+setInterval(function(){if(isDirty){saveData();}},60000);
+window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
+
+loadData();
+updateProgress();
 </script>
+</body>
+</html>
