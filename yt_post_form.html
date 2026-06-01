@@ -1,186 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YT Post Formatter</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 5rem;font-size:87.5%;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:#c4b0a8;}
+.card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
+.fl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;margin-top:1rem;}
+.fl:first-of-type{margin-top:0;}
+.fi{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:14px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;}
+.fi:focus{border-color:#dea193;}
+textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;z-index:100;}
+.sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:9px 20px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all 0.2s;}
+.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}
+.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
+.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
+.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+#out{display:none;max-width:700px;margin:0 auto;}
+.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
+.out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.out-card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.copy-all-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:10px 28px;border-radius:30px;cursor:pointer;transition:all 0.2s;}
+.copy-all-btn:hover{background:#bb7d72;color:#fff;}
+.out-preview{padding:1.5rem;}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+.thumb-preview{max-width:100%;border-radius:8px;border:1px solid #ead9d5;margin-top:8px;display:none;}
+.thumb-preview.show{display:block;}
+.img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+</style>
+</head>
+<body>
 
-<div id="ytpf-wrap" style="font-family:'Jost',sans-serif;background:#fdf7f2;color:#2a1f1c;padding:40px 20px;min-height:100vh;">
-<div style="max-width:780px;margin:0 auto;">
+<div class="page-header">
+  <div class="badge">DFY Niche Group</div>
+  <h1 class="page-title">YouTube Post Formatter</h1>
+  <p class="page-sub">Fill in your video details and generate a ready-to-paste post.</p>
+</div>
 
-  <!-- HEADER -->
-  <div style="background:#2a1f1c;border-radius:16px;padding:28px 32px;margin-bottom:32px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;color:#f5eddf;font-size:1.7rem;font-weight:700;letter-spacing:0.01em;">New Video Post Formatter</div>
-    <div style="color:#dea193;font-size:0.85rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;margin-top:6px;">DFY Niche Group · YouTube Share</div>
+<div class="card">
+  <p class="card-title">Video Details</p>
+  <p class="card-sub">Enter your video info below. Use an image URL for your thumbnail.</p>
+
+  <label class="fl" for="f-title">Video Title</label>
+  <input class="fi" id="f-title" placeholder="e.g. I Never List an Etsy Product Without Doing THIS First">
+
+  <label class="fl" for="f-url">YouTube URL</label>
+  <input class="fi" id="f-url" placeholder="https://www.youtube.com/watch?v=...">
+
+  <label class="fl" for="f-thumb">Thumbnail Image URL</label>
+  <input class="fi" id="f-thumb" placeholder="https://..." oninput="updateThumb()">
+  <img class="thumb-preview" id="thumb-preview" alt="Thumbnail preview">
+  <span class="img-err" id="thumb-err">Image not found — check the URL</span>
+
+  <label class="fl" for="f-desc">Video Description</label>
+  <textarea class="fi" id="f-desc" placeholder="Paste your video description here..."></textarea>
+</div>
+
+<div style="height:80px;"></div>
+
+<div id="out">
+  <div class="out-card">
+    <div class="out-card-head">
+      <span class="out-card-title">Your HTML — ready to paste into Systeme.io</span>
+      <button class="copy-all-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button>
+    </div>
+    <div class="out-preview" id="out-preview"></div>
   </div>
-
-  <!-- FORM -->
-  <div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:32px;margin-bottom:32px;">
-    <span style="background:#2a1f1c;color:#dea193;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;border-radius:8px;margin-bottom:24px;display:inline-block;">Video Details</span>
-
-    <div style="margin-bottom:22px;margin-top:16px;">
-      <label style="display:block;font-size:0.9rem;font-weight:700;color:#5a4a45;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">Video Title</label>
-      <input type="text" id="ytpf-title" placeholder="e.g. I Never List an Etsy Product Without Doing THIS First"
-        style="width:100%;background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:14px 16px;font-family:'Jost',sans-serif;font-size:1.05rem;font-weight:500;color:#2a1f1c;outline:none;box-sizing:border-box;">
-    </div>
-
-    <div style="margin-bottom:22px;">
-      <label style="display:block;font-size:0.9rem;font-weight:700;color:#5a4a45;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">YouTube URL</label>
-      <input type="url" id="ytpf-url" placeholder="https://www.youtube.com/watch?v=..."
-        style="width:100%;background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:14px 16px;font-family:'Jost',sans-serif;font-size:1.05rem;font-weight:500;color:#2a1f1c;outline:none;box-sizing:border-box;">
-    </div>
-
-    <div style="margin-bottom:22px;">
-      <label style="display:block;font-size:0.9rem;font-weight:700;color:#5a4a45;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">Video Description</label>
-      <textarea id="ytpf-desc" placeholder="Paste your video description here..."
-        style="width:100%;background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:14px 16px;font-family:'Jost',sans-serif;font-size:1.05rem;font-weight:500;color:#2a1f1c;outline:none;box-sizing:border-box;resize:vertical;min-height:140px;line-height:1.6;"></textarea>
-    </div>
-
-    <div style="height:1px;background:linear-gradient(to right,transparent,#dea193,transparent);margin:28px 0;"></div>
-
-    <div style="margin-bottom:22px;">
-      <label style="display:block;font-size:0.9rem;font-weight:700;color:#5a4a45;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">Thumbnail Image</label>
-      <div style="border:2px dashed #ead9d5;border-radius:12px;padding:28px;text-align:center;cursor:pointer;background:#fdf7f2;position:relative;">
-        <input type="file" id="ytpf-thumb" accept="image/*"
-          style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
-        <span style="font-size:2rem;display:block;margin-bottom:8px;">🖼️</span>
-        <p style="font-size:0.88rem;color:#c4b0a8;font-weight:500;margin:0;"><span style="color:#dea193;font-weight:600;">Click to upload</span> or drag & drop your thumbnail</p>
-        <div id="ytpf-thumb-preview" style="margin-top:16px;display:none;">
-          <img id="ytpf-thumb-img" src="" alt="Thumbnail preview" style="max-width:100%;border-radius:10px;border:1px solid #ead9d5;">
-        </div>
-      </div>
-    </div>
-
-    <button onclick="ytpfGenerate()"
-      style="width:100%;background:#2a1f1c;color:#dea193;border:none;border-radius:28px;padding:16px 32px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:600;letter-spacing:0.06em;cursor:pointer;">
-      Generate Post →
-    </button>
-  </div>
-
-  <!-- OUTPUT -->
-  <div id="ytpf-output" style="display:none;">
-
-    <!-- PREVIEW -->
-    <div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:32px;margin-bottom:24px;">
-      <span style="background:#2a1f1c;color:#dea193;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;border-radius:8px;margin-bottom:24px;display:inline-block;">Preview</span>
-      <div id="ytpf-prev-title" style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#2a1f1c;margin-bottom:20px;margin-top:16px;line-height:1.3;"></div>
-      <a id="ytpf-prev-link" href="#" target="_blank"
-        style="display:block;border-radius:12px;overflow:hidden;margin-bottom:10px;border:1px solid #ead9d5;text-decoration:none;">
-        <img id="ytpf-prev-thumb" src="" alt="Video thumbnail" style="width:100%;display:block;">
-      </a>
-      <a id="ytpf-watch-link" href="#" target="_blank"
-        style="display:inline-block;color:#dea193;font-size:0.95rem;font-weight:600;text-decoration:none;letter-spacing:0.04em;margin-bottom:24px;">
-        ▶ &nbsp;Click here to watch on YouTube
-      </a>
-      <div id="ytpf-prev-desc" style="font-size:1.05rem;font-weight:500;line-height:1.75;color:#2a1f1c;white-space:pre-wrap;margin-bottom:20px;"></div>
-      <div style="font-style:italic;color:#c4b0a8;font-size:0.88rem;border-top:1px solid #ead9d5;padding-top:16px;">(Please leave any questions or comments on the video and I'll get back to you there!)</div>
-    </div>
-
-    <!-- COPY BOX -->
-    <div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:32px;margin-bottom:24px;">
-      <span style="background:#2a1f1c;color:#dea193;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;border-radius:8px;margin-bottom:24px;display:inline-block;">Copy-Ready HTML</span>
-      <div style="font-size:0.78rem;font-weight:600;color:#5a4a45;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;margin-top:16px;">HTML — paste into your group post</div>
-      <div id="ytpf-copy-box"
-        style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:16px;font-family:monospace;font-size:0.85rem;line-height:1.75;color:#2a1f1c;white-space:pre-wrap;word-break:break-word;min-height:120px;margin-bottom:16px;"></div>
-      <button id="ytpf-copy-btn" onclick="ytpfCopy()"
-        style="background:#2a1f1c;color:#dea193;border:none;border-radius:24px;padding:12px 28px;font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;letter-spacing:0.06em;cursor:pointer;">
-        Copy to Clipboard
-      </button>
-      <button onclick="ytpfReset()"
-        style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;border-radius:24px;padding:12px 24px;font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;margin-left:12px;">
-        ← Start Over
-      </button>
-      <div style="border-left:4px solid #dea193;padding:12px 16px;background:#fdf0ed;border-radius:0 8px 8px 0;font-size:0.85rem;color:#5a4a45;margin-top:16px;">
-        💡 The preview shows how it looks. Copy the HTML and paste it into your group's HTML editor.
-      </div>
-    </div>
-
+  <textarea id="out-code" style="display:none;"></textarea>
+  <div style="text-align:center;margin-bottom:2rem;">
+    <button style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form</button>
   </div>
 </div>
+
+<div class="save-bar">
+  <div style="font-size:12px;color:#c4b0a8;">DFY Niche Group · YT Post</div>
+  <div style="display:flex;gap:10px;">
+    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear</button>
+    <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
+  </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-document.getElementById('ytpf-thumb').addEventListener('change', function(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    document.getElementById('ytpf-thumb-img').src = ev.target.result;
-    document.getElementById('ytpf-thumb-preview').style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-});
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
 
-function ytpfGenerate() {
-  var title = document.getElementById('ytpf-title').value.trim();
-  var url = document.getElementById('ytpf-url').value.trim();
-  var desc = document.getElementById('ytpf-desc').value.trim();
-  var hasThumb = document.getElementById('ytpf-thumb-preview').style.display === 'block';
-  var thumbSrc = document.getElementById('ytpf-thumb-img').src;
-
-  if (!title || !url) { alert('Please enter at least a title and YouTube URL.'); return; }
-
-  // PREVIEW
-  document.getElementById('ytpf-prev-title').textContent = title;
-  document.getElementById('ytpf-prev-link').href = url;
-  document.getElementById('ytpf-watch-link').href = url;
-  document.getElementById('ytpf-prev-desc').textContent = desc;
-
-  if (hasThumb) {
-    document.getElementById('ytpf-prev-thumb').src = thumbSrc;
-    document.getElementById('ytpf-prev-link').style.display = 'block';
-  } else {
-    document.getElementById('ytpf-prev-link').style.display = 'none';
-  }
-
-  // BUILD HTML OUTPUT
-  var staticLine = "(Please leave any questions or comments on the video and I'll get back to you there!)";
-
-  var firstEnd = desc.search(/[.!?](\s|$)/);
-  var descHTML;
-  if (firstEnd !== -1) {
-    var first = desc.slice(0, firstEnd + 1);
-    var rest = desc.slice(firstEnd + 1);
-    descHTML = '<strong>' + first + '</strong>' + rest;
-  } else {
-    descHTML = desc;
-  }
-
-  var thumbLine = hasThumb
-    ? '<a href="' + url + '" target="_blank"><img src="' + thumbSrc + '" alt="' + title + '" style="max-width:100%;border-radius:8px;display:block;margin-bottom:8px;"></a>\n\n'
-    : '';
-
-  var htmlOutput =
-    '<p><strong>' + title + '</strong></p>\n\n' +
-    thumbLine +
-    '<p><a href="' + url + '" target="_blank">&#9658; Click here to watch on YouTube</a></p>\n\n' +
-    '<p>' + descHTML + '</p>\n\n' +
-    '<hr>\n\n' +
-    '<p><em>' + staticLine + '</em></p>';
-
-  document.getElementById('ytpf-copy-box').textContent = htmlOutput;
-
-  document.getElementById('ytpf-output').style.display = 'block';
-  document.getElementById('ytpf-output').scrollIntoView({ behavior: 'smooth' });
+function updateThumb(){
+  var url=v('f-thumb').trim();
+  var img=document.getElementById('thumb-preview');
+  var err=document.getElementById('thumb-err');
+  if(!url){img.className='thumb-preview';img.src='';err.style.display='none';return;}
+  img.onload=function(){img.className='thumb-preview show';err.style.display='none';};
+  img.onerror=function(){img.className='thumb-preview';err.style.display='block';};
+  img.src=url;
 }
 
-function ytpfCopy() {
-  var text = document.getElementById('ytpf-copy-box').textContent;
-  navigator.clipboard.writeText(text).then(function() {
-    var btn = document.getElementById('ytpf-copy-btn');
-    btn.textContent = '✓ Copied!';
-    btn.style.background = '#3d5c3a';
-    btn.style.color = '#a8d4a0';
-    setTimeout(function() {
-      btn.textContent = 'Copy to Clipboard';
-      btn.style.background = '#2a1f1c';
-      btn.style.color = '#dea193';
-    }, 2500);
-  });
+function clearAll(){
+  if(!confirm('Clear all fields?'))return;
+  ['f-title','f-url','f-thumb','f-desc'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('thumb-preview').className='thumb-preview';
+  document.getElementById('thumb-preview').src='';
+  document.getElementById('thumb-err').style.display='none';
+  document.getElementById('out').style.display='none';
+  toast('Cleared.');
 }
 
-function ytpfReset() {
-  document.getElementById('ytpf-title').value = '';
-  document.getElementById('ytpf-url').value = '';
-  document.getElementById('ytpf-desc').value = '';
-  document.getElementById('ytpf-thumb-img').src = '';
-  document.getElementById('ytpf-thumb-preview').style.display = 'none';
-  document.getElementById('ytpf-output').style.display = 'none';
-  document.getElementById('ytpf-wrap').scrollIntoView({ behavior: 'smooth' });
+function generate(){
+  var title=v('f-title').trim();
+  var url=v('f-url').trim();
+  var desc=v('f-desc').trim();
+  var thumb=v('f-thumb').trim();
+
+  if(!title||!url){toast('Please enter a title and YouTube URL.');return;}
+
+  // Bold first sentence of description
+  var descHTML=desc;
+  var firstEnd=desc.search(/[.!?](\s|$)/);
+  if(firstEnd!==-1){
+    descHTML='<strong>'+esc(desc.slice(0,firstEnd+1))+'</strong>'+esc(desc.slice(firstEnd+1));
+  } else {
+    descHTML=esc(desc);
+  }
+
+  var staticLine="(Please leave any questions or comments on the video and I'll get back to you there!)";
+
+  var html='<div style="font-family:Jost,sans-serif;max-width:700px;margin:0 auto;">';
+
+  // Title
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#2a1f1c;margin-bottom:1.25rem;line-height:1.3;">'+esc(title)+'</h2>';
+
+  // Thumbnail
+  if(thumb){
+    html+='<a href="'+esc(url)+'" target="_blank" style="display:block;margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">';
+    html+='<img src="'+esc(thumb)+'" alt="'+esc(title)+'" style="width:100%;display:block;">';
+    html+='</a>';
+  }
+
+  // Watch link
+  html+='<p style="margin-bottom:1.5rem;"><a href="'+esc(url)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:0.95rem;font-weight:600;color:#dea193;text-decoration:none;">&#9658;&nbsp;&nbsp;Click here to watch on YouTube</a></p>';
+
+  // Description
+  html+='<p style="font-family:Jost,sans-serif;font-size:1rem;line-height:1.8;color:#2a1f1c;margin-bottom:1.5rem;white-space:pre-wrap;">'+descHTML+'</p>';
+
+  // Divider
+  html+='<hr style="border:none;border-top:1px solid #ead9d5;margin-bottom:1rem;">';
+
+  // Static line
+  html+='<p style="font-family:Jost,sans-serif;font-size:0.88rem;font-style:italic;color:#c4b0a8;">'+esc(staticLine)+'</p>';
+
+  html+='</div>';
+
+  document.getElementById('out-code').value=html;
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var code=document.getElementById('out-code').value;
+  var btn=document.getElementById('copy-all-btn');
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=code;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent='Copied!';
+    setTimeout(function(){btn.textContent='Copy HTML';},2500);
+    toast('HTML copied! Paste into Systeme.io.');
+  }catch(e){toast('Copy failed — try Ctrl+C');}
 }
 </script>
+</body>
+</html>
