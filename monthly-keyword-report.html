@@ -285,7 +285,18 @@ function applyNewMonth(){
   var m=document.getElementById('nm-month').value.trim();
   var y=document.getElementById('nm-year').value.trim();
   if(!m||!y){toast('Please fill in month and year.');return;}
+  // Save current month label + each row's month searches as prior
+  var priorMonth=v('f-month');
   var rows=document.querySelectorAll('#products-list .prod-row');
+  var priorData={month:priorMonth,rows:[]};
+  rows.forEach(function(row){
+    priorData.rows.push({
+      name:row.querySelector('[data-field="name"]').value,
+      month:row.querySelector('[data-field="month"]').value
+    });
+  });
+  try{localStorage.setItem(SK+'_prior',JSON.stringify(priorData));}catch(e){}
+  // Clear numbers for new month
   rows.forEach(function(row){
     row.querySelector('[data-field="month"]').value='';
     row.querySelector('[data-field="avg"]').value='';
@@ -294,7 +305,7 @@ function applyNewMonth(){
   document.getElementById('f-year').value=y;
   saveProductNames();
   closeModal();
-  isDirty=false;setStatus('saved','Rolled over — enter new numbers');
+  isDirty=false;setStatus('saved','Rolled over to '+m+' — enter new numbers');
   toast('Rolled over to '+m+' '+y+' — enter your new numbers!');
 }
 
@@ -355,6 +366,7 @@ function clearAll(){
   defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:''});});
   localStorage.removeItem(SK+'_names');
   localStorage.removeItem(SK+'_header');
+  localStorage.removeItem(SK+'_prior');
   document.getElementById('out').style.display='none';
   isDirty=false;setStatus('unsaved','Cleared');toast('Reset to defaults.');
 }
@@ -436,15 +448,31 @@ function buildHTML(){
   html+='</div>';
   html+='</div>';
 
+  // Load prior month data if available
+  var priorMonth='';
+  var priorMap={};
+  try{
+    var pRaw=localStorage.getItem(SK+'_prior');
+    if(pRaw){
+      var pData=JSON.parse(pRaw);
+      priorMonth=pData.month||'';
+      (pData.rows||[]).forEach(function(r){
+        if(r.name) priorMap[r.name.toLowerCase().trim()]=r.month;
+      });
+    }
+  }catch(e){}
+
   // ── Text list ──
   html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;padding:1.5rem 2rem;">';
   html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">All Keywords: '+esc(label)+'</p>';
   products.forEach(function(p,i){
+    var priorVal=priorMap[p.name.toLowerCase().trim()]||'';
     html+='<div style="padding:0.85rem 0;'+(i>0?'border-top:1px solid #ead9d5;':'')+'">';
-    html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">';
-    html+='<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#2a1f1c;margin:0;">'+esc(p.name)+'</p>';
-    html+='</div>';
-    html+='<p style="font-size:13px;color:#5a4a45;margin:4px 0 0;line-height:1.8;">';
+    html+='<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#2a1f1c;margin:0 0 4px;">'+esc(p.name)+'</p>';
+    html+='<p style="font-size:13px;color:#5a4a45;margin:0;line-height:1.9;">';
+    if(priorVal&&priorMonth){
+      html+='• '+esc(priorMonth)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(priorVal)+'</strong>&nbsp;&nbsp;';
+    }
     html+='• '+esc(month)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(p.month)+'</strong>&nbsp;&nbsp;';
     html+='• 15-Mo Avg: <strong style="color:#2a1f1c;">'+fmtNum(p.avg)+'</strong>';
     html+='</p>';
@@ -452,35 +480,42 @@ function buildHTML(){
   });
   html+='</div>';
 
-  // ── Bar chart ──
-  html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:10px 16px;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
+  // ── eRank-style table ──
+  html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:12px 18px;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
   html+='</div>';
-  html+='<div style="background:#fff;border:1px solid #ead9d5;border-top:none;">';
-  // Table header
-  html+='<div style="display:grid;grid-template-columns:1fr 80px 120px;background:#f5eddf;padding:8px 14px;border-bottom:1px solid #ead9d5;">';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.substring(0,3))+'</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-Mo Avg</span>';
+  // Table header row
+  html+='<div style="display:grid;grid-template-columns:1fr 90px 160px;background:#f5eddf;padding:9px 18px;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.toUpperCase())+'</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-Mo Avg</span>';
   html+='</div>';
+  // Rows
   sorted.forEach(function(p,i){
     var color=barColor(p.avg);
     var avgN=num(p.avg);
-    var barW=Math.round((avgN/maxAvg)*100);
+    var barW=Math.max(4,Math.round((avgN/maxAvg)*100));
     var isTop=(i===0);
-    html+='<div style="display:grid;grid-template-columns:1fr 80px 120px;padding:9px 14px;align-items:center;'+(isTop?'background:#fdf7f2;border-left:3px solid #dea193;':(i%2===0?'background:#fff;':'background:#f9f5f2;'))+'border-bottom:1px solid #ead9d5;">';
-    html+='<div style="display:flex;align-items:center;gap:6px;">';
-    if(isTop) html+='<span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;">🏆</span>';
-    html+='<span style="font-size:12px;color:#2a1f1c;font-weight:'+(isTop?'700':'500')+';">'+esc(p.name.toLowerCase())+'</span>';
+    var rowBg=isTop?'#fdf7f2':'#fff';
+    var leftBorder=isTop?'border-left:4px solid #dea193;':'border-left:1px solid #ead9d5;';
+    html+='<div style="display:grid;grid-template-columns:1fr 90px 160px;padding:11px 18px;align-items:center;background:'+rowBg+';'+leftBorder+'border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+    // Keyword name
+    html+='<div style="display:flex;align-items:center;gap:8px;">';
+    if(isTop) html+='<span style="font-size:14px;">🏆</span>';
+    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#2a1f1c;font-weight:'+(isTop?'700':'500')+';">'+esc(p.name.toLowerCase())+'</span>';
     html+='</div>';
-    html+='<span style="font-size:12px;color:#5a4a45;text-align:center;">'+fmtNum(p.month)+'</span>';
-    html+='<div style="position:relative;height:22px;background:#e8e0d8;border-radius:4px;overflow:hidden;">';
-    html+='<div style="position:absolute;left:0;top:0;bottom:0;width:'+barW+'%;background:'+color+';border-radius:4px;"></div>';
-    html+='<span style="position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,0.3);">'+fmtNum(p.avg)+'</span>';
+    // Month searches — plain number, centered
+    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;text-align:center;display:block;">'+fmtNum(p.month)+'</span>';
+    // Bar + number
+    html+='<div style="display:flex;align-items:center;gap:8px;">';
+    html+='<div style="flex:1;background:#e8e0d8;border-radius:4px;height:20px;overflow:hidden;position:relative;">';
+    html+='<div style="width:'+barW+'%;height:100%;background:'+color+';border-radius:4px;"></div>';
+    html+='</div>';
+    html+='<span style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;color:'+(isTop?'#2a1f1c':'#5a4a45')+';white-space:nowrap;min-width:46px;text-align:right;">'+fmtNum(p.avg)+'</span>';
     html+='</div>';
     html+='</div>';
   });
-  html+='</div>';
+  html+='<div style="border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;height:1px;background:#ead9d5;"></div>';
 
   // ── eRank footer ──
   html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 12px 12px;padding:1.5rem 2rem;text-align:center;">';
