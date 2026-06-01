@@ -1,0 +1,173 @@
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+  .bsf * { box-sizing: border-box; margin: 0; padding: 0; }
+  .bsf { font-family: 'Jost', sans-serif; background: #fdf7f2; }
+  .bsf-hero { background: #2a1f1c; padding: 3rem 2rem 2.8rem; text-align: center; }
+  .bsf-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: #c9a96e; margin-bottom: 1.2rem; display: block; }
+  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); line-height: 1.15; color: #f5eddf; margin-bottom: 1.2rem; font-weight: 700; }
+  .bsf-h1 em { color: #dea193; font-style: italic; }
+  .bsf-sub { font-size: 17px; font-weight: 300; color: #d9cfc8; line-height: 1.75; max-width: 500px; margin: 0 auto 2rem; }
+  .bsf-chips-section { margin-bottom: 1.8rem; }
+  .bsf-chips-label { font-size: 11px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #c9a96e; margin-bottom: 14px; display: block; }
+  .bsf-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 600px; margin: 0 auto; }
+  .bsf-chip { background-color: #e8ddd6 !important; border: 2px solid #e8ddd6 !important; color: #2a1f1c !important; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 600; padding: 9px 20px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s; -webkit-appearance: none; appearance: none; }
+  .bsf-chip:hover { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
+  .bsf-chip.active { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
+  .bsf-divider { width: 60px; height: 1px; background: rgba(201,169,110,0.35); margin: 0 auto 1.8rem; }
+  .bsf-body { padding: 2.5rem 1.5rem 3rem; max-width: 640px; margin: 0 auto; }
+  .bsf-card { background: #ffffff !important; border: 1.5px solid #ead9d5 !important; border-radius: 24px; padding: 2.8rem 2.5rem; }
+  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #2a1f1c !important; text-align: center; margin-bottom: 6px; }
+  .bsf-card-sub { font-size: 15px; font-weight: 300; color: #7a6660 !important; text-align: center; margin-bottom: 2rem; }
+  .bsf-field { margin-bottom: 1.4rem; }
+  .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .bsf-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #2a1f1c !important; }
+  .bsf-optional { font-size: 11px; font-weight: 400; color: #b09a94 !important; font-style: italic; }
+  .bsf-input { width: 100%; padding: 18px 22px; border: 1.5px solid #ead9d5 !important; border-radius: 14px; font-family: 'Jost', sans-serif; font-size: 17px; font-weight: 300; color: #2a1f1c !important; background: #fdf7f2 !important; outline: none; transition: border-color 0.2s, background 0.2s; }
+  .bsf-input:focus { border-color: #dea193 !important; background: #fff !important; }
+  .bsf-input::placeholder { color: #c4b0a8 !important; }
+  .bsf-btn { width: 100%; padding: 20px; background-color: #dea193 !important; color: #2a1f1c !important; border: none !important; border-radius: 14px; font-family: 'Jost', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.5rem; -webkit-appearance: none; appearance: none; }
+  .bsf-btn:active { transform: scale(0.985); }
+  .bsf-confirm { display: none; margin-top: 1.8rem; padding: 1.4rem 1.6rem; background: #fdf7f2 !important; border: 1.5px solid #ead9d5 !important; border-radius: 14px; text-align: center; }
+  .bsf-confirm.show { display: block; animation: fadeUp 0.3s ease; }
+  .bsf-confirm-text { font-family: 'Playfair Display', serif; font-size: 17px; font-style: italic; color: #2a1f1c !important; margin-bottom: 4px; }
+  .bsf-confirm-sub { font-size: 13px; color: #b09a94 !important; font-weight: 300; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .bsf-bullets { display: flex; flex-direction: column; border-top: 1px solid #ead9d5; margin-top: 2.5rem; padding-top: 2rem; }
+  .bsf-bullet { display: flex; align-items: flex-start; gap: 14px; font-size: 16px; font-weight: 400; color: #2a1f1c !important; line-height: 1.65; padding: 14px 0; border-bottom: 1px solid #f0e8e4; }
+  .bsf-bullet:last-child { border-bottom: none; }
+  .bsf-bullet-num { width: 28px; height: 28px; border-radius: 50%; background-color: #2a1f1c !important; color: #f5eddf !important; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .bsf-dfy { background: #2a1f1c; padding: 4rem 2rem; text-align: center; }
+  .bsf-dfy-inner { max-width: 600px; margin: 0 auto; }
+  .bsf-dfy-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: #c9a96e; margin-bottom: 1rem; display: block; }
+  .bsf-dfy-h2 { font-family: 'Playfair Display', serif; font-size: clamp(24px, 4vw, 36px); line-height: 1.25; color: #f5eddf; margin-bottom: 1rem; font-weight: 700; }
+  .bsf-dfy-h2 em { color: #dea193; font-style: italic; }
+  .bsf-dfy-body { font-size: 16px; font-weight: 300; color: #d9cfc8; line-height: 1.8; margin-bottom: 2.5rem; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .bsf-dfy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 2.5rem; text-align: left; }
+  .bsf-dfy-feature { background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.2); border-radius: 14px; padding: 1.1rem 1.25rem; }
+  .bsf-dfy-feature-title { font-size: 13px; font-weight: 600; color: #c9a96e; margin-bottom: 5px; }
+  .bsf-dfy-feature-desc { font-size: 13px; font-weight: 300; color: #d9cfc8; line-height: 1.5; }
+  .bsf-dfy-btn { display: inline-block; background-color: #dea193; color: #2a1f1c; text-decoration: none; font-family: 'Jost', sans-serif; font-size: 16px; font-weight: 700; padding: 18px 48px; border-radius: 14px; letter-spacing: 0.04em; transition: background-color 0.2s; }
+</style>
+
+<div class="bsf">
+  <div class="bsf-hero">
+    <span class="bsf-eyebrow">Members-only tool</span>
+    <h1 class="bsf-h1">Dania's Etsy <em>Bestseller</em><br>Finder</h1>
+    <p class="bsf-sub">Type your niche and go straight to Etsy listings that are already selling. No scrolling, no guessing.</p>
+
+    <div class="bsf-chips-section">
+      <span class="bsf-chips-label">Quick-fill a niche</span>
+      <div class="bsf-chips" id="niche-chips">
+        <button class="bsf-chip" onclick="fillNiche(this,'teacher')">teacher</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'nurse')">nurse</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'boho')">boho</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'cottagecore')">cottagecore</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'retro')">retro</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'baseball mom')">baseball mom</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'mama')">mama</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'western')">western</button>
+        <button class="bsf-chip" onclick="fillNiche(this,'motivational')">motivational</button>
+      </div>
+    </div>
+
+    <div class="bsf-divider"></div>
+
+    <div class="bsf-chips-section">
+      <span class="bsf-chips-label">Quick-fill a product type</span>
+      <div class="bsf-chips" id="product-chips">
+        <button class="bsf-chip" onclick="fillProduct(this,'png')">png</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'tumbler wrap')">tumbler wrap</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'wall art')">wall art</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'shirt')">shirt</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'sweatshirt')">sweatshirt</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'tote bag')">tote bag</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'mug')">mug</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'printable')">printable</button>
+        <button class="bsf-chip" onclick="fillProduct(this,'digital download')">digital download</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bsf-body">
+    <div class="bsf-card">
+      <p class="bsf-card-title">Find Bestsellers</p>
+      <p class="bsf-card-sub">Pick chips above or type your own. Product type is optional but sharpens results.</p>
+      <div class="bsf-field">
+        <div class="bsf-label-row"><span class="bsf-label">Niche</span></div>
+        <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. teacher, boho, mama"/>
+      </div>
+      <div class="bsf-field">
+        <div class="bsf-label-row">
+          <span class="bsf-label">Product Type</span>
+          <span class="bsf-optional">optional but helps a lot</span>
+        </div>
+        <input class="bsf-input" type="text" id="bsf-product" placeholder="e.g. png, tumbler wrap, shirt"/>
+      </div>
+      <button class="bsf-btn" id="bsf-main-btn" onclick="bsfGo()">Find Bestsellers</button>
+      <div class="bsf-confirm" id="bsf-confirm">
+        <p class="bsf-confirm-text">Opening your results on Etsy...</p>
+        <p class="bsf-confirm-sub">A new tab just opened with your bestseller search.</p>
+      </div>
+      <div class="bsf-bullets">
+        <div class="bsf-bullet"><div class="bsf-bullet-num">1</div><span>See what buyers are <strong>actually purchasing</strong> in your niche right now</span></div>
+        <div class="bsf-bullet"><div class="bsf-bullet-num">2</div><span>Get real inspiration for your <strong>next product drop</strong></span></div>
+        <div class="bsf-bullet"><div class="bsf-bullet-num">3</div><span><strong>Validate your idea</strong> before spending hours creating something nobody searches for</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bsf-dfy">
+    <div class="bsf-dfy-inner">
+      <span class="bsf-dfy-eyebrow">Want to go deeper?</span>
+      <h2 class="bsf-dfy-h2">Want the research <em>already done</em> for you?</h2>
+      <p class="bsf-dfy-body">This tool helps you spot what's selling. The DFY Niche Club takes it all the way. Every week I drop 7 fully researched, low-competition niches with everything you need to go from idea to listed without the guesswork.</p>
+      <div class="bsf-dfy-grid">
+        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">7 weekly niches</div><div class="bsf-dfy-feature-desc">Fresh, low-competition ideas every single week</div></div>
+        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Done-for-you SEO</div><div class="bsf-dfy-feature-desc">Titles and tags ready to copy and paste</div></div>
+        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Pricing insights</div><div class="bsf-dfy-feature-desc">Know exactly what to charge before you list</div></div>
+        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">AI image prompts</div><div class="bsf-dfy-feature-desc">Design direction included for every niche</div></div>
+        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Monthly live Q&amp;A</div><div class="bsf-dfy-feature-desc">Get your questions answered directly by Dania</div></div>
+        <div class="bsf-dfy-feature"><div class="bsf-dfy-feature-title">Members-only resources</div><div class="bsf-dfy-feature-desc">Exclusive tools and content just for the club</div></div>
+      </div>
+      <a class="bsf-dfy-btn" id="bsf-dfy-link" href="https://www.thrivewithdania.com/" target="_blank">Learn More About the DFY Niche Club</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fillNiche(el, val) {
+  document.getElementById('bsf-niche').value = val;
+  document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+function fillProduct(el, val) {
+  document.getElementById('bsf-product').value = val;
+  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+function bsfGo() {
+  var niche = document.getElementById('bsf-niche').value.trim();
+  var product = document.getElementById('bsf-product').value.trim();
+  if (!niche) { document.getElementById('bsf-niche').style.setProperty('border-color', '#dea193', 'important'); document.getElementById('bsf-niche').focus(); return; }
+  var q = encodeURIComponent(product ? niche + ' ' + product : niche);
+  window.open('https://www.etsy.com/search?q=' + q + '&order=most_relevant&is_best_seller=true', '_blank');
+  var conf = document.getElementById('bsf-confirm');
+  conf.classList.add('show');
+  setTimeout(function() { conf.classList.remove('show'); }, 4000);
+}
+document.getElementById('bsf-niche').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('bsf-product').focus(); });
+document.getElementById('bsf-product').addEventListener('keydown', function(e) { if (e.key === 'Enter') bsfGo(); });
+
+var btn = document.getElementById('bsf-main-btn');
+btn.style.setProperty('background-color', '#dea193', 'important');
+btn.style.setProperty('color', '#2a1f1c', 'important');
+btn.addEventListener('mouseover', function() { this.style.setProperty('background-color', '#c97e6e', 'important'); this.style.setProperty('color', '#ffffff', 'important'); });
+btn.addEventListener('mouseout', function() { this.style.setProperty('background-color', '#dea193', 'important'); this.style.setProperty('color', '#2a1f1c', 'important'); });
+
+var dfyBtn = document.getElementById('bsf-dfy-link');
+dfyBtn.style.setProperty('background-color', '#dea193', 'important');
+dfyBtn.style.setProperty('color', '#2a1f1c', 'important');
+dfyBtn.addEventListener('mouseover', function() { this.style.setProperty('background-color', '#c97e6e', 'important'); this.style.setProperty('color', '#ffffff', 'important'); });
+dfyBtn.addEventListener('mouseout', function() { this.style.setProperty('background-color', '#dea193', 'important'); this.style.setProperty('color', '#2a1f1c', 'important'); });
+</script>
