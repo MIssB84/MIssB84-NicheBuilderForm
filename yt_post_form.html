@@ -73,10 +73,10 @@
 
     <!-- COPY BOX -->
     <div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:32px;margin-bottom:24px;">
-      <span style="background:#2a1f1c;color:#dea193;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;border-radius:8px;margin-bottom:24px;display:inline-block;">Copy-Ready Text</span>
-      <div style="font-size:0.78rem;font-weight:600;color:#5a4a45;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;margin-top:16px;">Plain text for your group post</div>
+      <span style="background:#2a1f1c;color:#dea193;font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;border-radius:8px;margin-bottom:24px;display:inline-block;">Copy-Ready HTML</span>
+      <div style="font-size:0.78rem;font-weight:600;color:#5a4a45;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;margin-top:16px;">HTML — paste into your group post</div>
       <div id="ytpf-copy-box"
-        style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:16px;font-family:'Jost',sans-serif;font-size:1rem;font-weight:500;line-height:1.75;color:#2a1f1c;white-space:pre-wrap;word-break:break-word;min-height:120px;margin-bottom:16px;"></div>
+        style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:16px;font-family:monospace;font-size:0.85rem;line-height:1.75;color:#2a1f1c;white-space:pre-wrap;word-break:break-word;min-height:120px;margin-bottom:16px;"></div>
       <button id="ytpf-copy-btn" onclick="ytpfCopy()"
         style="background:#2a1f1c;color:#dea193;border:none;border-radius:24px;padding:12px 28px;font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;letter-spacing:0.06em;cursor:pointer;">
         Copy to Clipboard
@@ -86,7 +86,7 @@
         ← Start Over
       </button>
       <div style="border-left:4px solid #dea193;padding:12px 16px;background:#fdf0ed;border-radius:0 8px 8px 0;font-size:0.85rem;color:#5a4a45;margin-top:16px;">
-        💡 The preview above shows how it looks. The copy box gives you clean text to paste into your group.
+        💡 The preview shows how it looks. Copy the HTML and paste it into your group's HTML editor.
       </div>
     </div>
 
@@ -115,6 +115,7 @@ function ytpfGenerate() {
 
   if (!title || !url) { alert('Please enter at least a title and YouTube URL.'); return; }
 
+  // PREVIEW
   document.getElementById('ytpf-prev-title').textContent = title;
   document.getElementById('ytpf-prev-link').href = url;
   document.getElementById('ytpf-watch-link').href = url;
@@ -127,26 +128,39 @@ function ytpfGenerate() {
     document.getElementById('ytpf-prev-link').style.display = 'none';
   }
 
+  // BUILD HTML OUTPUT
   var staticLine = "(Please leave any questions or comments on the video and I'll get back to you there!)";
+
   var firstEnd = desc.search(/[.!?](\s|$)/);
-  var descFormatted;
+  var descHTML;
   if (firstEnd !== -1) {
     var first = desc.slice(0, firstEnd + 1);
     var rest = desc.slice(firstEnd + 1);
-    descFormatted = '<strong>' + first + '</strong>' + rest;
+    descHTML = '<strong>' + first + '</strong>' + rest;
   } else {
-    descFormatted = desc;
+    descHTML = desc;
   }
 
-  document.getElementById('ytpf-copy-box').innerHTML =
-    '<strong>' + title + '</strong>\n\n\u25BA Watch here \u2192 ' + url + '\n\n' + descFormatted + '\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n<em>' + staticLine + '</em>';
+  var thumbLine = hasThumb
+    ? '<a href="' + url + '" target="_blank"><img src="' + thumbSrc + '" alt="' + title + '" style="max-width:100%;border-radius:8px;display:block;margin-bottom:8px;"></a>\n\n'
+    : '';
+
+  var htmlOutput =
+    '<p><strong>' + title + '</strong></p>\n\n' +
+    thumbLine +
+    '<p><a href="' + url + '" target="_blank">&#9658; Click here to watch on YouTube</a></p>\n\n' +
+    '<p>' + descHTML + '</p>\n\n' +
+    '<hr>\n\n' +
+    '<p><em>' + staticLine + '</em></p>';
+
+  document.getElementById('ytpf-copy-box').textContent = htmlOutput;
 
   document.getElementById('ytpf-output').style.display = 'block';
   document.getElementById('ytpf-output').scrollIntoView({ behavior: 'smooth' });
 }
 
 function ytpfCopy() {
-  var text = document.getElementById('ytpf-copy-box').innerText;
+  var text = document.getElementById('ytpf-copy-box').textContent;
   navigator.clipboard.writeText(text).then(function() {
     var btn = document.getElementById('ytpf-copy-btn');
     btn.textContent = '✓ Copied!';
