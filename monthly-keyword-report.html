@@ -122,7 +122,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 
   <div class="prod-row-head">
     <span class="col-label name-col">Product / Keyword</span>
-    <span class="col-label">This Month</span>
+    <span class="col-label" id="col-month-label">Month Searches</span>
     <span class="col-label">Avg Monthly</span>
     <span></span>
   </div>
@@ -398,13 +398,13 @@ function buildHTML(){
 
   // ── Intro + blurb ──
   html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2rem;border-top:1px solid #ead9d5;">';
-  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">📌 '+esc(label)+' — Top Searched Digital Products</p>';
+  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">📌 '+esc(label)+': Top Searched Digital Products</p>';
   // Blurb 1 — what this report is
   html+='<div style="background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1rem;">';
   html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
   html+='Each month I pull the latest keyword data from <strong style="color:#2a1f1c;">eRank</strong> so you can see exactly what buyers are searching for on Etsy. ';
   html+='Use this to <strong style="color:#2a1f1c;">spot trending product types</strong>, validate your listings, and keep an eye on where demand is rising or falling. ';
-  html+='A quick note — these are <strong style="color:#2a1f1c;">broad keyword phrases</strong>. To rank, you\'ll still want to niche down (think: "boho digital planner for moms" vs just "digital planner"). ';
+  html+='A quick note: these are <strong style="color:#2a1f1c;">broad keyword phrases</strong>. To rank, you\'ll still want to niche down (think: "boho digital planner for moms" vs just "digital planner"). ';
   html+='Think of this report as your monthly pulse check on what\'s in demand. 📈';
   html+='</p>';
   html+='</div>';
@@ -412,10 +412,10 @@ function buildHTML(){
   html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:10px;padding:1rem 1.25rem;">';
   html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.5rem;">💛 A friendly reminder</p>';
   html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
-  html+='Fluctuations are completely normal — numbers go up and down every single month, and that doesn\'t mean something is wrong. ';
+  html+='Fluctuations are completely normal. Numbers go up and down every single month and that doesn\'t mean something is wrong. ';
   html+='<strong style="color:#2a1f1c;">Please don\'t feel like you need to chase every keyword that spiked this month.</strong> ';
-  html+='This report is a tool for awareness, not a to-do list. Use it to notice patterns over time, stay informed, and make intentional decisions — ';
-  html+='not to overhaul your shop every time one number shifts. Consistency always wins over chasing trends. 🙌';
+  html+='This report is a tool for awareness, not a to-do list. Use it to notice patterns over time, stay informed, and make intentional decisions. ';
+  html+='Not to overhaul your shop every time one number shifts. Consistency always wins over chasing trends. 🙌';
   html+='</p>';
   html+='</div>';
   html+='</div>';
@@ -437,7 +437,7 @@ function buildHTML(){
 
   // ── Text list ──
   html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;padding:1.5rem 2rem;">';
-  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">All Keywords — '+esc(label)+'</p>';
+  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">All Keywords: '+esc(label)+'</p>';
   products.forEach(function(p,i){
     html+='<div style="padding:0.85rem 0;'+(i>0?'border-top:1px solid #ead9d5;':'')+'">';
     html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">';
@@ -453,7 +453,7 @@ function buildHTML(){
 
   // ── Bar chart ──
   html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:10px 16px;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a> — Avg Monthly Search Volume</p>';
+  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: Avg Monthly Search Volume</p>';
   html+='</div>';
   html+='<div style="background:#fff;border:1px solid #ead9d5;border-top:none;">';
   // Table header
@@ -526,6 +526,19 @@ window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault(
   var el=document.getElementById(id);
   if(el)el.addEventListener('input',function(){isDirty=true;setStatus('unsaved','Unsaved changes');});
 });
+
+// Update the "Month Searches" column label live as month is typed
+document.getElementById('f-month').addEventListener('input', function(){
+  var m = this.value.trim();
+  var lbl = document.getElementById('col-month-label');
+  lbl.textContent = m ? m+' Searches' : 'Month Searches';
+});
+// Set on load too
+(function(){
+  var m = document.getElementById('f-month').value.trim();
+  var lbl = document.getElementById('col-month-label');
+  if(m) lbl.textContent = m+' Searches';
+})();
 
 loadData();
 </script>
