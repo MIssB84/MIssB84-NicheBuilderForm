@@ -22,9 +22,9 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .fi-sm:focus{border-color:#dea193;}
 .fi-sm.name-field{text-align:left;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-/* 5-col: name | month | avg | prev mo avg | del */
-.prod-row{display:grid;grid-template-columns:1fr 88px 88px 88px 34px;gap:6px;align-items:center;margin-bottom:7px;}
-.prod-row-head{display:grid;grid-template-columns:1fr 88px 88px 88px 34px;gap:6px;align-items:center;margin-bottom:6px;}
+/* 4-col: name | month | avg | del */
+.prod-row{display:grid;grid-template-columns:1fr 110px 110px 34px;gap:6px;align-items:center;margin-bottom:7px;}
+.prod-row-head{display:grid;grid-template-columns:1fr 110px 110px 34px;gap:6px;align-items:center;margin-bottom:6px;}
 .col-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;text-align:center;}
 .col-label.name-col{text-align:left;}
 .del-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:6px;color:#c4b0a8;font-size:15px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
@@ -84,7 +84,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <!-- NEW MONTH WORKFLOW -->
 <div class="card">
   <p class="card-title" style="margin-bottom:0.3rem;">Start a New Month</p>
-  <p class="card-sub" style="margin-bottom:1rem;">Keep all your products and reset just the numbers + trend data for a fresh month.</p>
+  <p class="card-sub" style="margin-bottom:1rem;">Keep all your products and clear the numbers for a fresh month.</p>
   <button class="new-month-btn" onclick="newMonthPrompt()">↻ New Month — Keep Products, Reset Numbers</button>
 </div>
 
@@ -118,13 +118,12 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <!-- PRODUCTS TABLE -->
 <div class="card">
   <p class="card-title" style="margin-bottom:0.2rem;">Product Keywords</p>
-  <p class="card-sub">Each row = one keyword. Prev Mo is last month's avg — drives the trend arrows. Product names are saved permanently; numbers reset each session.</p>
+  <p class="card-sub">Each row = one keyword. Product names are saved permanently; numbers reset each session.</p>
 
   <div class="prod-row-head">
     <span class="col-label name-col">Product / Keyword</span>
     <span class="col-label">This Month</span>
     <span class="col-label">Avg Monthly</span>
-    <span class="col-label">Prev Mo</span>
     <span></span>
   </div>
 
@@ -161,7 +160,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
       <button class="modal-close" onclick="closeModal()">Close ✕</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows, move <strong style="color:#2a1f1c;">This Month</strong> searches into <strong style="color:#2a1f1c;">Prev Mo</strong>, and clear the number columns so you're ready to enter new data.</p>
+      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows and clear the number columns so you're ready to enter fresh data for the new month.</p>
       <div class="row2" style="margin-bottom:1rem;">
         <div>
           <label class="fl" for="nm-month">New Month</label>
@@ -194,17 +193,17 @@ var SK = 'mkr_v2';
 var isDirty = false;
 
 var defaultProducts = [
-  {name:'20 oz Tumbler Wrap', month:'510', avg:'443', prev:''},
-  {name:'40oz Tumbler Wrap', month:'10', avg:'752', prev:''},
-  {name:'Budget Planner', month:'7780', avg:'6314', prev:''},
-  {name:'Budget Tracker', month:'4370', avg:'3221', prev:''},
-  {name:'Canva Template', month:'12740', avg:'8876', prev:''},
-  {name:'Digital Invitation', month:'3270', avg:'1814', prev:''},
-  {name:'Digital Journal', month:'2210', avg:'3225', prev:''},
-  {name:'Digital Planner', month:'28800', avg:'23629', prev:''},
-  {name:'Printable Wall Art', month:'11760', avg:'8786', prev:''},
-  {name:'Printables', month:'2310', avg:'6751', prev:''},
-  {name:'Sublimation PNG', month:'610', avg:'1533', prev:''}
+  {name:'20 oz Tumbler Wrap', month:'510', avg:'443'},
+  {name:'40oz Tumbler Wrap', month:'10', avg:'752'},
+  {name:'Budget Planner', month:'7780', avg:'6314'},
+  {name:'Budget Tracker', month:'4370', avg:'3221'},
+  {name:'Canva Template', month:'12740', avg:'8876'},
+  {name:'Digital Invitation', month:'3270', avg:'1814'},
+  {name:'Digital Journal', month:'2210', avg:'3225'},
+  {name:'Digital Planner', month:'28800', avg:'23629'},
+  {name:'Printable Wall Art', month:'11760', avg:'8786'},
+  {name:'Printables', month:'2310', avg:'6751'},
+  {name:'Sublimation PNG', month:'610', avg:'1533'}
 ];
 
 function v(id){return(document.getElementById(id)||{}).value||'';}
@@ -229,7 +228,7 @@ function updateThumb(inputId){
 var rowCount=0;
 
 function addRow(data){
-  data=data||{name:'',month:'',avg:'',prev:''};
+  data=data||{name:'',month:'',avg:''};
   var id=rowCount++;
   var list=document.getElementById('products-list');
   var row=document.createElement('div');
@@ -239,7 +238,6 @@ function addRow(data){
     '<input class="fi-sm name-field" data-field="name" placeholder="Product name" value="'+esc(data.name)+'">'+
     '<input class="fi-sm" data-field="month" placeholder="0" value="'+esc(data.month)+'">'+
     '<input class="fi-sm" data-field="avg" placeholder="0" value="'+esc(data.avg)+'">'+
-    '<input class="fi-sm" data-field="prev" placeholder="Prev Mo" value="'+esc(data.prev)+'">'+
     '<button class="del-btn" onclick="delRow(this)" title="Remove">×</button>';
   list.appendChild(row);
   row.querySelectorAll('input').forEach(function(el){
@@ -256,8 +254,7 @@ function getProducts(){
     out.push({
       name:row.querySelector('[data-field="name"]').value,
       month:row.querySelector('[data-field="month"]').value,
-      avg:row.querySelector('[data-field="avg"]').value,
-      prev:row.querySelector('[data-field="prev"]').value
+      avg:row.querySelector('[data-field="avg"]').value
     });
   });
   return out;
@@ -288,34 +285,27 @@ function applyNewMonth(){
   var m=document.getElementById('nm-month').value.trim();
   var y=document.getElementById('nm-year').value.trim();
   if(!m||!y){toast('Please fill in month and year.');return;}
-  // Move THIS MONTH searches → Prev Mo, clear avg and month
   var rows=document.querySelectorAll('#products-list .prod-row');
   rows.forEach(function(row){
-    var monthField=row.querySelector('[data-field="month"]');
-    var avgField=row.querySelector('[data-field="avg"]');
-    var prevField=row.querySelector('[data-field="prev"]');
-    prevField.value=monthField.value; // this month's searches become prev mo
-    monthField.value='';
-    avgField.value='';
+    row.querySelector('[data-field="month"]').value='';
+    row.querySelector('[data-field="avg"]').value='';
   });
   document.getElementById('f-month').value=m;
   document.getElementById('f-year').value=y;
-  // Save product names + new prev values
   saveProductNames();
   closeModal();
   isDirty=false;setStatus('saved','Rolled over — enter new numbers');
   toast('Rolled over to '+m+' '+y+' — enter your new numbers!');
 }
 
-// Save product names only (permanent)
 function saveProductNames(){
   var products=getProducts();
-  var names=products.map(function(p){return{name:p.name,prev:p.prev};});
+  var names=products.map(function(p){return{name:p.name};});
   try{localStorage.setItem(SK+'_names',JSON.stringify(names));}catch(e){}
 }
 
 function saveData(){
-  // Only save product names + prev — never save month/avg numbers
+  // Only save product names — numbers reset each session
   saveProductNames();
   // Save header info (month label + image) separately
   var header={month:v('f-month'),year:v('f-year'),img:v('f-img')};
@@ -336,18 +326,18 @@ function loadData(){
       document.getElementById('f-img').value=h.img||'';
       if(h.img)updateThumb('f-img');
     }
-    // Load product names (with prev, but blank month+avg)
+    // Load product names — numbers always blank on load
     var nRaw=localStorage.getItem(SK+'_names');
     if(nRaw){
       var names=JSON.parse(nRaw);
-      names.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:p.prev||''});});
+      names.forEach(function(p){addRow({name:p.name,month:'',avg:''});});
       setStatus('saved','Products loaded — enter this month\'s numbers');
     } else {
-      defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:''});});
+      defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:''});});
       setStatus('unsaved','Nothing saved yet');
     }
   }catch(e){
-    defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:''});});
+    defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:''});});
     setStatus('unsaved','Could not load');
   }
 }
@@ -362,21 +352,11 @@ function clearAll(){
   document.getElementById('err-f-img').style.display='none';
   document.getElementById('products-list').innerHTML='';
   rowCount=0;
-  defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:'',prev:''});});
+  defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:''});});
   localStorage.removeItem(SK+'_names');
   localStorage.removeItem(SK+'_header');
   document.getElementById('out').style.display='none';
   isDirty=false;setStatus('unsaved','Cleared');toast('Reset to defaults.');
-}
-
-function trendTag(avg, prev){
-  var a=num(avg), p=num(prev);
-  if(!p||!a) return '';
-  var diff=a-p;
-  var pct=Math.round(Math.abs(diff)/p*100);
-  if(diff>0)  return '<span style="display:inline-flex;align-items:center;gap:3px;background:#e8f5ee;color:#2d6a4f;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;">▲ '+pct+'%</span>';
-  if(diff<0)  return '<span style="display:inline-flex;align-items:center;gap:3px;background:#fdf0ee;color:#c0504d;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;">▼ '+pct+'%</span>';
-  return '<span style="display:inline-flex;align-items:center;gap:3px;background:#f5eddf;color:#c9a96e;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;">= flat</span>';
 }
 
 function barColor(avg){
@@ -451,7 +431,6 @@ function buildHTML(){
   html+='<div style="text-align:right;">';
   html+='<p style="font-family:Jost,sans-serif;font-size:1.6rem;font-weight:700;color:#dea193;margin:0;line-height:1;">'+fmtNum(topProduct.avg)+'</p>';
   html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0;">avg monthly searches</p>';
-  if(topProduct.prev&&num(topProduct.prev)){html+='<div style="margin-top:4px;">'+trendTag(topProduct.avg,topProduct.prev)+'</div>';}
   html+='</div>';
   html+='</div>';
   html+='</div>';
@@ -463,7 +442,6 @@ function buildHTML(){
     html+='<div style="padding:0.85rem 0;'+(i>0?'border-top:1px solid #ead9d5;':'')+'">';
     html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">';
     html+='<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#2a1f1c;margin:0;">'+esc(p.name)+'</p>';
-    if(p.prev&&num(p.prev)){html+=trendTag(p.avg,p.prev);}
     html+='</div>';
     html+='<p style="font-size:13px;color:#5a4a45;margin:4px 0 0;line-height:1.8;">';
     html+='• '+esc(month)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(p.month)+'</strong>&nbsp;&nbsp;';
@@ -493,7 +471,6 @@ function buildHTML(){
     html+='<div style="display:flex;align-items:center;gap:6px;">';
     if(isTop) html+='<span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;">🏆</span>';
     html+='<span style="font-size:12px;color:#2a1f1c;font-weight:'+(isTop?'700':'500')+';">'+esc(p.name.toLowerCase())+'</span>';
-    if(p.prev&&num(p.prev)){html+=trendTag(p.avg,p.prev);}
     html+='</div>';
     html+='<span style="font-size:12px;color:#5a4a45;text-align:center;">'+fmtNum(p.month)+'</span>';
     html+='<div style="position:relative;height:22px;background:#e8e0d8;border-radius:4px;overflow:hidden;">';
