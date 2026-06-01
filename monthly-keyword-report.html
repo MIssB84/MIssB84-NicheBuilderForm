@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Keyword Report Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 5rem;font-size:87.5%;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:5px 16px;border-radius:20px;margin-bottom:0.75rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;}
+.page-sub{font-size:13px;color:#c4b0a8;}
+.card{background:#fff;border-radius:14px;border:1px solid #ead9d5;padding:1.5rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:0.2rem;}
+.card-sub{font-size:12px;color:#c4b0a8;margin-bottom:1.2rem;}
+.fl{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:9px 13px;font-family:'Jost',sans-serif;font-size:13px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;}
+.fi:focus{border-color:#dea193;}
+.fi-sm{border:1.5px solid #ead9d5;border-radius:8px;padding:7px 8px;font-family:'Jost',sans-serif;font-size:12px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color 0.2s;width:100%;text-align:center;}
+.fi-sm:focus{border-color:#dea193;}
+.fi-sm.name-field{text-align:left;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+/* 5-col: name | month | avg | prev avg | del */
+.prod-row{display:grid;grid-template-columns:1fr 88px 88px 88px 34px;gap:6px;align-items:center;margin-bottom:7px;}
+.prod-row-head{display:grid;grid-template-columns:1fr 88px 88px 88px 34px;gap:6px;align-items:center;margin-bottom:6px;}
+.col-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;text-align:center;}
+.col-label.name-col{text-align:left;}
+.del-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:6px;color:#c4b0a8;font-size:15px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.del-btn:hover{border-color:#dea193;color:#dea193;}
+.add-row-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:#dea193;border:1.5px solid #dea193;padding:7px 16px;border-radius:20px;cursor:pointer;margin-top:6px;transition:all 0.2s;}
+.add-row-btn:hover{background:#dea193;color:#2a1f1c;}
+.sort-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:#c9a96e;border:1.5px solid #c9a96e;padding:7px 16px;border-radius:20px;cursor:pointer;margin-top:6px;margin-left:8px;transition:all 0.2s;}
+.sort-btn:hover{background:#c9a96e;color:#2a1f1c;}
+.new-month-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;border:1.5px solid #dea193;padding:8px 18px;border-radius:20px;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
+.new-month-btn:hover{background:#dea193;color:#2a1f1c;}
+.info-blurb{background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:13px;color:#5a4a45;line-height:1.75;}
+.info-blurb strong{color:#2a1f1c;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:8px;}
+.save-status{font-size:12px;color:#c4b0a8;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sdot{width:6px;height:6px;border-radius:50%;background:#c4b0a8;}
+.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
+.sbtn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 16px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all 0.2s;white-space:nowrap;}
+.sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}
+.sbtn-save:hover{background:#dea193;color:#2a1f1c;}
+.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}
+.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
+.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:10px;padding:6px 12px;}
+.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+#out{display:none;max-width:700px;margin:0 auto;}
+.out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
+.out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.out-card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.copy-all-btn{font-family:'Jost',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:10px 28px;border-radius:30px;cursor:pointer;transition:all 0.2s;}
+.copy-all-btn:hover{background:#bb7d72;color:#fff;}
+.out-preview{padding:1.5rem;}
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;padding:10px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+.img-thumb{width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #ead9d5;margin-top:6px;display:none;}
+.img-thumb.show{display:block;}
+.img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(42,31,28,0.88);z-index:200;overflow-y:auto;padding:2rem 1rem;}
+.modal-inner{background:#fff;border-radius:14px;max-width:480px;margin:0 auto;overflow:hidden;}
+.modal-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.modal-close{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(222,161,147,0.4);color:#dea193;padding:5px 14px;border-radius:20px;cursor:pointer;}
+.modal-close:hover{background:#dea193;color:#2a1f1c;}
+.modal-body{padding:1.5rem;}
+@media(max-width:560px){
+  .prod-row,.prod-row-head{grid-template-columns:1fr 72px 72px 72px 30px;gap:4px;}
+  .fi-sm{font-size:11px;padding:6px 5px;}
+}
+</style>
+</head>
+<body>
+
+<div id="form-top"></div>
+<div class="page-header">
+  <div class="badge">Monthly Keyword Report</div>
+  <h1 class="page-title">Report Builder</h1>
+  <p class="page-sub">Fill in each month's data. Progress saves automatically.</p>
+</div>
+
+<!-- NEW MONTH WORKFLOW -->
+<div class="card">
+  <p class="card-title" style="margin-bottom:0.3rem;">Start a New Month</p>
+  <p class="card-sub" style="margin-bottom:1rem;">Keep all your products and reset just the numbers + trend data for a fresh month.</p>
+  <button class="new-month-btn" onclick="newMonthPrompt()">↻ New Month — Keep Products, Reset Numbers</button>
+</div>
+
+<!-- MONTH + IMAGE -->
+<div class="card">
+  <p class="card-title">Report Info</p>
+  <p class="card-sub">Set the month, year, and header image for this report.</p>
+  <div class="row2" style="margin-bottom:10px;">
+    <div>
+      <label class="fl" for="f-month">Month</label>
+      <input class="fi" id="f-month" list="months-list" placeholder="e.g. April">
+      <datalist id="months-list">
+        <option value="January"><option value="February"><option value="March"><option value="April">
+        <option value="May"><option value="June"><option value="July"><option value="August">
+        <option value="September"><option value="October"><option value="November"><option value="December">
+      </datalist>
+    </div>
+    <div>
+      <label class="fl" for="f-year">Year</label>
+      <input class="fi" id="f-year" placeholder="e.g. 2026">
+    </div>
+  </div>
+  <div>
+    <label class="fl" for="f-img">Header Image URL</label>
+    <input class="fi" id="f-img" placeholder="Paste image URL here..." oninput="updateThumb('f-img')">
+    <img class="img-thumb" id="thumb-f-img">
+    <span class="img-err" id="err-f-img">Image not found</span>
+  </div>
+</div>
+
+<!-- PRODUCTS TABLE -->
+<div class="card">
+  <p class="card-title" style="margin-bottom:0.2rem;">Product Keywords</p>
+  <p class="card-sub">Each row = one keyword. Prev Avg is last month's average — used to calculate the trend arrow.</p>
+
+  <div class="prod-row-head">
+    <span class="col-label name-col">Product / Keyword</span>
+    <span class="col-label">This Month</span>
+    <span class="col-label">Avg Monthly</span>
+    <span class="col-label">Prev Avg</span>
+    <span></span>
+  </div>
+
+  <div id="products-list"></div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:0;align-items:center;">
+    <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+    <button class="sort-btn" onclick="sortByAvg()">↓ Sort by Avg</button>
+  </div>
+</div>
+
+<div style="height:80px;"></div>
+
+<!-- OUTPUT -->
+<div id="out">
+  <div class="out-card">
+    <div class="out-card-head">
+      <span class="out-card-title">Your HTML — ready to paste into Systeme.io</span>
+      <button class="copy-all-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button>
+    </div>
+    <div class="out-preview" id="out-preview"></div>
+  </div>
+  <textarea id="out-code" style="display:none;"></textarea>
+  <div style="text-align:center;margin-bottom:2rem;">
+    <button style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:10px 24px;border-radius:30px;cursor:pointer;border:2px solid #2a1f1c;background:transparent;color:#2a1f1c;" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form</button>
+  </div>
+</div>
+
+<!-- NEW MONTH MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <span class="modal-title">Start New Month</span>
+      <button class="modal-close" onclick="closeModal()">Close ✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#5a4a45;line-height:1.7;margin-bottom:1.25rem;">This will keep all your product rows but clear <strong style="color:#2a1f1c;">This Month</strong> and move your current <strong style="color:#2a1f1c;">Avg Monthly</strong> into <strong style="color:#2a1f1c;">Prev Avg</strong> automatically — so your trend arrows are ready to go.</p>
+      <div class="row2" style="margin-bottom:1rem;">
+        <div>
+          <label class="fl" for="nm-month">New Month</label>
+          <input class="fi" id="nm-month" list="months-list" placeholder="e.g. May">
+        </div>
+        <div>
+          <label class="fl" for="nm-year">Year</label>
+          <input class="fi" id="nm-year" placeholder="e.g. 2026">
+        </div>
+      </div>
+      <button onclick="applyNewMonth()" style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:11px 28px;border-radius:30px;cursor:pointer;width:100%;">Roll Over to New Month</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
+  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear All</button>
+    <button class="sbtn sbtn-save" onclick="saveData()">Save</button>
+    <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SK = 'mkr_v2';
+var isDirty = false;
+
+var defaultProducts = [
+  {name:'20 oz Tumbler Wrap', month:'510', avg:'443', prev:''},
+  {name:'40oz Tumbler Wrap', month:'10', avg:'752', prev:''},
+  {name:'Budget Planner', month:'7780', avg:'6314', prev:''},
+  {name:'Budget Tracker', month:'4370', avg:'3221', prev:''},
+  {name:'Canva Template', month:'12740', avg:'8876', prev:''},
+  {name:'Digital Invitation', month:'3270', avg:'1814', prev:''},
+  {name:'Digital Journal', month:'2210', avg:'3225', prev:''},
+  {name:'Digital Planner', month:'28800', avg:'23629', prev:''},
+  {name:'Printable Wall Art', month:'11760', avg:'8786', prev:''},
+  {name:'Printables', month:'2310', avg:'6751', prev:''},
+  {name:'Sublimation PNG', month:'610', avg:'1533', prev:''}
+];
+
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+function num(s){var n=parseInt((s||'0').replace(/,/g,''),10);return isNaN(n)?0:n;}
+function fmtNum(s){var n=num(s);return n===0?'—':n.toLocaleString();}
+
+function updateThumb(inputId){
+  var input=document.getElementById(inputId);if(!input)return;
+  var url=input.value.trim();
+  var thumb=document.getElementById('thumb-'+inputId);
+  var err=document.getElementById('err-'+inputId);
+  if(!thumb)return;
+  if(!url){thumb.className='img-thumb';thumb.src='';if(err)err.style.display='none';return;}
+  thumb.onload=function(){thumb.className='img-thumb show';if(err)err.style.display='none';};
+  thumb.onerror=function(){thumb.className='img-thumb';if(err)err.style.display='block';};
+  thumb.src=url;
+}
+
+var rowCount=0;
+
+function addRow(data){
+  data=data||{name:'',month:'',avg:'',prev:''};
+  var id=rowCount++;
+  var list=document.getElementById('products-list');
+  var row=document.createElement('div');
+  row.className='prod-row';
+  row.dataset.id=id;
+  row.innerHTML=
+    '<input class="fi-sm name-field" data-field="name" placeholder="Product name" value="'+esc(data.name)+'">'+
+    '<input class="fi-sm" data-field="month" placeholder="0" value="'+esc(data.month)+'">'+
+    '<input class="fi-sm" data-field="avg" placeholder="0" value="'+esc(data.avg)+'">'+
+    '<input class="fi-sm" data-field="prev" placeholder="—" value="'+esc(data.prev)+'">'+
+    '<button class="del-btn" onclick="delRow(this)" title="Remove">×</button>';
+  list.appendChild(row);
+  row.querySelectorAll('input').forEach(function(el){
+    el.addEventListener('input',function(){isDirty=true;setStatus('unsaved','Unsaved changes');});
+  });
+}
+
+function delRow(btn){btn.closest('.prod-row').remove();isDirty=true;setStatus('unsaved','Unsaved changes');}
+
+function getProducts(){
+  var rows=document.querySelectorAll('#products-list .prod-row');
+  var out=[];
+  rows.forEach(function(row){
+    out.push({
+      name:row.querySelector('[data-field="name"]').value,
+      month:row.querySelector('[data-field="month"]').value,
+      avg:row.querySelector('[data-field="avg"]').value,
+      prev:row.querySelector('[data-field="prev"]').value
+    });
+  });
+  return out;
+}
+
+function sortByAvg(){
+  var products=getProducts();
+  products.sort(function(a,b){return num(b.avg)-num(a.avg);});
+  document.getElementById('products-list').innerHTML='';
+  rowCount=0;
+  products.forEach(function(p){addRow(p);});
+  isDirty=true;setStatus('unsaved','Unsaved changes');toast('Sorted by avg monthly ↓');
+}
+
+function newMonthPrompt(){
+  document.getElementById('nm-month').value='';
+  document.getElementById('nm-year').value=v('f-year');
+  document.getElementById('modal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').style.display='none';
+  document.body.style.overflow='';
+}
+
+function applyNewMonth(){
+  var m=document.getElementById('nm-month').value.trim();
+  var y=document.getElementById('nm-year').value.trim();
+  if(!m||!y){toast('Please fill in month and year.');return;}
+  // Move avg → prev, clear month and avg
+  var rows=document.querySelectorAll('#products-list .prod-row');
+  rows.forEach(function(row){
+    var avgField=row.querySelector('[data-field="avg"]');
+    var prevField=row.querySelector('[data-field="prev"]');
+    var monthField=row.querySelector('[data-field="month"]');
+    prevField.value=avgField.value; // current avg becomes prev
+    avgField.value='';              // clear avg for new month
+    monthField.value='';           // clear this month
+  });
+  document.getElementById('f-month').value=m;
+  document.getElementById('f-year').value=y;
+  closeModal();
+  isDirty=true;setStatus('unsaved','Unsaved changes');
+  toast('Rolled over to '+m+' '+y+' — update your numbers!');
+}
+
+function saveData(){
+  var data={month:v('f-month'),year:v('f-year'),img:v('f-img'),products:getProducts()};
+  try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved','Saved just now');toast('Progress saved!');}
+  catch(e){toast('Could not save');}
+}
+
+function loadData(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(!raw){defaultProducts.forEach(function(p){addRow(p);});setStatus('unsaved','Nothing saved yet');return;}
+    var data=JSON.parse(raw);
+    document.getElementById('f-month').value=data.month||'';
+    document.getElementById('f-year').value=data.year||'';
+    document.getElementById('f-img').value=data.img||'';
+    if(data.img)updateThumb('f-img');
+    (data.products||[]).forEach(function(p){addRow(p);});
+    setStatus('saved','Progress loaded');
+  }catch(e){defaultProducts.forEach(function(p){addRow(p);});setStatus('unsaved','Could not load');}
+}
+
+function clearAll(){
+  if(!confirm('Clear everything and reset to defaults?'))return;
+  document.getElementById('f-month').value='';
+  document.getElementById('f-year').value='';
+  document.getElementById('f-img').value='';
+  document.getElementById('thumb-f-img').className='img-thumb';
+  document.getElementById('thumb-f-img').src='';
+  document.getElementById('err-f-img').style.display='none';
+  document.getElementById('products-list').innerHTML='';
+  rowCount=0;
+  defaultProducts.forEach(function(p){addRow(p);});
+  localStorage.removeItem(SK);
+  document.getElementById('out').style.display='none';
+  isDirty=false;setStatus('unsaved','Cleared');toast('Reset to defaults.');
+}
+
+function trendTag(avg, prev){
+  var a=num(avg), p=num(prev);
+  if(!p||!a) return '';
+  var diff=a-p;
+  var pct=Math.round(Math.abs(diff)/p*100);
+  if(diff>0)  return '<span style="display:inline-flex;align-items:center;gap:3px;background:#e8f5ee;color:#2d6a4f;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;">▲ '+pct+'%</span>';
+  if(diff<0)  return '<span style="display:inline-flex;align-items:center;gap:3px;background:#fdf0ee;color:#c0504d;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;">▼ '+pct+'%</span>';
+  return '<span style="display:inline-flex;align-items:center;gap:3px;background:#f5eddf;color:#c9a96e;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:8px;">= flat</span>';
+}
+
+function barColor(avg){
+  var n=num(avg);
+  if(n>=15000) return '#1b4332';
+  if(n>=8000)  return '#2d6a4f';
+  if(n>=4000)  return '#40916c';
+  if(n>=1000)  return '#52b788';
+  return '#d4a017';
+}
+
+function buildHTML(){
+  var month=v('f-month')||'Month';
+  var year=v('f-year')||'';
+  var img=v('f-img');
+  var products=getProducts().filter(function(p){return p.name.trim();});
+  var label=month+(year?' '+year:'');
+
+  // Sort for output: highest avg first
+  var sorted=products.slice().sort(function(a,b){return num(b.avg)-num(a.avg);});
+  var topProduct=sorted[0];
+  var maxAvg=num(topProduct.avg)||1;
+
+  var html='<div style="font-family:Jost,sans-serif;font-size:87.5%;max-width:680px;margin:0 auto;">';
+
+  // ── Header ──
+  html+='<div style="background:#2a1f1c;border-radius:12px 12px 0 0;padding:1.75rem 2rem 1.5rem;text-align:center;">';
+  html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.5rem;">eRank Data</p>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.75rem;font-weight:700;color:#f5eddf;margin:0 0 0.3rem;line-height:1.2;">📊 Top Searched Digital Products Report</h2>';
+  html+='<p style="font-size:1rem;font-weight:600;color:#dea193;margin:0;letter-spacing:0.04em;">'+esc(label)+'</p>';
+  html+='</div>';
+
+  // ── Hero image ──
+  if(img){
+    html+='<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.25rem;text-align:center;">';
+    html+='<img src="'+esc(img)+'" alt="'+esc(label)+'" style="width:100%;max-width:420px;border-radius:10px;border:1px solid #ead9d5;display:inline-block;">';
+    html+='</div>';
+  }
+
+  // ── Intro + blurb ──
+  html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2rem;border-top:1px solid #ead9d5;">';
+  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">📌 '+esc(label)+' — Top Searched Digital Products</p>';
+  // Blurb
+  html+='<div style="background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:0;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
+  html+='Each month I pull the latest keyword data from <strong style="color:#2a1f1c;">eRank</strong> so you can see exactly what buyers are searching for on Etsy. ';
+  html+='Use this to <strong style="color:#2a1f1c;">spot trending product types</strong>, validate your listings, and keep an eye on where demand is rising or falling. ';
+  html+='A quick note — these are <strong style="color:#2a1f1c;">broad keyword phrases</strong>. To rank, you\'ll still want to niche down (think: "boho digital planner for moms" vs just "digital planner"). ';
+  html+='Think of this report as your monthly pulse check on what\'s in demand. 📈';
+  html+='</p>';
+  html+='</div>';
+  html+='</div>';
+
+  // ── #1 Spotlight ──
+  html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;padding:1.5rem 2rem;">';
+  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.6rem;">🏆 #1 This Month</p>';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
+  html+='<div>';
+  html+='<p style="font-family:Playfair Display,serif;font-size:1.3rem;font-weight:700;color:#f5eddf;margin:0 0 3px;">'+esc(topProduct.name)+'</p>';
+  html+='<p style="font-size:12px;color:#c4b0a8;margin:0;">Highest avg monthly search volume this month</p>';
+  html+='</div>';
+  html+='<div style="text-align:right;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:1.6rem;font-weight:700;color:#dea193;margin:0;line-height:1;">'+fmtNum(topProduct.avg)+'</p>';
+  html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0;">avg monthly searches</p>';
+  if(topProduct.prev&&num(topProduct.prev)){html+='<div style="margin-top:4px;">'+trendTag(topProduct.avg,topProduct.prev)+'</div>';}
+  html+='</div>';
+  html+='</div>';
+  html+='</div>';
+
+  // ── Text list ──
+  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;padding:1.5rem 2rem;">';
+  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">All Keywords — '+esc(label)+'</p>';
+  products.forEach(function(p,i){
+    html+='<div style="padding:0.85rem 0;'+(i>0?'border-top:1px solid #ead9d5;':'')+'">';
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">';
+    html+='<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#2a1f1c;margin:0;">'+esc(p.name)+'</p>';
+    if(p.prev&&num(p.prev)){html+=trendTag(p.avg,p.prev);}
+    html+='</div>';
+    html+='<p style="font-size:13px;color:#5a4a45;margin:4px 0 0;line-height:1.8;">';
+    html+='• '+esc(month)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(p.month)+'</strong>&nbsp;&nbsp;';
+    html+='• Avg Monthly: <strong style="color:#2a1f1c;">'+fmtNum(p.avg)+'</strong>';
+    html+='</p>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  // ── Bar chart ──
+  html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:10px 16px;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a> — Avg Monthly Search Volume</p>';
+  html+='</div>';
+  html+='<div style="background:#fff;border:1px solid #ead9d5;border-top:none;">';
+  // Table header
+  html+='<div style="display:grid;grid-template-columns:1fr 80px 120px;background:#f5eddf;padding:8px 14px;border-bottom:1px solid #ead9d5;">';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.substring(0,3))+'</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:right;">Avg. Searches</span>';
+  html+='</div>';
+  sorted.forEach(function(p,i){
+    var color=barColor(p.avg);
+    var avgN=num(p.avg);
+    var barW=Math.round((avgN/maxAvg)*100);
+    var isTop=(i===0);
+    html+='<div style="display:grid;grid-template-columns:1fr 80px 120px;padding:9px 14px;align-items:center;'+(isTop?'background:#fdf7f2;border-left:3px solid #dea193;':(i%2===0?'background:#fff;':'background:#f9f5f2;'))+'border-bottom:1px solid #ead9d5;">';
+    html+='<div style="display:flex;align-items:center;gap:6px;">';
+    if(isTop) html+='<span style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c9a96e;">🏆</span>';
+    html+='<span style="font-size:12px;color:#2a1f1c;font-weight:'+(isTop?'700':'500')+';">'+esc(p.name.toLowerCase())+'</span>';
+    if(p.prev&&num(p.prev)){html+=trendTag(p.avg,p.prev);}
+    html+='</div>';
+    html+='<span style="font-size:12px;color:#5a4a45;text-align:center;">'+fmtNum(p.month)+'</span>';
+    html+='<div style="position:relative;height:22px;background:#e8e0d8;border-radius:4px;overflow:hidden;">';
+    html+='<div style="position:absolute;left:0;top:0;bottom:0;width:'+barW+'%;background:'+color+';border-radius:4px;"></div>';
+    html+='<span style="position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,0.3);">'+fmtNum(p.avg)+'</span>';
+    html+='</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  // ── eRank footer ──
+  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 12px 12px;padding:1.5rem 2rem;text-align:center;">';
+  html+='<p style="font-size:13px;color:#5a4a45;margin:0 0 0.75rem;line-height:1.7;">Want to research keywords yourself? I pull this data from <strong style="color:#2a1f1c;">eRank</strong> every month.</p>';
+  html+='<a href="https://erank.com" target="_blank" style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 26px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;display:inline-block;">Visit eRank ↗</a>';
+  html+='</div>';
+
+  html+='</div>';
+  return html;
+}
+
+function generate(){
+  var month=v('f-month'),year=v('f-year');
+  if(!month||!year){toast('Please fill in month and year first.');return;}
+  var products=getProducts().filter(function(p){return p.name.trim();});
+  if(!products.length){toast('Add at least one product row.');return;}
+  var html=buildHTML();
+  document.getElementById('out-code').value=html;
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var code=document.getElementById('out-code').value;
+  var btn=document.getElementById('copy-all-btn');
+  try{
+    var ta=document.createElement('textarea');
+    ta.value=code;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2500);
+    toast('HTML copied! Paste into Systeme.io.');
+  }catch(e){toast('Copy failed — try Ctrl+C');}
+}
+
+var autoTimer;
+document.addEventListener('input',function(){
+  isDirty=true;setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData();},3000);
+});
+window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
+
+['f-month','f-year','f-img'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('input',function(){isDirty=true;setStatus('unsaved','Unsaved changes');});
+});
+
+loadData();
+</script>
+</body>
+</html>
