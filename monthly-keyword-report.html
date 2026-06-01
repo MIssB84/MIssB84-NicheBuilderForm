@@ -123,7 +123,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
   <div class="prod-row-head">
     <span class="col-label name-col">Product / Keyword</span>
     <span class="col-label" id="col-month-label">Month Searches</span>
-    <span class="col-label">Avg Monthly</span>
+    <span class="col-label">15-Mo Avg</span>
     <span></span>
   </div>
 
@@ -266,7 +266,7 @@ function sortByAvg(){
   document.getElementById('products-list').innerHTML='';
   rowCount=0;
   products.forEach(function(p){addRow(p);});
-  isDirty=true;setStatus('unsaved','Unsaved changes');toast('Sorted by avg monthly ↓');
+  isDirty=true;setStatus('unsaved','Unsaved changes');toast('Sorted by 15-mo avg ↓');
 }
 
 function newMonthPrompt(){
@@ -403,6 +403,7 @@ function buildHTML(){
   html+='<div style="background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1rem;">';
   html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
   html+='Each month I pull the latest keyword data from <strong style="color:#2a1f1c;">eRank</strong> so you can see exactly what buyers are searching for on Etsy. ';
+  html+='The <strong style="color:#2a1f1c;">15-month average</strong> shows the rolling average search volume over the past 15 months, so it gives you a more stable picture of ongoing demand rather than a single month spike. ';
   html+='Use this to <strong style="color:#2a1f1c;">spot trending product types</strong>, validate your listings, and keep an eye on where demand is rising or falling. ';
   html+='A quick note: these are <strong style="color:#2a1f1c;">broad keyword phrases</strong>. To rank, you\'ll still want to niche down (think: "boho digital planner for moms" vs just "digital planner"). ';
   html+='Think of this report as your monthly pulse check on what\'s in demand. 📈';
@@ -426,11 +427,11 @@ function buildHTML(){
   html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
   html+='<div>';
   html+='<p style="font-family:Playfair Display,serif;font-size:1.3rem;font-weight:700;color:#f5eddf;margin:0 0 3px;">'+esc(topProduct.name)+'</p>';
-  html+='<p style="font-size:12px;color:#c4b0a8;margin:0;">Highest avg monthly search volume this month</p>';
+  html+='<p style="font-size:12px;color:#c4b0a8;margin:0;">Highest 15-month avg search volume</p>';
   html+='</div>';
   html+='<div style="text-align:right;">';
   html+='<p style="font-family:Jost,sans-serif;font-size:1.6rem;font-weight:700;color:#dea193;margin:0;line-height:1;">'+fmtNum(topProduct.avg)+'</p>';
-  html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0;">avg monthly searches</p>';
+  html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0;">15-month avg searches</p>';
   html+='</div>';
   html+='</div>';
   html+='</div>';
@@ -445,7 +446,7 @@ function buildHTML(){
     html+='</div>';
     html+='<p style="font-size:13px;color:#5a4a45;margin:4px 0 0;line-height:1.8;">';
     html+='• '+esc(month)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(p.month)+'</strong>&nbsp;&nbsp;';
-    html+='• Avg Monthly: <strong style="color:#2a1f1c;">'+fmtNum(p.avg)+'</strong>';
+    html+='• 15-Mo Avg: <strong style="color:#2a1f1c;">'+fmtNum(p.avg)+'</strong>';
     html+='</p>';
     html+='</div>';
   });
@@ -453,14 +454,14 @@ function buildHTML(){
 
   // ── Bar chart ──
   html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:10px 16px;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: Avg Monthly Search Volume</p>';
+  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
   html+='</div>';
   html+='<div style="background:#fff;border:1px solid #ead9d5;border-top:none;">';
   // Table header
   html+='<div style="display:grid;grid-template-columns:1fr 80px 120px;background:#f5eddf;padding:8px 14px;border-bottom:1px solid #ead9d5;">';
   html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
   html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.substring(0,3))+'</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:right;">Avg. Searches</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-Mo Avg</span>';
   html+='</div>';
   sorted.forEach(function(p,i){
     var color=barColor(p.avg);
