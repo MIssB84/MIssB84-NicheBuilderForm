@@ -22,7 +22,6 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .fi-sm:focus{border-color:#dea193;}
 .fi-sm.name-field{text-align:left;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-/* 4-col: name | month | avg | del */
 .prod-row{display:grid;grid-template-columns:1fr 110px 110px 34px;gap:6px;align-items:center;margin-bottom:7px;}
 .prod-row-head{display:grid;grid-template-columns:1fr 110px 110px 34px;gap:6px;align-items:center;margin-bottom:6px;}
 .col-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;text-align:center;}
@@ -31,12 +30,8 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .del-btn:hover{border-color:#dea193;color:#dea193;}
 .add-row-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:#dea193;border:1.5px solid #dea193;padding:7px 16px;border-radius:20px;cursor:pointer;margin-top:6px;transition:all 0.2s;}
 .add-row-btn:hover{background:#dea193;color:#2a1f1c;}
-.sort-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:#c9a96e;border:1.5px solid #c9a96e;padding:7px 16px;border-radius:20px;cursor:pointer;margin-top:6px;margin-left:8px;transition:all 0.2s;}
-.sort-btn:hover{background:#c9a96e;color:#2a1f1c;}
 .new-month-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;border:1.5px solid #dea193;padding:8px 18px;border-radius:20px;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px;}
 .new-month-btn:hover{background:#dea193;color:#2a1f1c;}
-.info-blurb{background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:13px;color:#5a4a45;line-height:1.75;}
-.info-blurb strong{color:#2a1f1c;}
 .save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,0.3);padding:0.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:8px;}
 .save-status{font-size:12px;color:#c4b0a8;display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .sdot{width:6px;height:6px;border-radius:50%;background:#c4b0a8;}
@@ -67,7 +62,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .modal-close:hover{background:#dea193;color:#2a1f1c;}
 .modal-body{padding:1.5rem;}
 @media(max-width:560px){
-  .prod-row,.prod-row-head{grid-template-columns:1fr 72px 72px 72px 30px;gap:4px;}
+  .prod-row,.prod-row-head{grid-template-columns:1fr 80px 80px 30px;gap:4px;}
   .fi-sm{font-size:11px;padding:6px 5px;}
 }
 </style>
@@ -81,21 +76,21 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
   <p class="page-sub">Fill in each month's data. Progress saves automatically.</p>
 </div>
 
-<!-- NEW MONTH WORKFLOW -->
+<!-- NEW MONTH -->
 <div class="card">
   <p class="card-title" style="margin-bottom:0.3rem;">Start a New Month</p>
-  <p class="card-sub" style="margin-bottom:1rem;">Keep all your products and clear the numbers for a fresh month.</p>
+  <p class="card-sub" style="margin-bottom:1rem;">Keeps all your products and clears the numbers for a fresh month.</p>
   <button class="new-month-btn" onclick="newMonthPrompt()">↻ New Month — Keep Products, Reset Numbers</button>
 </div>
 
-<!-- MONTH + IMAGE -->
+<!-- REPORT INFO -->
 <div class="card">
   <p class="card-title">Report Info</p>
   <p class="card-sub">Set the month, year, and header image for this report.</p>
   <div class="row2" style="margin-bottom:10px;">
     <div>
       <label class="fl" for="f-month">Month</label>
-      <input class="fi" id="f-month" list="months-list" placeholder="e.g. April">
+      <input class="fi" id="f-month" list="months-list" placeholder="e.g. May">
       <datalist id="months-list">
         <option value="January"><option value="February"><option value="March"><option value="April">
         <option value="May"><option value="June"><option value="July"><option value="August">
@@ -118,21 +113,15 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <!-- PRODUCTS TABLE -->
 <div class="card">
   <p class="card-title" style="margin-bottom:0.2rem;">Product Keywords</p>
-  <p class="card-sub">Each row = one keyword. Product names are saved permanently; numbers reset each session.</p>
-
+  <p class="card-sub">Product names save permanently. Numbers reset each session.</p>
   <div class="prod-row-head">
-    <span class="col-label name-col">Product / Keyword</span>
+    <span class="col-label name-col">Keyword</span>
     <span class="col-label" id="col-month-label">Month Searches</span>
     <span class="col-label">15-Mo Avg</span>
     <span></span>
   </div>
-
   <div id="products-list"></div>
-
-  <div style="display:flex;flex-wrap:wrap;gap:0;align-items:center;">
-    <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
-    <button class="sort-btn" onclick="sortByAvg()">↓ Sort by Avg</button>
-  </div>
+  <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
 </div>
 
 <div style="height:80px;"></div>
@@ -164,7 +153,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
       <div class="row2" style="margin-bottom:1rem;">
         <div>
           <label class="fl" for="nm-month">New Month</label>
-          <input class="fi" id="nm-month" list="months-list" placeholder="e.g. May">
+          <input class="fi" id="nm-month" list="months-list" placeholder="e.g. June">
         </div>
         <div>
           <label class="fl" for="nm-year">Year</label>
@@ -189,21 +178,18 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <div class="toast" id="toast"></div>
 
 <script>
-var SK = 'mkr_v2';
-var isDirty = false;
+var SK='mkr_v3';
+var isDirty=false;
 
-var defaultProducts = [
-  {name:'20 oz Tumbler Wrap', month:'510', avg:'443'},
-  {name:'40oz Tumbler Wrap', month:'10', avg:'752'},
-  {name:'Budget Planner', month:'7780', avg:'6314'},
-  {name:'Budget Tracker', month:'4370', avg:'3221'},
-  {name:'Canva Template', month:'12740', avg:'8876'},
-  {name:'Digital Invitation', month:'3270', avg:'1814'},
-  {name:'Digital Journal', month:'2210', avg:'3225'},
-  {name:'Digital Planner', month:'28800', avg:'23629'},
-  {name:'Printable Wall Art', month:'11760', avg:'8786'},
-  {name:'Printables', month:'2310', avg:'6751'},
-  {name:'Sublimation PNG', month:'610', avg:'1533'}
+var defaultProducts=[
+  {name:'20 oz tumbler wrap'},{name:'20oz tumbler wrap'},
+  {name:'40 oz tumbler wrap'},{name:'40oz tumbler wrap'},
+  {name:'canva template'},{name:'digital invitation'},
+  {name:'digital journal'},{name:'digital planner'},
+  {name:'editable canva template'},{name:'frame tv art'},
+  {name:'png'},{name:'printable wall art'},
+  {name:'printables'},{name:'shirt png'},
+  {name:'sublimation png'},{name:'tshirt png'}
 ];
 
 function v(id){return(document.getElementById(id)||{}).value||'';}
@@ -211,7 +197,7 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
 function num(s){var n=parseInt((s||'0').replace(/,/g,''),10);return isNaN(n)?0:n;}
-function fmtNum(s){var n=num(s);return n===0?'—':n.toLocaleString();}
+function fmtNum(s){var n=num(s);return n===0?'':n.toLocaleString();}
 
 function updateThumb(inputId){
   var input=document.getElementById(inputId);if(!input)return;
@@ -226,7 +212,6 @@ function updateThumb(inputId){
 }
 
 var rowCount=0;
-
 function addRow(data){
   data=data||{name:'',month:'',avg:''};
   var id=rowCount++;
@@ -235,7 +220,7 @@ function addRow(data){
   row.className='prod-row';
   row.dataset.id=id;
   row.innerHTML=
-    '<input class="fi-sm name-field" data-field="name" placeholder="Product name" value="'+esc(data.name)+'">'+
+    '<input class="fi-sm name-field" data-field="name" placeholder="Keyword" value="'+esc(data.name)+'">'+
     '<input class="fi-sm" data-field="month" placeholder="0" value="'+esc(data.month)+'">'+
     '<input class="fi-sm" data-field="avg" placeholder="0" value="'+esc(data.avg)+'">'+
     '<button class="del-btn" onclick="delRow(this)" title="Remove">×</button>';
@@ -260,53 +245,32 @@ function getProducts(){
   return out;
 }
 
-function sortByAvg(){
-  var products=getProducts();
-  products.sort(function(a,b){return num(b.avg)-num(a.avg);});
-  document.getElementById('products-list').innerHTML='';
-  rowCount=0;
-  products.forEach(function(p){addRow(p);});
-  isDirty=true;setStatus('unsaved','Unsaved changes');toast('Sorted by 15-mo avg ↓');
-}
-
 function newMonthPrompt(){
   document.getElementById('nm-month').value='';
   document.getElementById('nm-year').value=v('f-year');
   document.getElementById('modal').style.display='block';
   document.body.style.overflow='hidden';
 }
-
 function closeModal(){
   document.getElementById('modal').style.display='none';
   document.body.style.overflow='';
 }
-
 function applyNewMonth(){
   var m=document.getElementById('nm-month').value.trim();
   var y=document.getElementById('nm-year').value.trim();
   if(!m||!y){toast('Please fill in month and year.');return;}
-  // Save current month label + each row's month searches as prior
-  var priorMonth=v('f-month');
   var rows=document.querySelectorAll('#products-list .prod-row');
-  var priorData={month:priorMonth,rows:[]};
-  rows.forEach(function(row){
-    priorData.rows.push({
-      name:row.querySelector('[data-field="name"]').value,
-      month:row.querySelector('[data-field="month"]').value
-    });
-  });
-  try{localStorage.setItem(SK+'_prior',JSON.stringify(priorData));}catch(e){}
-  // Clear numbers for new month
   rows.forEach(function(row){
     row.querySelector('[data-field="month"]').value='';
     row.querySelector('[data-field="avg"]').value='';
   });
   document.getElementById('f-month').value=m;
   document.getElementById('f-year').value=y;
+  updateColLabel(m);
   saveProductNames();
   closeModal();
   isDirty=false;setStatus('saved','Rolled over to '+m+' — enter new numbers');
-  toast('Rolled over to '+m+' '+y+' — enter your new numbers!');
+  toast('Rolled over to '+m+' '+y+'!');
 }
 
 function saveProductNames(){
@@ -314,21 +278,16 @@ function saveProductNames(){
   var names=products.map(function(p){return{name:p.name};});
   try{localStorage.setItem(SK+'_names',JSON.stringify(names));}catch(e){}
 }
-
 function saveData(){
-  // Only save product names — numbers reset each session
   saveProductNames();
-  // Save header info (month label + image) separately
   var header={month:v('f-month'),year:v('f-year'),img:v('f-img')};
   try{
     localStorage.setItem(SK+'_header',JSON.stringify(header));
     isDirty=false;setStatus('saved','Saved just now');toast('Saved!');
   }catch(e){toast('Could not save');}
 }
-
 function loadData(){
   try{
-    // Load header
     var hRaw=localStorage.getItem(SK+'_header');
     if(hRaw){
       var h=JSON.parse(hRaw);
@@ -336,8 +295,8 @@ function loadData(){
       document.getElementById('f-year').value=h.year||'';
       document.getElementById('f-img').value=h.img||'';
       if(h.img)updateThumb('f-img');
+      if(h.month)updateColLabel(h.month);
     }
-    // Load product names — numbers always blank on load
     var nRaw=localStorage.getItem(SK+'_names');
     if(nRaw){
       var names=JSON.parse(nRaw);
@@ -352,7 +311,6 @@ function loadData(){
     setStatus('unsaved','Could not load');
   }
 }
-
 function clearAll(){
   if(!confirm('Clear everything and reset to defaults?'))return;
   document.getElementById('f-month').value='';
@@ -366,9 +324,15 @@ function clearAll(){
   defaultProducts.forEach(function(p){addRow({name:p.name,month:'',avg:''});});
   localStorage.removeItem(SK+'_names');
   localStorage.removeItem(SK+'_header');
-  localStorage.removeItem(SK+'_prior');
   document.getElementById('out').style.display='none';
-  isDirty=false;setStatus('unsaved','Cleared');toast('Reset to defaults.');
+  isDirty=false;setStatus('unsaved','Cleared');
+  updateColLabel('');
+  toast('Reset to defaults.');
+}
+
+function updateColLabel(m){
+  var lbl=document.getElementById('col-month-label');
+  lbl.textContent=m?m+' Searches':'Month Searches';
 }
 
 function barColor(avg){
@@ -387,137 +351,85 @@ function buildHTML(){
   var products=getProducts().filter(function(p){return p.name.trim();});
   var label=month+(year?' '+year:'');
 
-  // Sort for output: highest avg first
+  // Sort by avg descending for output table
   var sorted=products.slice().sort(function(a,b){return num(b.avg)-num(a.avg);});
-  var topProduct=sorted[0];
-  var maxAvg=num(topProduct.avg)||1;
+  var maxAvg=sorted.reduce(function(mx,p){return Math.max(mx,num(p.avg));},0)||1;
 
   var html='<div style="font-family:Jost,sans-serif;font-size:100%;max-width:680px;margin:0 auto;">';
 
-  // ── Header ──
+  // Header
   html+='<div style="background:#2a1f1c;border-radius:12px 12px 0 0;padding:1.75rem 2rem 1.5rem;text-align:center;">';
   html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.5rem;">eRank Data</p>';
-  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.75rem;font-weight:700;color:#f5eddf;margin:0 0 0.3rem;line-height:1.2;">📊 Top Searched Digital Products Report</h2>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.75rem;font-weight:700;color:#f5eddf;margin:0 0 0.3rem;line-height:1.2;">Top Searched Digital Products</h2>';
   html+='<p style="font-size:1rem;font-weight:600;color:#dea193;margin:0;letter-spacing:0.04em;">'+esc(label)+'</p>';
   html+='</div>';
 
-  // ── Hero image ──
+  // Hero image
   if(img){
     html+='<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.25rem;text-align:center;">';
     html+='<img src="'+esc(img)+'" alt="'+esc(label)+'" style="width:100%;max-width:420px;border-radius:10px;border:1px solid #ead9d5;display:inline-block;">';
     html+='</div>';
   }
 
-  // ── Intro + blurb ──
+  // Intro + blurbs
   html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2rem;border-top:1px solid #ead9d5;">';
   html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">📌 '+esc(label)+': Top Searched Digital Products</p>';
-  // Blurb 1 — what this report is
+
+  // Blurb 1
   html+='<div style="background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1rem;">';
   html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
   html+='Each month I pull the latest keyword data from <strong style="color:#2a1f1c;">eRank</strong> so you can see exactly what buyers are searching for on Etsy. ';
-  html+='The <strong style="color:#2a1f1c;">15-month average</strong> shows the rolling average search volume over the past 15 months, so it gives you a more stable picture of ongoing demand rather than a single month spike. ';
-  html+='Use this to <strong style="color:#2a1f1c;">spot trending product types</strong>, validate your listings, and keep an eye on where demand is rising or falling. ';
-  html+='A quick note: these are <strong style="color:#2a1f1c;">broad keyword phrases</strong>. To rank, you\'ll still want to niche down (think: "boho digital planner for moms" vs just "digital planner"). ';
-  html+='Think of this report as your monthly pulse check on what\'s in demand. 📈';
+  html+='The <strong style="color:#2a1f1c;">15-month average</strong> shows the rolling average search volume over the past 15 months, giving you a more stable picture of ongoing demand rather than a single month spike. ';
+  html+='Use this to spot trending product types, validate your listings, and keep an eye on where demand is heading. ';
+  html+='A quick note: these are <strong style="color:#2a1f1c;">broad keyword phrases</strong> and results are based on typing in the keyword exactly as shown. You\'ll notice we track similar variations like "20 oz tumbler wrap" and "20oz tumbler wrap" separately. That\'s intentional: buyers search both ways and eRank tracks them independently, so seeing both gives you a fuller picture of total demand. To rank in search results, you\'ll still want to niche down (think: "boho wildflower tumbler wrap" vs just "tumbler wrap"). Think of this report as your monthly pulse check on what\'s in demand. 📈';
   html+='</p>';
   html+='</div>';
-  // Blurb 2 — don't panic about fluctuations
+
+  // Blurb 2 — don't panic
   html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:10px;padding:1rem 1.25rem;">';
   html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.5rem;">💛 A friendly reminder</p>';
   html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
   html+='Fluctuations are completely normal. Numbers go up and down every single month and that doesn\'t mean something is wrong. ';
   html+='<strong style="color:#2a1f1c;">Please don\'t feel like you need to chase every keyword that spiked this month.</strong> ';
-  html+='This report is a tool for awareness, not a to-do list. Use it to notice patterns over time, stay informed, and make intentional decisions. ';
-  html+='Not to overhaul your shop every time one number shifts. Consistency always wins over chasing trends. 🙌';
+  html+='This report is a tool for awareness, not a to-do list. Use it to notice patterns over time, stay informed, and make intentional decisions. Not to overhaul your shop every time one number shifts. Consistency always wins over chasing trends. 🙌';
   html+='</p>';
   html+='</div>';
   html+='</div>';
 
-  // ── #1 Spotlight ──
-  html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;padding:1.5rem 2rem;">';
-  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.6rem;">🏆 #1 This Month</p>';
-  html+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">';
-  html+='<div>';
-  html+='<p style="font-family:Playfair Display,serif;font-size:1.3rem;font-weight:700;color:#f5eddf;margin:0 0 3px;">'+esc(topProduct.name)+'</p>';
-  html+='<p style="font-size:12px;color:#c4b0a8;margin:0;">Highest 15-month avg search volume</p>';
-  html+='</div>';
-  html+='<div style="text-align:right;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:1.6rem;font-weight:700;color:#dea193;margin:0;line-height:1;">'+fmtNum(topProduct.avg)+'</p>';
-  html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0;">15-month avg searches</p>';
-  html+='</div>';
-  html+='</div>';
-  html+='</div>';
-
-  // Load prior month data if available
-  var priorMonth='';
-  var priorMap={};
-  try{
-    var pRaw=localStorage.getItem(SK+'_prior');
-    if(pRaw){
-      var pData=JSON.parse(pRaw);
-      priorMonth=pData.month||'';
-      (pData.rows||[]).forEach(function(r){
-        if(r.name) priorMap[r.name.toLowerCase().trim()]=r.month;
-      });
-    }
-  }catch(e){}
-
-  // ── Text list ──
-  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;padding:1.5rem 2rem;">';
-  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">All Keywords: '+esc(label)+'</p>';
-  products.forEach(function(p,i){
-    var priorVal=priorMap[p.name.toLowerCase().trim()]||'';
-    html+='<div style="padding:0.85rem 0;'+(i>0?'border-top:1px solid #ead9d5;':'')+'">';
-    html+='<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#2a1f1c;margin:0 0 4px;">'+esc(p.name)+'</p>';
-    html+='<p style="font-size:13px;color:#5a4a45;margin:0;line-height:1.9;">';
-    if(priorVal&&priorMonth){
-      html+='• '+esc(priorMonth)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(priorVal)+'</strong>&nbsp;&nbsp;';
-    }
-    html+='• '+esc(month)+' Searches: <strong style="color:#2a1f1c;">'+fmtNum(p.month)+'</strong>&nbsp;&nbsp;';
-    html+='• 15-Mo Avg: <strong style="color:#2a1f1c;">'+fmtNum(p.avg)+'</strong>';
-    html+='</p>';
-    html+='</div>';
-  });
-  html+='</div>';
-
-  // ── eRank-style table ──
+  // eRank table header bar
   html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:12px 18px;">';
   html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
   html+='</div>';
-  // Table header row
-  html+='<div style="display:grid;grid-template-columns:1fr 90px 160px;background:#f5eddf;padding:9px 18px;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+
+  // Table column headers
+  html+='<div style="display:grid;grid-template-columns:1fr 110px 170px;background:#f5eddf;padding:9px 18px;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
   html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.toUpperCase())+'</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-Mo Avg</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.toUpperCase())+' SEARCHES</span>';
+  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-MO AVG SEARCHES</span>';
   html+='</div>';
-  // Rows
+
+  // Table rows
   sorted.forEach(function(p,i){
     var color=barColor(p.avg);
     var avgN=num(p.avg);
-    var barW=Math.max(4,Math.round((avgN/maxAvg)*100));
-    var isTop=(i===0);
-    var rowBg=isTop?'#fdf7f2':'#fff';
-    var leftBorder=isTop?'border-left:4px solid #dea193;':'border-left:1px solid #ead9d5;';
-    html+='<div style="display:grid;grid-template-columns:1fr 90px 160px;padding:11px 18px;align-items:center;background:'+rowBg+';'+leftBorder+'border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
-    // Keyword name
-    html+='<div style="display:flex;align-items:center;gap:8px;">';
-    if(isTop) html+='<span style="font-size:14px;">🏆</span>';
-    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#2a1f1c;font-weight:'+(isTop?'700':'500')+';">'+esc(p.name.toLowerCase())+'</span>';
-    html+='</div>';
-    // Month searches — plain number, centered
-    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;text-align:center;display:block;">'+fmtNum(p.month)+'</span>';
+    var barW=avgN>0?Math.max(4,Math.round((avgN/maxAvg)*100)):4;
+    var monthVal=fmtNum(p.month);
+    var avgVal=fmtNum(p.avg);
+    var rowBg=(i%2===0)?'#fff':'#fdf7f2';
+    html+='<div style="display:grid;grid-template-columns:1fr 110px 170px;padding:11px 18px;align-items:center;background:'+rowBg+';border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#2a1f1c;font-weight:500;">'+esc(p.name)+'</span>';
+    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;text-align:center;display:block;">'+(monthVal||'&mdash;')+'</span>';
     // Bar + number
     html+='<div style="display:flex;align-items:center;gap:8px;">';
-    html+='<div style="flex:1;background:#e8e0d8;border-radius:4px;height:20px;overflow:hidden;position:relative;">';
-    html+='<div style="width:'+barW+'%;height:100%;background:'+color+';border-radius:4px;"></div>';
+    html+='<div style="flex:1;background:#e8e0d8;border-radius:4px;height:20px;overflow:hidden;">';
+    if(avgN>0){html+='<div style="width:'+barW+'%;height:100%;background:'+color+';border-radius:4px;"></div>';}
     html+='</div>';
-    html+='<span style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;color:'+(isTop?'#2a1f1c':'#5a4a45')+';white-space:nowrap;min-width:46px;text-align:right;">'+fmtNum(p.avg)+'</span>';
+    html+='<span style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;color:#5a4a45;white-space:nowrap;min-width:52px;text-align:right;">'+(avgVal||'&mdash;')+'</span>';
     html+='</div>';
     html+='</div>';
   });
-  html+='<div style="border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;height:1px;background:#ead9d5;"></div>';
 
-  // ── eRank footer ──
+  // eRank footer
   html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 12px 12px;padding:1.5rem 2rem;text-align:center;">';
   html+='<p style="font-size:13px;color:#5a4a45;margin:0 0 0.75rem;line-height:1.7;">Want to research keywords yourself? I pull this data from <strong style="color:#2a1f1c;">eRank</strong> every month.</p>';
   html+='<a href="https://erank.com" target="_blank" style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 26px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;display:inline-block;">Visit eRank ↗</a>';
@@ -551,6 +463,11 @@ function copyAll(){
   }catch(e){toast('Copy failed — try Ctrl+C');}
 }
 
+// Live column label update
+document.getElementById('f-month').addEventListener('input',function(){
+  updateColLabel(this.value.trim());
+});
+
 var autoTimer;
 document.addEventListener('input',function(){
   isDirty=true;setStatus('unsaved','Unsaved changes');
@@ -562,19 +479,6 @@ window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault(
   var el=document.getElementById(id);
   if(el)el.addEventListener('input',function(){isDirty=true;setStatus('unsaved','Unsaved changes');});
 });
-
-// Update the "Month Searches" column label live as month is typed
-document.getElementById('f-month').addEventListener('input', function(){
-  var m = this.value.trim();
-  var lbl = document.getElementById('col-month-label');
-  lbl.textContent = m ? m+' Searches' : 'Month Searches';
-});
-// Set on load too
-(function(){
-  var m = document.getElementById('f-month').value.trim();
-  var lbl = document.getElementById('col-month-label');
-  if(m) lbl.textContent = m+' Searches';
-})();
 
 loadData();
 </script>
