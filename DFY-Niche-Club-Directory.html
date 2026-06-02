@@ -64,9 +64,6 @@
     background: var(--cream);
     border-bottom: 1px solid var(--border);
     padding: 16px 20px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -120,9 +117,6 @@
   .nav-wrap {
     background: var(--white);
     border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 57px;
-    z-index: 99;
   }
 
   /* Year tab row */
@@ -395,7 +389,7 @@
 </div>
 
 <!-- SEARCH + MONTH NAV -->
-<div class="search-bar-wrap">
+<div class="search-bar-wrap" id="dfySearch">
   <div class="search-input-wrap">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="searchInput" placeholder="Search niches… try 'raccoon' or 'wall art'">
@@ -403,7 +397,7 @@
   <button id="clearSearch" onclick="clearSearch()">Clear</button>
 </div>
 
-<div class="nav-wrap">
+<div class="nav-wrap" id="dfyNav">
   <div class="year-tabs">
     <button class="year-tab active" data-year="2026">2026</button>
     <button class="year-tab" data-year="2025">2025</button>
@@ -1475,15 +1469,67 @@
     searchCount.textContent = '';
   }
 
-  // BACK TO TOP
-  window.addEventListener('scroll', function() {
-    const btn = document.getElementById('backToTop');
-    btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
-  });
+  // BACK TO TOP — works inside Systeme.io scroll container
+  function getScroller() {
+    var el = document.getElementById('backToTop');
+    var node = el.parentElement;
+    while (node && node !== document.body) {
+      var style = window.getComputedStyle(node);
+      var overflow = style.overflow + style.overflowY;
+      if (overflow.indexOf('auto') > -1 || overflow.indexOf('scroll') > -1) return node;
+      node = node.parentElement;
+    }
+    return window;
+  }
+
+  var scroller = null;
+
+  function initScroller() {
+    scroller = getScroller();
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    scroller.addEventListener('scroll', makeStickyNav, { passive: true });
+    makeStickyNav();
+  }
+
+  function makeStickyNav() {
+    var search = document.getElementById('dfySearch');
+    var nav = document.getElementById('dfyNav');
+    var wrapper = document.querySelector('.dfy-dir');
+    if (!search || !nav || !scroller || scroller === window) return;
+    var scrollTop = scroller.scrollTop;
+    var wrapperTop = wrapper.getBoundingClientRect().top + scrollTop - (scroller === window ? 0 : scroller.getBoundingClientRect().top);
+    var searchHeight = search.offsetHeight;
+    var navHeight = nav.offsetHeight;
+    var searchOffset = search.getBoundingClientRect().top;
+    var navOffset = nav.getBoundingClientRect().top;
+    if (searchOffset < 0) {
+      search.style.position = 'sticky';
+      search.style.top = '0';
+      search.style.zIndex = '100';
+    }
+    if (navOffset < searchHeight) {
+      nav.style.position = 'sticky';
+      nav.style.top = searchHeight + 'px';
+      nav.style.zIndex = '99';
+    }
+  }
+
+  function onScroll() {
+    var scrollTop = scroller === window ? window.scrollY : scroller.scrollTop;
+    var btn = document.getElementById('backToTop');
+    btn.style.display = scrollTop > 300 ? 'flex' : 'none';
+  }
 
   function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (scroller === window) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      scroller.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
+
+  window.addEventListener('load', initScroller);
+  setTimeout(initScroller, 500);
 
   // YEAR TABS
   const yearTabs = document.querySelectorAll('.year-tab');
@@ -1502,14 +1548,14 @@
   });
 
   // SMOOTH SCROLL for month nav pills
-  document.querySelectorAll('.month-pill').forEach(pill => {
+  document.querySelectorAll('.month-pill').forEach(function(pill) {
     pill.addEventListener('click', function(e) {
       e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        const offset = 130;
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target && scroller) {
+        var scrollTop = scroller === window ? window.scrollY : scroller.scrollTop;
+        var top = target.getBoundingClientRect().top + scrollTop - 20;
+        scroller.scrollTo({ top: top, behavior: 'smooth' });
       }
     });
   });
@@ -1547,7 +1593,14 @@
     }
   }
 
-  window.addEventListener('scroll', updateActivePill, { passive: true });
-  updateActivePill();
+  function initScrollSpy() {
+    if (scroller) {
+      scroller.addEventListener('scroll', updateActivePill, { passive: true });
+    }
+    updateActivePill();
+  }
+
+  window.addEventListener('load', initScrollSpy);
+  setTimeout(initScrollSpy, 600);
 </script>
 </div>
