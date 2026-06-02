@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The DFY Niche Club Directory</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
+:root {
     --dark: #2a1f1c;
     --cream: #f5eddf;
     --light-bg: #fdf7f2;
@@ -20,7 +14,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
+  .dfy-dir {
     font-family: 'Jost', sans-serif;
     background: var(--light-bg);
     color: var(--dark);
@@ -392,9 +386,7 @@
     .niche-list { gap: 4px 8px; }
   }
 </style>
-</head>
-<body>
-
+<div class="dfy-dir">
 <!-- HEADER -->
 <div class="dir-header">
   <h1>The DFY Niche Club Directory</h1>
@@ -1413,7 +1405,7 @@
   function buildIndex() {
     const index = [];
     document.querySelectorAll('.week-card').forEach(card => {
-      const weekLabel = card.querySelector('.week-date-link').textContent.replace('→','').trim();
+      const weekLabel = card.querySelector('.week-date-link').textContent.split('→')[0].trim();
       const weekHref = card.querySelector('.week-date-link').href;
       const niches = Array.from(card.querySelectorAll('.niche-list li')).map(li => ({
         text: li.textContent.trim(),
@@ -1455,8 +1447,10 @@
       searchCount.textContent = matches.length + ' result' + (matches.length !== 1 ? 's' : '') + ' for "' + searchInput.value.trim() + '"';
 
       const highlighted = (text) => {
-        const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-        return text.replace(re, '<mark>$1</mark>');
+        var safe = query.split('').join('');
+        var idx = text.toLowerCase().indexOf(safe);
+        if (idx === -1) return text;
+        return text.slice(0, idx) + '<mark>' + text.slice(idx, idx + safe.length) + '</mark>' + text.slice(idx + safe.length);
       };
 
       searchResults.innerHTML = matches.map(m => `
@@ -1531,21 +1525,19 @@
 
     if (currentId) {
       // auto-switch year tab
-      const yearMatch = currentId.match(/-(\d{4})$/);
-      if (yearMatch) {
-        const yr = yearMatch[1];
-        if (yr !== activeYear) {
-          activeYear = yr;
-          yearTabs.forEach(t => t.classList.toggle('active', t.dataset.year === yr));
-          yearMonthGroups.forEach(g => {
-            g.style.display = g.dataset.year === yr ? 'inline' : 'none';
-          });
-        }
+      const parts = currentId.split('-');
+      const yr = parts[parts.length - 1];
+      if (yr !== activeYear && (yr === '2025' || yr === '2026')) {
+        activeYear = yr;
+        yearTabs.forEach(t => t.classList.toggle('active', t.dataset.year === yr));
+        yearMonthGroups.forEach(g => {
+          g.style.display = g.dataset.year === yr ? 'inline' : 'none';
+        });
       }
     }
 
     document.querySelectorAll('.month-pill').forEach(pill => {
-      const href = pill.getAttribute('href').replace('#', '');
+      const href = pill.getAttribute('href').substring(1);
       pill.classList.toggle('active', href === currentId);
     });
 
@@ -1558,5 +1550,4 @@
   window.addEventListener('scroll', updateActivePill, { passive: true });
   updateActivePill();
 </script>
-</body>
-</html>
+</div>
