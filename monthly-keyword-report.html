@@ -359,9 +359,9 @@ function buildHTML(){
 
   // Header
   html+='<div style="background:#2a1f1c;border-radius:12px 12px 0 0;padding:1.75rem 2rem 1.5rem;text-align:center;">';
-  html+='<p style="font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.5rem;">eRank Data</p>';
-  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.75rem;font-weight:700;color:#f5eddf;margin:0 0 0.3rem;line-height:1.2;">Top Searched Digital Products</h2>';
-  html+='<p style="font-size:1rem;font-weight:600;color:#dea193;margin:0;letter-spacing:0.04em;">'+esc(label)+'</p>';
+  html+='<p style="font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.5rem;">eRank Data</p>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:2.2rem;font-weight:700;color:#f5eddf;margin:0 0 0.3rem;line-height:1.2;">Top Searched Digital Products</h2>';
+  html+='<p style="font-size:1.15rem;font-weight:600;color:#dea193;margin:0;letter-spacing:0.04em;">'+esc(label)+'</p>';
   html+='</div>';
 
   // Hero image
@@ -373,11 +373,11 @@ function buildHTML(){
 
   // Intro + blurbs
   html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2rem;border-top:1px solid #ead9d5;">';
-  html+='<p style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">📌 '+esc(label)+': Top Searched Digital Products</p>';
+  html+='<p style="font-size:13px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">📌 '+esc(label)+': Top Searched Digital Products</p>';
 
   // Blurb 1
   html+='<div style="background:#fdf7f2;border-left:4px solid #dea193;border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin-bottom:1rem;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.8;margin:0;">';
   html+='Each month I pull the latest keyword data from <strong style="color:#2a1f1c;">eRank</strong> so you can see exactly what buyers are searching for on Etsy. ';
   html+='The <strong style="color:#2a1f1c;">15-month average</strong> shows the rolling average search volume over the past 15 months, giving you a more stable picture of ongoing demand rather than a single month spike. ';
   html+='Use this to spot trending product types, validate your listings, and keep an eye on where demand is heading. ';
@@ -387,8 +387,8 @@ function buildHTML(){
 
   // Blurb 2 — don't panic
   html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:10px;padding:1rem 1.25rem;">';
-  html+='<p style="font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.5rem;">💛 A friendly reminder</p>';
-  html+='<p style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;line-height:1.8;margin:0;">';
+  html+='<p style="font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.5rem;">💛 A friendly reminder</p>';
+  html+='<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.8;margin:0;">';
   html+='Fluctuations are completely normal. Numbers go up and down every single month and that doesn\'t mean something is wrong. ';
   html+='<strong style="color:#2a1f1c;">Please don\'t feel like you need to chase every keyword that spiked this month.</strong> ';
   html+='This report is a tool for awareness, not a to-do list. Use it to notice patterns over time, stay informed, and make intentional decisions. Not to overhaul your shop every time one number shifts. Consistency always wins over chasing trends. 🙌';
@@ -398,14 +398,14 @@ function buildHTML(){
 
   // eRank table header bar
   html+='<div style="background:#2a1f1c;border-left:1px solid #2a1f1c;border-right:1px solid #2a1f1c;border-top:1px solid rgba(222,161,147,0.2);padding:12px 18px;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
+  html+='<p style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
   html+='</div>';
 
   // Table column headers
-  html+='<div style="display:grid;grid-template-columns:1fr 110px 170px;background:#f5eddf;padding:9px 18px;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.toUpperCase())+' SEARCHES</span>';
-  html+='<span style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-MO AVG SEARCHES</span>';
+  html+='<div style="display:grid;grid-template-columns:1fr 130px 190px;background:#f5eddf;padding:11px 18px;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+  html+='<span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
+  html+='<span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:center;">'+esc(month.toUpperCase())+' SEARCHES</span>';
+  html+='<span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-MO AVG SEARCHES</span>';
   html+='</div>';
 
   // Table rows
@@ -416,22 +416,22 @@ function buildHTML(){
     var monthVal=fmtNum(p.month);
     var avgVal=fmtNum(p.avg);
     var rowBg=(i%2===0)?'#fff':'#fdf7f2';
-    html+='<div style="display:grid;grid-template-columns:1fr 110px 170px;padding:11px 18px;align-items:center;background:'+rowBg+';border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
-    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#2a1f1c;font-weight:500;">'+esc(p.name)+'</span>';
-    html+='<span style="font-family:Jost,sans-serif;font-size:13px;color:#5a4a45;text-align:center;display:block;">'+(monthVal||'&mdash;')+'</span>';
+    html+='<div style="display:grid;grid-template-columns:1fr 130px 190px;padding:13px 18px;align-items:center;background:'+rowBg+';border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+    html+='<span style="font-family:Jost,sans-serif;font-size:15px;color:#2a1f1c;font-weight:500;">'+esc(p.name)+'</span>';
+    html+='<span style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;text-align:center;display:block;">'+(monthVal||'&mdash;')+'</span>';
     // Bar + number
     html+='<div style="display:flex;align-items:center;gap:8px;">';
-    html+='<div style="flex:1;background:#e8e0d8;border-radius:4px;height:20px;overflow:hidden;">';
+    html+='<div style="flex:1;background:#e8e0d8;border-radius:4px;height:22px;overflow:hidden;">';
     if(avgN>0){html+='<div style="width:'+barW+'%;height:100%;background:'+color+';border-radius:4px;"></div>';}
     html+='</div>';
-    html+='<span style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;color:#5a4a45;white-space:nowrap;min-width:52px;text-align:right;">'+(avgVal||'&mdash;')+'</span>';
+    html+='<span style="font-family:Jost,sans-serif;font-size:14px;font-weight:700;color:#5a4a45;white-space:nowrap;min-width:56px;text-align:right;">'+(avgVal||'&mdash;')+'</span>';
     html+='</div>';
     html+='</div>';
   });
 
   // eRank footer
   html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 12px 12px;padding:1.5rem 2rem;text-align:center;">';
-  html+='<p style="font-size:13px;color:#5a4a45;margin:0 0 0.75rem;line-height:1.7;">Want to research keywords yourself? I pull this data from <strong style="color:#2a1f1c;">eRank</strong> every month.</p>';
+  html+='<p style="font-size:15px;color:#5a4a45;margin:0 0 0.75rem;line-height:1.7;">Want to research keywords yourself? I pull this data from <strong style="color:#2a1f1c;">eRank</strong> every month.</p>';
   html+='<a href="https://erank.com" target="_blank" style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 26px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;display:inline-block;">Visit eRank ↗</a>';
   html+='</div>';
 
