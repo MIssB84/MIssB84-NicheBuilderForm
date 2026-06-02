@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The DFY Niche Club Directory</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #2a1f1c;
+    --cream: #f5eddf;
+    --light-bg: #fdf7f2;
+    --border: #ead9d5;
+    --rose: #dea193;
+    --gold: #c9a96e;
+    --mid-text: #5a4a45;
+    --muted: #c4b0a8;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--light-bg);
+    color: var(--dark);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .dir-header {
+    background: var(--dark);
+    padding: 32px 24px 28px;
+    text-align: center;
+  }
+
+  .dir-header h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    margin-bottom: 6px;
+  }
+
+  .dir-header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .dir-header .how-to {
+    display: inline-block;
+    margin-top: 14px;
+    background: rgba(222,161,147,0.15);
+    border: 1px solid rgba(222,161,147,0.3);
+    border-radius: 20px;
+    padding: 7px 18px;
+    color: var(--rose);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  /* SEARCH */
+  .search-bar-wrap {
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .search-input-wrap {
+    flex: 1;
+    position: relative;
+  }
+
+  .search-input-wrap svg {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  #searchInput {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border: 1.5px solid var(--border);
+    border-radius: 25px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    background: var(--white);
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  #searchInput:focus { border-color: var(--rose); }
+  #searchInput::placeholder { color: var(--muted); }
+
+  #clearSearch {
+    display: none;
+    background: var(--rose);
+    color: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* YEAR / MONTH NAV */
+  .nav-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 57px;
+    z-index: 99;
+  }
+
+  /* Year tab row */
+  .year-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+
+  .year-tab {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 18px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.18s;
+  }
+
+  .year-tab:hover { color: var(--mid-text); }
+
+  .year-tab.active {
+    color: var(--dark);
+    border-bottom-color: var(--rose);
+  }
+
+  /* Month pill row */
+  .month-pill-row {
+    padding: 8px 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .month-pill-row::-webkit-scrollbar { display: none; }
+
+  .month-pill {
+    display: inline-block;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--mid-text);
+    cursor: pointer;
+    margin-right: 6px;
+    transition: all 0.18s;
+    text-decoration: none;
+  }
+
+  .month-pill:hover, .month-pill.active {
+    background: var(--dark);
+    color: var(--rose);
+    border-color: var(--dark);
+  }
+
+  /* MAIN CONTENT */
+  .directory-body {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  /* MONTH SECTION */
+  .month-section { margin-top: 0; }
+
+  .month-header {
+    background: var(--dark);
+    color: var(--rose);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 9px 20px;
+    margin: 28px -16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .month-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(222,161,147,0.4), transparent);
+  }
+
+  /* WEEK CARD */
+  .week-card {
+    border-left: 4px solid var(--rose);
+    background: var(--white);
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    padding: 16px 20px;
+    box-shadow: 0 1px 4px rgba(42,31,28,0.06);
+    transition: box-shadow 0.2s;
+  }
+
+  .week-card:hover { box-shadow: 0 3px 10px rgba(42,31,28,0.1); }
+
+  .week-date-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--dark);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.18s;
+  }
+
+  .week-date-link:hover { color: var(--gold); }
+
+  .week-date-link .arrow {
+    font-size: 0.85rem;
+    color: var(--rose);
+    transition: transform 0.18s;
+  }
+
+  .week-date-link:hover .arrow { transform: translateX(3px); }
+
+  .niche-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .niche-list li {
+    font-size: 0.83rem;
+    color: var(--mid-text);
+    font-weight: 400;
+    position: relative;
+    padding-left: 12px;
+  }
+
+  .niche-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--rose);
+    font-weight: 700;
+  }
+
+  .niche-list li.bonus {
+    color: var(--mid-text);
+    font-weight: 400;
+  }
+
+  .niche-list li.bonus::before { color: var(--rose); }
+
+  /* SEARCH RESULTS */
+  #searchResults {
+    display: none;
+    padding-top: 20px;
+  }
+
+  .search-result-item {
+    border-left: 4px solid var(--gold);
+    background: var(--white);
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    padding: 14px 18px;
+    box-shadow: 0 1px 4px rgba(42,31,28,0.06);
+  }
+
+  .search-result-item .result-week {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--mid-text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .search-result-item .result-niche {
+    font-size: 0.9rem;
+    color: var(--dark);
+    font-weight: 500;
+  }
+
+  .search-result-item a {
+    color: var(--dark);
+    text-decoration: none;
+  }
+
+  .search-result-item a:hover { color: var(--gold); }
+
+  mark {
+    background: rgba(201,169,110,0.25);
+    color: var(--dark);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  #noResults {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  #searchCount {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 8px 0 4px;
+    display: none;
+  }
+
+  /* BACK TO TOP */
+  #backToTop {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--dark);
+    color: var(--rose);
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(42,31,28,0.25);
+    transition: background 0.2s, transform 0.2s;
+    z-index: 200;
+  }
+
+  #backToTop:hover { background: var(--mid-text); transform: translateY(-2px); }
+
+  /* HIDDEN */
+  .month-section.hidden { display: none; }
+  .week-card.hidden { display: none; }
+
+  /* DIVIDER */
+  .month-divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--rose), transparent);
+    margin: 8px 0 0;
+    opacity: 0.3;
+  }
+
+  @media (max-width: 600px) {
+    .dir-header h1 { font-size: 1.5rem; }
+    .week-date-link { font-size: 0.95rem; }
+    .niche-list { gap: 4px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="dir-header">
+  <h1>The DFY Niche Club Directory</h1>
+  <p>Browse every niche drop since we launched — scroll to explore or search for something specific.</p>
+  <span class="how-to">Click any week date to go straight to that drop →</span>
+</div>
+
+<!-- SEARCH + MONTH NAV -->
+<div class="search-bar-wrap">
+  <div class="search-input-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Search niches… try 'raccoon' or 'wall art'">
+  </div>
+  <button id="clearSearch" onclick="clearSearch()">Clear</button>
+</div>
+
+<div class="nav-wrap">
+  <div class="year-tabs">
+    <button class="year-tab active" data-year="2026">2026</button>
+    <button class="year-tab" data-year="2025">2025</button>
+  </div>
+  <div class="month-pill-row">
+    <span class="year-months" data-year="2026">
+      <a href="#month-may-2026" class="month-pill" data-year="2026">May</a>
+      <a href="#month-apr-2026" class="month-pill" data-year="2026">Apr</a>
+      <a href="#month-mar-2026" class="month-pill" data-year="2026">Mar</a>
+      <a href="#month-feb-2026" class="month-pill" data-year="2026">Feb</a>
+      <a href="#month-jan-2026" class="month-pill" data-year="2026">Jan</a>
+    </span>
+    <span class="year-months" data-year="2025" style="display:none">
+      <a href="#month-dec-2025" class="month-pill" data-year="2025">Dec</a>
+      <a href="#month-nov-2025" class="month-pill" data-year="2025">Nov</a>
+      <a href="#month-oct-2025" class="month-pill" data-year="2025">Oct</a>
+      <a href="#month-sep-2025" class="month-pill" data-year="2025">Sep</a>
+      <a href="#month-aug-2025" class="month-pill" data-year="2025">Aug</a>
+      <a href="#month-jul-2025" class="month-pill" data-year="2025">Jul</a>
+      <a href="#month-jun-2025" class="month-pill" data-year="2025">Jun</a>
+      <a href="#month-may-2025" class="month-pill" data-year="2025">May</a>
+      <a href="#month-apr-2025" class="month-pill" data-year="2025">Apr</a>
+      <a href="#month-mar-2025" class="month-pill" data-year="2025">Mar</a>
+    </span>
+  </div>
+</div>
+
+<!-- DIRECTORY BODY -->
+<div class="directory-body">
+
+  <div id="searchCount"></div>
+  <div id="searchResults"></div>
+  <div id="noResults">No niches found for that search. Try a different keyword!</div>
+  <div id="allContent">
+
+  <!-- ===== MAY 2026 ===== -->
+  <div class="month-section" id="month-may-2026">
+    <div class="month-header">May 2026</div>
+
+    <div class="week-card" data-week="May 25, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 25, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Funny Goose Bathroom Printable Wall Art</li>
+        <li>There is Sunshine in My Soul PNG</li>
+        <li>Colorful Butterfly Frame TV Art</li>
+        <li>Home Health Caregiver Activity Report</li>
+        <li>Vintage Black Cat Smoking Printable Wall Art</li>
+        <li>Gentle Parenting Dropout PNG</li>
+        <li>Fourth of July Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="May 18, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 18, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Smoking Raccoon Printable Wall Art</li>
+        <li>Retro Flying Mallard Duck PNG</li>
+        <li>Vintage Horse Landscape Frame TV Art</li>
+        <li>Taco About A Baby Shower Invite</li>
+        <li>Rustic Floral Toilet Paper Printable Wall Art</li>
+        <li>Baseball Moms Club Doodle PNG</li>
+        <li>Retro Television Photo Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="May 11, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 11, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Pigeon Reading Printable Wall Art</li>
+        <li>Funny Cowboy Goat PNG</li>
+        <li>First Birthday Frame TV Art</li>
+        <li>Lawnmower Birthday Invitation</li>
+        <li>Towels in Laundry Basket Printable Wall Art</li>
+        <li>Watercolor Highland Cow Tumbler PNG</li>
+        <li>Cherry Blossom Landscape Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="May 4, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 4, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Afrocentric Vinyl Records Printable Wall Art</li>
+        <li>Retro Bass Fish PNG</li>
+        <li>Paris Blossom Frame TV Art</li>
+        <li>Citrus Orange Bridal Brunch Invitation</li>
+        <li>Minimalist Japanese Koi Fish Printable Wall Art</li>
+        <li>Hot Mess Highland Cow PNG</li>
+        <li>Moody Waves Frame TV Art</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== APRIL 2026 ===== -->
+  <div class="month-section" id="month-apr-2026">
+    <div class="month-header">April 2026</div>
+
+    <div class="week-card" data-week="April 27, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 27, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Romantic Cafe Window Printable Wall Art</li>
+        <li>Spoiled Leopard PNG</li>
+        <li>Chickens Frame TV Art</li>
+        <li>Activity Sheets on God's Love Printable</li>
+        <li>Retro Bubblegum Doll Printable Wall Art</li>
+        <li>Trendy Western American PNG</li>
+        <li>Airplane Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="April 20, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 20, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Woman on Couch with Martini Printable Wall Art</li>
+        <li>Wild and Feral Raccoon PNG</li>
+        <li>Bluebonnet Frame TV Art</li>
+        <li>Fun Facts Wedding Printable</li>
+        <li>Japanese Frog in a Bathtub Printable Wall Art</li>
+        <li>Preppy Alligator PNG</li>
+        <li>Stained Glass Mountain Frame TV Art</li>
+        <li class="bonus">Bonus Niche: Tumbler/Digital Invitation/Journal/Coloring Pages/Checklist</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="April 13, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 13, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Axolotl Printable Wall Art</li>
+        <li>Pink Crab PNG</li>
+        <li>Golden Countryside Frame TV Art</li>
+        <li>Quinceanera Checklist</li>
+        <li>Colorful Mountain Floral Printable Wall Art</li>
+        <li>Cherry America Coquette PNG</li>
+        <li>Vintage Golf Course Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="April 6, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 6, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Abstract Landscape Grandmillennial Printable Wall Art</li>
+        <li>Patchwork Strawberry PNG</li>
+        <li>Earthy Neutral Landscape Frame TV Art</li>
+        <li>Restaurant Cleaning Checklist Printable</li>
+        <li>Aerial Surfers Printable Wall Art</li>
+        <li>Preppy Fish PNG</li>
+        <li>Tulip Cottage Frame TV Art</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== MARCH 2026 ===== -->
+  <div class="month-section" id="month-mar-2026">
+    <div class="month-header">March 2026</div>
+
+    <div class="week-card" data-week="March 30, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 30, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Moody Pink Peonies Printable Wall Art</li>
+        <li>Margarita Weather PNG</li>
+        <li>Abstract Marsh Frame TV Art</li>
+        <li>A Little Pearl Is On The Way Baby Shower Invitation</li>
+        <li>Tiger Pizza Printable Wall Art</li>
+        <li>Whimsical Coquette Goose PNG</li>
+        <li>Ducks by a Pond Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 23, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 23, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Coastal White Sailboat Printable Wall Art</li>
+        <li>Salty Moms Beach Club PNG</li>
+        <li>Antique French Forest Frame TV Art</li>
+        <li>Lash Tech Client Record Digital Planner</li>
+        <li>Waterlily Cat Printable Wall Art</li>
+        <li>Inflated Rhinestone Cherry Bow Tumbler Wrap PNG</li>
+        <li>Vintage Lake Ducks Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 16, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 16, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Cottagecore Robin with Blossoms Printable Wall Art</li>
+        <li>Camo Dripping Baseball PNG</li>
+        <li>Navy Blue Flowers Frame TV Art</li>
+        <li>Princess Tea Party Digital Birthday Invitation</li>
+        <li>Western Horseshoe Printable Wall Art</li>
+        <li>Western Leopard Wildcard PNG</li>
+        <li>Rustic Mason Jar Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 9, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 9, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Funky Western Cowgirl Printable Wall Art</li>
+        <li>Bleacher Creature PNG</li>
+        <li>Cottage Rose Garden Frame TV Art</li>
+        <li>Impulse Control Worksheets for Kids</li>
+        <li>Modern Colorful Feminine Printable Wall Art</li>
+        <li>Literally Born to Dilly Dally PNG</li>
+        <li>Spring Tulips Oil Painting Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 2, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 2, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Vintage Pink Ballerina Printable Wall Art</li>
+        <li>Hit the Dang Ball PNG</li>
+        <li>Jesus in a Flower Field Frame TV Art</li>
+        <li>Threenager Digital Birthday Invitation</li>
+        <li>Country Geese Hydrangeas Printable Wall Art</li>
+        <li>Preppy Coquette Iced Coffee PNG</li>
+        <li>Dogs with Sunglasses Frame TV Art</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== FEBRUARY 2026 ===== -->
+  <div class="month-section" id="month-feb-2026">
+    <div class="month-header">February 2026</div>
+
+    <div class="week-card" data-week="February 23, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">February 23, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Pink Coastal Seascape Printable Wall Art</li>
+        <li>Faux Cross Stitch Floral PNG</li>
+        <li>Lemons and Daisies Frame TV Art</li>
+        <li>Weight Loss Injection Tracker Printable</li>
+        <li>Modern Cactus Flowers Printable Wall Art</li>
+        <li>Bunnies are Overrated Stay Feral PNG</li>
+        <li>Olive Branches Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="February 16, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">February 16, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Abstract Whimsical Cat Printable Wall Art</li>
+        <li>Retro Howdy Easter PNG</li>
+        <li>Italian Lemon Tree Frame TV Art</li>
+        <li>Rumination Worksheet</li>
+        <li>Minimalist Woman Reading Book Printable Wall Art</li>
+        <li>Leopard Print Star PNG</li>
+        <li>Hot Air Balloon Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="February 9, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">February 9, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Vintage Pink Butterfly Printable Wall Art</li>
+        <li>Easter Faux Patchwork PNG</li>
+        <li>Stained Glass Frame TV Art</li>
+        <li>Ancient Greece Coloring Pages</li>
+        <li>Sleepy Leopard Printable Wall Art</li>
+        <li>Vintage Floral Dragonfly PNG</li>
+        <li>Abstract Spring Oil Painting Frame TV Art</li>
+        <li class="bonus">Bonus Niche: Leopard Cherry Tumbler Wrap</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="February 2, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">February 2, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Come As You Are Printable Wall Art</li>
+        <li>Vintage Hen in Nest PNG</li>
+        <li>Eight is Great Birthday Invitation</li>
+        <li>Flowers on Trendy Vase Frame TV Art</li>
+        <li>Raccoon Shamrock PNG</li>
+        <li>These Are the Good Old Days Printable Wall Art</li>
+        <li>Parts of the Brain Worksheet</li>
+        <li class="bonus">Bonus Niche: Vintage Cloud Frame TV Art</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== JANUARY 2026 ===== -->
+  <div class="month-section" id="month-jan-2026">
+    <div class="month-header">January 2026</div>
+
+    <div class="week-card" data-week="January 26, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">January 26, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Woman Reading Newspaper Printable Wall Art</li>
+        <li>Western Longhorn Bull PNG</li>
+        <li>Wildflower is on Her Way Baby Shower Digital Invitation</li>
+        <li>Swan Frame TV Art</li>
+        <li>Coffee Addict Highland Cow PNG</li>
+        <li>Halftone Cowgirl Printable Wall Art</li>
+        <li>Hospice Admission Checklist</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="January 19, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">January 19, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Florence Printable Wall Art</li>
+        <li>Slow Mornings Club PNG</li>
+        <li>That's Amore Bridal Shower Digital Invitation</li>
+        <li>Mexican Frame TV Art</li>
+        <li>Dogtrovert PNG</li>
+        <li>Extra Dirty Martini Printable Wall Art</li>
+        <li>Weekly Daycare Menu</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="January 12, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">January 12, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>So Glad You're Here Printable Wall Art</li>
+        <li>Floral Watercolor Coquette Bow Shirt PNG</li>
+        <li>Golf Theme Gender Reveal Digital Invitation</li>
+        <li>Swimmer Frame TV Art</li>
+        <li>Valentine Raccoon Shirt PNG</li>
+        <li>Vintage White Tulips Printable Wall Art</li>
+        <li>Printable Affirmation Cards for Teens</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="January 5, 2026">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">January 5, 2026 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Retro Skateboarding Bear Printable Wall Art</li>
+        <li>Life is Better With My Dogs PNG</li>
+        <li>Sage Green 60th Birthday Invitation</li>
+        <li>Turquoise Frame TV Art</li>
+        <li>Chiropractic Shirt PNG</li>
+        <li>Pastel Coquette Coastal Printable Wall Art</li>
+        <li>Wedding Planner Emergency Kit Checklist</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== DECEMBER 2025 ===== -->
+  <div class="month-section" id="month-dec-2025">
+    <div class="month-header">December 2025</div>
+
+    <div class="week-card" data-week="December 29, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">December 29, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Black Woman Holding Elegant Glass Printable Wall Art</li>
+        <li>Some Things are Better Left Alone PNG</li>
+        <li>LPN Pinning Ceremony Invitation</li>
+        <li>Coquette Bow Frame TV Art</li>
+        <li>Humble But I'm Still That Girl PNG</li>
+        <li>Tomato Printable Wall Art</li>
+        <li>90th Birthday Party Activities Printable</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="December 22, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">December 22, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>What's the Best That Could Happen Printable Wall Art</li>
+        <li>Valentine's Day Leopard Coquette Bow PNG</li>
+        <li>Sock Hop Digital Invitation</li>
+        <li>Southwestern Frame TV Art</li>
+        <li>Sorry for What My Face Said PNG</li>
+        <li>Cozy Stack of Books Printable Wall Art</li>
+        <li>Printable Homeschool Portfolio</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="December 15, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">December 15, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Vintage Cowboy Golf Printable Wall Art</li>
+        <li>I Could be Meaner PNG</li>
+        <li>Skincare Birthday Invitation</li>
+        <li>Greece Frame TV Art</li>
+        <li>Soccer Ball Pink Bow PNG</li>
+        <li>Funny Duck Wine Printable Wall Art</li>
+        <li>Printable Backpack Checklist</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="December 8, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">December 8, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Pink Bathtub Printable Wall Art</li>
+        <li>Adulting is a Scam PNG</li>
+        <li>Pink and Purple Butterfly Baby Shower Digital Invitation</li>
+        <li>Alpine Meadow Frame TV Art</li>
+        <li>Make Heaven Crowded PNG</li>
+        <li>Pink Disco Strawberries Printable Wall Art</li>
+        <li>Intrusive Thoughts Worksheet for Kids</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="December 1, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">December 1, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Aurora Borealis Printable Wall Art</li>
+        <li>XOXO Knit PNG</li>
+        <li>Cafe Bebe Digital Invitation</li>
+        <li>Bride Frame TV Art</li>
+        <li>Reading is My Favorite Sport PNG</li>
+        <li>Skeleton Lovers Printable Wall Art</li>
+        <li>Looking for Models Flyer</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== NOVEMBER 2025 ===== -->
+  <div class="month-section" id="month-nov-2025">
+    <div class="month-header">November 2025</div>
+
+    <div class="week-card" data-week="November 24, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">November 24, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Dusty Blue and Sage Wall Art Printable Wall Art</li>
+        <li>Axolotl Birthday Shirt PNG</li>
+        <li>Her Royal Threeness Princess Birthday Invitation</li>
+        <li>Highland Cow Frame TV Art</li>
+        <li>Dominican Republic T-Shirt Sublimation PNG</li>
+        <li>Flowering in Garden Printable Wall Art</li>
+        <li>Bar Inventory Checklist</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="November 17, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">November 17, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Boho Olive Printable Wall Art</li>
+        <li>Hands Ripping a Shirt PNG</li>
+        <li>Military Send Off Digital Invitation</li>
+        <li>Paris Cafe Frame TV Art</li>
+        <li>I Require Snacks Shirt PNG</li>
+        <li>Abstract Terracotta Flower Printable Wall Art</li>
+        <li>Days of the Week Printable Worksheet</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="November 10, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">November 10, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Bison Printable Wall Art</li>
+        <li>Mom Dad Est 2026 PNG</li>
+        <li>Hunting Fishing Baby Shower Invitation</li>
+        <li>Burgundy Floral TV Art</li>
+        <li>Having a Meltdown Shirt PNG</li>
+        <li>Navy Old Money Printable Wall Art</li>
+        <li>Salon Cleaning Checklist</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="November 3, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">November 3, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Floral Crown Leopard Wall Art</li>
+        <li>Psalm 23 T-Shirt PNG</li>
+        <li>Burgundy Rose Gold 70th Birthday Invitation</li>
+        <li>Strawberries Frame TV Art</li>
+        <li>Feeling Lucky Gambling T-Shirt PNG</li>
+        <li>Palm Springs Travel Printable Wall Art</li>
+        <li>Anger Management Worksheet for Adults</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== OCTOBER 2025 ===== -->
+  <div class="month-section" id="month-oct-2025">
+    <div class="month-header">October 2025</div>
+
+    <div class="week-card" data-week="October 27, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">October 27, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Romantic Coffee Shop Printable Art</li>
+        <li>Proud Army Wife Shirt PNG</li>
+        <li>Pink Bow Sleepover Birthday Invitation</li>
+        <li>Fig Frame TV Art</li>
+        <li>All Booked for Christmas Shirt PNG</li>
+        <li>Leopard Skateboard Wall Art</li>
+        <li>Nail Business Coupon Card</li>
+        <li class="bonus">Bonus Niche: Aquarium Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="October 20, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">October 20, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Teal Pink and Yellow Printable Wall Art</li>
+        <li>Postal Worker Tshirt PNG Design</li>
+        <li>Cowboy Dinosaur Birthday Invitation</li>
+        <li>Tennis Frame TV Art</li>
+        <li>Sunflower Cow T-Shirt PNG</li>
+        <li>Woman at the Well Modern Christian Printable Wall Art</li>
+        <li>Pink Row and Ribbons Tumbler Wrap</li>
+        <li class="bonus">Bonus Niche: Home Health Nurse Planner</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="October 13, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">October 13, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Ranunculus Printable Wall Art</li>
+        <li>Treat Dealer Shirt PNG</li>
+        <li>Mob Wife Birthday Invitation</li>
+        <li>Hunting Frame TV Art</li>
+        <li>Bowling Tshirt PNG</li>
+        <li>Bluebird Printable Wall Art</li>
+        <li>Printable and Editable Hospital Bag Checklist</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="October 6, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">October 6, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Whale Shark Printable Wall Art</li>
+        <li>Car Show T-shirt PNG</li>
+        <li>Large Sunflower Printable Wall Art</li>
+        <li>Monarch Butterfly Baby Shower Invitation</li>
+        <li>He Left the 99 Shirt PNG</li>
+        <li>Auto Detailing Checklist</li>
+        <li>Banana Leaves Frame TV Art</li>
+        <li class="bonus">Bonus Niche: Kawaii Kitty Tumbler Wrap PNG</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== SEPTEMBER 2025 ===== -->
+  <div class="month-section" id="month-sep-2025">
+    <div class="month-header">September 2025</div>
+
+    <div class="week-card" data-week="September 29, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">September 29, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Vintage Golf Printable Wall Art</li>
+        <li>Trophy Husband Shirt PNG</li>
+        <li>Pelican Printable Wall Art</li>
+        <li>Time Two Take Off Invitation</li>
+        <li>Floral Highland Cow Santa PNG</li>
+        <li>Christian Teacher Printable Planner</li>
+        <li>Goose Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="September 22, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">September 22, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Autumn Fig Printable Wall Art</li>
+        <li>All Booked for Fall PNG</li>
+        <li>Green Marble Printable Wall Art</li>
+        <li>Pink Disco Bow Ball Digital Invitation</li>
+        <li>Cozy Christmas Goose PNG</li>
+        <li>Burnt Orange Frame TV Art</li>
+        <li>Homeschool Student Checklist</li>
+        <li class="bonus">Bonus Niche: Heron Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="September 15, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">September 15, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Animals Reading Books Printable Wall Art</li>
+        <li>Out Here Ballin Santa PNG</li>
+        <li>Preppy Cheetah Printable Wall Art</li>
+        <li>Denim Jacket Birthday Invitation</li>
+        <li>Girls Gone Mild Shirt PNG</li>
+        <li>Real Estate Transaction Printable Checklist</li>
+        <li>Olive Green Leaf Printable Wall Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="September 8, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">September 8, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Pink and Sage Cat Wall Art</li>
+        <li>Cool Moms Love Jesus PNG</li>
+        <li>Spaghetti Dinner Invitation</li>
+        <li>Bonjour Madame Wall Art</li>
+        <li>My Husband's Problem Snarky Humor PNG</li>
+        <li>Fall Apple Cider Printable Wall Art</li>
+        <li>Teacher Digital Planner 2025-2026 Google Sheets</li>
+        <li class="bonus">Bonus Niche: Golf Frame TV Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="September 1, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">September 1, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Shark in the Bathtub Printable Wall Art</li>
+        <li>German Shepherd Ghost PNG</li>
+        <li>Bad Witches Only Invitation</li>
+        <li>Nantucket Frame TV Art</li>
+        <li>Book Lovers Fall Tumbler Wrap PNG</li>
+        <li>Developmental Milestone Checklist</li>
+        <li>Castlecore Printable Wall Art</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== AUGUST 2025 ===== -->
+  <div class="month-section" id="month-aug-2025">
+    <div class="month-header">August 2025</div>
+
+    <div class="week-card" data-week="August 25, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">August 25, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Light Pink And Gold Printable Wall Art</li>
+        <li>Lion Blowing Bubble PNG</li>
+        <li>Whale Frame TV Art</li>
+        <li>21st Birthday Champagne Bottle Invitation</li>
+        <li>Fall Sweater Weather Tumbler Wrap PNG</li>
+        <li>Cheetah Print Girls Night Flyer</li>
+        <li>Mexican Flowers Tshirt PNG</li>
+        <li class="bonus">Bonus Niche: Coquette Halloween Ghost Printable Wall Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="August 18, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">August 18, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Family Medical History Checklist</li>
+        <li>Victorian Disco Printable Art</li>
+        <li>Coquette Bow Donut Shirt PNG</li>
+        <li>Elder Emo Birthday Invite</li>
+        <li>Pink Camo Hunting Tumbler Wrap</li>
+        <li>Its A Good Day To Read A Book Wall Art</li>
+        <li>Just A Girl Who Loves Fall Shirt Sublimation PNG</li>
+        <li class="bonus">Bonus POD Niche: We Can Do Hard Things T Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="August 11, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">August 11, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Pelican Printable Wall Art</li>
+        <li>Let's Get Rowdy Bachelorette PNG</li>
+        <li>How Old Were They Canva Template</li>
+        <li>Manatee Nursery Wall Art</li>
+        <li>I Teach The Cutest Bees PNG</li>
+        <li>Weekly Daycare Lunch Menu</li>
+        <li>Leopard Print Sunflower Cow 20oz Sublimation Tumbler Design</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="August 4, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">August 4, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Aerial Beach View Printable Wall Art</li>
+        <li>Margaritas and Matrimony Shirt PNG</li>
+        <li>Aperol Spritz Dinner Party Invitation Template</li>
+        <li>Green Marble Printable Wall Art</li>
+        <li>Travel Agent Shirt PNG</li>
+        <li>Trauma Bond Worksheets</li>
+        <li>Police Tumbler Wrap PNG</li>
+        <li class="bonus">Bonus POD Niche: Better Late than Ugly Tshirt</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== JULY 2025 ===== -->
+  <div class="month-section" id="month-jul-2025">
+    <div class="month-header">July 2025</div>
+
+    <div class="week-card" data-week="July 28, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">July 28, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Love On The Lake Bachelorette Party Digital Invite</li>
+        <li>Vintage Nest Printable Wall Art</li>
+        <li>Seashore Tumbler Wrap PNG</li>
+        <li>Barbershop Printable Wall Art</li>
+        <li>Quinceañera Checklist</li>
+        <li>80s Theme Shirt PNG</li>
+        <li>Put It On My Dads Tab PNG</li>
+        <li class="bonus">Bonus POD Niche: I Dont Know I Just Work Here Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="July 21, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">July 21, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Graffiti Printable Wall Art</li>
+        <li>Firefly Tumbler Wrap PNG</li>
+        <li>Rustic Western 40th Birthday Invitation</li>
+        <li>Chic Doberman Wall Art</li>
+        <li>Audiobook Shirt PNG</li>
+        <li>Sprinkled With Love Ice Cream Baby Shower Invitation</li>
+        <li>We Be Trippin PNG</li>
+        <li class="bonus">Bonus POD Niche: Everything Hurts And I'm Tired Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="July 14, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">July 14, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>How Lucky Are We Printable Wall Art</li>
+        <li>Thrifting Tumbler PNG</li>
+        <li>Retro Cowboy Baby Shower Invite</li>
+        <li>Tranquilo Wall Art</li>
+        <li>Lets Go Bananas T-Shirt PNG</li>
+        <li>Pink Floral and Bow Oil Painting Wall Art</li>
+        <li>Limoncello Tshirt PNG</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="July 7, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">July 7, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Bear Playing Sports Nursery Wall Art</li>
+        <li>Hunting Dog Cooler PNG</li>
+        <li>One Cute Chick Birthday Invitation</li>
+        <li>Minimalistic Magnolia Wall Art</li>
+        <li>Puerto Rico Vacation Shirt PNG</li>
+        <li>Minimalistic Fruits Printable Wall Art</li>
+        <li>Boo Ghost Goose PNG</li>
+        <li class="bonus">Bonus Evergreen Niche: Moody Wall Art</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== JUNE 2025 ===== -->
+  <div class="month-section" id="month-jun-2025">
+    <div class="month-header">June 2025</div>
+
+    <div class="week-card" data-week="June 30, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">June 30, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Cat Loaf PNG</li>
+        <li>Halloween Pregnancy Announcement Canva Template</li>
+        <li>Boho Unicorn Printable Wall Art</li>
+        <li>Rubber Duck Tumbler Wrap</li>
+        <li>Espresso Martini Wall Art Cheetah Print</li>
+        <li>Teacher Digital Planner 2025-2026 Google Sheets</li>
+        <li>Vintage Airplane Nursery Wall Art</li>
+        <li class="bonus">Bonus Evergreen Niche: Homebody Wall Art</li>
+        <li class="bonus">Bonus POD Niche: Sips About to Go Down Tshirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="June 23, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">June 23, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Cowboy Boots and Sunflowers Tumbler Wrap</li>
+        <li>Surfboard and Dogs Wall Art</li>
+        <li>Spooky and Feral Raccoon PNG</li>
+        <li>Daily Niche - Speed Limit Birthday Invitation</li>
+        <li>Its So Good To Be Home Wall Art</li>
+        <li>At Least My Trauma Made Me Funny PNG</li>
+        <li>New Location Flyer Canva Editable Template</li>
+        <li class="bonus">Bonus Evergreen Niche: Coquette Nurse PNG</li>
+        <li class="bonus">Bonus POD Niche: Sorry About My Husband Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="June 16, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">June 16, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Light Pink Cheetah Wall Art</li>
+        <li>Manatee Shirt PNG</li>
+        <li>Who Has The Groom Canva Template</li>
+        <li>Antique Books and Roses Printable Wall Art</li>
+        <li>Tombstone Tumbler Wrap</li>
+        <li>Four Ever Spooky Invitation Template</li>
+        <li>Coastal Grandma Printable Wall Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="June 9, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">June 9, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>This Grandma Prays Shirt PNG</li>
+        <li>Labradoodle and Flowers Printable Wall Art</li>
+        <li>Love My Pet Tumbler Wrap</li>
+        <li>Boots And Brunch Thank You Card</li>
+        <li>Every Dog Needs A Baby Wall Art</li>
+        <li>Feral Mom T-Shirt PNG</li>
+        <li>Italian Summer Dinner Party Template</li>
+        <li class="bonus">Bonus POD Niche: I Yell Because I Care Baseball Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="June 2, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">June 2, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Disco Bow Printable Wall Art</li>
+        <li>Birthday Dinner Menu Template</li>
+        <li>Whatever Floats Your Boat PNG</li>
+        <li>Boston Terrier Printable Wall Art</li>
+        <li>Let's Roll Girls PNG</li>
+        <li>Preppy Chicago Wall Art</li>
+        <li>Rookie Trading Card Template</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== MAY 2025 ===== -->
+  <div class="month-section" id="month-may-2025">
+    <div class="month-header">May 2025</div>
+
+    <div class="week-card" data-week="May 26, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 26, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Venezuela Tumbler Wrap</li>
+        <li>Vintage Stamp State PNG</li>
+        <li>Back to School Giveaway Flyers</li>
+        <li>Watercolor Lemon Printable Wall Art</li>
+        <li>Memorial Birthday Flyer Editable Canva Template</li>
+        <li>Lets Do This Field Day Thing PNG</li>
+        <li>I See London I See France Wall Art</li>
+        <li class="bonus">Bonus POD Niche: Everything Is Going to Be OK TShirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="May 19, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 19, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Carnation Printable Wall Art</li>
+        <li>Four Ever Sweet PNG</li>
+        <li>Travel Itinerary Canva Template</li>
+        <li>Mountain Biking Printable Wall Art</li>
+        <li>Jesus Saves I Spend PNG</li>
+        <li>Middle School Survival Kit</li>
+        <li>Abstract Flamingo Printable Wall Art</li>
+        <li class="bonus">Bonus POD Niche: School Bus Tote Bag</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="May 12, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 12, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Wild And Three Birthday PNG</li>
+        <li>Shout Out Template</li>
+        <li>Cowgirl In Bathtub Wall Art</li>
+        <li>Feral but Free Tumbler Wrap PNG</li>
+        <li>Baseball Drip Birthday Invite</li>
+        <li>Meet Me At The Lake Wall Art</li>
+        <li>Principal Tumbler Wrap PNG</li>
+        <li class="bonus">Bonus POD Niche: I Survived My Wife Nursing School Tshirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="May 5, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">May 5, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Pancake Printable Wall Art</li>
+        <li>Digital Prayer Journal For Men</li>
+        <li>Teach Love Inspire Boho PNG</li>
+        <li>Black Lab Cowgirl Wall Art</li>
+        <li>Stock The Bar Invitation Template</li>
+        <li>Perimenopause PNG</li>
+        <li>Pool Floats Wall Art</li>
+        <li class="bonus">Bonus POD Niche: Summer Reading 2025 Shirt</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== APRIL 2025 ===== -->
+  <div class="month-section" id="month-apr-2025">
+    <div class="month-header">April 2025</div>
+
+    <div class="week-card" data-week="April 28, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 28, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Bioluminescent Printable Wall Art</li>
+        <li>Hospital Activity Book For Kids</li>
+        <li>Arizona Tshirt PNG</li>
+        <li>Pink Lotus Printable Wall Art</li>
+        <li>Heifer 4th of July PNG</li>
+        <li>Lobster Printable Wall Art</li>
+        <li>Hot Mess Express Tumbler PNG</li>
+        <li class="bonus">Bonus POD Niche: Funny Racoon Rodeo Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="April 21, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 21, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Whatever Life Throws At You Funny PNG</li>
+        <li>Fitness Instructor Planner</li>
+        <li>Hot Pink And Orange Graduation Invitation</li>
+        <li>Lemon Drop Martini Wall Art</li>
+        <li>Just A Girl Who Loves To Dance Tumbler Wrap</li>
+        <li>Girl Reading A Magazine Wall Art</li>
+        <li>Wedding Photographer Social Media Kit</li>
+        <li class="bonus">Bonus POD Niche: Ballpark Auntie Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="April 14, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 14, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Lofi Printable Wall Art</li>
+        <li>Printable Custom Wedding Checklist</li>
+        <li>Pink Disco Ball Leopard Wall Art</li>
+        <li>Coming Soon Social Media Flyer Templates</li>
+        <li>Feral Girl Summer Raccoon PNG</li>
+        <li>Who Am I Digital Journal</li>
+        <li>Silliest Goose Around Wall Art</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="April 7, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">April 7, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Book Shop Printable Wall Art</li>
+        <li>Printable Kids Cruise Journal</li>
+        <li>Cowgirl In Martini Glass PNG</li>
+        <li>Manifest Your Love Journal</li>
+        <li>Country Club Baby Shower Invitation</li>
+        <li>Shih Tzu Dog Printable Wall Art</li>
+        <li>Vision Board Template For Teens</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== MARCH 2025 ===== -->
+  <div class="month-section" id="month-mar-2025">
+    <div class="month-header">March 2025</div>
+
+    <div class="week-card" data-week="March 31, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 31, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Drippy Baseball With Glove PNG</li>
+        <li>Babysitter Binder</li>
+        <li>Goldendoodle Golf Nursery Wall Art</li>
+        <li>Meatball Birthday Invite</li>
+        <li>Cowgirl Coloring Sheet</li>
+        <li>Kitesurfing Printable Wall Art</li>
+        <li>Coquette Bows Thank You Card Template</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 24, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 24, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Weight Loss Tracker 50 Lbs</li>
+        <li>Grown With Love Baby Shower Games</li>
+        <li>Wash Your Paws Printable Wall Art</li>
+        <li>Editable Wedding Signature Drinks Menu Sign</li>
+        <li>Happy Retirement Tumbler Wrap PNG</li>
+        <li>Kitchen Conversion Chart Wall Art</li>
+        <li>Who Knows The Birthday Girl Best Editable Template</li>
+        <li class="bonus">Bonus POD Niche: Cute Kawaii Strawberry Cat Tshirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 17, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 17, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Birth Plan Template</li>
+        <li>Anxiety Journal</li>
+        <li>This is a High Class Joint Wall Art</li>
+        <li>Here Comes the Son Sublimation</li>
+        <li>Social Media Template</li>
+        <li>Printable Homeschool Transcript</li>
+        <li>Sage Green Wall Art Bow and Boots</li>
+        <li class="bonus">Bonus POD Niche: Soccer Mom Tarot Card Shirt</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 10, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 10, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Peace Out Single Digits Birthday Invitation</li>
+        <li>Flock of Birds Wall Art</li>
+        <li>Self Care Checklist</li>
+        <li>Duck Towel Wall Art</li>
+        <li>Girl Coloring Pages</li>
+        <li>IVF PNG</li>
+        <li>Sterile and Feral PNG</li>
+      </ul>
+    </div>
+
+    <div class="week-card" data-week="March 3, 2025">
+      <a class="week-date-link" href="YOUR-LINK-HERE" target="_blank">March 3, 2025 <span class="arrow">→</span></a>
+      <ul class="niche-list">
+        <li>Boho Desert Highland Cow Tumbler Wrap</li>
+        <li>Head to Toe Checklist</li>
+        <li>2025 Digital Planner Dark Theme</li>
+        <li>Real Estate Listing Performance Template</li>
+        <li>Tiger In the Tub Wall Art</li>
+        <li>Girls Trip Cheaper Than Therapy 2025 PNG SVG</li>
+        <li>What's for Dinner Wall Art</li>
+      </ul>
+    </div>
+  </div>
+
+  </div><!-- end allContent -->
+</div><!-- end directory-body -->
+
+<!-- BACK TO TOP -->
+<button id="backToTop" onclick="scrollToTop()" title="Back to top">↑</button>
+
+<script>
+  // SEARCH
+  const searchInput = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearSearch');
+  const searchResults = document.getElementById('searchResults');
+  const allContent = document.getElementById('allContent');
+  const noResults = document.getElementById('noResults');
+  const searchCount = document.getElementById('searchCount');
+
+  // Build index from all week cards
+  function buildIndex() {
+    const index = [];
+    document.querySelectorAll('.week-card').forEach(card => {
+      const weekLabel = card.querySelector('.week-date-link').textContent.replace('→','').trim();
+      const weekHref = card.querySelector('.week-date-link').href;
+      const niches = Array.from(card.querySelectorAll('.niche-list li')).map(li => ({
+        text: li.textContent.trim(),
+        isBonus: li.classList.contains('bonus')
+      }));
+      index.push({ weekLabel, weekHref, niches });
+    });
+    return index;
+  }
+
+  const index = buildIndex();
+
+  searchInput.addEventListener('input', function() {
+    const query = this.value.trim().toLowerCase();
+    if (!query) {
+      clearSearch();
+      return;
+    }
+    clearBtn.style.display = 'block';
+    allContent.style.display = 'none';
+    searchResults.style.display = 'block';
+    searchCount.style.display = 'block';
+
+    const matches = [];
+    index.forEach(week => {
+      week.niches.forEach(niche => {
+        if (niche.text.toLowerCase().includes(query)) {
+          matches.push({ week, niche });
+        }
+      });
+    });
+
+    if (matches.length === 0) {
+      searchResults.innerHTML = '';
+      noResults.style.display = 'block';
+      searchCount.textContent = '';
+    } else {
+      noResults.style.display = 'none';
+      searchCount.textContent = matches.length + ' result' + (matches.length !== 1 ? 's' : '') + ' for "' + searchInput.value.trim() + '"';
+
+      const highlighted = (text) => {
+        const re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        return text.replace(re, '<mark>$1</mark>');
+      };
+
+      searchResults.innerHTML = matches.map(m => `
+        <div class="search-result-item">
+          <div class="result-week">
+            <a href="${m.week.weekHref}" target="_blank">${m.week.weekLabel} <span style="color:var(--rose)">→</span></a>
+          </div>
+          <div class="result-niche ${m.niche.isBonus ? 'bonus' : ''}">${highlighted(m.niche.text)}</div>
+        </div>
+      `).join('');
+    }
+  });
+
+  function clearSearch() {
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    searchResults.style.display = 'none';
+    searchResults.innerHTML = '';
+    allContent.style.display = 'block';
+    noResults.style.display = 'none';
+    searchCount.style.display = 'none';
+    searchCount.textContent = '';
+  }
+
+  // BACK TO TOP
+  window.addEventListener('scroll', function() {
+    const btn = document.getElementById('backToTop');
+    btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+  });
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // YEAR TABS
+  const yearTabs = document.querySelectorAll('.year-tab');
+  const yearMonthGroups = document.querySelectorAll('.year-months');
+  let activeYear = '2026';
+
+  yearTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      activeYear = this.dataset.year;
+      yearTabs.forEach(t => t.classList.toggle('active', t.dataset.year === activeYear));
+      yearMonthGroups.forEach(g => {
+        g.style.display = g.dataset.year === activeYear ? 'inline' : 'none';
+      });
+      updateActivePill();
+    });
+  });
+
+  // SMOOTH SCROLL for month nav pills
+  document.querySelectorAll('.month-pill').forEach(pill => {
+    pill.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offset = 130;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // SCROLL SPY — highlight active month pill + switch year tab automatically
+  const monthSections = document.querySelectorAll('.month-section');
+
+  function updateActivePill() {
+    let currentId = null;
+    monthSections.forEach(section => {
+      if (section.getBoundingClientRect().top <= 160) currentId = section.id;
+    });
+
+    if (currentId) {
+      // auto-switch year tab
+      const yearMatch = currentId.match(/-(\d{4})$/);
+      if (yearMatch) {
+        const yr = yearMatch[1];
+        if (yr !== activeYear) {
+          activeYear = yr;
+          yearTabs.forEach(t => t.classList.toggle('active', t.dataset.year === yr));
+          yearMonthGroups.forEach(g => {
+            g.style.display = g.dataset.year === yr ? 'inline' : 'none';
+          });
+        }
+      }
+    }
+
+    document.querySelectorAll('.month-pill').forEach(pill => {
+      const href = pill.getAttribute('href').replace('#', '');
+      pill.classList.toggle('active', href === currentId);
+    });
+
+    const activePill = document.querySelector('.month-pill.active');
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  window.addEventListener('scroll', updateActivePill, { passive: true });
+  updateActivePill();
+</script>
+</body>
+</html>
