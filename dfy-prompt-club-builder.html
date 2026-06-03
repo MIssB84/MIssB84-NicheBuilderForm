@@ -320,7 +320,7 @@ function buildSectionHTML(s){
 
     // Prompt card - upright Jost, larger, better line-height
     html+='<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">';
-    html+='<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="'+pid+'">'+esc(text)+'</p>';
+    html+='<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;font-style:italic;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="'+pid+'">'+esc(text)+'</p>';
 
     // Copy Prompt button - solid pink background
     html+='<div style="text-align:center;">';
@@ -371,7 +371,7 @@ function buildHTML(){
   sections.forEach(function(s){
     var hasAny=s.ids.some(function(id){return v(id).trim().length>0;});
     if(!hasAny)return;
-    nav+='<a href="#'+s.anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:5px solid #dea193;border-radius:10px;padding:18px 22px;text-decoration:none;margin-bottom:10px;"><span style="font-family:Jost,sans-serif;font-size:17px;font-weight:600;color:#2a1f1c;">'+s.name+'</span><span style="margin-left:auto;font-size:16px;color:#c4b0a8;">&#8595;</span></a>';
+    nav+='<a href="#'+s.anchor+'" style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:12px 22px;border-radius:30px;text-decoration:none;margin:4px;">'+s.name+'</a>';
   });
 
   var html='<div id="lesson-top" style="font-family:Jost,sans-serif;font-size:82%;">';
@@ -385,12 +385,12 @@ function buildHTML(){
   html+='</div>';
 
   html+='<div style="padding:2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
-  html+='<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:11px 30px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>';
+  html+='<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong><br>Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>';
+  html+='<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#2a1f1c;padding:11px 0;">Let\'s Create!</span>';
   html+='</div>';
 
-  html+='<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;">';
-  html+='<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Product Type</p>';
+  html+='<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;text-align:center;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">Jump to a Product Type</p>';
   html+=nav;
   html+='</div></div>';
 
