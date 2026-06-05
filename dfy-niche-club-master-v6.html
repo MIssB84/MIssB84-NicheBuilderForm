@@ -112,6 +112,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 </style>
 </head>
 <body>
+<!-- UPDATED: preview full weekly drop button visible near top -->
 <div id="top"></div>
 <div class="page-header">
   <div class="badge">DFY Niche Club</div>
@@ -127,6 +128,9 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   </div>
   <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
 </div>
+
+<!-- QUICK IN-PROGRESS PREVIEW -->
+<button class="gen-all-btn" onclick="previewAllNiches()" style="margin-top:0.5rem;margin-bottom:1.5rem;">Preview Full Weekly Drop</button>
 
 <!-- SECTION 1: INTRO -->
 <div style="max-width:760px;margin:2.5rem auto 1rem;display:flex;align-items:center;gap:14px;"><div class="sec-line"></div><span class="sec-label">Section 1: Weekly Intro</span><div class="sec-line"></div></div>
@@ -156,6 +160,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   <button class="collapse-all-btn" onclick="collapseAll()">Collapse All</button>
   <button class="collapse-all-btn" onclick="expandAll()">Expand All</button>
 </div>
+<button class="preview-btn" onclick="previewAllNiches()" style="margin-top:1rem;margin-bottom:1.5rem;">Preview Full Weekly Drop</button>
 <div id="all-sections"></div>
 
 <!-- GENERATE ALL -->
@@ -723,6 +728,21 @@ function previewNiche(n){
   var label = n==='bonus' ? 'Bonus' : 'Niche '+n;
   document.getElementById('modal-title').textContent = label + ' Preview';
   document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function previewAllNiches(){
+  var parts = [];
+  parts.push(DCP_SCRIPT);
+  parts.push(buildIntroHTML());
+  ALL_NICHES.forEach(function(niche){
+    if(niche.n === 'bonus' && !bonusOn) return;
+    parts.push(buildNicheHTML(niche.n));
+  });
+
+  document.getElementById('modal-title').textContent = 'Full Weekly Drop Preview';
+  document.getElementById('modal-body').innerHTML = parts.join('\n');
   document.getElementById('modal').style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
