@@ -829,11 +829,38 @@ function loadData(){
 
 function clearAll(){
   if(!confirm('Clear all data for this week?'))return;
-  getAllFieldIds().forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+
+  var defaultProductTypes = {
+    'intro-n1': 'Printable Wall Art',
+    'intro-n2': 'PNG',
+    'intro-n3': 'Frame TV Art',
+    'intro-n4': '',
+    'intro-n5': 'Printable Wall Art',
+    'intro-n6': 'PNG',
+    'intro-n7': 'Frame TV Art',
+    'intro-bonus': ''
+  };
+
+  getAllFieldIds().forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+
+    if(defaultProductTypes.hasOwnProperty(id)){
+      el.value = defaultProductTypes[id];
+    } else {
+      el.value = '';
+    }
+  });
+
   document.querySelectorAll('.img-thumb').forEach(function(t){ t.className='img-thumb'; t.src=''; });
   document.querySelectorAll('.img-err').forEach(function(e){ e.style.display='none'; });
   completedNiches={};
-  ALL_NICHES.forEach(function(niche){ clearCompleteUI(niche.n); });
+  ALL_NICHES.forEach(function(niche){
+    clearCompleteUI(niche.n);
+    updateKwRef(niche.n);
+    updateReadyDot(niche.n);
+    updateTagWarnings(niche.n);
+  });
   localStorage.removeItem(SK);
   document.getElementById('out-all').style.display='none';
   isDirty=false; setStatus('unsaved','Cleared'); toast('Week cleared.');
