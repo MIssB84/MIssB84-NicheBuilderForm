@@ -112,7 +112,6 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 </style>
 </head>
 <body>
-<!-- UPDATED: preview full weekly drop button visible near top -->
 <div id="top"></div>
 <div class="page-header">
   <div class="badge">DFY Niche Club</div>
@@ -128,9 +127,6 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   </div>
   <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
 </div>
-
-<!-- QUICK IN-PROGRESS PREVIEW -->
-<button class="gen-all-btn" onclick="previewAllNiches()" style="margin-top:0.5rem;margin-bottom:1.5rem;">Preview Full Weekly Drop</button>
 
 <!-- SECTION 1: INTRO -->
 <div style="max-width:760px;margin:2.5rem auto 1rem;display:flex;align-items:center;gap:14px;"><div class="sec-line"></div><span class="sec-label">Section 1: Weekly Intro</span><div class="sec-line"></div></div>
@@ -160,7 +156,6 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
   <button class="collapse-all-btn" onclick="collapseAll()">Collapse All</button>
   <button class="collapse-all-btn" onclick="expandAll()">Expand All</button>
 </div>
-<button class="preview-btn" onclick="previewAllNiches()" style="margin-top:1rem;margin-bottom:1.5rem;">Preview Full Weekly Drop</button>
 <div id="all-sections"></div>
 
 <!-- GENERATE ALL -->
@@ -426,17 +421,6 @@ function buildAllSections(){
     tabIdx++;
     html += '</div></div>';
 
-    // Styles Used
-    html += '<div class="card"><p class="card-title">Styles Used</p><p class="card-sub">Tool names are locked in — just enter the style for each one</p>';
-    html += '<div style="display:flex;flex-direction:column;gap:10px;">';
-    html += '<div class="g2"><div class="tool-locked">Ideogram</div><input class="fi" id="n'+n+'-s-ideogram" tabindex="'+tabIdx+'" placeholder="e.g. Auto"></div>';
-    tabIdx++;
-    html += '<div class="g2"><div class="tool-locked">Kittl (Flux 1.1 Pro Ultra)</div><input class="fi" id="n'+n+'-s-kittl" tabindex="'+tabIdx+'" placeholder="e.g. Cozy Support"></div>';
-    tabIdx++;
-    html += '<div class="g2"><div class="tool-locked">Canva Dream Lab</div><input class="fi" id="n'+n+'-s-canva" tabindex="'+tabIdx+'" placeholder="e.g. Smart"></div>';
-    tabIdx++;
-    html += '</div></div>';
-
     // Generator Images
     html += '<div class="card"><p class="card-title">Generator Result Images</p><p class="card-sub">Paste image URL for each generator. Thumbnails appear instantly.</p>';
     html += '<div class="gen-grid">';
@@ -567,9 +551,6 @@ function buildNicheHTML(n){
   var tags=cleanTags(v('n'+n+'-tags'));
   var prompt=v('n'+n+'-prompt').trim();
   var notesArr=v('n'+n+'-notes').split('\n').map(function(t){return t.trim();}).filter(Boolean);
-  var sIdeo=v('n'+n+'-s-ideogram').trim();
-  var sKittl=v('n'+n+'-s-kittl').trim();
-  var sCanva=v('n'+n+'-s-canva').trim();
 
   var tipsHtml = '';
   tips.forEach(function(t){ if(t) tipsHtml += '<div style="'+S.tipBox+'">'+formatTip(t)+'</div>'; });
@@ -622,7 +603,6 @@ function buildNicheHTML(n){
   if(tagsHtml) jumpItems.push({id:anchorId+'-tags', label:'Tags'});
   if(prompt) jumpItems.push({id:anchorId+'-prompt', label:'AI Prompt'});
   if(notesArr.length) jumpItems.push({id:anchorId+'-important', label:'Important Notes'});
-  if(sIdeo||sKittl||sCanva) jumpItems.push({id:anchorId+'-styles', label:'Styles Used'});
   if(hasImg) jumpItems.push({id:anchorId+'-results', label:'Generator Results'});
 
   if(jumpItems.length > 0){
@@ -650,15 +630,6 @@ function buildNicheHTML(n){
   if(notesArr.length){
     var notesHtml=''; notesArr.forEach(function(n2){ notesHtml+='<div style="'+S.noteBox+'">'+esc(n2)+'</div>'; });
     html += '<div id="'+anchorId+'-important" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Important Notes</p></div><div style="'+S.blockBody+'">'+notesHtml+'</div></div>';
-  }
-
-  // Styles used — only if at least one is filled
-  if(sIdeo||sKittl||sCanva){
-    html += '<div id="'+anchorId+'-styles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Styles Used</p></div><div style="'+S.blockBody+'">';
-    if(sIdeo) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Ideogram:</strong> '+esc(sIdeo)+'</p></div>';
-    if(sKittl) html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Kittl (Flux 1.1 Pro Ultra):</strong> '+esc(sKittl)+'</p></div>';
-    if(sCanva) html += '<div style="display:flex;align-items:center;gap:10px;"><div style="width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;"></div><p style="font-size:15px;color:#5a4a45;font-family:Jost,sans-serif;"><strong>Canva Dream Lab:</strong> '+esc(sCanva)+'</p></div>';
-    html += '</div></div>'+backLink;
   }
 
   // Generator results — only images that have URLs
@@ -732,21 +703,6 @@ function previewNiche(n){
   document.body.style.overflow = 'hidden';
 }
 
-function previewAllNiches(){
-  var parts = [];
-  parts.push(DCP_SCRIPT);
-  parts.push(buildIntroHTML());
-  ALL_NICHES.forEach(function(niche){
-    if(niche.n === 'bonus' && !bonusOn) return;
-    parts.push(buildNicheHTML(niche.n));
-  });
-
-  document.getElementById('modal-title').textContent = 'Full Weekly Drop Preview';
-  document.getElementById('modal-body').innerHTML = parts.join('\n');
-  document.getElementById('modal').style.display = 'block';
-  document.body.style.overflow = 'hidden';
-}
-
 function closeModal(){
   document.getElementById('modal').style.display = 'none';
   document.body.style.overflow = '';
@@ -787,8 +743,7 @@ function getAllFieldIds(){
       'n'+n+'-l1','n'+n+'-l2','n'+n+'-l3',
       'n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3',
       'n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags',
-      'n'+n+'-prompt','n'+n+'-notes',
-      'n'+n+'-s-ideogram','n'+n+'-s-kittl','n'+n+'-s-canva']);
+      'n'+n+'-prompt','n'+n+'-notes']);
     GEN_TOOLS.forEach(function(g){ ids.push('n'+n+'-img-'+g.id); });
   });
   return ids;
