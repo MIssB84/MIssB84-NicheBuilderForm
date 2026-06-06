@@ -25,12 +25,6 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .preview-thumb{width:140px;height:90px;object-fit:cover;border-radius:10px;border:1px solid #ead9d5;margin-top:9px;display:none;}
 .preview-thumb.show{display:block;}
 .err{font-size:13px;color:#c26464;margin-top:6px;display:none;}
-.progress-wrap{background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;}
-.progress-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
-.progress-text{font-size:15px;font-weight:800;color:#2a1f1c;}
-.progress-note{font-size:13px;color:#8b746d;}
-.progress-bar{height:12px;background:#ead9d5;border-radius:999px;overflow:hidden;}
-.progress-fill{height:100%;width:0%;background:#dea193;border-radius:999px;transition:width .2s ease;}
 .save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,.3);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:10px;}
 .save-status{font-size:13px;color:#c4b0a8;display:flex;align-items:center;gap:7px;flex-shrink:0;}
 .sdot{width:7px;height:7px;border-radius:50%;background:#c4b0a8;}.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
@@ -58,20 +52,9 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <div class="page-header">
   <div class="badge">Weekly Tip Builder</div>
   <h1 class="page-title">DFY Weekly Tip Builder</h1>
-  <p class="page-sub">Create a polished weekly tip page. Progress saves automatically.</p>
+  <p class="page-sub">Create a polished weekly tip page. Your work saves automatically.</p>
 </div>
 
-<div class="card">
-  <p class="card-title">Progress</p>
-  <p class="card-sub">Required fields: title and weekly tip content. Optional image, video, button text, and button link will only show if filled in.</p>
-  <div class="progress-wrap">
-    <div class="progress-top">
-      <span class="progress-text" id="progress-text">0 / 2 Required Fields Complete</span>
-      <span class="progress-note" id="progress-note">Keep going</span>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-  </div>
-</div>
 
 <div class="card">
   <p class="card-title">Weekly Tip Details</p>
@@ -149,13 +132,12 @@ function v(id){return (el(id)||{}).value||'';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function setStatus(state,txt){el('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');el('stxt').textContent=txt;}
 function toast(msg){var t=el('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
-function markDirty(){isDirty=true;setStatus('unsaved','Unsaved changes');updateProgress();scheduleAutoSave();}
+function markDirty(){isDirty=true;setStatus('unsaved','Unsaved changes');scheduleAutoSave();}
 function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData(false);setStatus('saved','Auto-saved');},1200);}
 function getData(){return {title:v('f-title'),body:v('f-body'),img:v('f-img'),video:v('f-video'),btnText:v('f-btn-text'),btnLink:v('f-btn-link')};}
-function saveData(showToast){var data=getData();try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved','Saved just now');if(showToast!==false)toast('Saved!');updateProgress();}catch(e){toast('Could not save');}}
-function loadData(){try{var raw=localStorage.getItem(SK);if(raw){var d=JSON.parse(raw);el('f-title').value=d.title||'';el('f-body').value=d.body||'';el('f-img').value=d.img||'';el('f-video').value=d.video||'';el('f-btn-text').value=d.btnText||'';el('f-btn-link').value=d.btnLink||'';if(d.img)updateThumb();setStatus('saved','Saved draft loaded');}else{setStatus('unsaved','Nothing saved yet');}}catch(e){setStatus('unsaved','Could not load');}updateProgress();}
-function updateProgress(){var done=0;if(v('f-title').trim())done++;if(v('f-body').trim())done++;el('progress-text').textContent=done+' / 2 Required Fields Complete';el('progress-note').textContent=done===2?'Ready to preview':'Keep going';el('progress-fill').style.width=(done/2*100)+'%';}
-function clearAll(){if(!confirm('Clear this weekly tip draft?'))return;['f-title','f-body','f-img','f-video','f-btn-text','f-btn-link'].forEach(function(id){el(id).value='';});el('img-thumb').className='preview-thumb';el('img-thumb').src='';el('img-err').style.display='none';localStorage.removeItem(SK);el('out').style.display='none';isDirty=false;setStatus('unsaved','Cleared');updateProgress();toast('Cleared.');}
+function saveData(showToast){var data=getData();try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved','Saved just now');if(showToast!==false)toast('Saved!');}catch(e){toast('Could not save');}}
+function loadData(){try{var raw=localStorage.getItem(SK);if(raw){var d=JSON.parse(raw);el('f-title').value=d.title||'';el('f-body').value=d.body||'';el('f-img').value=d.img||'';el('f-video').value=d.video||'';el('f-btn-text').value=d.btnText||'';el('f-btn-link').value=d.btnLink||'';if(d.img)updateThumb();setStatus('saved','Saved draft loaded');}else{setStatus('unsaved','Nothing saved yet');}}catch(e){setStatus('unsaved','Could not load');}}
+function clearAll(){if(!confirm('Clear this weekly tip draft?'))return;['f-title','f-body','f-img','f-video','f-btn-text','f-btn-link'].forEach(function(id){el(id).value='';});el('img-thumb').className='preview-thumb';el('img-thumb').src='';el('img-err').style.display='none';localStorage.removeItem(SK);el('out').style.display='none';isDirty=false;setStatus('unsaved','Cleared');toast('Cleared.');}
 function updateThumb(){var url=v('f-img').trim();var thumb=el('img-thumb');var err=el('img-err');if(!url){thumb.className='preview-thumb';thumb.src='';err.style.display='none';return;}thumb.onload=function(){thumb.className='preview-thumb show';err.style.display='none';};thumb.onerror=function(){thumb.className='preview-thumb';err.style.display='block';};thumb.src=url;}
 function paragraphs(text){var parts=String(text||'').split(/\n\s*\n/).map(function(p){return p.trim();}).filter(Boolean);return parts.map(function(p){var safe=esc(p).replace(/\n/g,'<br>');return '<p style="font-family:Jost,Arial,sans-serif;font-size:17px;color:#5a4a45;line-height:1.85;margin:0 0 1rem;">'+safe+'</p>';}).join('');}
 function videoEmbed(url){url=(url||'').trim();if(!url)return '';var safe=esc(url);var isEmbed=/youtube\.com\/embed|player\.vimeo\.com|loom\.com\/embed/i.test(url);var yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);if(yt){safe='https://www.youtube.com/embed/'+yt[1];isEmbed=true;}return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin:1.25rem 0;text-align:center;">'+(isEmbed?'<div style="position:relative;width:100%;padding-top:56.25%;"><iframe src="'+safe+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:10px;" allowfullscreen></iframe></div>':'<a href="'+safe+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:12px 26px;border-radius:30px;text-decoration:none;display:inline-block;">▶ Watch Video</a>')+'</div>';}
