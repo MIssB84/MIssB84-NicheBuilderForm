@@ -60,8 +60,8 @@ textarea.fi{min-height:95px;resize:vertical;line-height:1.6;}
     <p class="card-sub">The page wording is already built in. You only need to update the title, link, and optional short description.</p>
     <div class="row2">
       <div>
-        <label class="fl" for="f-title">Product Title</label>
-        <input class="fi" id="f-title" placeholder="e.g. Debt Tracker" value="Debt Tracker">
+        <label class="fl" for="f-title">Product Name</label>
+        <input class="fi" id="f-title" placeholder="e.g. Debt Tracker" value="">
       </div>
       <div>
         <label class="fl" for="f-link">Canva Template Link</label>
@@ -127,7 +127,7 @@ function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(saveDat
 function loadData(){
   try{
     var raw=localStorage.getItem(SK);
-    if(raw){var d=JSON.parse(raw);el('f-title').value=d.title||'Debt Tracker';el('f-link').value=d.link||'';el('f-desc').value=d.desc||defaultDesc;setStatus('saved','Saved page loaded');}
+    if(raw){var d=JSON.parse(raw);el('f-title').value=d.title||'';el('f-link').value=d.link||'';el('f-desc').value=d.desc||defaultDesc;setStatus('saved','Saved page loaded');}
     else{setStatus('unsaved','Nothing saved yet');}
   }catch(e){setStatus('unsaved','Could not load');}
 }
@@ -139,7 +139,8 @@ function clearBuilder(){
 }
 
 function buildOutput(){
-  var title=v('f-title').trim()||'PLR Resource';
+  var productName=v('f-title').trim();
+  var title=productName?'PLR: '+productName:'PLR Resource';
   var link=v('f-link').trim()||'#';
   var desc=v('f-desc').trim()||defaultDesc;
   var html='';
@@ -158,30 +159,30 @@ function buildOutput(){
   html+='<a href="'+esc(link)+'" target="_blank" style="display:inline-block;font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;background:#dea193;color:#2a1f1c;padding:13px 30px;border-radius:999px;border:1.5px solid #dea193;">✨ Access Canva Template</a>';
   html+='</div>';
   html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem;">';
-  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.4rem;">';
-  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;">Quick Start</p>';
-  html+='<ol style="padding-left:1.25rem;margin:0;">';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Open the Canva template.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Make a copy before editing.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Update the fonts, colors, graphics, and wording.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Export your finished files.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Create your listing and add your own mockups/details.</li>';
-  html+='</ol></div>';
-  html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.4rem;">';
-  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;">What This Is</p>';
+  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.5rem;text-align:left;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 1rem;color:#2a1f1c;text-align:left;">Quick Start</p>';
+  html+='<div style="display:grid;gap:.65rem;">';
+  html+='<div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;"><span style="font-size:14px;font-weight:800;color:#dea193;">1.</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Open the Canva template</span></div>';
+  html+='<div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;"><span style="font-size:14px;font-weight:800;color:#dea193;">2.</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Make a copy before editing</span></div>';
+  html+='<div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;"><span style="font-size:14px;font-weight:800;color:#dea193;">3.</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Update the fonts, colors, graphics, and wording</span></div>';
+  html+='<div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;"><span style="font-size:14px;font-weight:800;color:#dea193;">4.</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Export your finished files</span></div>';
+  html+='<div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;"><span style="font-size:14px;font-weight:800;color:#dea193;">5.</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Create your listing and add your own mockups/details</span></div>';
+  html+='</div></div>';
+  html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.5rem;text-align:left;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 1rem;color:#2a1f1c;text-align:left;">What This Is</p>';
   html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0;">This is a <strong>PLR, Private Label Rights, resource</strong> created to help you save time and fast-track your digital product creation process.</p>';
   html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:.75rem 0 0;">Use it as a strong starting point, then make it your own before selling or sharing it.</p>';
   html+='</div></div>';
-  html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.4rem;">';
-  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;">Customize Before You List</p>';
-  html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0;">To comply with Etsy guidelines and stand out in the marketplace, do not upload the template exactly as-is. Simple edits can make a big difference.</p>';
-  html+='<ul style="padding-left:1.25rem;margin:.8rem 0 0;">';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Change the colors and fonts.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Swap or remove graphics.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Edit the layout or page order.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Add your own creative details.</li>';
-  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Write your own listing description and use your own mockups.</li>';
-  html+='</ul></div>';
+  html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.6rem;text-align:left;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;text-align:left;">Customize Before You List</p>';
+  html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">To comply with Etsy guidelines and stand out in the marketplace, do not upload the template exactly as-is. Simple edits can make a big difference.</p>';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.7rem .9rem;">';
+  html+='<div style="display:grid;grid-template-columns:24px 1fr;gap:.6rem;align-items:start;"><span style="color:#dea193;font-weight:800;">✓</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Change the colors and fonts</span></div>';
+  html+='<div style="display:grid;grid-template-columns:24px 1fr;gap:.6rem;align-items:start;"><span style="color:#dea193;font-weight:800;">✓</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Swap or remove graphics</span></div>';
+  html+='<div style="display:grid;grid-template-columns:24px 1fr;gap:.6rem;align-items:start;"><span style="color:#dea193;font-weight:800;">✓</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Edit the layout or page order</span></div>';
+  html+='<div style="display:grid;grid-template-columns:24px 1fr;gap:.6rem;align-items:start;"><span style="color:#dea193;font-weight:800;">✓</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Add your own creative details</span></div>';
+  html+='<div style="display:grid;grid-template-columns:24px 1fr;gap:.6rem;align-items:start;grid-column:1/-1;"><span style="color:#dea193;font-weight:800;">✓</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">Write your own listing description and use your own mockups</span></div>';
+  html+='</div></div>';
   html+='<div style="background:#2a1f1c;border-radius:16px;padding:1.5rem;margin-top:1rem;">';
   html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;color:#f5eddf;margin:0 0 .6rem;">Friendly Reminder</p>';
   html+='<p style="font-size:15.5px;color:#c4b0a8;line-height:1.8;margin:0;">These templates are meant to give you a head start, not replace your creative direction. The more you tailor the design to a specific audience, style, or use case, the stronger your final product will be.</p>';
