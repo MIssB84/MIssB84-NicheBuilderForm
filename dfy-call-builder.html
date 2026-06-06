@@ -4,293 +4,425 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DFY Call Page Builder</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #f5eddf; font-family: 'Jost', sans-serif; color: #2a1f1c; min-height: 100vh; }
+  body { background: #2a1f1c; font-family: 'Jost', sans-serif; color: #2a1f1c; min-height: 100vh; }
+  .builder { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 100vh; }
+  .left { background: #2a1f1c; display: flex; flex-direction: column; }
+  .left-header { background: #dea193; padding: 18px 24px; }
+  .left-header h2 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.1rem; font-weight: 700; }
+  .left-header p { color: rgba(255,255,255,0.8); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; margin-top: 3px; }
+  .fields { padding: 20px 24px; flex: 1; overflow-y: auto; }
+  .section-sep { font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(201,169,110,0.8); padding: 12px 0 8px; border-top: 1px solid rgba(222,161,147,0.15); margin-top: 4px; }
+  .section-sep:first-child { border-top: none; padding-top: 0; }
+  .field { margin-bottom: 13px; }
+  .field label { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #dea193; margin-bottom: 5px; }
+  .field input { width: 100%; padding: 8px 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(222,161,147,0.3); border-radius: 7px; color: #f5eddf; font-family: 'Jost', sans-serif; font-size: .85rem; outline: none; transition: border-color .15s; }
+  .field input:focus { border-color: #dea193; background: rgba(255,255,255,0.1); }
+  .field input::placeholder { color: rgba(245,237,223,0.25); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .toggle-row { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+  .toggle-label { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #dea193; }
+  .tog { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+  .tog input { opacity: 0; width: 0; height: 0; }
+  .tog-sl { position: absolute; inset: 0; background: rgba(255,255,255,0.15); border-radius: 24px; cursor: pointer; transition: background .2s; }
+  .tog-sl::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; }
+  .tog input:checked + .tog-sl { background: #dea193; }
+  .tog input:checked + .tog-sl::before { transform: translateX(18px); }
+  .meet-wrap { display: none; }
+  .save-bar { padding: 14px 24px; background: rgba(0,0,0,0.25); border-top: 1px solid rgba(222,161,147,0.2); display: flex; align-items: center; gap: 12px; }
+  .save-indicator { font-size: .75rem; color: rgba(245,237,223,0.45); flex: 1; }
+  .save-indicator.saved { color: #7ecfa0; }
+  .copy-btn { padding: 10px 22px; background: #dea193; color: #fff; border: none; border-radius: 8px; font-family: 'Jost', sans-serif; font-weight: 700; font-size: .82rem; letter-spacing: .06em; cursor: pointer; transition: background .15s, transform .1s; text-transform: uppercase; white-space: nowrap; }
+  .copy-btn:hover { background: #cc7b68; }
+  .copy-btn:active { transform: scale(0.97); }
+  .copy-btn.done { background: #34a853; }
 
-  header { background: #2a1f1c; padding: 26px 24px; text-align: center; }
-  header h1 { font-family: 'Playfair Display', serif; color: #c9a96e; font-size: 1.7rem; }
-  header p { color: #f5eddf; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; font-weight: 300; }
+  /* RIGHT PREVIEW */
+  .right { background: #f0e8d8; overflow-y: auto; }
+  .right-header { background: #f5e6e3; padding: 18px 24px; border-bottom: 1px solid rgba(222,161,147,0.4); position: sticky; top: 0; z-index: 10; }
+  .right-header h2 { font-family: 'Playfair Display', serif; color: #2a1f1c; font-size: 1.1rem; font-weight: 700; }
+  .right-header p { color: #cc7b68; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; margin-top: 3px; }
+  .preview-wrap { padding: 20px; }
+  .prev-card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 24px rgba(42,31,28,.13); }
+  .prev-header { background: #2a1f1c; padding: 18px 20px; text-align: center; }
+  .prev-header h1 { font-family: 'Playfair Display', serif; color: #c9a96e; font-size: 1.2rem; margin: 0; }
+  .prev-header p { color: #f5eddf; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; margin-top: 3px; font-weight: 300; }
+  .prev-live { display: none; align-items: center; gap: 7px; background: #e05252; color: #fff; font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 8px 16px; justify-content: center; }
+  .prev-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pp 1.2s ease-in-out infinite; }
+  @keyframes pp { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .prev-body { padding: 18px 20px; }
+  .prev-lbl { font-family: 'Playfair Display', serif; font-size: .9rem; color: #2a1f1c; border-bottom: 2px solid #c9a96e; padding-bottom: 7px; margin-bottom: 11px; }
+  .prev-row { display: flex; gap: 10px; font-size: .78rem; line-height: 1.5; margin-bottom: 6px; }
+  .prev-row b { min-width: 38px; color: #2a1f1c; }
+  .prev-row span { color: #555; }
+  .prev-cd { background: #2a1f1c; border-radius: 9px; padding: 13px; text-align: center; margin: 11px 0 13px; }
+  .prev-cd-title { color: #c9a96e; font-family: 'Playfair Display', serif; font-size: .75rem; margin-bottom: 9px; }
+  .prev-cd-nums { display: flex; justify-content: center; gap: 9px; align-items: flex-start; }
+  .prev-cd-unit { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .prev-cd-n { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: #f5eddf; line-height: 1; min-width: 32px; text-align: center; }
+  .prev-cd-l { font-size: .54rem; letter-spacing: .1em; text-transform: uppercase; color: #dea193; }
+  .prev-cd-sep { font-size: 1.1rem; color: #c9a96e; padding-top: 2px; }
+  .prev-expect { background: #fdf7f0; border-left: 3px solid #c9a96e; border-radius: 0 7px 7px 0; padding: 11px 13px; margin-bottom: 13px; font-size: .75rem; line-height: 1.65; color: #3a2e2b; }
+  .prev-pending { background: #f8f3ec; border: 1px dashed #c9a96e; border-radius: 8px; padding: 11px; font-size: .75rem; color: #7a6350; text-align: center; font-style: italic; margin-bottom: 11px; }
+  .prev-meet-active { display: none; margin-bottom: 11px; }
+  .prev-meet-active a { display: flex; align-items: center; justify-content: center; padding: 10px; background: #34a853; color: #fff; font-size: .78rem; font-weight: 700; text-decoration: none; border-radius: 8px; }
+  .prev-btns { display: flex; gap: 9px; margin-bottom: 11px; flex-wrap: wrap; }
+  .prev-btn { padding: 8px 14px; border-radius: 7px; font-size: .75rem; font-weight: 600; }
+  .prev-btn-rose { background: #dea193; color: #fff; }
+  .prev-btn-dark { background: #2a1f1c; color: #f5eddf; }
+  .prev-next { text-align: center; font-size: .72rem; color: #999; padding-top: 11px; border-top: 1px solid #ede5d8; }
+  .prev-next a { color: #dea193; font-style: italic; font-weight: 600; text-decoration: none; }
 
-  .container { max-width: 680px; margin: 36px auto; padding: 0 20px 60px; }
-
-  .card { background: #fff; border-radius: 16px; padding: 32px 36px; box-shadow: 0 6px 32px rgba(42,31,28,.1); margin-bottom: 24px; }
-
-  .section-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #2a1f1c; border-bottom: 2px solid #c9a96e; padding-bottom: 10px; margin-bottom: 22px; }
-
-  .field { margin-bottom: 20px; }
-  .field label { display: block; font-weight: 600; font-size: .85rem; letter-spacing: .04em; margin-bottom: 6px; color: #2a1f1c; }
-  .field .hint { font-size: .75rem; color: #999; margin-bottom: 6px; font-weight: 400; }
-  .field input, .field textarea {
-    width: 100%; padding: 10px 14px; border: 1.5px solid #e0d5c5;
-    border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .92rem;
-    color: #2a1f1c; background: #fdfaf6; outline: none;
-    transition: border-color .18s;
+  @media (max-width: 700px) {
+    .builder { grid-template-columns: 1fr; }
+    .right { border-top: 3px solid #dea193; }
   }
-  .field input:focus, .field textarea:focus { border-color: #c9a96e; }
-  .field textarea { resize: vertical; min-height: 70px; }
-
-  .toggle-row { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
-  .toggle-row label { font-weight: 600; font-size: .85rem; letter-spacing: .04em; }
-  .toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; background: #ddd; border-radius: 26px; cursor: pointer; transition: background .2s; }
-  .toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; }
-  .toggle input:checked + .toggle-slider { background: #c9a96e; }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
-  .meet-field { display: none; }
-
-  .build-btn {
-    width: 100%; padding: 16px; background: #2a1f1c; color: #f5eddf;
-    font-family: 'Jost', sans-serif; font-weight: 700; font-size: 1rem;
-    letter-spacing: .06em; text-transform: uppercase; border: none;
-    border-radius: 10px; cursor: pointer; transition: opacity .18s;
-  }
-  .build-btn:hover { opacity: .88; }
-
-  .output-card { display: none; background: #fff; border-radius: 16px; padding: 32px 36px; box-shadow: 0 6px 32px rgba(42,31,28,.1); }
-  .output-card .section-title { margin-bottom: 16px; }
-
-  .output-box {
-    background: #fdfaf6; border: 1.5px solid #e0d5c5; border-radius: 10px;
-    padding: 16px; font-family: monospace; font-size: .75rem; line-height: 1.6;
-    color: #444; white-space: pre-wrap; word-break: break-all;
-    max-height: 320px; overflow-y: auto; margin-bottom: 18px;
-  }
-
-  .copy-btn {
-    width: 100%; padding: 14px; background: #dea193; color: #fff;
-    font-family: 'Jost', sans-serif; font-weight: 700; font-size: .95rem;
-    letter-spacing: .05em; border: none; border-radius: 10px;
-    cursor: pointer; transition: opacity .18s;
-  }
-  .copy-btn:hover { opacity: .88; }
-  .copy-btn.copied { background: #34a853; }
-
-  .success-msg { display: none; text-align: center; font-size: .85rem; color: #34a853; font-weight: 600; margin-top: 12px; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>DFY Call Page Builder</h1>
-  <p>Fill in the details. Copy the code. Paste into Systeme.io.</p>
-</header>
+<div class="builder">
 
-<div class="container">
-
-  <div class="card">
-    <div class="section-title">This Month's Call Details</div>
-
-    <div class="field">
-      <label>Call Date (display)</label>
-      <div class="hint">How it shows on the page, e.g. Saturday, June 13, 2026</div>
-      <input type="text" id="callDateDisplay" placeholder="Saturday, June 13, 2026" value="Saturday, June 13, 2026"/>
+  <!-- LEFT: INPUTS -->
+  <div class="left">
+    <div class="left-header">
+      <h2>DFY Call Page Builder</h2>
+      <p>Fill in, preview, copy</p>
     </div>
+    <div class="fields">
 
-    <div class="field">
-      <label>Call Date + Start Time (for countdown)</label>
-      <div class="hint">Use format: YYYY-MM-DDTHH:MM:SS in your local time</div>
-      <input type="datetime-local" id="callDatetime" value="2026-06-13T09:15"/>
+      <div class="section-sep">This Month's Call</div>
+
+      <div class="field">
+        <label>Date (shown on page)</label>
+        <input type="text" id="callDateDisplay" placeholder="Saturday, June 13, 2026" oninput="update();scheduleSave()"/>
+      </div>
+      <div class="field">
+        <label>Date + Start Time (for countdown)</label>
+        <input type="datetime-local" id="callDatetime" oninput="update();scheduleSave()"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Start Time</label>
+          <input type="text" id="callStart" placeholder="9:15 am PST" oninput="update();scheduleSave()"/>
+        </div>
+        <div class="field">
+          <label>End Time</label>
+          <input type="text" id="callEnd" placeholder="11:15 am PST" oninput="update();scheduleSave()"/>
+        </div>
+      </div>
+
+      <div class="section-sep">Links</div>
+
+      <div class="field">
+        <label>Google Form Link</label>
+        <input type="url" id="formLink" placeholder="https://forms.gle/..." oninput="scheduleSave()"/>
+      </div>
+      <div class="toggle-row">
+        <label class="tog">
+          <input type="checkbox" id="meetToggle" onchange="toggleMeet();update();scheduleSave()"/>
+          <span class="tog-sl"></span>
+        </label>
+        <span class="toggle-label">Meet link is ready</span>
+      </div>
+      <div class="meet-wrap" id="meetWrap">
+        <div class="field">
+          <label>Google Meet Link</label>
+          <input type="url" id="meetLink" placeholder="https://meet.google.com/..." oninput="scheduleSave()"/>
+        </div>
+      </div>
+
+      <div class="section-sep">Next Month's Call</div>
+
+      <div class="field">
+        <label>Date (shown on page)</label>
+        <input type="text" id="nextCallDisplay" placeholder="Saturday, July 11, 2026" oninput="update();scheduleSave()"/>
+      </div>
+      <div class="field">
+        <label>Date + Start Time (for calendar button)</label>
+        <input type="datetime-local" id="nextCallDatetime" oninput="scheduleSave()"/>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Start Time</label>
+          <input type="text" id="nextStart" placeholder="9:15 am PST" oninput="update();scheduleSave()"/>
+        </div>
+        <div class="field">
+          <label>End Time</label>
+          <input type="text" id="nextEnd" placeholder="11:15 am PST" oninput="update();scheduleSave()"/>
+        </div>
+      </div>
+
     </div>
-
-    <div class="field">
-      <label>Time (display)</label>
-      <div class="hint">How it shows on the page, e.g. 9:15 am PST – 11:15 am PST</div>
-      <input type="text" id="callTimeDisplay" placeholder="9:15 am PST – 11:15 am PST" value="9:15 am PST – 11:15 am PST"/>
+    <div class="save-bar">
+      <span class="save-indicator" id="saveInd">Auto-saved</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy Code</button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="section-title">Links</div>
-
-    <div class="field">
-      <label>Google Form Link</label>
-      <div class="hint">Paste your question submission form URL here</div>
-      <input type="url" id="formLink" placeholder="https://forms.gle/..."/>
+  <!-- RIGHT: PREVIEW -->
+  <div class="right">
+    <div class="right-header">
+      <h2>Live Preview</h2>
+      <p>Updates as you type</p>
     </div>
-
-    <div class="toggle-row">
-      <label class="toggle">
-        <input type="checkbox" id="meetToggle" onchange="toggleMeet()"/>
-        <span class="toggle-slider"></span>
-      </label>
-      <label for="meetToggle">Google Meet link is ready (week of the call)</label>
+    <div class="preview-wrap">
+      <div class="prev-card">
+        <div class="prev-header">
+          <h1>Monthly Live Call Info</h1>
+          <p>DFY Niche Club</p>
+        </div>
+        <div class="prev-live" id="prevLive">
+          <span class="prev-live-dot"></span> The link is live!
+        </div>
+        <div class="prev-body">
+          <div class="prev-lbl">This Month's Call Details</div>
+          <div class="prev-row"><b>Date</b><span id="prevDate">Saturday, June 13, 2026</span></div>
+          <div class="prev-row"><b>Time</b><span id="prevTime">9:15 am PST – 11:15 am PST</span></div>
+          <div class="prev-row"><b>Via</b><span>Google Meet</span></div>
+          <div class="prev-cd">
+            <div class="prev-cd-title">Call starts in...</div>
+            <div class="prev-cd-nums">
+              <div class="prev-cd-unit"><span class="prev-cd-n" id="pdays">--</span><span class="prev-cd-l">Days</span></div>
+              <span class="prev-cd-sep">:</span>
+              <div class="prev-cd-unit"><span class="prev-cd-n" id="phrs">--</span><span class="prev-cd-l">Hrs</span></div>
+              <span class="prev-cd-sep">:</span>
+              <div class="prev-cd-unit"><span class="prev-cd-n" id="pmins">--</span><span class="prev-cd-l">Mins</span></div>
+              <span class="prev-cd-sep">:</span>
+              <div class="prev-cd-unit"><span class="prev-cd-n" id="psecs">--</span><span class="prev-cd-l">Secs</span></div>
+            </div>
+          </div>
+          <div class="prev-lbl">What to Expect</div>
+          <div class="prev-expect">Every month we hop on live to dig into your Etsy questions, talk trending niches, and get some real strategy time together. Submit your questions ahead of time so your topic gets covered first. Calls are recorded!</div>
+          <div class="prev-lbl">Join the Call</div>
+          <div class="prev-pending" id="prevPending">The Google Meet link will be added the week of the call. Check back soon!</div>
+          <div class="prev-meet-active" id="prevMeetActive"><a href="#">Join on Google Meet</a></div>
+          <div class="prev-btns">
+            <span class="prev-btn prev-btn-rose">Submit Your Questions</span>
+            <span class="prev-btn prev-btn-dark">Add to Calendar</span>
+          </div>
+          <div class="prev-next">Following month: <a id="prevNext" href="#">Saturday, July 11, 2026 at 9:15 am PST</a></div>
+        </div>
+      </div>
     </div>
-
-    <div class="field meet-field" id="meetFieldWrap">
-      <label>Google Meet Link</label>
-      <input type="url" id="meetLink" placeholder="https://meet.google.com/..."/>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-title">Next Month's Call</div>
-    <div class="field">
-      <label>Next Month Display Text</label>
-      <div class="hint">e.g. Saturday, July 11, 2026 at 9:15 am PST</div>
-      <input type="text" id="nextCall" placeholder="Saturday, July 11, 2026 at 9:15 am PST" value="Saturday, July 11, 2026 at 9:15 am PST"/>
-    </div>
-  </div>
-
-  <button class="build-btn" onclick="buildCode()">Generate My Code</button>
-
-  <div class="output-card" id="outputCard" style="margin-top:24px;">
-    <div class="section-title">Your Code — Ready to Paste</div>
-    <div class="output-box" id="outputBox"></div>
-    <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy to Clipboard</button>
-    <div class="success-msg" id="successMsg">Copied! Go paste it into Systeme.io.</div>
   </div>
 
 </div>
 
 <script>
-function toggleMeet() {
-  var wrap = document.getElementById("meetFieldWrap");
-  wrap.style.display = document.getElementById("meetToggle").checked ? "block" : "none";
+var saveTimer = null;
+function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+
+function timeDisplay(s, e) {
+  if (s && e) return s + " - " + e;
+  if (s) return s;
+  return "";
 }
 
-function buildCode() {
-  var callDateDisplay = document.getElementById("callDateDisplay").value.trim();
-  var callDatetime    = document.getElementById("callDatetime").value.trim();
-  var callTimeDisplay = document.getElementById("callTimeDisplay").value.trim();
-  var formLink        = document.getElementById("formLink").value.trim();
-  var meetActive      = document.getElementById("meetToggle").checked;
-  var meetLink        = meetActive ? document.getElementById("meetLink").value.trim() : "";
-  var nextCall        = document.getElementById("nextCall").value.trim();
+function update() {
+  var d  = document.getElementById("callDateDisplay").value;
+  var s  = document.getElementById("callStart").value;
+  var e  = document.getElementById("callEnd").value;
+  var nx = document.getElementById("nextCallDisplay").value;
+  var ns = document.getElementById("nextStart").value;
+  var meetOn = document.getElementById("meetToggle").checked;
 
-  if (!callDateDisplay || !callDatetime || !callTimeDisplay || !formLink || !nextCall) {
-    alert("Please fill in all fields before generating.");
-    return;
-  }
-  if (meetActive && !meetLink) {
-    alert("You toggled the Meet link on but left it empty. Please paste the link.");
-    return;
-  }
+  document.getElementById("prevDate").textContent = d || "Saturday, June 13, 2026";
+  document.getElementById("prevTime").textContent = timeDisplay(s, e) || "9:15 am PST - 11:15 am PST";
 
-  var meetPendingDisplay = meetActive ? "none" : "block";
-  var meetActiveDisplay  = meetActive ? "block" : "none";
-  var liveDisplay        = meetActive ? "flex"  : "none";
+  var nextText = "Saturday, July 11, 2026 at 9:15 am PST";
+  if (nx && ns) nextText = nx + " at " + ns;
+  else if (nx)  nextText = nx;
+  document.getElementById("prevNext").textContent = nextText;
 
-  var code = '<style>\n'
-    + '  @import url(\'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Jost:wght@300;400;500;600&display=swap\');\n'
-    + '  .dlc-wrap{background:#f5eddf;font-family:\'Jost\',sans-serif;color:#2a1f1c;padding:0 0 40px}\n'
-    + '  .dlc-header{background:#2a1f1c;padding:28px 24px 22px;text-align:center}\n'
-    + '  .dlc-header h1{font-family:\'Playfair Display\',serif;color:#c9a96e;font-size:2rem;letter-spacing:.04em;margin:0}\n'
-    + '  .dlc-header p{color:#f5eddf;font-size:.82rem;font-weight:300;margin:4px 0 0;letter-spacing:.1em;text-transform:uppercase}\n'
-    + '  .dlc-card{max-width:640px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(42,31,28,.13)}\n'
-    + '  .dlc-live{display:' + liveDisplay + ';align-items:center;gap:8px;background:#e05252;color:#fff;font-family:\'Jost\',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:10px 24px;justify-content:center}\n'
-    + '  .dlc-live-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:dlcpulse 1.2s ease-in-out infinite}\n'
-    + '  @keyframes dlcpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}\n'
-    + '  .dlc-body{padding:36px 40px 40px}\n'
-    + '  .dlc-label{font-family:\'Playfair Display\',serif;font-size:1.2rem;color:#2a1f1c;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #c9a96e}\n'
-    + '  .dlc-details{margin-bottom:28px}\n'
-    + '  .dlc-row{display:flex;gap:12px;font-size:.93rem;line-height:1.6;margin-bottom:8px}\n'
-    + '  .dlc-row b{min-width:52px}\n'
-    + '  .dlc-countdown{background:#2a1f1c;border-radius:12px;padding:22px 20px;margin-bottom:28px;text-align:center}\n'
-    + '  .dlc-cd-title{color:#c9a96e;font-family:\'Playfair Display\',serif;font-size:1rem;margin-bottom:16px}\n'
-    + '  .dlc-cd-grid{display:flex;justify-content:center;align-items:flex-start;gap:12px}\n'
-    + '  .dlc-cd-unit{display:flex;flex-direction:column;align-items:center;gap:4px}\n'
-    + '  .dlc-cd-num{font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center}\n'
-    + '  .dlc-cd-lbl{font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193}\n'
-    + '  .dlc-cd-sep{font-size:1.8rem;color:#c9a96e;line-height:1;padding-top:2px}\n'
-    + '  .dlc-cd-done{display:none;color:#dea193;font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.1rem}\n'
-    + '  .dlc-expect{background:#fdf7f0;border-left:4px solid #c9a96e;border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:28px;font-size:.92rem;line-height:1.75;color:#3a2e2b}\n'
-    + '  .dlc-meet-pending{background:#f8f3ec;border:1.5px dashed #c9a96e;border-radius:10px;padding:16px 20px;font-size:.88rem;color:#7a6350;text-align:center;font-style:italic;margin-bottom:28px}\n'
-    + '  .dlc-meet-active{margin-bottom:28px}\n'
-    + '  .dlc-meet-active a{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#34a853;color:#fff;font-family:\'Jost\',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;border-radius:10px;letter-spacing:.03em}\n'
-    + '  .dlc-btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}\n'
-    + '  .dlc-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-family:\'Jost\',sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.04em;text-decoration:none;transition:opacity .18s}\n'
-    + '  .dlc-btn:hover{opacity:.85}\n'
-    + '  .dlc-btn-rose{background:#dea193;color:#ffffff}\n'
-    + '  .dlc-btn-dark{background:#2a1f1c;color:#f5eddf}\n'
-    + '  .dlc-next{text-align:center;font-size:.82rem;color:#999;padding-top:22px;border-top:1px solid #ede5d8}\n'
-    + '  .dlc-next span{color:#dea193;font-style:italic;font-weight:600}\n'
-    + '</style>\n\n'
-    + '<div class="dlc-wrap">\n'
-    + '  <div class="dlc-header"><h1>Monthly Live Call Info</h1><p>DFY Niche Club</p></div>\n'
-    + '  <div class="dlc-card">\n'
-    + '    <div class="dlc-live"><span class="dlc-live-dot"></span> The link is live - join below!</div>\n'
-    + '    <div class="dlc-body">\n'
-    + '      <div class="dlc-label">This Month\'s Call Details</div>\n'
-    + '      <div class="dlc-details">\n'
-    + '        <div class="dlc-row"><b>Date</b> <span>' + callDateDisplay + '</span></div>\n'
-    + '        <div class="dlc-row"><b>Time</b> <span>' + callTimeDisplay + '</span></div>\n'
-    + '        <div class="dlc-row"><b>Via</b> <span>Google Meet</span></div>\n'
-    + '      </div>\n'
-    + '      <div class="dlc-countdown">\n'
-    + '        <div class="dlc-cd-title">Call starts in...</div>\n'
-    + '        <div class="dlc-cd-grid" id="dlc-cd-grid">\n'
-    + '          <div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-days">--</span><span class="dlc-cd-lbl">Days</span></div>\n'
-    + '          <span class="dlc-cd-sep">:</span>\n'
-    + '          <div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-hrs">--</span><span class="dlc-cd-lbl">Hours</span></div>\n'
-    + '          <span class="dlc-cd-sep">:</span>\n'
-    + '          <div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-mins">--</span><span class="dlc-cd-lbl">Mins</span></div>\n'
-    + '          <span class="dlc-cd-sep">:</span>\n'
-    + '          <div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-secs">--</span><span class="dlc-cd-lbl">Secs</span></div>\n'
-    + '        </div>\n'
-    + '        <div class="dlc-cd-done" id="dlc-cd-done">We are live! Join us now!</div>\n'
-    + '      </div>\n'
-    + '      <div class="dlc-label">What to Expect</div>\n'
-    + '      <div class="dlc-expect">Every month we hop on live to dig into your Etsy questions, talk trending niches, and get some real strategy time together. Bring your wins, your stuck points, or just come to listen. Submit your questions ahead of time using the form below so we can make sure your topic gets covered first. These calls are recorded, so if you cannot make it live, the replay will be waiting for you inside the group.</div>\n'
-    + '      <div class="dlc-label">Join the Call</div>\n'
-    + '      <div class="dlc-meet-pending" style="display:' + meetPendingDisplay + '">The Google Meet link will be added the week of the call. Check back soon!</div>\n'
-    + '      <div class="dlc-meet-active" style="display:' + meetActiveDisplay + '"><a href="' + meetLink + '" target="_blank" rel="noopener">Join on Google Meet</a></div>\n'
-    + '      <div class="dlc-btn-row">\n'
-    + '        <a href="' + formLink + '" target="_blank" rel="noopener" class="dlc-btn dlc-btn-rose">Submit Your Questions</a>\n'
-    + '        <a id="dlc-cal-link" href="#" target="_blank" rel="noopener" class="dlc-btn dlc-btn-dark">Add to Calendar</a>\n'
-    + '      </div>\n'
-    + '      <div class="dlc-next">The following month\'s live call will be: <span>' + nextCall + '</span></div>\n'
-    + '    </div>\n'
-    + '  </div>\n'
-    + '</div>\n\n'
-    + '<script>\n'
-    + 'var callDate = new Date("' + callDatetime + ':00");\n'
-    + 'var endDate = new Date(callDate.getTime() + 2 * 60 * 60 * 1000);\n'
-    + 'function pad2(n) { return n < 10 ? "0" + n : "" + n; }\n'
-    + 'var startStr = callDate.getFullYear() + pad2(callDate.getMonth()+1) + pad2(callDate.getDate()) + "T" + pad2(callDate.getHours()) + pad2(callDate.getMinutes()) + "00";\n'
-    + 'var endStr = endDate.getFullYear() + pad2(endDate.getMonth()+1) + pad2(endDate.getDate()) + "T" + pad2(endDate.getHours()) + pad2(endDate.getMinutes()) + "00";\n'
-    + 'var gcalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=DFY%20Niche%20Club%20Monthly%20Live%20Call&dates=" + startStr + "/" + endStr + "&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet";\n'
-    + 'document.getElementById("dlc-cal-link").href = gcalUrl;\n'
-    + 'function dlcTick() {\n'
-    + '  var now = new Date();\n'
-    + '  var diff = callDate - now;\n'
-    + '  if (diff <= 0) {\n'
-    + '    document.getElementById("dlc-cd-grid").style.display = "none";\n'
-    + '    document.getElementById("dlc-cd-done").style.display = "block";\n'
-    + '    return;\n'
-    + '  }\n'
-    + '  var d = Math.floor(diff / 86400000);\n'
-    + '  var h = Math.floor((diff % 86400000) / 3600000);\n'
-    + '  var m = Math.floor((diff % 3600000) / 60000);\n'
-    + '  var s = Math.floor((diff % 60000) / 1000);\n'
-    + '  document.getElementById("dlc-days").innerHTML = pad2(d);\n'
-    + '  document.getElementById("dlc-hrs").innerHTML = pad2(h);\n'
-    + '  document.getElementById("dlc-mins").innerHTML = pad2(m);\n'
-    + '  document.getElementById("dlc-secs").innerHTML = pad2(s);\n'
-    + '}\n'
-    + 'dlcTick();\n'
-    + 'setInterval(dlcTick, 1000);\n'
-    + '<\/script>';
+  document.getElementById("prevLive").style.display       = meetOn ? "flex"  : "none";
+  document.getElementById("prevPending").style.display    = meetOn ? "none"  : "block";
+  document.getElementById("prevMeetActive").style.display = meetOn ? "block" : "none";
+}
 
-  document.getElementById("outputBox").textContent = code;
-  document.getElementById("outputCard").style.display = "block";
-  document.getElementById("copyBtn").textContent = "Copy to Clipboard";
-  document.getElementById("copyBtn").classList.remove("copied");
-  document.getElementById("successMsg").style.display = "none";
-  document.getElementById("outputCard").scrollIntoView({ behavior: "smooth" });
+function toggleMeet() {
+  document.getElementById("meetWrap").style.display = document.getElementById("meetToggle").checked ? "block" : "none";
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  document.getElementById("saveInd").textContent = "Saving...";
+  document.getElementById("saveInd").className = "save-indicator";
+  saveTimer = setTimeout(function() { doSave(); }, 800);
+}
+
+function doSave() {
+  var data = {
+    callDateDisplay:  document.getElementById("callDateDisplay").value,
+    callDatetime:     document.getElementById("callDatetime").value,
+    callStart:        document.getElementById("callStart").value,
+    callEnd:          document.getElementById("callEnd").value,
+    formLink:         document.getElementById("formLink").value,
+    meetOn:           document.getElementById("meetToggle").checked,
+    meetLink:         document.getElementById("meetLink").value,
+    nextCallDisplay:  document.getElementById("nextCallDisplay").value,
+    nextCallDatetime: document.getElementById("nextCallDatetime").value,
+    nextStart:        document.getElementById("nextStart").value,
+    nextEnd:          document.getElementById("nextEnd").value
+  };
+  try { localStorage.setItem("dfy_call_v3", JSON.stringify(data)); } catch(e) {}
+  var el = document.getElementById("saveInd");
+  el.textContent = "Saved!";
+  el.className = "save-indicator saved";
+  setTimeout(function() { el.textContent = "Auto-saved"; }, 1500);
+}
+
+function loadSaved() {
+  try {
+    var raw = localStorage.getItem("dfy_call_v3");
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    var fields = ["callDateDisplay","callDatetime","callStart","callEnd","formLink","meetLink","nextCallDisplay","nextCallDatetime","nextStart","nextEnd"];
+    fields.forEach(function(id) { if (data[id]) document.getElementById(id).value = data[id]; });
+    if (data.meetOn) { document.getElementById("meetToggle").checked = true; document.getElementById("meetWrap").style.display = "block"; }
+    update();
+    var el = document.getElementById("saveInd");
+    el.textContent = "Loaded your last session";
+    el.className = "save-indicator saved";
+    setTimeout(function() { el.textContent = "Auto-saved"; }, 2000);
+  } catch(e) {}
+}
+
+function buildGcalUrl(dt, title) {
+  if (!dt) return "#";
+  var d   = new Date(dt + ":00");
+  var end = new Date(d.getTime() + 2 * 60 * 60 * 1000);
+  var s   = d.getFullYear()   + pad2(d.getMonth()+1)   + pad2(d.getDate())   + "T" + pad2(d.getHours())   + pad2(d.getMinutes())   + "00";
+  var e   = end.getFullYear() + pad2(end.getMonth()+1) + pad2(end.getDate()) + "T" + pad2(end.getHours()) + pad2(end.getMinutes()) + "00";
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) + "&dates=" + s + "/" + e + "&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet";
 }
 
 function copyCode() {
-  var text = document.getElementById("outputBox").textContent;
-  navigator.clipboard.writeText(text).then(function() {
+  var callDateDisplay  = document.getElementById("callDateDisplay").value.trim()  || "Saturday, June 13, 2026";
+  var callDatetime     = document.getElementById("callDatetime").value.trim()      || "2026-06-13T09:15";
+  var callStart        = document.getElementById("callStart").value.trim()         || "9:15 am PST";
+  var callEnd          = document.getElementById("callEnd").value.trim()           || "11:15 am PST";
+  var callTimeDisplay  = timeDisplay(callStart, callEnd);
+  var formLink         = document.getElementById("formLink").value.trim()          || "#";
+  var meetOn           = document.getElementById("meetToggle").checked;
+  var meetLink         = meetOn ? (document.getElementById("meetLink").value.trim() || "#") : "";
+  var nextCallDisplay  = document.getElementById("nextCallDisplay").value.trim()   || "";
+  var nextCallDatetime = document.getElementById("nextCallDatetime").value.trim()  || "";
+  var nextStart        = document.getElementById("nextStart").value.trim()         || "9:15 am PST";
+  var nextFullDisplay  = nextCallDisplay + (nextStart ? " at " + nextStart : "");
+  var liveDisp  = meetOn ? "flex"  : "none";
+  var pendDisp  = meetOn ? "none"  : "block";
+  var actDisp   = meetOn ? "block" : "none";
+  var thisGcal  = buildGcalUrl(callDatetime,     "DFY Niche Club Monthly Live Call");
+  var nextGcal  = buildGcalUrl(nextCallDatetime, "DFY Niche Club Monthly Live Call");
+
+  var code = '<style>\n'
+    + '@import url(\'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Jost:wght@300;400;500;600&display=swap\');\n'
+    + '.dlc-wrap{background:#f5eddf;font-family:\'Jost\',sans-serif;color:#2a1f1c;padding:0 0 40px}\n'
+    + '.dlc-header{background:#2a1f1c;padding:28px 24px 22px;text-align:center}\n'
+    + '.dlc-header h1{font-family:\'Playfair Display\',serif;color:#c9a96e;font-size:2rem;letter-spacing:.04em;margin:0}\n'
+    + '.dlc-header p{color:#f5eddf;font-size:.82rem;font-weight:300;margin:4px 0 0;letter-spacing:.1em;text-transform:uppercase}\n'
+    + '.dlc-card{max-width:640px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(42,31,28,.13)}\n'
+    + '.dlc-live{display:' + liveDisp + ';align-items:center;gap:8px;background:#e05252;color:#fff;font-family:\'Jost\',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:10px 24px;justify-content:center}\n'
+    + '.dlc-live-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:dlcpulse 1.2s ease-in-out infinite}\n'
+    + '@keyframes dlcpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}\n'
+    + '.dlc-body{padding:36px 40px 40px}\n'
+    + '.dlc-label{font-family:\'Playfair Display\',serif;font-size:1.2rem;color:#2a1f1c;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #c9a96e}\n'
+    + '.dlc-details{margin-bottom:28px}\n'
+    + '.dlc-row{display:flex;gap:12px;font-size:.93rem;line-height:1.6;margin-bottom:8px}\n'
+    + '.dlc-row b{min-width:52px}\n'
+    + '.dlc-countdown{background:#2a1f1c;border-radius:12px;padding:22px 20px;margin-bottom:28px;text-align:center}\n'
+    + '.dlc-cd-title{color:#c9a96e;font-family:\'Playfair Display\',serif;font-size:1rem;margin-bottom:16px}\n'
+    + '.dlc-cd-grid{display:flex;justify-content:center;align-items:flex-start;gap:12px}\n'
+    + '.dlc-cd-unit{display:flex;flex-direction:column;align-items:center;gap:4px}\n'
+    + '.dlc-cd-num{font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center}\n'
+    + '.dlc-cd-lbl{font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193}\n'
+    + '.dlc-cd-sep{font-size:1.8rem;color:#c9a96e;line-height:1;padding-top:2px}\n'
+    + '.dlc-cd-done{display:none;color:#dea193;font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.1rem}\n'
+    + '.dlc-expect{background:#fdf7f0;border-left:4px solid #c9a96e;border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:28px;font-size:.92rem;line-height:1.75;color:#3a2e2b}\n'
+    + '.dlc-meet-pending{background:#f8f3ec;border:1.5px dashed #c9a96e;border-radius:10px;padding:16px 20px;font-size:.88rem;color:#7a6350;text-align:center;font-style:italic;margin-bottom:28px}\n'
+    + '.dlc-meet-active{margin-bottom:28px}\n'
+    + '.dlc-meet-active a{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#34a853;color:#fff;font-family:\'Jost\',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;border-radius:10px;letter-spacing:.03em}\n'
+    + '.dlc-btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}\n'
+    + '.dlc-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-family:\'Jost\',sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.04em;text-decoration:none;transition:opacity .18s}\n'
+    + '.dlc-btn:hover{opacity:.85}\n'
+    + '.dlc-btn-rose{background:#dea193;color:#ffffff}\n'
+    + '.dlc-btn-dark{background:#2a1f1c;color:#f5eddf}\n'
+    + '.dlc-next{text-align:center;font-size:.82rem;color:#999;padding-top:22px;border-top:1px solid #ede5d8}\n'
+    + '.dlc-next a{color:#dea193;font-style:italic;font-weight:600;text-decoration:none}\n'
+    + '.dlc-next a:hover{text-decoration:underline}\n'
+    + '</style>\n\n'
+    + '<div class="dlc-wrap">\n'
+    + '<div class="dlc-header"><h1>Monthly Live Call Info</h1><p>DFY Niche Club</p></div>\n'
+    + '<div class="dlc-card">\n'
+    + '<div class="dlc-live"><span class="dlc-live-dot"></span> The link is live - join below!</div>\n'
+    + '<div class="dlc-body">\n'
+    + '<div class="dlc-label">This Month\'s Call Details</div>\n'
+    + '<div class="dlc-details">\n'
+    + '<div class="dlc-row"><b>Date</b> <span>' + callDateDisplay + '</span></div>\n'
+    + '<div class="dlc-row"><b>Time</b> <span>' + callTimeDisplay + '</span></div>\n'
+    + '<div class="dlc-row"><b>Via</b> <span>Google Meet</span></div>\n'
+    + '</div>\n'
+    + '<div class="dlc-countdown">\n'
+    + '<div class="dlc-cd-title">Call starts in...</div>\n'
+    + '<div class="dlc-cd-grid" id="dlc-cd-grid">\n'
+    + '<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-days">--</span><span class="dlc-cd-lbl">Days</span></div>\n'
+    + '<span class="dlc-cd-sep">:</span>\n'
+    + '<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-hrs">--</span><span class="dlc-cd-lbl">Hours</span></div>\n'
+    + '<span class="dlc-cd-sep">:</span>\n'
+    + '<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-mins">--</span><span class="dlc-cd-lbl">Mins</span></div>\n'
+    + '<span class="dlc-cd-sep">:</span>\n'
+    + '<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-secs">--</span><span class="dlc-cd-lbl">Secs</span></div>\n'
+    + '</div>\n'
+    + '<div class="dlc-cd-done" id="dlc-cd-done">We are live! Join us now!</div>\n'
+    + '</div>\n'
+    + '<div class="dlc-label">What to Expect</div>\n'
+    + '<div class="dlc-expect">Every month we hop on live to dig into your Etsy questions, talk trending niches, and get some real strategy time together. Bring your wins, your stuck points, or just come to listen. Submit your questions ahead of time using the form below so we can make sure your topic gets covered first. These calls are recorded, so if you cannot make it live, the replay will be waiting for you inside the group.</div>\n'
+    + '<div class="dlc-label">Join the Call</div>\n'
+    + '<div class="dlc-meet-pending" style="display:' + pendDisp + '">The Google Meet link will be added the week of the call. Check back soon!</div>\n'
+    + '<div class="dlc-meet-active" style="display:' + actDisp + '"><a href="' + meetLink + '" target="_blank" rel="noopener">Join on Google Meet</a></div>\n'
+    + '<div class="dlc-btn-row">\n'
+    + '<a href="' + formLink + '" target="_blank" rel="noopener" class="dlc-btn dlc-btn-rose">Submit Your Questions</a>\n'
+    + '<a href="' + thisGcal + '" target="_blank" rel="noopener" class="dlc-btn dlc-btn-dark">Add to Calendar</a>\n'
+    + '</div>\n'
+    + '<div class="dlc-next">The following month\'s live call will be: <a href="' + nextGcal + '" target="_blank" rel="noopener">' + nextFullDisplay + '</a></div>\n'
+    + '</div>\n</div>\n</div>\n\n'
+    + '<script>\n'
+    + 'var callDate=new Date("' + callDatetime + ':00");\n'
+    + 'function pad2(n){return n<10?"0"+n:""+n;}\n'
+    + 'function dlcTick(){var now=new Date();var diff=callDate-now;if(diff<=0){document.getElementById("dlc-cd-grid").style.display="none";document.getElementById("dlc-cd-done").style.display="block";return;}document.getElementById("dlc-days").innerHTML=pad2(Math.floor(diff/86400000));document.getElementById("dlc-hrs").innerHTML=pad2(Math.floor((diff%86400000)/3600000));document.getElementById("dlc-mins").innerHTML=pad2(Math.floor((diff%3600000)/60000));document.getElementById("dlc-secs").innerHTML=pad2(Math.floor((diff%60000)/1000));}\n'
+    + 'dlcTick();setInterval(dlcTick,1000);\n'
+    + '<\/script>';
+
+  navigator.clipboard.writeText(code).then(function() {
     var btn = document.getElementById("copyBtn");
     btn.textContent = "Copied!";
-    btn.classList.add("copied");
-    document.getElementById("successMsg").style.display = "block";
-  });
+    btn.className = "copy-btn done";
+    setTimeout(function() { btn.textContent = "Copy Code"; btn.className = "copy-btn"; }, 2500);
+  }).catch(function() { alert("Copy failed, try again."); });
 }
+
+function prevTick() {
+  var raw = document.getElementById("callDatetime").value;
+  if (!raw) return;
+  var d    = new Date(raw + ":00");
+  var diff = d - new Date();
+  if (diff <= 0) {
+    ["pdays","phrs","pmins","psecs"].forEach(function(id) { document.getElementById(id).textContent = "00"; });
+    return;
+  }
+  document.getElementById("pdays").textContent = pad2(Math.floor(diff / 86400000));
+  document.getElementById("phrs").textContent  = pad2(Math.floor((diff % 86400000) / 3600000));
+  document.getElementById("pmins").textContent = pad2(Math.floor((diff % 3600000) / 60000));
+  document.getElementById("psecs").textContent = pad2(Math.floor((diff % 60000) / 1000));
+}
+
+setInterval(prevTick, 1000);
+loadSaved();
+update();
+prevTick();
 </script>
 </body>
 </html>
