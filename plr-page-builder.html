@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLR Page Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',Arial,sans-serif;background:#f0e8df;color:#2a1f1c;min-height:100vh;padding:2rem 1rem 6rem;font-size:115%;}
+.builder-wrap{max-width:920px;margin:0 auto;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#dea193;background:#2a1f1c;border:1px solid rgba(222,161,147,.35);padding:8px 19px;border-radius:999px;margin-bottom:.85rem;}
+.page-title{font-family:'Playfair Display',Georgia,serif;font-size:2.45rem;font-weight:700;color:#2a1f1c;margin-bottom:.35rem;}
+.page-sub{font-size:16px;color:#8b746d;line-height:1.6;}
+.card{background:#fff;border:1px solid #ead9d5;border-radius:18px;padding:2rem;margin-bottom:1.5rem;box-shadow:0 12px 36px rgba(42,31,28,.05);}
+.card-title{font-family:'Playfair Display',Georgia,serif;font-size:1.55rem;font-weight:700;color:#2a1f1c;margin-bottom:.35rem;}
+.card-sub{font-size:15px;color:#8b746d;line-height:1.65;margin-bottom:1.3rem;}
+.fl{display:block;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:7px;}
+.fi{width:100%;border:1.5px solid #ead9d5;border-radius:12px;padding:15px 16px;font-family:'Jost',Arial,sans-serif;font-size:17px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:#dea193;}
+textarea.fi{min-height:95px;resize:vertical;line-height:1.6;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field{margin-bottom:14px;}
+.btn-row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;}
+.btn{font-family:'Jost',Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:12px 20px;border-radius:999px;cursor:pointer;border:1.5px solid;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:#dea193;color:#2a1f1c;border-color:#dea193;}
+.btn-primary:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
+.btn-dark{background:#2a1f1c;color:#dea193;border-color:#2a1f1c;}
+.btn-dark:hover{background:#dea193;color:#2a1f1c;border-color:#dea193;}
+.btn-soft{background:transparent;color:#5a4a45;border-color:#ead9d5;}
+.btn-soft:hover{border-color:#dea193;color:#2a1f1c;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,.3);padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:50;}
+.save-status{font-size:13px;color:#c4b0a8;display:flex;align-items:center;gap:8px;}
+.sdot{width:7px;height:7px;border-radius:50%;background:#c4b0a8;}
+.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
+#out{display:none;margin-top:1rem;}
+.out-card{background:#fff;border:1px solid #ead9d5;border-radius:18px;overflow:hidden;box-shadow:0 12px 36px rgba(42,31,28,.05);}
+.out-head{background:#2a1f1c;padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.out-title{font-family:'Playfair Display',Georgia,serif;font-size:1.25rem;font-weight:700;color:#f5eddf;}
+.copy-btn{display:none;font-family:'Jost',Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:11px 26px;border-radius:999px;cursor:pointer;}
+.copy-btn.show{display:inline-block;}
+.copy-btn:hover{background:#bb7d72;color:#fff;}
+.out-preview{padding:1.25rem;background:#f0e8df;}
+.toast{position:fixed;bottom:5.7rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:11px 24px;border-radius:999px;border:1px solid #dea193;display:none;z-index:99;white-space:nowrap;}
+.small-note{font-size:13px;color:#8b746d;line-height:1.6;margin-top:.75rem;}
+@media(max-width:720px){body{padding:1rem 1rem 8rem;}.page-title{font-size:2rem;}.card{padding:1.35rem;}.row2{grid-template-columns:1fr;}.save-bar{flex-direction:column;align-items:flex-start;}.btn-row{width:100%;}.btn{font-size:11px;padding:10px 13px;}.out-head{flex-direction:column;align-items:flex-start;}.copy-btn{width:100%;}}
+</style>
+</head>
+<body>
+<div class="builder-wrap">
+  <div class="page-header">
+    <div class="badge">PLR Page Builder</div>
+    <h1 class="page-title">Build Your PLR Resource Page</h1>
+    <p class="page-sub">Enter the product title and Canva link, preview the page, then copy the HTML for Systeme.io.</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Resource Info</p>
+    <p class="card-sub">The page wording is already built in. You only need to update the title, link, and optional short description.</p>
+    <div class="row2">
+      <div>
+        <label class="fl" for="f-title">Product Title</label>
+        <input class="fi" id="f-title" placeholder="e.g. Debt Tracker" value="Debt Tracker">
+      </div>
+      <div>
+        <label class="fl" for="f-link">Canva Template Link</label>
+        <input class="fi" id="f-link" placeholder="Paste Canva template link here...">
+      </div>
+    </div>
+    <div class="field">
+      <label class="fl" for="f-desc">Short Description</label>
+      <textarea class="fi" id="f-desc">A done-for-you Canva template you can customize, rebrand, and turn into a polished digital product for your shop.</textarea>
+      <p class="small-note">This description appears in the dark header. The rest of the PLR instructions stay hard-coded.</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-soft" onclick="resetDefault()">Reset Default Text</button>
+    </div>
+  </div>
+
+  <div id="out">
+    <div class="out-card">
+      <div class="out-head">
+        <span class="out-title" id="out-title">Preview</span>
+        <button class="copy-btn" id="copy-btn" onclick="copyHTML()">Copy HTML</button>
+      </div>
+      <div class="out-preview" id="out-preview"></div>
+    </div>
+  </div>
+</div>
+
+<div class="save-bar">
+  <div class="save-status"><span class="sdot" id="sdot"></span><span id="stxt">Loading...</span></div>
+  <div class="btn-row">
+    <button class="btn btn-soft" onclick="clearBuilder()">Clear</button>
+    <button class="btn btn-soft" onclick="saveData()">Save</button>
+    <button class="btn btn-dark" onclick="previewPage()">Preview Page</button>
+    <button class="btn btn-primary" onclick="generateHTML()">Generate HTML</button>
+  </div>
+</div>
+
+<textarea id="out-code" style="display:none;"></textarea>
+<div class="toast" id="toast"></div>
+
+<script>
+var SK='plr_builder_v1';
+var isDirty=false;
+var defaultDesc='A done-for-you Canva template you can customize, rebrand, and turn into a polished digital product for your shop.';
+
+function el(id){return document.getElementById(id);}
+function v(id){return (el(id)||{}).value||'';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function setStatus(state,txt){el('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');el('stxt').textContent=txt;}
+function toast(msg){var t=el('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2300);}
+
+function markDirty(){isDirty=true;setStatus('unsaved','Unsaved changes');scheduleAutoSave();}
+['f-title','f-link','f-desc'].forEach(function(id){el(id).addEventListener('input',markDirty);});
+
+function saveData(){
+  try{
+    localStorage.setItem(SK,JSON.stringify({title:v('f-title'),link:v('f-link'),desc:v('f-desc')}));
+    isDirty=false;setStatus('saved','Saved');
+  }catch(e){toast('Could not save');}
+}
+var autoTimer;
+function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(saveData,1000);}
+function loadData(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(raw){var d=JSON.parse(raw);el('f-title').value=d.title||'Debt Tracker';el('f-link').value=d.link||'';el('f-desc').value=d.desc||defaultDesc;setStatus('saved','Saved page loaded');}
+    else{setStatus('unsaved','Nothing saved yet');}
+  }catch(e){setStatus('unsaved','Could not load');}
+}
+function resetDefault(){el('f-desc').value=defaultDesc;markDirty();toast('Default text restored');}
+function clearBuilder(){
+  if(!confirm('Clear the title, link, and reset the description?'))return;
+  el('f-title').value='';el('f-link').value='';el('f-desc').value=defaultDesc;
+  localStorage.removeItem(SK);el('out').style.display='none';isDirty=false;setStatus('unsaved','Cleared');toast('Cleared');
+}
+
+function buildOutput(){
+  var title=v('f-title').trim()||'PLR Resource';
+  var link=v('f-link').trim()||'#';
+  var desc=v('f-desc').trim()||defaultDesc;
+  var html='';
+  html+='<div style="font-family:Jost,Arial,sans-serif;background:#f0e8df;color:#2a1f1c;padding:2rem 1rem;">';
+  html+='<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+  html+='<div style="max-width:880px;margin:0 auto;">';
+  html+='<div style="background:#2a1f1c;border-radius:18px 18px 0 0;padding:2.4rem 2rem;text-align:center;">';
+  html+='<div style="display:inline-block;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,.1);border:1px solid rgba(222,161,147,.35);padding:7px 18px;border-radius:999px;margin-bottom:1rem;">PLR Resource Template</div>';
+  html+='<h1 style="font-family:Playfair Display,Georgia,serif;font-size:2.7rem;line-height:1.1;color:#f5eddf;margin:0 0 .5rem;">'+esc(title)+'</h1>';
+  html+='<p style="font-size:18px;color:#c4b0a8;line-height:1.6;max-width:650px;margin:0 auto;">'+esc(desc)+'</p>';
+  html+='</div>';
+  html+='<div style="background:#fff;border:1px solid #ead9d5;border-top:none;border-radius:0 0 18px 18px;padding:2rem;box-shadow:0 12px 36px rgba(42,31,28,.06);">';
+  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.6rem;text-align:center;margin-bottom:1.5rem;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.5rem;font-weight:700;margin:0 0 .5rem;color:#2a1f1c;">Access Your Canva Template</p>';
+  html+='<p style="font-size:16px;color:#5a4a45;line-height:1.7;margin:0 0 1.25rem;">Click below to open the template. Make a copy first, then customize it to fit your brand, audience, and product style.</p>';
+  html+='<a href="'+esc(link)+'" target="_blank" style="display:inline-block;font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;background:#dea193;color:#2a1f1c;padding:13px 30px;border-radius:999px;border:1.5px solid #dea193;">✨ Access Canva Template</a>';
+  html+='</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem;">';
+  html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.4rem;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;">Quick Start</p>';
+  html+='<ol style="padding-left:1.25rem;margin:0;">';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Open the Canva template.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Make a copy before editing.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Update the fonts, colors, graphics, and wording.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Export your finished files.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Create your listing and add your own mockups/details.</li>';
+  html+='</ol></div>';
+  html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.4rem;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;">What This Is</p>';
+  html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0;">This is a <strong>PLR, Private Label Rights, resource</strong> created to help you save time and fast-track your digital product creation process.</p>';
+  html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:.75rem 0 0;">Use it as a strong starting point, then make it your own before selling or sharing it.</p>';
+  html+='</div></div>';
+  html+='<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.4rem;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;">Customize Before You List</p>';
+  html+='<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0;">To comply with Etsy guidelines and stand out in the marketplace, do not upload the template exactly as-is. Simple edits can make a big difference.</p>';
+  html+='<ul style="padding-left:1.25rem;margin:.8rem 0 0;">';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Change the colors and fonts.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Swap or remove graphics.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Edit the layout or page order.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Add your own creative details.</li>';
+  html+='<li style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin-bottom:.45rem;">Write your own listing description and use your own mockups.</li>';
+  html+='</ul></div>';
+  html+='<div style="background:#2a1f1c;border-radius:16px;padding:1.5rem;margin-top:1rem;">';
+  html+='<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;color:#f5eddf;margin:0 0 .6rem;">Friendly Reminder</p>';
+  html+='<p style="font-size:15.5px;color:#c4b0a8;line-height:1.8;margin:0;">These templates are meant to give you a head start, not replace your creative direction. The more you tailor the design to a specific audience, style, or use case, the stronger your final product will be.</p>';
+  html+='</div></div></div></div>';
+  return html;
+}
+
+function previewPage(){
+  if(!v('f-title').trim()){toast('Add a product title');return;}
+  el('out-title').textContent='Page Preview';
+  el('copy-btn').className='copy-btn';
+  el('out-preview').innerHTML=buildOutput();
+  el('out').style.display='block';
+  el('out').scrollIntoView({behavior:'smooth'});
+}
+function generateHTML(){
+  if(!v('f-title').trim()){toast('Add a product title');return;}
+  if(!v('f-link').trim()){toast('Add your Canva link');return;}
+  var html=buildOutput();
+  el('out-code').value=html;
+  el('out-title').textContent='Your HTML is ready';
+  el('copy-btn').className='copy-btn show';
+  el('out-preview').innerHTML=html;
+  el('out').style.display='block';
+  el('out').scrollIntoView({behavior:'smooth'});
+  saveData();
+}
+function copyHTML(){
+  var code=el('out-code').value;
+  try{
+    var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    var b=el('copy-btn');b.textContent='Copied!';setTimeout(function(){b.textContent='Copy HTML';},2200);toast('HTML copied');
+  }catch(e){toast('Copy failed');}
+}
+window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
+loadData();
+</script>
+</body>
+</html>
