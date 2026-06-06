@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Announcements Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 6.5rem;font-size:115%;color:#2a1f1c;}
+.page-header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:7px 18px;border-radius:999px;margin-bottom:.85rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:2.45rem;font-weight:700;color:#2a1f1c;line-height:1.1;margin-bottom:.35rem;}
+.page-sub{font-size:16px;color:#8b746d;line-height:1.55;}
+.card{background:#fff;border-radius:16px;border:1px solid #ead9d5;padding:2rem;margin-bottom:1.5rem;max-width:960px;margin-left:auto;margin-right:auto;box-shadow:0 10px 35px rgba(42,31,28,.04);}
+.card-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#2a1f1c;margin-bottom:.25rem;}
+.card-sub{font-size:15px;color:#8b746d;margin-bottom:1.2rem;line-height:1.65;}
+.fl{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:6px;display:block;}
+.fi,.ta{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:14px 16px;font-family:'Jost',sans-serif;font-size:17px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color .2s;}
+.fi:focus,.ta:focus{border-color:#dea193;}
+.ta{min-height:170px;line-height:1.6;resize:vertical;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.announcement-block{background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin-bottom:1rem;}
+.block-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:.9rem;}
+.block-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;}
+.del-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:999px;color:#a98f87;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;padding:8px 13px;transition:all .2s;}
+.del-btn:hover{border-color:#dea193;color:#2a1f1c;background:#dea193;}
+.add-btn{font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:#dea193;border:1.5px solid #dea193;padding:11px 22px;border-radius:30px;cursor:pointer;margin-top:4px;transition:all .2s;}
+.add-btn:hover{background:#dea193;color:#2a1f1c;}
+.mini-note{font-size:13px;color:#8b746d;line-height:1.55;margin-top:6px;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,.3);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:10px;}
+.save-status{font-size:13px;color:#c4b0a8;display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.sdot{width:7px;height:7px;border-radius:50%;background:#c4b0a8;}.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
+.sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:10px 17px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all .2s;white-space:nowrap;}
+.sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}.sbtn-save:hover{background:#dea193;color:#2a1f1c;}
+.sbtn-preview{background:transparent;color:#f5eddf;border-color:rgba(245,237,223,.45);}.sbtn-preview:hover{background:#f5eddf;color:#2a1f1c;}
+.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
+.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,.4);font-size:11px;padding:8px 13px;}.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+#out{display:none;max-width:960px;margin:0 auto;}
+.out-card{background:#fff;border-radius:16px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 10px 35px rgba(42,31,28,.04);}
+.out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.out-card-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;color:#f5eddf;}
+.copy-all-btn{font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:11px 28px;border-radius:30px;cursor:pointer;transition:all .2s;display:none;}
+.copy-all-btn.show{display:inline-block;}.copy-all-btn:hover{background:#bb7d72;color:#fff;}
+.out-preview{padding:1.5rem;background:#f0e8df;}
+.toast{position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;padding:11px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+@media(max-width:760px){.row2{grid-template-columns:1fr}.save-bar{align-items:flex-start;flex-direction:column}.save-bar>div:last-child{width:100%;justify-content:flex-start!important}.sbtn{font-size:11px;padding:9px 12px}.card{padding:1.4rem}.page-title{font-size:2rem}}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="badge">DFY Digital Niche Club</div>
+  <h1 class="page-title">Announcements Builder</h1>
+  <p class="page-sub">Create polished weekly announcements. Your work auto-saves as you type.</p>
+</div>
+
+<div class="card">
+  <p class="card-title">Announcement Info</p>
+  <p class="card-sub">Choose the week/date label members will see at the top of the announcement area.</p>
+  <div class="row2">
+    <div>
+      <label class="fl" for="f-date">Week / Date Label</label>
+      <input class="fi" id="f-date" list="date-list" placeholder="e.g. Week of June 10, 2026">
+      <datalist id="date-list"></datalist>
+      <p class="mini-note">You can type any label, or use the quick-fill button below.</p>
+    </div>
+    <div>
+      <label class="fl" for="f-tag">Small Header Label</label>
+      <input class="fi" id="f-tag" placeholder="e.g. Member Updates" value="Member Updates">
+      <p class="mini-note">This appears above the main title.</p>
+    </div>
+  </div>
+  <button class="add-btn" onclick="fillThisWeek()">Use This Week</button>
+</div>
+
+<div class="card">
+  <p class="card-title">Announcements</p>
+  <p class="card-sub">Add one or more updates. The member-facing version will show each announcement as a clean collapsed card.</p>
+  <div id="ann-list"></div>
+  <button class="add-btn" onclick="addAnnouncement()">+ Add Announcement</button>
+</div>
+
+<div style="height:80px;"></div>
+
+<div id="out">
+  <div class="out-card">
+    <div class="out-card-head">
+      <span class="out-card-title" id="out-title">Preview</span>
+      <button class="copy-all-btn" id="copy-all-btn" onclick="copyAll()">Copy HTML</button>
+    </div>
+    <div class="out-preview" id="out-preview"></div>
+  </div>
+  <textarea id="out-code" style="display:none;"></textarea>
+  <div style="text-align:center;margin-bottom:2rem;">
+    <button class="add-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Builder</button>
+  </div>
+</div>
+
+<div class="save-bar">
+  <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
+  <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear All</button>
+    <button class="sbtn sbtn-save" onclick="saveData()">Save</button>
+    <button class="sbtn sbtn-preview" onclick="previewHTML()">Preview</button>
+    <button class="sbtn sbtn-gen" onclick="generateHTML()">Generate HTML</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var SK='dfy_announcements_builder_v1';
+var isDirty=false;
+var annCount=0;
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function nl2br(s){return esc(s).replace(/\n/g,'<br>');}
+function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2300);}
+function markDirty(){isDirty=true;setStatus('unsaved','Unsaved changes');scheduleAutoSave();}
+var autoTimer;
+function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData(true);},900);}
+
+function makeWeekOptions(){
+  var dl=document.getElementById('date-list');
+  var today=new Date();
+  for(var i=0;i<16;i++){
+    var d=new Date(today);d.setDate(today.getDate()+i*7);
+    var opt=document.createElement('option');
+    opt.value='Week of '+d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    dl.appendChild(opt);
+  }
+}
+function fillThisWeek(){
+  var d=new Date();
+  document.getElementById('f-date').value='Week of '+d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  markDirty();
+}
+
+function addAnnouncement(data){
+  data=data||{title:'',body:'',buttonText:'',buttonUrl:''};
+  var id=annCount++;
+  var wrap=document.createElement('div');
+  wrap.className='announcement-block';
+  wrap.dataset.id=id;
+  wrap.innerHTML='<div class="block-head"><span class="block-title">Announcement</span><button class="del-btn" onclick="deleteAnnouncement(this)">Remove</button></div>'+ 
+    '<div style="margin-bottom:12px;"><label class="fl">Title</label><input class="fi" data-field="title" placeholder="e.g. Quick AI Generator Update ✨" value="'+esc(data.title)+'"></div>'+ 
+    '<div style="margin-bottom:12px;"><label class="fl">Announcement Body</label><textarea class="ta" data-field="body" placeholder="Type the announcement here...">'+esc(data.body)+'</textarea></div>'+ 
+    '<div class="row2" style="margin-bottom:0;"><div><label class="fl">Optional Button Text</label><input class="fi" data-field="buttonText" placeholder="e.g. Open Resource" value="'+esc(data.buttonText)+'"></div><div><label class="fl">Optional Button URL</label><input class="fi" data-field="buttonUrl" placeholder="https://..." value="'+esc(data.buttonUrl)+'"></div></div>';
+  document.getElementById('ann-list').appendChild(wrap);
+  wrap.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',markDirty);el.addEventListener('change',markDirty);});
+  markDirty();
+}
+function deleteAnnouncement(btn){btn.closest('.announcement-block').remove();markDirty();}
+function getAnnouncements(){
+  return Array.from(document.querySelectorAll('.announcement-block')).map(function(block){
+    return {
+      title:block.querySelector('[data-field="title"]').value,
+      body:block.querySelector('[data-field="body"]').value,
+      buttonText:block.querySelector('[data-field="buttonText"]').value,
+      buttonUrl:block.querySelector('[data-field="buttonUrl"]').value
+    };
+  });
+}
+function saveData(silent){
+  var data={date:v('f-date'),tag:v('f-tag'),announcements:getAnnouncements()};
+  try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved',silent?'Auto-saved':'Saved just now');if(!silent)toast('Saved!');}
+  catch(e){toast('Could not save');}
+}
+function loadData(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(raw){
+      var data=JSON.parse(raw);
+      document.getElementById('f-date').value=data.date||'';
+      document.getElementById('f-tag').value=data.tag||'Member Updates';
+      (data.announcements&&data.announcements.length?data.announcements:[{title:'Quick AI Generator Update ✨',body:'You’ll notice a small update starting with this week’s drop.\n\nI’ll still include which AI image generator I used to create each example, but I’ll no longer be listing the specific style preset selected inside each tool.\n\nAI tools have advanced so much, and I’ve been getting better results by letting the prompt guide the style instead of locking the generator into one preset.\n\nThe prompts are intentionally written with the creative direction built in, including the aesthetic, colors, composition, texture, and overall vibe.\n\nThe goal is always to learn how to create strong designs, not just recreate my exact example. 😊',buttonText:'',buttonUrl:''}]).forEach(function(a){addAnnouncement(a);});
+      isDirty=false;setStatus('saved','Saved draft loaded');
+    }else{
+      addAnnouncement({title:'Quick AI Generator Update ✨',body:'You’ll notice a small update starting with this week’s drop.\n\nI’ll still include which AI image generator I used to create each example, but I’ll no longer be listing the specific style preset selected inside each tool.\n\nWhen I started this club over a year ago, AI image generators were very different. Choosing the right preset style was often needed to help guide the final result.\n\nAI tools have advanced so much since then, and I’ve actually been getting better results by letting the prompt guide the style instead of locking the generator into one preset.\n\nThe prompts are intentionally written with the creative direction built in, including the aesthetic, colors, composition, texture, and overall vibe.\n\nI also don’t want you to feel like you have to use my exact settings to get a great result. Experiment, test different styles, and see what you love! If you are looking for a specific aesthetic or vibe, definitely try the available presets, but don’t be afraid to let the prompt do the work too.\n\nThe goal is always to learn how to create strong designs, not just recreate my exact example. 😊',buttonText:'',buttonUrl:''});
+      isDirty=false;setStatus('unsaved','Nothing saved yet');
+    }
+  }catch(e){setStatus('unsaved','Could not load');}
+}
+
+function buildMemberHTML(){
+  var rid='dfy_ann_'+Math.random().toString(36).slice(2,9);
+  var date=v('f-date')||'Weekly Update';
+  var tag=v('f-tag')||'Member Updates';
+  var anns=getAnnouncements().filter(function(a){return a.title.trim()||a.body.trim();});
+  var html='<div id="'+rid+'" style="font-family:Jost,Arial,sans-serif;font-size:115%;max-width:920px;margin:0 auto;color:#2a1f1c;">';
+  html+='<style>#'+rid+' *{box-sizing:border-box;}#'+rid+' .dfy-btn:hover{background:#bb7d72!important;color:#fff!important;}#'+rid+' .dfy-card{background:#fff;border:1px solid #ead9d5;border-radius:14px;margin-bottom:12px;overflow:hidden;}#'+rid+' .dfy-toggle{width:100%;border:0;background:#fff;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left;cursor:pointer;font-family:Jost,Arial,sans-serif;}#'+rid+' .dfy-toggle:hover{background:#fdf7f2;}#'+rid+' .dfy-title{font-size:17px;font-weight:800;color:#2a1f1c;line-height:1.35;}#'+rid+' .dfy-icon{width:28px;height:28px;border-radius:999px;background:#f5eddf;color:#2a1f1c;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;}#'+rid+' .dfy-body{display:none;padding:0 20px 20px;}#'+rid+' .dfy-body.open{display:block;}#'+rid+' .dfy-body-inner{border-top:1px solid #ead9d5;padding-top:16px;font-size:16px;color:#5a4a45;line-height:1.75;}@media(max-width:680px){#'+rid+'{font-size:105%;}#'+rid+' .dfy-main{padding:1.35rem!important;}#'+rid+' h2{font-size:2rem!important;}#'+rid+' .dfy-controls{flex-direction:column;align-items:stretch!important;}#'+rid+' .dfy-btn{text-align:center;}}</style>';
+  html+='<div style="background:#2a1f1c;border-radius:16px 16px 0 0;padding:2rem 2.25rem;text-align:center;">';
+  html+='<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .55rem;">'+esc(tag)+'</p>';
+  html+='<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;font-weight:700;color:#f5eddf;margin:0 0 .5rem;line-height:1.15;">Announcements &amp; FYIs</h2>';
+  html+='<p style="font-size:1.05rem;font-weight:700;color:#c4b0a8;margin:0;letter-spacing:.03em;">'+esc(date)+'</p>';
+  html+='</div>';
+  html+='<div class="dfy-main" style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;border-radius:0 0 16px 16px;padding:1.75rem 2.25rem;">';
+  html+='<p style="font-size:16px;color:#5a4a45;line-height:1.75;margin:0 0 1.25rem;">I’ll be posting quick weekly updates here as needed — not every single week, but whenever there’s something important to share.</p>';
+  html+='<div class="dfy-controls" style="display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-bottom:1rem;">';
+  html+='<button class="dfy-btn" onclick="'+rid+'_setAll(true)" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 18px;border-radius:999px;cursor:pointer;transition:all .2s;">Expand All</button>';
+  html+='<button class="dfy-btn" onclick="'+rid+'_setAll(false)" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:#2a1f1c;border:1.5px solid #ead9d5;padding:10px 18px;border-radius:999px;cursor:pointer;transition:all .2s;">Collapse All</button>';
+  html+='</div>';
+  anns.forEach(function(a,i){
+    html+='<div class="dfy-card">';
+    html+='<button class="dfy-toggle" onclick="'+rid+'_toggle('+i+')"><span class="dfy-title">'+esc(a.title||('Announcement '+(i+1)))+'</span><span class="dfy-icon" id="'+rid+'_icon_'+i+'">+</span></button>';
+    html+='<div class="dfy-body" id="'+rid+'_body_'+i+'"><div class="dfy-body-inner">'+nl2br(a.body||'');
+    if(a.buttonText&&a.buttonUrl){html+='<div style="margin-top:1.1rem;"><a class="dfy-btn" href="'+esc(a.buttonUrl)+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:11px 22px;border-radius:999px;text-decoration:none;display:inline-block;transition:all .2s;">'+esc(a.buttonText)+'</a></div>';}
+    html+='</div></div></div>';
+  });
+  html+='</div><script>function '+rid+'_toggle(i){var b=document.getElementById("'+rid+'_body_"+i);var ic=document.getElementById("'+rid+'_icon_"+i);var open=b.className.indexOf("open")>-1;b.className=open?"dfy-body":"dfy-body open";ic.textContent=open?"+":"–";}function '+rid+'_setAll(open){var root=document.getElementById("'+rid+'");var bodies=root.querySelectorAll(".dfy-body");var icons=root.querySelectorAll(".dfy-icon");for(var i=0;i<bodies.length;i++){bodies[i].className=open?"dfy-body open":"dfy-body";icons[i].textContent=open?"–":"+";}}<\/script></div>';
+  return html;
+}
+function validate(){if(!v('f-date').trim()){toast('Add a week/date label first.');return false;}var anns=getAnnouncements().filter(function(a){return a.title.trim()||a.body.trim();});if(!anns.length){toast('Add at least one announcement.');return false;}return true;}
+function previewHTML(){if(!validate())return;var html=buildMemberHTML();document.getElementById('out-preview').innerHTML=html;document.getElementById('copy-all-btn').className='copy-all-btn';document.getElementById('out-title').textContent='Announcement Preview';document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
+function generateHTML(){if(!validate())return;var html=buildMemberHTML();document.getElementById('out-code').value=html;document.getElementById('out-preview').innerHTML=html;document.getElementById('copy-all-btn').className='copy-all-btn show';document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
+function copyAll(){var code=document.getElementById('out-code').value;var btn=document.getElementById('copy-all-btn');var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2200);toast('HTML copied!');}
+function clearAll(){if(!confirm('Clear everything and reset the builder?'))return;localStorage.removeItem(SK);document.getElementById('f-date').value='';document.getElementById('f-tag').value='Member Updates';document.getElementById('ann-list').innerHTML='';annCount=0;addAnnouncement({title:'',body:'',buttonText:'',buttonUrl:''});isDirty=false;setStatus('unsaved','Cleared');document.getElementById('out').style.display='none';toast('Reset complete.');}
+['f-date','f-tag'].forEach(function(id){document.getElementById(id).addEventListener('input',markDirty);document.getElementById(id).addEventListener('change',markDirty);});
+window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
+makeWeekOptions();loadData();
+</script>
+</body>
+</html>
