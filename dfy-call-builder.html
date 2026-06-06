@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DFY Call Page Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Jost', sans-serif; background: #f5eddf; min-height: 100vh; padding-bottom: 60px; }
+  .top-bar { background: #2a1f1c; padding: 20px 28px; }
+  .top-bar h1 { font-family: 'Playfair Display', serif; color: #c9a96e; font-size: 1.6rem; }
+  .top-bar p { color: #dea193; font-size: .88rem; letter-spacing: .08em; text-transform: uppercase; margin-top: 4px; }
+  .form-card { background: #fff; border-radius: 14px; padding: 34px 38px; max-width: 640px; margin: 30px auto 0; box-shadow: 0 4px 24px rgba(42,31,28,.1); }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: #2a1f1c; border-bottom: 2px solid #c9a96e; padding-bottom: 8px; margin-bottom: 18px; margin-top: 26px; }
+  .section-title:first-child { margin-top: 0; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: .85rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #2a1f1c; margin-bottom: 6px; }
+  .field input[type="datetime-local"], .field input[type="url"] {
+    width: 100%; padding: 9px 13px; background: #fdfaf6; border: 1.5px solid #e0d5c5;
+    border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .88rem; color: #2a1f1c;
+    outline: none; transition: border-color .15s;
+  }
+  .field input[type="datetime-local"]:focus, .field input[type="url"]:focus { border-color: #dea193; }
+  .field input::placeholder { color: #bbb; }
+  .auto-display { margin-top: 8px; background: #fdf7f0; border-left: 3px solid #dea193; border-radius: 0 7px 7px 0; padding: 10px 14px; display: none; }
+  .auto-display .auto-row { font-size: .95rem; color: #2a1f1c; margin-bottom: 4px; }
+  .auto-display .auto-row:last-child { margin-bottom: 0; }
+  .auto-display .auto-label { font-weight: 600; color: #dea193; margin-right: 6px; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+  .toggle-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .toggle-lbl { font-size: .85rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #2a1f1c; }
+  .tog { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+  .tog input { opacity: 0; width: 0; height: 0; }
+  .tog-sl { position: absolute; inset: 0; background: #ddd; border-radius: 24px; cursor: pointer; transition: background .2s; }
+  .tog-sl::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; }
+  .tog input:checked + .tog-sl { background: #dea193; }
+  .tog input:checked + .tog-sl::before { transform: translateX(18px); }
+  .meet-wrap { display: none; }
+  .bottom-bar { max-width: 600px; margin: 18px auto 0; display: flex; align-items: center; gap: 12px; padding: 0 2px; flex-wrap: wrap; }
+  .save-lbl { font-size: .88rem; color: #999; flex: 1; }
+  .save-lbl.saved { color: #34a853; }
+  .clear-btn { padding: 13px 20px; background: transparent; color: #999; border: 1.5px solid #ddd; border-radius: 9px; font-family: 'Jost', sans-serif; font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .15s; }
+  .clear-btn:hover { border-color: #dea193; color: #dea193; }
+  .gen-btn { padding: 13px 28px; background: #dea193; color: #fff; border: none; border-radius: 9px; font-family: 'Jost', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; transition: background .15s, transform .1s; }
+  .gen-btn:hover { background: #cc7b68; }
+  .gen-btn:active { transform: scale(.97); }
+  .output-section { display: none; max-width: 600px; margin: 26px auto 0; }
+  .output-card { background: #fff; border-radius: 14px; padding: 26px 30px; box-shadow: 0 4px 24px rgba(42,31,28,.1); }
+  .output-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .output-top h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #2a1f1c; }
+  .copy-btn { padding: 10px 22px; background: #dea193; color: #fff; border: none; border-radius: 8px; font-family: 'Jost', sans-serif; font-weight: 700; font-size: .9rem; letter-spacing: .05em; cursor: pointer; transition: background .15s; text-transform: uppercase; }
+  .copy-btn:hover { background: #cc7b68; }
+  .copy-btn.done { background: #34a853; }
+  .preview-label { font-size: .85rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #999; margin-bottom: 12px; }
+  .prev-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1.5px solid #e0d5c5; }
+  .prev-header { background: #2a1f1c; padding: 18px 22px; text-align: center; }
+  .prev-header h1 { font-family: 'Playfair Display', serif; color: #c9a96e; font-size: 1.2rem; margin: 0; }
+  .prev-header p { color: #f5eddf; font-size: .67rem; letter-spacing: .1em; text-transform: uppercase; margin-top: 3px; font-weight: 300; }
+  .prev-live { display: none; align-items: center; gap: 7px; background: #e05252; color: #fff; font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 8px 16px; justify-content: center; }
+  .prev-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pp 1.2s ease-in-out infinite; }
+  @keyframes pp { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .prev-body { padding: 20px 22px; }
+  .prev-lbl { font-family: 'Playfair Display', serif; font-size: .9rem; color: #2a1f1c; border-bottom: 1.5px solid #c9a96e; padding-bottom: 7px; margin-bottom: 11px; }
+  .prev-row { display: flex; gap: 10px; font-size: .8rem; line-height: 1.5; margin-bottom: 6px; }
+  .prev-row b { min-width: 38px; color: #2a1f1c; }
+  .prev-row span { color: #555; }
+  .prev-cd { background: #2a1f1c; border-radius: 9px; padding: 14px; text-align: center; margin: 11px 0 14px; }
+  .prev-cd-title { color: #c9a96e; font-family: 'Playfair Display', serif; font-size: .75rem; margin-bottom: 9px; }
+  .prev-cd-nums { display: flex; justify-content: center; gap: 9px; align-items: flex-start; }
+  .prev-cd-unit { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .prev-cd-n { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #f5eddf; line-height: 1; min-width: 32px; text-align: center; }
+  .prev-cd-l { font-size: .54rem; letter-spacing: .1em; text-transform: uppercase; color: #dea193; }
+  .prev-cd-sep { font-size: 1.1rem; color: #c9a96e; padding-top: 2px; }
+  .prev-expect { background: #fdf7f0; border-left: 3px solid #c9a96e; border-radius: 0 7px 7px 0; padding: 11px 13px; margin-bottom: 13px; font-size: .78rem; line-height: 1.65; color: #3a2e2b; }
+  .prev-pending { background: #f8f3ec; border: 1px dashed #c9a96e; border-radius: 8px; padding: 11px; font-size: .78rem; color: #7a6350; text-align: center; font-style: italic; margin-bottom: 11px; }
+  .prev-meet-active { display: none; margin-bottom: 11px; }
+  .prev-meet-active a { display: flex; align-items: center; justify-content: center; padding: 10px; background: #34a853; color: #fff; font-size: .8rem; font-weight: 700; text-decoration: none; border-radius: 8px; }
+  .prev-btns { display: flex; gap: 9px; margin-bottom: 11px; flex-wrap: wrap; }
+  .prev-btn { padding: 8px 14px; border-radius: 7px; font-size: .78rem; font-weight: 600; }
+  .prev-btn-rose { background: #dea193; color: #fff; }
+  .prev-btn-dark { background: #2a1f1c; color: #f5eddf; }
+  .prev-next { text-align: center; font-size: .73rem; color: #999; padding-top: 11px; border-top: 1px solid #ede5d8; }
+  .prev-next a { color: #dea193; font-style: italic; font-weight: 600; text-decoration: none; }
+  @media (max-width: 640px) {
+    .form-card { margin: 20px 14px 0; padding: 22px 20px; }
+    .bottom-bar { padding: 0 14px; }
+    .output-section { margin: 20px 14px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>DFY Call Page Builder</h1>
+  <p>DFY Niche Club</p>
+</div>
+
+<div class="form-card">
+
+  <div class="section-title">This Month's Call</div>
+  <div class="field">
+    <label>Date and Start Time</label>
+    <input type="datetime-local" id="callDatetime" oninput="onThisChange();scheduleSave()"/>
+    <div class="auto-display" id="thisAutoDisplay">
+      <div class="auto-row"><span class="auto-label">Date</span><span id="thisDateOut"></span></div>
+      <div class="auto-row"><span class="auto-label">Time</span><span id="thisTimeOut"></span></div>
+    </div>
+  </div>
+
+  <div class="section-title">Links</div>
+  <div class="field">
+    <label>Google Form Link</label>
+    <input type="url" id="formLink" placeholder="https://forms.gle/..." oninput="scheduleSave()"/>
+  </div>
+  <div class="toggle-row">
+    <label class="tog"><input type="checkbox" id="meetToggle" onchange="toggleMeet();scheduleSave()"/><span class="tog-sl"></span></label>
+    <span class="toggle-lbl">Meet link is ready</span>
+  </div>
+  <div class="meet-wrap" id="meetWrap">
+    <div class="field">
+      <label>Google Meet Link</label>
+      <input type="url" id="meetLink" placeholder="https://meet.google.com/..." oninput="scheduleSave()"/>
+    </div>
+  </div>
+
+  <div class="section-title">Next Month's Call</div>
+  <div class="field">
+    <label>Date and Start Time</label>
+    <input type="datetime-local" id="nextCallDatetime" oninput="onNextChange();scheduleSave()"/>
+    <div class="auto-display" id="nextAutoDisplay">
+      <div class="auto-row"><span class="auto-label">Date</span><span id="nextDateOut"></span></div>
+      <div class="auto-row"><span class="auto-label">Time</span><span id="nextTimeOut"></span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-bar">
+  <span class="save-lbl" id="saveInd">Auto-saved</span>
+  <button class="clear-btn" onclick="clearForm()">Clear Form</button>
+  <button class="gen-btn" onclick="generate()">Generate Code + Preview</button>
+</div>
+
+<div class="output-section" id="outputSection">
+  <div class="output-card">
+    <div class="output-top">
+      <h2>Your Systeme.io Code</h2>
+      <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy Code</button>
+    </div>
+    <div class="preview-label">Preview</div>
+    <div class="prev-card">
+      <div class="prev-header"><h1>Monthly Live Call Info</h1><p>DFY Niche Club</p></div>
+      <div class="prev-live" id="prevLive"><span class="prev-live-dot"></span> The link is live!</div>
+      <div class="prev-body">
+        <div class="prev-lbl">This Month's Call Details</div>
+        <div class="prev-row"><b>Date</b><span id="prevDate"></span></div>
+        <div class="prev-row"><b>Time</b><span id="prevTime"></span></div>
+        <div class="prev-row"><b>Via</b><span>Google Meet</span></div>
+        <div class="prev-cd">
+          <div class="prev-cd-title">Call starts in...</div>
+          <div class="prev-cd-nums">
+            <div class="prev-cd-unit"><span class="prev-cd-n" id="pdays">--</span><span class="prev-cd-l">Days</span></div>
+            <span class="prev-cd-sep">:</span>
+            <div class="prev-cd-unit"><span class="prev-cd-n" id="phrs">--</span><span class="prev-cd-l">Hrs</span></div>
+            <span class="prev-cd-sep">:</span>
+            <div class="prev-cd-unit"><span class="prev-cd-n" id="pmins">--</span><span class="prev-cd-l">Mins</span></div>
+            <span class="prev-cd-sep">:</span>
+            <div class="prev-cd-unit"><span class="prev-cd-n" id="psecs">--</span><span class="prev-cd-l">Secs</span></div>
+          </div>
+        </div>
+        <div class="prev-lbl">What to Expect</div>
+        <div class="prev-expect">Every month we hop on live to dig into your Etsy questions, talk trending niches, and get some real strategy time together. Submit your questions ahead of time so your topic gets covered first. Calls are recorded!</div>
+        <div class="prev-lbl">Join the Call</div>
+        <div class="prev-pending" id="prevPending">The Google Meet link will be added the week of the call. Check back soon!</div>
+        <div class="prev-meet-active" id="prevMeetActive"><a href="#">Join on Google Meet</a></div>
+        <div class="prev-btns">
+          <span class="prev-btn prev-btn-rose">Submit Your Questions</span>
+          <span class="prev-btn prev-btn-dark">Add to Calendar</span>
+        </div>
+        <div class="prev-next">Next month's call will be: <a id="prevNext" href="#">—</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var saveTimer = null;
+var generatedCode = "";
+var DAYS   = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+
+function formatDateLong(dt) {
+  var d = new Date(dt + ":00");
+  return DAYS[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+}
+
+function formatTime12(dt) {
+  var d = new Date(dt + ":00");
+  var h = d.getHours(), m = d.getMinutes();
+  var ampm = h >= 12 ? "pm" : "am";
+  h = h % 12; if (h === 0) h = 12;
+  return h + (m > 0 ? ":" + pad2(m) : "") + " " + ampm + " PST";
+}
+
+function formatTime12FromDate(d) {
+  var h = d.getHours(), m = d.getMinutes();
+  var ampm = h >= 12 ? "pm" : "am";
+  h = h % 12; if (h === 0) h = 12;
+  return h + (m > 0 ? ":" + pad2(m) : "") + " " + ampm + " PST";
+}
+
+function onThisChange() {
+  var val = document.getElementById("callDatetime").value;
+  var box = document.getElementById("thisAutoDisplay");
+  if (!val) { box.style.display = "none"; return; }
+  var start = new Date(val + ":00");
+  var end   = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+  document.getElementById("thisDateOut").textContent = formatDateLong(val);
+  document.getElementById("thisTimeOut").textContent = formatTime12(val) + " - " + formatTime12FromDate(end);
+  box.style.display = "block";
+}
+
+function onNextChange() {
+  var val = document.getElementById("nextCallDatetime").value;
+  var box = document.getElementById("nextAutoDisplay");
+  if (!val) { box.style.display = "none"; return; }
+  var start = new Date(val + ":00");
+  var end   = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+  document.getElementById("nextDateOut").textContent = formatDateLong(val);
+  document.getElementById("nextTimeOut").textContent = formatTime12(val) + " - " + formatTime12FromDate(end);
+  box.style.display = "block";
+}
+
+function toggleMeet() {
+  document.getElementById("meetWrap").style.display = document.getElementById("meetToggle").checked ? "block" : "none";
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  var el = document.getElementById("saveInd");
+  el.textContent = "Saving..."; el.className = "save-lbl";
+  saveTimer = setTimeout(doSave, 800);
+}
+
+function doSave() {
+  var data = {
+    callDatetime:     document.getElementById("callDatetime").value,
+    formLink:         document.getElementById("formLink").value,
+    meetOn:           document.getElementById("meetToggle").checked,
+    meetLink:         document.getElementById("meetLink").value,
+    nextCallDatetime: document.getElementById("nextCallDatetime").value
+  };
+  try { localStorage.setItem("dfy_call_v5", JSON.stringify(data)); } catch(e) {}
+  var el = document.getElementById("saveInd");
+  el.textContent = "Saved!"; el.className = "save-lbl saved";
+  setTimeout(function() { el.textContent = "Auto-saved"; }, 1500);
+}
+
+function loadSaved() {
+  try {
+    var raw = localStorage.getItem("dfy_call_v5");
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (d.callDatetime)     { document.getElementById("callDatetime").value     = d.callDatetime;     onThisChange(); }
+    if (d.formLink)           document.getElementById("formLink").value           = d.formLink;
+    if (d.meetLink)           document.getElementById("meetLink").value           = d.meetLink;
+    if (d.nextCallDatetime) { document.getElementById("nextCallDatetime").value = d.nextCallDatetime; onNextChange(); }
+    if (d.meetOn) { document.getElementById("meetToggle").checked = true; document.getElementById("meetWrap").style.display = "block"; }
+    var el = document.getElementById("saveInd");
+    el.textContent = "Loaded last session"; el.className = "save-lbl saved";
+    setTimeout(function() { el.textContent = "Auto-saved"; }, 2000);
+  } catch(e) {}
+}
+
+function clearForm() {
+  if (!confirm("Clear all fields and start fresh?")) return;
+  ["callDatetime","formLink","meetLink","nextCallDatetime"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("meetToggle").checked = false;
+  document.getElementById("meetWrap").style.display = "none";
+  document.getElementById("outputSection").style.display = "none";
+  document.getElementById("thisAutoDisplay").style.display = "none";
+  document.getElementById("nextAutoDisplay").style.display = "none";
+  try { localStorage.removeItem("dfy_call_v5"); } catch(e) {}
+  var el = document.getElementById("saveInd");
+  el.textContent = "Cleared"; el.className = "save-lbl";
+  setTimeout(function() { el.textContent = "Auto-saved"; }, 2000);
+}
+
+function buildGcalUrl(startDt, title) {
+  if (!startDt) return "#";
+  var s   = new Date(startDt + ":00");
+  var e   = new Date(s.getTime() + 2 * 60 * 60 * 1000);
+  var sf  = s.getFullYear() + pad2(s.getMonth()+1) + pad2(s.getDate()) + "T" + pad2(s.getHours()) + pad2(s.getMinutes()) + "00";
+  var ef  = e.getFullYear() + pad2(e.getMonth()+1) + pad2(e.getDate()) + "T" + pad2(e.getHours()) + pad2(e.getMinutes()) + "00";
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) + "&dates=" + sf + "/" + ef + "&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet";
+}
+
+function generate() {
+  var callDatetime     = document.getElementById("callDatetime").value.trim();
+  var formLink         = document.getElementById("formLink").value.trim() || "#";
+  var meetOn           = document.getElementById("meetToggle").checked;
+  var meetLink         = meetOn ? (document.getElementById("meetLink").value.trim() || "#") : "";
+  var nextCallDatetime = document.getElementById("nextCallDatetime").value.trim();
+
+  if (!callDatetime) { alert("Please pick a date and start time for this month's call."); return; }
+
+  var startDate    = new Date(callDatetime + ":00");
+  var endDate      = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+  var callDateDisplay  = formatDateLong(callDatetime);
+  var callTimeDisplay  = formatTime12(callDatetime) + " - " + formatTime12FromDate(endDate);
+  var nextDateDisplay  = nextCallDatetime ? formatDateLong(nextCallDatetime) : "TBD";
+  var nextStartTime    = nextCallDatetime ? formatTime12(nextCallDatetime) : "";
+  var nextFullDisplay  = nextStartTime ? nextDateDisplay + " at " + nextStartTime : nextDateDisplay;
+  var liveDisp  = meetOn ? "flex"  : "none";
+  var pendDisp  = meetOn ? "none"  : "block";
+  var actDisp   = meetOn ? "block" : "none";
+  var thisGcal  = buildGcalUrl(callDatetime,     "DFY Niche Club Monthly Live Call");
+  var nextGcal  = buildGcalUrl(nextCallDatetime, "DFY Niche Club Monthly Live Call");
+
+  document.getElementById("prevDate").textContent = callDateDisplay;
+  document.getElementById("prevTime").textContent = callTimeDisplay;
+  document.getElementById("prevNext").textContent = nextFullDisplay;
+  document.getElementById("prevLive").style.display       = meetOn ? "flex"  : "none";
+  document.getElementById("prevPending").style.display    = meetOn ? "none"  : "block";
+  document.getElementById("prevMeetActive").style.display = meetOn ? "block" : "none";
+
+  var callDate = new Date(callDatetime + ":00");
+  clearInterval(window._prevTimer);
+  window._prevTimer = setInterval(function() {
+    var diff = callDate - new Date();
+    if (diff <= 0) { ["pdays","phrs","pmins","psecs"].forEach(function(id) { document.getElementById(id).textContent = "00"; }); return; }
+    document.getElementById("pdays").textContent = pad2(Math.floor(diff / 86400000));
+    document.getElementById("phrs").textContent  = pad2(Math.floor((diff % 86400000) / 3600000));
+    document.getElementById("pmins").textContent = pad2(Math.floor((diff % 3600000) / 60000));
+    document.getElementById("psecs").textContent = pad2(Math.floor((diff % 60000) / 1000));
+  }, 1000);
+
+  generatedCode = '<style>\n@import url(\'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Jost:wght@300;400;500;600&display=swap\');\n.dlc-wrap{background:#f5eddf;font-family:\'Jost\',sans-serif;color:#2a1f1c;padding:0 0 40px}\n.dlc-header{background:#2a1f1c;padding:28px 24px 22px;text-align:center}\n.dlc-header h1{font-family:\'Playfair Display\',serif;color:#c9a96e;font-size:2rem;letter-spacing:.04em;margin:0}\n.dlc-header p{color:#f5eddf;font-size:.82rem;font-weight:300;margin:4px 0 0;letter-spacing:.1em;text-transform:uppercase}\n.dlc-card{max-width:640px;margin:32px auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(42,31,28,.13)}\n.dlc-live{display:' + liveDisp + ';align-items:center;gap:8px;background:#e05252;color:#fff;font-family:\'Jost\',sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:10px 24px;justify-content:center}\n.dlc-live-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:dlcpulse 1.2s ease-in-out infinite}\n@keyframes dlcpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}\n.dlc-body{padding:36px 40px 40px}\n.dlc-label{font-family:\'Playfair Display\',serif;font-size:1.2rem;color:#2a1f1c;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #c9a96e}\n.dlc-details{margin-bottom:28px}\n.dlc-row{display:flex;gap:12px;font-size:.93rem;line-height:1.6;margin-bottom:8px}\n.dlc-row b{min-width:52px}\n.dlc-countdown{background:#2a1f1c;border-radius:12px;padding:22px 20px;margin-bottom:28px;text-align:center}\n.dlc-cd-title{color:#c9a96e;font-family:\'Playfair Display\',serif;font-size:1rem;margin-bottom:16px}\n.dlc-cd-grid{display:flex;justify-content:center;align-items:flex-start;gap:12px}\n.dlc-cd-unit{display:flex;flex-direction:column;align-items:center;gap:4px}\n.dlc-cd-num{font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center}\n.dlc-cd-lbl{font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193}\n.dlc-cd-sep{font-size:1.8rem;color:#c9a96e;line-height:1;padding-top:2px}\n.dlc-cd-done{display:none;color:#dea193;font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.1rem}\n.dlc-expect{background:#fdf7f0;border-left:4px solid #c9a96e;border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:28px;font-size:.92rem;line-height:1.75;color:#3a2e2b}\n.dlc-meet-pending{background:#f8f3ec;border:1.5px dashed #c9a96e;border-radius:10px;padding:16px 20px;font-size:.88rem;color:#7a6350;text-align:center;font-style:italic;margin-bottom:28px}\n.dlc-meet-active{margin-bottom:28px}\n.dlc-meet-active a{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#34a853;color:#fff;font-family:\'Jost\',sans-serif;font-weight:700;font-size:1rem;text-decoration:none;border-radius:10px;letter-spacing:.03em}\n.dlc-btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}\n.dlc-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-family:\'Jost\',sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.04em;text-decoration:none;transition:opacity .18s}\n.dlc-btn:hover{opacity:.85}\n.dlc-btn-rose{background:#dea193;color:#ffffff}\n.dlc-btn-dark{background:#2a1f1c;color:#f5eddf}\n.dlc-next{text-align:center;font-size:.82rem;color:#999;padding-top:22px;border-top:1px solid #ede5d8}\n.dlc-next a{color:#dea193;font-style:italic;font-weight:600;text-decoration:none}\n.dlc-next a:hover{text-decoration:underline}\n</style>\n\n<div class="dlc-wrap">\n<div class="dlc-header"><h1>Monthly Live Call Info</h1><p>DFY Niche Club</p></div>\n<div class="dlc-card">\n<div class="dlc-live"><span class="dlc-live-dot"></span> The link is live - join below!</div>\n<div class="dlc-body">\n<div class="dlc-label">This Month\'s Call Details</div>\n<div class="dlc-details">\n<div class="dlc-row"><b>Date</b> <span>' + callDateDisplay + '</span></div>\n<div class="dlc-row"><b>Time</b> <span>' + callTimeDisplay + '</span></div>\n<div class="dlc-row"><b>Via</b> <span>Google Meet</span></div>\n</div>\n<div class="dlc-countdown">\n<div class="dlc-cd-title">Call starts in...</div>\n<div class="dlc-cd-grid" id="dlc-cd-grid">\n<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-days">--</span><span class="dlc-cd-lbl">Days</span></div>\n<span class="dlc-cd-sep">:</span>\n<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-hrs">--</span><span class="dlc-cd-lbl">Hours</span></div>\n<span class="dlc-cd-sep">:</span>\n<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-mins">--</span><span class="dlc-cd-lbl">Mins</span></div>\n<span class="dlc-cd-sep">:</span>\n<div class="dlc-cd-unit"><span class="dlc-cd-num" id="dlc-secs">--</span><span class="dlc-cd-lbl">Secs</span></div>\n</div>\n<div class="dlc-cd-done" id="dlc-cd-done">We are live! Join us now!</div>\n</div>\n<div class="dlc-label">What to Expect</div>\n<div class="dlc-expect">Every month we hop on live to dig into your Etsy questions, talk trending niches, and get some real strategy time together. Bring your wins, your stuck points, or just come to listen. Submit your questions ahead of time using the form below so we can make sure your topic gets covered first. These calls are recorded, so if you cannot make it live, the replay will be waiting for you inside the group.</div>\n<div class="dlc-label">Join the Call</div>\n<div class="dlc-meet-pending" style="display:' + pendDisp + '">The Google Meet link will be added the week of the call. Check back soon!</div>\n<div class="dlc-meet-active" style="display:' + actDisp + '"><a href="' + meetLink + '" target="_blank" rel="noopener">Join on Google Meet</a></div>\n<div class="dlc-btn-row">\n<a href="' + formLink + '" target="_blank" rel="noopener" class="dlc-btn dlc-btn-rose">Submit Your Questions</a>\n<a href="' + thisGcal + '" target="_blank" rel="noopener" class="dlc-btn dlc-btn-dark">Add to Calendar</a>\n</div>\n<div class="dlc-next">Next month\'s call will be: <a href="' + nextGcal + '" target="_blank" rel="noopener">' + nextFullDisplay + '</a></div>\n</div>\n</div>\n</div>\n\n<script>\nvar callDate=new Date("' + callDatetime + ':00");\nfunction pad2(n){return n<10?"0"+n:""+n;}\nfunction dlcTick(){var now=new Date();var diff=callDate-now;if(diff<=0){document.getElementById("dlc-cd-grid").style.display="none";document.getElementById("dlc-cd-done").style.display="block";return;}document.getElementById("dlc-days").innerHTML=pad2(Math.floor(diff/86400000));document.getElementById("dlc-hrs").innerHTML=pad2(Math.floor((diff%86400000)/3600000));document.getElementById("dlc-mins").innerHTML=pad2(Math.floor((diff%3600000)/60000));document.getElementById("dlc-secs").innerHTML=pad2(Math.floor((diff%60000)/1000));}\ndlcTick();setInterval(dlcTick,1000);\n<\/script>';
+
+  document.getElementById("outputSection").style.display = "block";
+  document.getElementById("outputSection").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("copyBtn").textContent = "Copy Code";
+  document.getElementById("copyBtn").className = "copy-btn";
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(generatedCode).then(function() {
+    var btn = document.getElementById("copyBtn");
+    btn.textContent = "Copied!"; btn.className = "copy-btn done";
+    setTimeout(function() { btn.textContent = "Copy Code"; btn.className = "copy-btn"; }, 2500);
+  }).catch(function() { alert("Copy failed, try again."); });
+}
+
+loadSaved();
+</script>
+</body>
+</html>
