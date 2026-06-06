@@ -16,10 +16,20 @@
   .section-title:first-child { margin-top: 0; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #2a1f1c; margin-bottom: 5px; }
-  .field input { width: 100%; padding: 9px 13px; background: #fdfaf6; border: 1.5px solid #e0d5c5; border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .88rem; color: #2a1f1c; outline: none; transition: border-color .15s; }
-  .field input:focus { border-color: #dea193; }
+  .field input[type="datetime-local"] {
+    width: 100%; padding: 9px 13px; background: #fdfaf6; border: 1.5px solid #e0d5c5;
+    border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .88rem; color: #2a1f1c;
+    outline: none; transition: border-color .15s;
+  }
+  .field input[type="datetime-local"]:focus { border-color: #dea193; }
+  .field input[type="url"] {
+    width: 100%; padding: 9px 13px; background: #fdfaf6; border: 1.5px solid #e0d5c5;
+    border-radius: 8px; font-family: 'Jost', sans-serif; font-size: .88rem; color: #2a1f1c;
+    outline: none; transition: border-color .15s;
+  }
+  .field input[type="url"]:focus { border-color: #dea193; }
   .field input::placeholder { color: #bbb; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .preview-text { font-size: .82rem; color: #dea193; font-style: italic; margin-top: 5px; min-height: 18px; }
   .toggle-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .toggle-lbl { font-size: .72rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: #2a1f1c; }
   .tog { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
@@ -38,7 +48,6 @@
   .gen-btn:hover { background: #cc7b68; }
   .gen-btn:active { transform: scale(.97); }
 
-  /* OUTPUT */
   .output-section { display: none; max-width: 600px; margin: 26px auto 0; }
   .output-card { background: #fff; border-radius: 14px; padding: 26px 30px; box-shadow: 0 4px 24px rgba(42,31,28,.1); }
   .output-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -48,7 +57,6 @@
   .copy-btn.done { background: #34a853; }
   .preview-label { font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #999; margin-bottom: 12px; }
 
-  /* PREVIEW CARD */
   .prev-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1.5px solid #e0d5c5; }
   .prev-header { background: #2a1f1c; padding: 18px 22px; text-align: center; }
   .prev-header h1 { font-family: 'Playfair Display', serif; color: #c9a96e; font-size: 1.2rem; margin: 0; }
@@ -96,29 +104,43 @@
 <div class="form-card">
 
   <div class="section-title">This Month's Call</div>
-  <div class="field"><label>Date (shown on page)</label><input type="text" id="callDateDisplay" placeholder="Saturday, June 13, 2026" oninput="scheduleSave()"/></div>
-  <div class="field"><label>Date + Start Time (for countdown)</label><input type="datetime-local" id="callDatetime" oninput="scheduleSave()"/></div>
-  <div class="two-col">
-    <div class="field"><label>Start Time</label><input type="text" id="callStart" placeholder="9:15 am PST" oninput="scheduleSave()"/></div>
-    <div class="field"><label>End Time</label><input type="text" id="callEnd" placeholder="11:15 am PST" oninput="scheduleSave()"/></div>
+  <div class="field">
+    <label>Date and Start Time</label>
+    <input type="datetime-local" id="callDatetime" oninput="onThisChange();scheduleSave()"/>
+    <div class="preview-text" id="thisPreviewText"></div>
+  </div>
+  <div class="field">
+    <label>End Time</label>
+    <input type="datetime-local" id="callEndDatetime" oninput="onThisChange();scheduleSave()"/>
+    <div class="preview-text" id="thisEndPreviewText"></div>
   </div>
 
   <div class="section-title">Links</div>
-  <div class="field"><label>Google Form Link</label><input type="url" id="formLink" placeholder="https://forms.gle/..." oninput="scheduleSave()"/></div>
+  <div class="field">
+    <label>Google Form Link</label>
+    <input type="url" id="formLink" placeholder="https://forms.gle/..." oninput="scheduleSave()"/>
+  </div>
   <div class="toggle-row">
     <label class="tog"><input type="checkbox" id="meetToggle" onchange="toggleMeet();scheduleSave()"/><span class="tog-sl"></span></label>
     <span class="toggle-lbl">Meet link is ready</span>
   </div>
   <div class="meet-wrap" id="meetWrap">
-    <div class="field"><label>Google Meet Link</label><input type="url" id="meetLink" placeholder="https://meet.google.com/..." oninput="scheduleSave()"/></div>
+    <div class="field">
+      <label>Google Meet Link</label>
+      <input type="url" id="meetLink" placeholder="https://meet.google.com/..." oninput="scheduleSave()"/>
+    </div>
   </div>
 
   <div class="section-title">Next Month's Call</div>
-  <div class="field"><label>Date (shown on page)</label><input type="text" id="nextCallDisplay" placeholder="Saturday, July 11, 2026" oninput="scheduleSave()"/></div>
-  <div class="field"><label>Date + Start Time (for calendar button)</label><input type="datetime-local" id="nextCallDatetime" oninput="scheduleSave()"/></div>
-  <div class="two-col">
-    <div class="field"><label>Start Time</label><input type="text" id="nextStart" placeholder="9:15 am PST" oninput="scheduleSave()"/></div>
-    <div class="field"><label>End Time</label><input type="text" id="nextEnd" placeholder="11:15 am PST" oninput="scheduleSave()"/></div>
+  <div class="field">
+    <label>Date and Start Time</label>
+    <input type="datetime-local" id="nextCallDatetime" oninput="onNextChange();scheduleSave()"/>
+    <div class="preview-text" id="nextPreviewText"></div>
+  </div>
+  <div class="field">
+    <label>End Time</label>
+    <input type="datetime-local" id="nextCallEndDatetime" oninput="onNextChange();scheduleSave()"/>
+    <div class="preview-text" id="nextEndPreviewText"></div>
   </div>
 
 </div>
@@ -174,8 +196,40 @@
 <script>
 var saveTimer = null;
 var generatedCode = "";
+
+var DAYS   = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
 function pad2(n) { return n < 10 ? "0" + n : "" + n; }
-function timeFmt(s, e) { if (s && e) return s + " - " + e; if (s) return s; return ""; }
+
+function formatDateLong(dt) {
+  if (!dt) return "";
+  var d = new Date(dt + ":00");
+  return DAYS[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+}
+
+function formatTime12(dt) {
+  if (!dt) return "";
+  var d = new Date(dt + ":00");
+  var h = d.getHours(), m = d.getMinutes();
+  var ampm = h >= 12 ? "pm" : "am";
+  h = h % 12; if (h === 0) h = 12;
+  return h + (m > 0 ? ":" + pad2(m) : "") + " " + ampm + " PST";
+}
+
+function onThisChange() {
+  var start = document.getElementById("callDatetime").value;
+  var end   = document.getElementById("callEndDatetime").value;
+  document.getElementById("thisPreviewText").textContent   = start ? formatDateLong(start) + " at " + formatTime12(start) : "";
+  document.getElementById("thisEndPreviewText").textContent = end   ? "End: " + formatTime12(end) : "";
+}
+
+function onNextChange() {
+  var start = document.getElementById("nextCallDatetime").value;
+  var end   = document.getElementById("nextCallEndDatetime").value;
+  document.getElementById("nextPreviewText").textContent   = start ? formatDateLong(start) + " at " + formatTime12(start) : "";
+  document.getElementById("nextEndPreviewText").textContent = end   ? "End: " + formatTime12(end) : "";
+}
 
 function toggleMeet() {
   document.getElementById("meetWrap").style.display = document.getElementById("meetToggle").checked ? "block" : "none";
@@ -190,19 +244,15 @@ function scheduleSave() {
 
 function doSave() {
   var data = {
-    callDateDisplay:  document.getElementById("callDateDisplay").value,
-    callDatetime:     document.getElementById("callDatetime").value,
-    callStart:        document.getElementById("callStart").value,
-    callEnd:          document.getElementById("callEnd").value,
-    formLink:         document.getElementById("formLink").value,
-    meetOn:           document.getElementById("meetToggle").checked,
-    meetLink:         document.getElementById("meetLink").value,
-    nextCallDisplay:  document.getElementById("nextCallDisplay").value,
-    nextCallDatetime: document.getElementById("nextCallDatetime").value,
-    nextStart:        document.getElementById("nextStart").value,
-    nextEnd:          document.getElementById("nextEnd").value
+    callDatetime:        document.getElementById("callDatetime").value,
+    callEndDatetime:     document.getElementById("callEndDatetime").value,
+    formLink:            document.getElementById("formLink").value,
+    meetOn:              document.getElementById("meetToggle").checked,
+    meetLink:            document.getElementById("meetLink").value,
+    nextCallDatetime:    document.getElementById("nextCallDatetime").value,
+    nextCallEndDatetime: document.getElementById("nextCallEndDatetime").value
   };
-  try { localStorage.setItem("dfy_call_v4", JSON.stringify(data)); } catch(e) {}
+  try { localStorage.setItem("dfy_call_v5", JSON.stringify(data)); } catch(e) {}
   var el = document.getElementById("saveInd");
   el.textContent = "Saved!"; el.className = "save-lbl saved";
   setTimeout(function() { el.textContent = "Auto-saved"; }, 1500);
@@ -210,11 +260,17 @@ function doSave() {
 
 function loadSaved() {
   try {
-    var raw = localStorage.getItem("dfy_call_v4");
+    var raw = localStorage.getItem("dfy_call_v5");
     if (!raw) return;
     var d = JSON.parse(raw);
-    ["callDateDisplay","callDatetime","callStart","callEnd","formLink","meetLink","nextCallDisplay","nextCallDatetime","nextStart","nextEnd"].forEach(function(id) { if (d[id]) document.getElementById(id).value = d[id]; });
+    if (d.callDatetime)        document.getElementById("callDatetime").value        = d.callDatetime;
+    if (d.callEndDatetime)     document.getElementById("callEndDatetime").value     = d.callEndDatetime;
+    if (d.formLink)            document.getElementById("formLink").value            = d.formLink;
+    if (d.meetLink)            document.getElementById("meetLink").value            = d.meetLink;
+    if (d.nextCallDatetime)    document.getElementById("nextCallDatetime").value    = d.nextCallDatetime;
+    if (d.nextCallEndDatetime) document.getElementById("nextCallEndDatetime").value = d.nextCallEndDatetime;
     if (d.meetOn) { document.getElementById("meetToggle").checked = true; document.getElementById("meetWrap").style.display = "block"; }
+    onThisChange(); onNextChange();
     var el = document.getElementById("saveInd");
     el.textContent = "Loaded last session"; el.className = "save-lbl saved";
     setTimeout(function() { el.textContent = "Auto-saved"; }, 2000);
@@ -223,46 +279,54 @@ function loadSaved() {
 
 function clearForm() {
   if (!confirm("Clear all fields and start fresh?")) return;
-  ["callDateDisplay","callDatetime","callStart","callEnd","formLink","meetLink","nextCallDisplay","nextCallDatetime","nextStart","nextEnd"].forEach(function(id) { document.getElementById(id).value = ""; });
+  ["callDatetime","callEndDatetime","formLink","meetLink","nextCallDatetime","nextCallEndDatetime"].forEach(function(id) { document.getElementById(id).value = ""; });
   document.getElementById("meetToggle").checked = false;
   document.getElementById("meetWrap").style.display = "none";
   document.getElementById("outputSection").style.display = "none";
-  try { localStorage.removeItem("dfy_call_v4"); } catch(e) {}
+  ["thisPreviewText","thisEndPreviewText","nextPreviewText","nextEndPreviewText"].forEach(function(id) { document.getElementById(id).textContent = ""; });
+  try { localStorage.removeItem("dfy_call_v5"); } catch(e) {}
   var el = document.getElementById("saveInd");
   el.textContent = "Cleared"; el.className = "save-lbl";
   setTimeout(function() { el.textContent = "Auto-saved"; }, 2000);
 }
 
-function buildGcalUrl(dt, title) {
-  if (!dt) return "#";
-  var d = new Date(dt + ":00"), end = new Date(d.getTime() + 2 * 60 * 60 * 1000);
-  var s = d.getFullYear()   + pad2(d.getMonth()+1)   + pad2(d.getDate())   + "T" + pad2(d.getHours())   + pad2(d.getMinutes())   + "00";
-  var e = end.getFullYear() + pad2(end.getMonth()+1) + pad2(end.getDate()) + "T" + pad2(end.getHours()) + pad2(end.getMinutes()) + "00";
-  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) + "&dates=" + s + "/" + e + "&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet";
+function buildGcalUrl(startDt, endDt, title) {
+  if (!startDt) return "#";
+  var s = new Date(startDt + ":00");
+  var e = endDt ? new Date(endDt + ":00") : new Date(s.getTime() + 2 * 60 * 60 * 1000);
+  var sf = s.getFullYear() + pad2(s.getMonth()+1) + pad2(s.getDate()) + "T" + pad2(s.getHours()) + pad2(s.getMinutes()) + "00";
+  var ef = e.getFullYear() + pad2(e.getMonth()+1) + pad2(e.getDate()) + "T" + pad2(e.getHours()) + pad2(e.getMinutes()) + "00";
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) + "&dates=" + sf + "/" + ef + "&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet";
 }
 
 function generate() {
-  var callDateDisplay  = document.getElementById("callDateDisplay").value.trim()  || "Saturday, June 13, 2026";
-  var callDatetime     = document.getElementById("callDatetime").value.trim()      || "2026-06-13T09:15";
-  var callStart        = document.getElementById("callStart").value.trim()         || "9:15 am PST";
-  var callEnd          = document.getElementById("callEnd").value.trim()           || "11:15 am PST";
-  var callTimeDisplay  = timeFmt(callStart, callEnd);
-  var formLink         = document.getElementById("formLink").value.trim()          || "#";
-  var meetOn           = document.getElementById("meetToggle").checked;
-  var meetLink         = meetOn ? (document.getElementById("meetLink").value.trim() || "#") : "";
-  var nextCallDisplay  = document.getElementById("nextCallDisplay").value.trim()   || "";
-  var nextCallDatetime = document.getElementById("nextCallDatetime").value.trim()  || "";
-  var nextStart        = document.getElementById("nextStart").value.trim()         || "";
-  var nextFullDisplay  = nextCallDisplay + (nextStart ? " at " + nextStart : "");
+  var callDatetime        = document.getElementById("callDatetime").value.trim();
+  var callEndDatetime     = document.getElementById("callEndDatetime").value.trim();
+  var formLink            = document.getElementById("formLink").value.trim() || "#";
+  var meetOn              = document.getElementById("meetToggle").checked;
+  var meetLink            = meetOn ? (document.getElementById("meetLink").value.trim() || "#") : "";
+  var nextCallDatetime    = document.getElementById("nextCallDatetime").value.trim();
+  var nextCallEndDatetime = document.getElementById("nextCallEndDatetime").value.trim();
+
+  if (!callDatetime) { alert("Please pick a date and start time for this month's call."); return; }
+
+  var callDateDisplay  = formatDateLong(callDatetime);
+  var callStartTime    = formatTime12(callDatetime);
+  var callEndTime      = callEndDatetime ? formatTime12(callEndDatetime) : "";
+  var callTimeDisplay  = callEndTime ? callStartTime + " - " + callEndTime : callStartTime;
+  var nextDateDisplay  = nextCallDatetime ? formatDateLong(nextCallDatetime) : "TBD";
+  var nextStartTime    = nextCallDatetime ? formatTime12(nextCallDatetime) : "";
+  var nextFullDisplay  = nextStartTime ? nextDateDisplay + " at " + nextStartTime : nextDateDisplay;
   var liveDisp  = meetOn ? "flex"  : "none";
   var pendDisp  = meetOn ? "none"  : "block";
   var actDisp   = meetOn ? "block" : "none";
-  var thisGcal  = buildGcalUrl(callDatetime,     "DFY Niche Club Monthly Live Call");
-  var nextGcal  = buildGcalUrl(nextCallDatetime, "DFY Niche Club Monthly Live Call");
+  var thisGcal  = buildGcalUrl(callDatetime, callEndDatetime, "DFY Niche Club Monthly Live Call");
+  var nextGcal  = buildGcalUrl(nextCallDatetime, nextCallEndDatetime, "DFY Niche Club Monthly Live Call");
 
+  // update preview
   document.getElementById("prevDate").textContent = callDateDisplay;
   document.getElementById("prevTime").textContent = callTimeDisplay;
-  document.getElementById("prevNext").textContent = nextFullDisplay || "TBD";
+  document.getElementById("prevNext").textContent = nextFullDisplay;
   document.getElementById("prevLive").style.display       = meetOn ? "flex"  : "none";
   document.getElementById("prevPending").style.display    = meetOn ? "none"  : "block";
   document.getElementById("prevMeetActive").style.display = meetOn ? "block" : "none";
