@@ -401,6 +401,15 @@ function buildHTML(){
   html+='<p style="font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#dea193;margin:0;text-align:center;"><a href="https://erank.com" target="_blank" style="color:#dea193;text-decoration:none;">eRank</a>: 15-Month Avg Search Volume</p>';
   html+='</div>';
 
+  // Sort and filter controls
+  html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;padding:1rem 1.25rem;">';
+  html+='<div style="display:grid;grid-template-columns:1fr 260px;gap:12px;align-items:end;">';
+  html+='<div><label for="mkr-search" style="display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;">Filter Keywords</label><input id="mkr-search" type="text" placeholder="Type to search keywords..." style="width:100%;font-family:Jost,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:11px 13px;outline:none;"></div>';
+  html+='<div><label for="mkr-sort" style="display:block;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c4b0a8;margin-bottom:6px;">Sort By</label><select id="mkr-sort" style="width:100%;font-family:Jost,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:10px;padding:11px 13px;outline:none;"><option value="avg-desc">15-mo avg searches: high to low</option><option value="avg-asc">15-mo avg searches: low to high</option><option value="month-desc">'+esc(month)+' searches: high to low</option><option value="month-asc">'+esc(month)+' searches: low to high</option><option value="name-asc">Keyword name: A to Z</option><option value="name-desc">Keyword name: Z to A</option></select></div>';
+  html+='</div>';
+  html+='<p id="mkr-count" style="font-size:13px;color:#c4b0a8;margin:0.75rem 0 0;text-align:center;"></p>';
+  html+='</div>';
+
   // Table column headers
   html+='<div style="display:grid;grid-template-columns:1fr 160px 240px;background:#f5eddf;padding:11px 18px;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
   html+='<span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;">Keywords</span>';
@@ -408,15 +417,17 @@ function buildHTML(){
   html+='<span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5a4a45;text-align:right;">15-MO AVG SEARCHES</span>';
   html+='</div>';
 
+  html+='<div id="mkr-table-rows">';
   // Table rows
   sorted.forEach(function(p,i){
     var color=barColor(p.avg);
     var avgN=num(p.avg);
+    var monthN=num(p.month);
     var barW=avgN>0?Math.max(4,Math.round((avgN/maxAvg)*100)):4;
     var monthVal=fmtNum(p.month);
     var avgVal=fmtNum(p.avg);
     var rowBg=(i%2===0)?'#fff':'#fdf7f2';
-    html+='<div style="display:grid;grid-template-columns:1fr 160px 240px;padding:13px 18px;align-items:center;background:'+rowBg+';border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
+    html+='<div class="mkr-row" data-keyword="'+esc(p.name.toLowerCase())+'" data-month="'+monthN+'" data-avg="'+avgN+'" style="display:grid;grid-template-columns:1fr 160px 240px;padding:13px 18px;align-items:center;background:'+rowBg+';border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;">';
     html+='<span style="font-family:Jost,sans-serif;font-size:17px;color:#2a1f1c;font-weight:500;">'+esc(p.name)+'</span>';
     html+='<span style="font-family:Jost,sans-serif;font-size:17px;color:#5a4a45;text-align:center;display:block;">'+(monthVal||'&mdash;')+'</span>';
     // Bar + number
@@ -428,6 +439,10 @@ function buildHTML(){
     html+='</div>';
     html+='</div>';
   });
+  html+='</div>';
+
+  // Sort/filter script for generated report
+  html+='<script>(function(){var search=document.getElementById("mkr-search");var sort=document.getElementById("mkr-sort");var wrap=document.getElementById("mkr-table-rows");var count=document.getElementById("mkr-count");if(!search||!sort||!wrap)return;function apply(){var rows=Array.prototype.slice.call(wrap.querySelectorAll(".mkr-row"));var q=(search.value||"").toLowerCase().trim();var mode=sort.value;rows.sort(function(a,b){var ak=a.getAttribute("data-keyword")||"";var bk=b.getAttribute("data-keyword")||"";var am=parseInt(a.getAttribute("data-month")||"0",10);var bm=parseInt(b.getAttribute("data-month")||"0",10);var aa=parseInt(a.getAttribute("data-avg")||"0",10);var ba=parseInt(b.getAttribute("data-avg")||"0",10);if(mode==="name-asc")return ak.localeCompare(bk);if(mode==="name-desc")return bk.localeCompare(ak);if(mode==="month-asc")return am-bm;if(mode==="month-desc")return bm-am;if(mode==="avg-asc")return aa-ba;return ba-aa;});var shown=0;rows.forEach(function(row,i){var match=!q||(row.getAttribute("data-keyword")||"").indexOf(q)>-1;row.style.display=match?"grid":"none";if(match){row.style.background=(shown%2===0)?"#fff":"#fdf7f2";shown++;}wrap.appendChild(row);});if(count){count.textContent=shown+" keyword"+(shown===1?"":"s")+" showing";}}search.addEventListener("input",apply);sort.addEventListener("change",apply);apply();})();<\/script>';
 
   // eRank footer
   html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 12px 12px;padding:1.5rem 2rem;text-align:center;">';
