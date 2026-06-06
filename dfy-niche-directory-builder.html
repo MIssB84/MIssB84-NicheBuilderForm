@@ -4,87 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DFY Niche Directory Builder</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Jost:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 6rem;font-size:115%;color:#2a1f1c;}
+body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem 6rem;color:#2a1f1c;font-size:115%;}
 .page-header{text-align:center;margin-bottom:2rem;}
-.badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:7px 18px;border-radius:20px;margin-bottom:.75rem;}
+.badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#dea193;background:#2a1f1c;padding:7px 18px;border-radius:999px;margin-bottom:.75rem;}
 .page-title{font-family:'Playfair Display',serif;font-size:2.45rem;font-weight:700;color:#2a1f1c;margin-bottom:.25rem;}
-.page-sub{font-size:16px;color:#8b746d;}
-.card{background:#fff;border-radius:16px;border:1px solid #ead9d5;padding:2rem;margin-bottom:1.75rem;max-width:1050px;margin-left:auto;margin-right:auto;box-shadow:0 10px 35px rgba(42,31,28,.04);}
-.card-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#2a1f1c;margin-bottom:.2rem;}
-.card-sub{font-size:15px;color:#8b746d;margin-bottom:1.2rem;line-height:1.6;}
+.page-sub{font-size:16px;color:#8b746d;line-height:1.6;}
+.card{background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:2rem;margin:0 auto 1.75rem;max-width:980px;box-shadow:0 10px 35px rgba(42,31,28,.04);}
+.card-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#2a1f1c;margin-bottom:.25rem;}
+.card-sub{font-size:15px;color:#8b746d;margin-bottom:1.2rem;line-height:1.65;}
 .fl{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:6px;display:block;}
-.fi{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:14px 16px;font-family:'Jost',sans-serif;font-size:17px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color .2s;}
-.fi:focus{border-color:#dea193;}
+.fi,.ta,select{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:13px 15px;font-family:'Jost',sans-serif;font-size:16px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color .2s;}
+.fi:focus,.ta:focus,select:focus{border-color:#dea193;}
+.ta{min-height:170px;resize:vertical;line-height:1.6;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
-.niche-row{display:grid;grid-template-columns:80px 1.5fr 190px;gap:10px;align-items:center;margin-bottom:10px;}
-.niche-num{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#a98f87;}
-.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:1rem;}
-.btn{font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all .2s;padding:11px 20px;}
+.row3{display:grid;grid-template-columns:1.15fr 1fr 42px;gap:8px;align-items:end;margin-bottom:10px;}
+.niche-row{display:grid;grid-template-columns:1.15fr 1fr 42px;gap:8px;align-items:center;margin-bottom:9px;}
+.del-btn{background:transparent;border:1.5px solid #ead9d5;border-radius:8px;color:#a98f87;font-size:20px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.del-btn:hover{border-color:#dea193;color:#dea193;}
+.btn{font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;cursor:pointer;border:1.5px solid;transition:all .2s;padding:11px 20px;}
 .btn-primary{background:#dea193;color:#2a1f1c;border-color:#dea193;}
 .btn-primary:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
-.btn-dark{background:#2a1f1c;color:#dea193;border-color:#2a1f1c;}
-.btn-dark:hover{background:#dea193;color:#2a1f1c;border-color:#dea193;}
-.btn-outline{background:transparent;color:#dea193;border-color:#dea193;}
-.btn-outline:hover{background:#dea193;color:#2a1f1c;}
-.btn-muted{background:transparent;color:#8b746d;border-color:#ead9d5;}
-.btn-muted:hover{border-color:#dea193;color:#2a1f1c;}
-.weeks-list{display:grid;gap:12px;}
-.week-card{border:1px solid #ead9d5;background:#fdf7f2;border-radius:14px;padding:1rem;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;}
-.week-title{font-weight:800;color:#2a1f1c;font-size:17px;}
-.week-meta{font-size:14px;color:#8b746d;margin-top:4px;line-height:1.5;}
-.week-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
-.small-btn{font-size:11px;padding:8px 12px;}
-.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,.3);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:10px;}
-.save-status{font-size:13px;color:#c4b0a8;display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.btn-dark{background:#2a1f1c;color:#dea193;border-color:#dea193;}
+.btn-dark:hover{background:#dea193;color:#2a1f1c;}
+.btn-soft{background:transparent;color:#dea193;border-color:#dea193;}
+.btn-soft:hover{background:#dea193;color:#2a1f1c;}
+.btn-muted{background:transparent;color:#8b746d;border-color:rgba(139,116,109,.35);font-size:12px;padding:9px 14px;}
+.btn-muted:hover{border-color:#8b746d;color:#2a1f1c;}
+.tip-box{background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1rem 1.15rem;margin-bottom:1rem;}
+.tip-box p{font-size:14px;color:#5a4a45;line-height:1.65;margin-bottom:.5rem;}
+.tip-box code{background:#fff;border:1px solid #ead9d5;border-radius:6px;padding:2px 6px;font-family:monospace;font-size:13px;}
+.week-card{background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin-top:1rem;}
+.week-title{font-weight:800;color:#2a1f1c;margin-bottom:.3rem;}
+.week-meta{font-size:14px;color:#8b746d;margin-bottom:.7rem;}
+.week-list{display:flex;flex-wrap:wrap;gap:7px;}
+.pill{font-size:12px;font-weight:800;color:#5a4a45;background:#fff;border:1px solid #ead9d5;border-radius:999px;padding:6px 10px;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,.3);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:100;}
+.save-status{font-size:13px;color:#c4b0a8;display:flex;align-items:center;gap:7px;}
 .sdot{width:7px;height:7px;border-radius:50%;background:#c4b0a8;}.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
-.save-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
-.sbtn{font-family:'Jost',sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:10px 17px;border-radius:30px;cursor:pointer;border:1.5px solid;transition:all .2s;white-space:nowrap;}
-.sbtn-save{background:transparent;color:#dea193;border-color:#dea193;}.sbtn-save:hover{background:#dea193;color:#2a1f1c;}
-.sbtn-preview{background:transparent;color:#f5eddf;border-color:rgba(245,237,223,.45);}.sbtn-preview:hover{background:#f5eddf;color:#2a1f1c;}
-.sbtn-gen{background:#dea193;color:#2a1f1c;border-color:#dea193;}.sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
-.sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,.4);font-size:11px;padding:8px 13px;}.sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
-#out{display:none;max-width:1050px;margin:0 auto;}
+#out{display:none;max-width:980px;margin:0 auto;}
 .out-card{background:#fff;border-radius:16px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 10px 35px rgba(42,31,28,.04);}
 .out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .out-card-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;color:#f5eddf;}
-.copy-all-btn{font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:11px 28px;border-radius:30px;cursor:pointer;transition:all .2s;display:none;}
+.copy-all-btn{display:none;font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:11px 28px;border-radius:999px;cursor:pointer;transition:all .2s;}
 .copy-all-btn.show{display:inline-block;}.copy-all-btn:hover{background:#bb7d72;color:#fff;}
 .out-preview{padding:1.5rem;background:#f0e8df;}
-.toast{position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;padding:11px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
-@media(max-width:820px){.row2,.row3,.niche-row{grid-template-columns:1fr}.save-bar{align-items:flex-start;flex-direction:column}.save-actions{justify-content:flex-start}.week-card{flex-direction:column}.week-actions{justify-content:flex-start}.page-title{font-size:2rem}.card{padding:1.4rem}}
+.toast{position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-size:13px;font-weight:800;letter-spacing:.1em;padding:11px 24px;border-radius:999px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+@media(max-width:820px){.row2,.row3,.niche-row{grid-template-columns:1fr;}.del-btn{width:100%;}.save-bar{align-items:flex-start;flex-direction:column;}.save-bar>div:last-child{width:100%;justify-content:flex-start!important;}.btn{font-size:11px;padding:9px 12px;}}
 </style>
 </head>
 <body>
 <div class="page-header">
   <div class="badge">DFY Niche Club</div>
   <h1 class="page-title">Niche Directory Builder</h1>
-  <p class="page-sub">Add each weekly drop once, then generate a searchable member directory.</p>
+  <p class="page-sub">Add weekly niche drops, bulk import past drops, preview, and generate a searchable member directory.</p>
 </div>
 
 <div class="card">
-  <p class="card-title">Add Weekly Drop</p>
-  <p class="card-sub">Pick the date, paste the weekly drop link once, then enter the 7 niches. All niches from that week will link back to the same drop.</p>
-  <div class="row3">
-    <div><label class="fl" for="week-month">Month</label><select class="fi" id="week-month"><option value="">Select Month...</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
-    <div><label class="fl" for="week-day">Day</label><input class="fi" id="week-day" type="number" min="1" max="31" placeholder="e.g. 25"></div>
-    <div><label class="fl" for="week-year">Year</label><select class="fi" id="week-year"><option value="">Select Year...</option></select></div>
+  <p class="card-title">Bulk Import Past Drops</p>
+  <p class="card-sub">Use this to add your older niche drops faster. Paste one week at a time or multiple weeks if they follow the same pattern.</p>
+  <div class="tip-box">
+    <p><strong>Recommended format:</strong></p>
+    <p><code>May 25, 2026</code><br><code>LINK: https://your-weekly-drop-link.com</code><br><code>Funny Goose Bathroom Printable Wall Art | Wall Art</code><br><code>There Is Sunshine In My Soul PNG | PNG</code></p>
+    <p>If you leave off the product type after the pipe, it will import as <strong>Other</strong>.</p>
   </div>
-  <div style="margin-bottom:16px;"><label class="fl" for="week-url">Weekly Drop Link</label><input class="fi" id="week-url" placeholder="Paste Systeme.io weekly drop URL..."></div>
+  <textarea class="ta" id="bulk-import" placeholder="Paste past drops here...&#10;&#10;May 25, 2026&#10;LINK: https://your-link.com&#10;Funny Goose Bathroom Printable Wall Art | Wall Art&#10;There Is Sunshine In My Soul PNG | PNG"></textarea>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem;">
+    <button class="btn btn-primary" onclick="bulkImport()">Import Past Drops</button>
+    <button class="btn btn-muted" onclick="document.getElementById('bulk-import').value=''">Clear Import Box</button>
+  </div>
+</div>
+
+<div class="card">
+  <p class="card-title">Add New Weekly Drop</p>
+  <p class="card-sub">For future drops, paste the weekly drop URL once. Each niche in that week will link back to the same full drop.</p>
+  <div class="row2">
+    <div>
+      <label class="fl" for="week-date">Week Date</label>
+      <input class="fi" id="week-date" type="date">
+    </div>
+    <div>
+      <label class="fl" for="week-link">Weekly Drop URL</label>
+      <input class="fi" id="week-link" placeholder="Paste Systeme weekly drop link...">
+    </div>
+  </div>
+  <div class="row3" style="margin-top:.75rem;">
+    <span class="fl" style="margin:0;">Niche Name</span>
+    <span class="fl" style="margin:0;">Product Type</span>
+    <span></span>
+  </div>
   <div id="niche-inputs"></div>
-  <div class="action-row">
-    <button class="btn btn-primary" onclick="addWeek()">+ Add Week to Directory</button>
-    <button class="btn btn-muted" onclick="clearWeekForm()">Clear Week Form</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:.75rem;">
+    <button class="btn btn-soft" onclick="addNicheInput()">+ Add Niche Row</button>
+    <button class="btn btn-primary" onclick="addWeekFromForm()">Add Week</button>
   </div>
 </div>
 
 <div class="card">
   <p class="card-title">Saved Weekly Drops</p>
-  <p class="card-sub">Newest weeks will appear first in the member directory. You can delete a week if needed.</p>
-  <div id="weeks-list" class="weeks-list"></div>
+  <p class="card-sub"><span id="week-count">0</span> weeks saved. <span id="niche-count">0</span> niches total.</p>
+  <div id="saved-weeks"></div>
 </div>
 
 <div id="out">
@@ -100,61 +121,70 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 
 <div class="save-bar">
   <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
-  <div class="save-actions">
-    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear All</button>
-    <button class="sbtn sbtn-save" onclick="saveData()">Save</button>
-    <button class="sbtn sbtn-preview" onclick="previewDirectory()">Preview</button>
-    <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
+  <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+    <button class="btn btn-muted" onclick="clearAll()">Clear All</button>
+    <button class="btn btn-soft" onclick="saveData()">Save</button>
+    <button class="btn btn-dark" onclick="previewDirectory()">Preview</button>
+    <button class="btn btn-primary" onclick="generateHTML()">Generate HTML</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-var SK='dfy_niche_directory_v1';
+var SK='dfy_niche_directory_builder_v2';
 var weeks=[];
-var isDirty=false;
-var productTypes=['PNG','Printable Wall Art','Frame TV Art','Tumbler Wrap','Tumbler Wrap PNG','Invitation','Canva Template','SVG','Clipart','Digital Paper','Sublimation Design','POD','Other'];
-var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var productTypes=['Wall Art','Frame TV Art','PNG','Tumbler Wrap','Canva Template','Invitation','Planner','Journal','SVG','Clipart','Digital Paper','Sublimation Design','POD','Other'];
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function v(id){return (document.getElementById(id)||{}).value||'';}
-function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2400);}
 function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
-function markDirty(){isDirty=true;setStatus('unsaved','Unsaved changes');scheduleAutoSave();}
-function monthIndex(m){return months.indexOf(m);}
-function dateLabel(w){return w.month+' '+w.day+', '+w.year;}
-function monthYear(w){return w.month+' '+w.year;}
-function sortableDate(w){return Number(w.year)*10000+(monthIndex(w.month)+1)*100+Number(w.day||0);}
-function inferType(name){var n=(name||'').toLowerCase(); if(n.includes('frame tv'))return 'Frame TV Art'; if(n.includes('wall art'))return 'Printable Wall Art'; if(n.includes('tumbler wrap')&&n.includes('png'))return 'Tumbler Wrap PNG'; if(n.includes('tumbler'))return 'Tumbler Wrap'; if(n.includes('invitation')||n.includes('invite'))return 'Invitation'; if(n.includes('canva'))return 'Canva Template'; if(n.includes('svg'))return 'SVG'; if(n.includes('clipart'))return 'Clipart'; if(n.includes('digital paper'))return 'Digital Paper'; if(n.includes('sublimation'))return 'Sublimation Design'; if(n.includes('png'))return 'PNG'; return 'Other';}
-function typeSelectHTML(i){var html='<select class="fi" id="niche-type-'+i+'"><option value="">Auto Detect</option>';productTypes.forEach(function(t){html+='<option>'+esc(t)+'</option>';});html+='</select>';return html;}
-function buildNicheInputs(){var wrap=document.getElementById('niche-inputs');wrap.innerHTML='';for(var i=1;i<=7;i++){var row=document.createElement('div');row.className='niche-row';row.innerHTML='<div class="niche-num">Niche '+i+'</div><input class="fi" id="niche-name-'+i+'" placeholder="Enter niche '+i+'...">'+typeSelectHTML(i);wrap.appendChild(row);}document.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',markDirty);el.addEventListener('change',markDirty);});}
-function buildYears(){var y=document.getElementById('week-year');var current=new Date().getFullYear();for(var i=0;i<=2;i++){var opt=document.createElement('option');opt.value=String(current+i);opt.textContent=String(current+i);y.appendChild(opt);}}
-function clearWeekForm(){document.getElementById('week-month').value='';document.getElementById('week-day').value='';document.getElementById('week-year').value='';document.getElementById('week-url').value='';for(var i=1;i<=7;i++){document.getElementById('niche-name-'+i).value='';document.getElementById('niche-type-'+i).value='';}}
-function addWeek(){var m=v('week-month'),d=v('week-day'),y=v('week-year'),url=v('week-url').trim();if(!m||!d||!y){toast('Please select month, day, and year.');return;}if(!url){toast('Please paste the weekly drop link.');return;}var niches=[];for(var i=1;i<=7;i++){var name=v('niche-name-'+i).trim();var type=v('niche-type-'+i)||inferType(name);if(name){niches.push({name:name,type:type});}}if(!niches.length){toast('Add at least one niche.');return;}weeks.push({id:Date.now(),month:m,day:d,year:y,url:url,niches:niches});weeks.sort(function(a,b){return sortableDate(b)-sortableDate(a);});renderWeeks();saveData();clearWeekForm();toast('Week added!');}
-function deleteWeek(id){if(!confirm('Delete this weekly drop from the directory?'))return;weeks=weeks.filter(function(w){return String(w.id)!==String(id);});renderWeeks();saveData();}
-function renderWeeks(){var list=document.getElementById('weeks-list');if(!weeks.length){list.innerHTML='<div style="color:#8b746d;font-size:15px;">No weekly drops added yet.</div>';return;}list.innerHTML='';weeks.forEach(function(w){var div=document.createElement('div');div.className='week-card';div.innerHTML='<div><div class="week-title">'+esc(dateLabel(w))+'</div><div class="week-meta">'+w.niches.length+' niches added<br>'+esc(w.niches.map(function(n){return n.name;}).join(', '))+'</div></div><div class="week-actions"><a class="btn btn-outline small-btn" href="'+esc(w.url)+'" target="_blank">Open Drop</a><button class="btn btn-muted small-btn" onclick="deleteWeek(\''+w.id+'\')">Delete</button></div>';list.appendChild(div);});}
-function saveData(){try{localStorage.setItem(SK,JSON.stringify({weeks:weeks}));isDirty=false;setStatus('saved','Saved just now');}catch(e){toast('Could not save');}}
-var autoTimer;function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData();setStatus('saved','Auto-saved');},1000);}
-function loadData(){try{var raw=localStorage.getItem(SK);if(raw){weeks=(JSON.parse(raw).weeks)||[];weeks.sort(function(a,b){return sortableDate(b)-sortableDate(a);});setStatus('saved','Saved directory loaded');}else{setStatus('unsaved','Nothing saved yet');}}catch(e){setStatus('unsaved','Could not load');}renderWeeks();}
-function clearAll(){if(!confirm('Clear the full directory? This cannot be undone.'))return;weeks=[];localStorage.removeItem(SK);renderWeeks();document.getElementById('out').style.display='none';setStatus('unsaved','Cleared');toast('Directory cleared.');}
-function groupByMonthYear(){var grouped={};weeks.forEach(function(w){var key=monthYear(w);if(!grouped[key])grouped[key]=[];grouped[key].push(w);});return grouped;}
-function totalNiches(){return weeks.reduce(function(sum,w){return sum+w.niches.length;},0);}
-function typeEmoji(t){if(t==='PNG')return '🎨'; if(t==='Printable Wall Art')return '🖼️'; if(t==='Frame TV Art')return '📺'; if(t.includes('Tumbler'))return '🥤'; if(t==='Invitation')return '✉️'; if(t==='Canva Template')return '✨'; if(t==='SVG')return '✂️'; if(t==='Clipart')return '🌸'; if(t==='Digital Paper')return '📄'; if(t==='POD')return '👕'; return '🌿';}
-function buildDirectoryHTML(){var rid='dfy_'+Math.random().toString(36).slice(2,9);var total=totalNiches();var latest=weeks[0];var html='<div id="'+rid+'" style="font-family:Jost,Arial,sans-serif;max-width:980px;margin:0 auto;color:#2a1f1c;font-size:115%;">';
-html+='<style>#'+rid+' *{box-sizing:border-box;}#'+rid+' .dfy-control{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:12px 14px;font-family:Jost,Arial,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;outline:none;}#'+rid+' .dfy-card{background:#fff;border:1px solid #ead9d5;border-radius:14px;padding:18px;margin-bottom:14px;}#'+rid+' details{background:#fff;border:1px solid #ead9d5;border-radius:14px;margin-bottom:14px;overflow:hidden;}#'+rid+' summary{cursor:pointer;background:#f5eddf;padding:16px 18px;font-weight:800;font-size:18px;list-style:none;}#'+rid+' summary::-webkit-details-marker{display:none;}#'+rid+' .week{padding:18px;border-top:1px solid #ead9d5;}#'+rid+' .niche-grid{display:grid;grid-template-columns:1fr 160px 150px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f1e5e1;}#'+rid+' .niche-grid:last-child{border-bottom:none;}#'+rid+' .drop-btn{font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:9px 13px;border-radius:999px;text-decoration:none;display:inline-block;text-align:center;white-space:nowrap;}#'+rid+' .drop-btn:hover{background:#bb7d72;color:#fff;border-color:#bb7d72;}#'+rid+' .empty{display:none;background:#fff;border:1px solid #ead9d5;border-radius:14px;padding:20px;text-align:center;color:#5a4a45;}@media(max-width:720px){#'+rid+' .controls{grid-template-columns:1fr!important;}#'+rid+' .niche-grid{grid-template-columns:1fr;}#'+rid+' .drop-btn{text-align:center;width:100%;}}</style>';
-html+='<div style="background:#2a1f1c;border-radius:16px 16px 0 0;padding:2.1rem 2.3rem;text-align:center;"><p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 .55rem;">DFY Niche Club</p><h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.65rem;font-weight:700;color:#f5eddf;margin:0 0 .45rem;line-height:1.12;">The Niche Directory</h2><p style="font-size:1.05rem;color:#dea193;margin:0;line-height:1.6;">Browse every niche added to the club. Search by keyword, product type, or month.</p></div>';
-html+='<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;padding:1.4rem 2rem;text-align:center;"><div style="display:inline-block;background:#fff;border:1px solid #ead9d5;border-radius:999px;padding:10px 22px;font-weight:800;color:#2a1f1c;">✨ '+total+' Niches Inside</div></div>';
-if(latest){html+='<div class="dfy-card" style="border-radius:0 0 14px 14px;margin-bottom:18px;"><p style="font-family:Playfair Display,Georgia,serif;font-size:1.45rem;font-weight:700;margin:0 0 .4rem;text-align:center;">Recently Added</p><p style="font-size:15px;color:#8b746d;text-align:center;margin:0 0 1rem;">'+esc(dateLabel(latest))+'</p>';latest.niches.forEach(function(n){html+='<div class="niche-grid dfy-item" data-name="'+esc(n.name.toLowerCase())+'" data-type="'+esc(n.type)+'" data-month="'+esc(monthYear(latest))+'"><div><strong>'+esc(n.name)+'</strong></div><div>'+typeEmoji(n.type)+' '+esc(n.type)+'</div><div><a class="drop-btn" href="'+esc(latest.url)+'" target="_blank">View Drop</a></div></div>';});html+='</div>';}
-var allTypes=[];weeks.forEach(function(w){w.niches.forEach(function(n){if(allTypes.indexOf(n.type)<0)allTypes.push(n.type);});});allTypes.sort();
-html+='<div class="dfy-card"><div class="controls" style="display:grid;grid-template-columns:1fr 220px;gap:12px;"><input class="dfy-control" id="'+rid+'_search" placeholder="Search niches..." oninput="'+rid+'_filter()"><select class="dfy-control" id="'+rid+'_type" onchange="'+rid+'_filter()"><option value="">All Product Types</option>';allTypes.forEach(function(t){html+='<option value="'+esc(t)+'">'+esc(t)+'</option>';});html+='</select></div></div>';
-var grouped=groupByMonthYear();Object.keys(grouped).sort(function(a,b){return sortableDate(grouped[b][0])-sortableDate(grouped[a][0]);}).forEach(function(key,idx){html+='<details '+(idx===0?'open':'')+' class="dfy-month"><summary>▾ '+esc(key)+'</summary>';grouped[key].forEach(function(w){html+='<div class="week"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;"><h3 style="font-family:Playfair Display,Georgia,serif;font-size:1.4rem;margin:0;">'+esc(dateLabel(w))+'</h3><a class="drop-btn" href="'+esc(w.url)+'" target="_blank">View Weekly Drop</a></div>';w.niches.forEach(function(n){html+='<div class="niche-grid dfy-item" data-name="'+esc(n.name.toLowerCase())+'" data-type="'+esc(n.type)+'" data-month="'+esc(key)+'"><div><strong>'+esc(n.name)+'</strong></div><div>'+typeEmoji(n.type)+' '+esc(n.type)+'</div><div><a class="drop-btn" href="'+esc(w.url)+'" target="_blank">View Drop</a></div></div>';});html+='</div>';});html+='</details>';});
-html+='<div id="'+rid+'_empty" class="empty">No niches match your search.</div>';
-html+='<script>function '+rid+'_filter(){var root=document.getElementById("'+rid+'");var q=(document.getElementById("'+rid+'_search").value||"").toLowerCase();var type=document.getElementById("'+rid+'_type").value;var items=root.querySelectorAll(".dfy-item");var visible=0;items.forEach(function(it){var ok=it.dataset.name.indexOf(q)>-1&&(!type||it.dataset.type===type);it.style.display=ok?"grid":"none";if(ok)visible++;});root.querySelectorAll("details.dfy-month").forEach(function(d){var has=Array.prototype.slice.call(d.querySelectorAll(".dfy-item")).some(function(it){return it.style.display!=="none";});d.style.display=has?"block":"none";if(q||type){d.open=true;}});document.getElementById("'+rid+'_empty").style.display=visible?"none":"block";}<\/script>';
+function formatDate(dateStr){if(!dateStr)return'';var d=new Date(dateStr+'T12:00:00');return d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});}
+function monthKey(dateStr){var d=new Date(dateStr+'T12:00:00');return d.toLocaleDateString('en-US',{month:'long',year:'numeric'});}
+function typeOptions(selected){return productTypes.map(function(t){return '<option value="'+esc(t)+'" '+(t===selected?'selected':'')+'>'+esc(t)+'</option>';}).join('');}
+function addNicheInput(name,type){var wrap=document.getElementById('niche-inputs');var row=document.createElement('div');row.className='niche-row';row.innerHTML='<input class="fi niche-name" placeholder="Niche name" value="'+esc(name||'')+'"><select class="fi niche-type">'+typeOptions(type||'Other')+'</select><button class="del-btn" onclick="this.closest(\'.niche-row\').remove()">×</button>';wrap.appendChild(row);row.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',function(){setStatus('unsaved','Unsaved changes');});el.addEventListener('change',function(){setStatus('unsaved','Unsaved changes');});});}
+function addDefaultRows(){document.getElementById('niche-inputs').innerHTML='';for(var i=0;i<7;i++)addNicheInput('', 'Other');}
+function collectFormNiches(){return Array.prototype.slice.call(document.querySelectorAll('.niche-row')).map(function(r){return{name:r.querySelector('.niche-name').value.trim(),type:r.querySelector('.niche-type').value};}).filter(function(n){return n.name;});}
+function addWeekFromForm(){var date=document.getElementById('week-date').value;var link=document.getElementById('week-link').value.trim();var niches=collectFormNiches();if(!date){toast('Please choose a week date.');return;}if(!niches.length){toast('Add at least one niche.');return;}weeks.push({date:date,link:link,niches:niches});sortWeeks();renderSavedWeeks();saveData();addDefaultRows();document.getElementById('week-date').value='';document.getElementById('week-link').value='';toast('Week added!');}
+function sortWeeks(){weeks.sort(function(a,b){return new Date(b.date)-new Date(a.date);});}
+function parseDateLine(line){var d=new Date(line);if(!isNaN(d.getTime())){var y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}return'';}
+function bulkImport(){var txt=document.getElementById('bulk-import').value.trim();if(!txt){toast('Paste something to import.');return;}var lines=txt.split(/\r?\n/).map(function(l){return l.trim();}).filter(Boolean);var current=null, imported=0;
+  lines.forEach(function(line){
+    var parsedDate=parseDateLine(line);
+    if(parsedDate){if(current&&current.niches.length){weeks.push(current);imported++;}current={date:parsedDate,link:'',niches:[]};return;}
+    if(!current)return;
+    if(/^link\s*:/i.test(line)){current.link=line.replace(/^link\s*:/i,'').trim();return;}
+    var clean=line.replace(/^[-•*]\s*/,'').replace(/^Niche\s*\d+\s*:\s*/i,'').trim();
+    if(!clean)return;
+    var parts=clean.split('|');
+    var name=(parts[0]||'').trim();
+    var type=(parts[1]||'Other').trim();
+    if(name){current.niches.push({name:name,type:type||'Other'});}
+  });
+  if(current&&current.niches.length){weeks.push(current);imported++;}
+  if(!imported){toast('No weeks found. Make sure each week starts with a date.');return;}
+  sortWeeks();renderSavedWeeks();saveData();document.getElementById('bulk-import').value='';toast('Imported '+imported+' week'+(imported===1?'':'s')+'!');
+}
+function renderSavedWeeks(){var wrap=document.getElementById('saved-weeks');wrap.innerHTML='';var total=weeks.reduce(function(s,w){return s+w.niches.length;},0);document.getElementById('week-count').textContent=weeks.length;document.getElementById('niche-count').textContent=total;weeks.forEach(function(w,idx){var div=document.createElement('div');div.className='week-card';div.innerHTML='<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;"><div><p class="week-title">'+esc(formatDate(w.date))+'</p><p class="week-meta">'+w.niches.length+' niches'+(w.link?' • Link added':' • No link')+'</p></div><button class="btn btn-muted" onclick="deleteWeek('+idx+')">Delete</button></div><div class="week-list">'+w.niches.map(function(n){return '<span class="pill">'+esc(n.name)+' · '+esc(n.type||'Other')+'</span>';}).join('')+'</div>';wrap.appendChild(div);});}
+function deleteWeek(idx){if(!confirm('Delete this saved week?'))return;weeks.splice(idx,1);renderSavedWeeks();saveData();}
+function saveData(){localStorage.setItem(SK,JSON.stringify({weeks:weeks}));setStatus('saved','Saved just now');}
+function loadData(){try{var raw=localStorage.getItem(SK);if(raw){weeks=JSON.parse(raw).weeks||[];sortWeeks();renderSavedWeeks();setStatus('saved','Saved directory loaded');}else{setStatus('unsaved','Nothing saved yet');}}catch(e){setStatus('unsaved','Could not load');}addDefaultRows();}
+function clearAll(){if(!confirm('Clear all saved niche directory data?'))return;weeks=[];localStorage.removeItem(SK);renderSavedWeeks();setStatus('unsaved','Cleared');toast('Cleared.');}
+function buildDirectoryHTML(){var total=weeks.reduce(function(s,w){return s+w.niches.length;},0);var rid='dfy_'+Math.random().toString(36).slice(2,9);var allTypes={};weeks.forEach(function(w){w.niches.forEach(function(n){allTypes[n.type||'Other']=true;});});var types=Object.keys(allTypes).sort();
+var html='<div id="'+rid+'" style="font-family:Jost,Arial,sans-serif;max-width:960px;margin:0 auto;color:#2a1f1c;font-size:115%;">';
+html+='<style>#'+rid+' *{box-sizing:border-box;}#'+rid+' .dfy-control{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:12px 14px;font-family:Jost,Arial,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;outline:none;}#'+rid+' .dfy-card{background:#fff;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin-bottom:.85rem;}#'+rid+' .dfy-month{margin-bottom:1rem;}#'+rid+' .dfy-month-btn{width:100%;text-align:left;background:#2a1f1c;color:#dea193;border:none;border-radius:12px;padding:14px 18px;font-family:Jost,Arial,sans-serif;font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;}#'+rid+' .dfy-week{background:#fff;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin:.75rem 0;}#'+rid+' .dfy-pill{display:inline-block;background:#f5eddf;border:1px solid #ead9d5;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;color:#5a4a45;margin:0 6px 6px 0;}#'+rid+' .dfy-link{display:inline-block;margin-top:.75rem;background:#dea193;color:#2a1f1c;border-radius:999px;padding:9px 18px;text-decoration:none;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}#'+rid+' .dfy-link:hover{background:#bb7d72;color:#fff;}#'+rid+' .dfy-hidden{display:none!important;}@media(max-width:720px){#'+rid+' .dfy-grid{grid-template-columns:1fr!important;}}</style>';
+html+='<div style="background:#2a1f1c;border-radius:16px 16px 0 0;padding:2rem 2.25rem;text-align:center;"><p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 .5rem;">DFY Niche Club</p><h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;font-weight:700;color:#f5eddf;margin:0 0 .45rem;line-height:1.15;">Niche Directory</h2><p style="font-size:1.15rem;color:#dea193;font-weight:700;margin:0;">Search every niche added to the club.</p></div>';
+html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2rem;text-align:center;"><div style="display:inline-block;background:#fdf7f2;border:1px solid #ead9d5;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:800;color:#2a1f1c;">✨ '+total+' Niches Inside</div></div>';
+if(weeks[0]){var latest=weeks[0];html+='<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-top:1px solid #ead9d5;padding:1.5rem 2rem;"><p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;text-align:center;margin:0 0 1rem;">Recently Added</p><div class="dfy-card"><p style="font-weight:800;margin:0 0 .25rem;">'+esc(formatDate(latest.date))+'</p><div>'+latest.niches.map(function(n){return '<span class="dfy-pill">'+esc(n.name)+' · '+esc(n.type||'Other')+'</span>';}).join('')+'</div>'+(latest.link?'<a class="dfy-link" href="'+esc(latest.link)+'" target="_blank">View Latest Drop</a>':'')+'</div></div>';}
+html+='<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-top:1px solid #ead9d5;padding:1.5rem 2rem;"><div class="dfy-grid" style="display:grid;grid-template-columns:1fr 260px;gap:12px;"><input class="dfy-control" id="'+rid+'_search" placeholder="Search niches..." oninput="'+rid+'_filter()"><select class="dfy-control" id="'+rid+'_type" onchange="'+rid+'_filter()"><option value="">All Product Types</option>'+types.map(function(t){return '<option value="'+esc(t.toLowerCase())+'">'+esc(t)+'</option>';}).join('')+'</select></div><p id="'+rid+'_results" style="font-size:14px;color:#8b746d;margin:1rem 0 0;text-align:center;"></p></div>';
+var groups={};weeks.forEach(function(w){var mk=monthKey(w.date);if(!groups[mk])groups[mk]=[];groups[mk].push(w);});
+html+='<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 16px 16px;padding:1.5rem 2rem;">';
+Object.keys(groups).forEach(function(mk,i){html+='<div class="dfy-month"><button class="dfy-month-btn" onclick="var n=this.nextElementSibling;n.style.display=n.style.display===\'none\'?\'block\':\'none\';">'+(i===0?'▾ ':'▸ ')+esc(mk)+'</button><div class="dfy-month-content" style="display:'+(i===0?'block':'none')+';">';groups[mk].forEach(function(w){html+='<div class="dfy-week" data-week="'+esc(formatDate(w.date).toLowerCase())+'">';html+='<p style="font-weight:800;margin:0 0 .6rem;color:#2a1f1c;">'+esc(formatDate(w.date))+'</p>';w.niches.forEach(function(n){html+='<div class="dfy-item" data-name="'+esc(n.name.toLowerCase())+'" data-type="'+esc((n.type||'Other').toLowerCase())+'" style="padding:8px 0;border-top:1px solid #f0e8df;"><span style="font-weight:700;">'+esc(n.name)+'</span><span style="font-size:12px;font-weight:800;color:#8b746d;background:#f5eddf;border:1px solid #ead9d5;border-radius:999px;padding:4px 8px;margin-left:8px;white-space:nowrap;">'+esc(n.type||'Other')+'</span></div>';});if(w.link){html+='<a class="dfy-link" href="'+esc(w.link)+'" target="_blank">View This Drop</a>';}html+='</div>';});html+='</div></div>';});
+html+='<p id="'+rid+'_empty" style="display:none;text-align:center;color:#5a4a45;background:#fff;border:1px solid #ead9d5;border-radius:12px;padding:1rem;">No niches match your search.</p></div>';
+html+='<script>function '+rid+'_filter(){var root=document.getElementById("'+rid+'");var q=(document.getElementById("'+rid+'_search").value||"").toLowerCase();var type=(document.getElementById("'+rid+'_type").value||"").toLowerCase();var items=root.querySelectorAll(".dfy-item");var visible=0;items.forEach(function(item){var show=(!q||item.dataset.name.indexOf(q)>-1)&&(!type||item.dataset.type===type);item.style.display=show?"block":"none";if(show)visible++;});root.querySelectorAll(".dfy-week").forEach(function(w){var any=Array.prototype.slice.call(w.querySelectorAll(".dfy-item")).some(function(i){return i.style.display!=="none";});w.style.display=any?"block":"none";});root.querySelectorAll(".dfy-month").forEach(function(m){var any=Array.prototype.slice.call(m.querySelectorAll(".dfy-week")).some(function(w){return w.style.display!=="none";});m.style.display=any?"block":"none";if((q||type)&&any){m.querySelector(".dfy-month-content").style.display="block";}});document.getElementById("'+rid+'_results").textContent=(q||type)?("Showing "+visible+" matching niche"+(visible===1?"":"s")):"";document.getElementById("'+rid+'_empty").style.display=visible?"none":"block";}</'+'script>';
 html+='</div>';return html;}
-function previewDirectory(){if(!weeks.length){toast('Add at least one week first.');return;}var html=buildDirectoryHTML();document.getElementById('out-title').textContent='Directory Preview';document.getElementById('copy-all-btn').className='copy-all-btn';document.getElementById('out-preview').innerHTML=html;document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
-function generate(){if(!weeks.length){toast('Add at least one week first.');return;}var html=buildDirectoryHTML();document.getElementById('out-code').value=html;document.getElementById('out-preview').innerHTML=html;document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';document.getElementById('copy-all-btn').className='copy-all-btn show';document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
-function copyAll(){var code=document.getElementById('out-code').value;var btn=document.getElementById('copy-all-btn');try{var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2500);toast('HTML copied!');}catch(e){toast('Copy failed. Try Ctrl+C.');}}
-window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
-buildYears();buildNicheInputs();loadData();
+function previewDirectory(){if(!weeks.length){toast('Add or import at least one week first.');return;}var html=buildDirectoryHTML();document.getElementById('out-title').textContent='Directory Preview';document.getElementById('copy-all-btn').className='copy-all-btn';document.getElementById('out-preview').innerHTML=html;document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
+function generateHTML(){if(!weeks.length){toast('Add or import at least one week first.');return;}var html=buildDirectoryHTML();document.getElementById('out-code').value=html;document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';document.getElementById('copy-all-btn').className='copy-all-btn show';document.getElementById('out-preview').innerHTML=html;document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
+function copyAll(){var code=document.getElementById('out-code').value;var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);var btn=document.getElementById('copy-all-btn');btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2200);toast('HTML copied!');}
+loadData();
 </script>
 </body>
 </html>
