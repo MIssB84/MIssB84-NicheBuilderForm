@@ -139,15 +139,15 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <div class="card">
   <p class="card-title">Niche List</p>
   <p class="card-sub">Update any niche name that changed this week. Toggle the X to hide the Bonus niche if you're not including it.</p>
-  <div class="niche-row"><div class="niche-num">Niche 1</div><input class="fi" id="intro-n1" value="Printable Wall Art" oninput="syncNicheKeyword('intro-n1')" tabindex="2"><div style="width:36px;"></div></div>
-  <div class="niche-row"><div class="niche-num">Niche 2</div><input class="fi" id="intro-n2" value="PNG" oninput="syncNicheKeyword('intro-n2')" tabindex="3"><div style="width:36px;"></div></div>
-  <div class="niche-row"><div class="niche-num">Niche 3</div><input class="fi" id="intro-n3" value="Frame TV Art" oninput="syncNicheKeyword('intro-n3')" tabindex="4"><div style="width:36px;"></div></div>
-  <div class="niche-row"><div class="niche-num">Niche 4</div><input class="fi" id="intro-n4" value="Printable (Journal/Checklist/Planner)" oninput="syncNicheKeyword('intro-n4')" tabindex="5"><div style="width:36px;"></div></div>
-  <div class="niche-row"><div class="niche-num">Niche 5</div><input class="fi" id="intro-n5" value="Printable Wall Art" oninput="syncNicheKeyword('intro-n5')" tabindex="6"><div style="width:36px;"></div></div>
-  <div class="niche-row"><div class="niche-num">Niche 6</div><input class="fi" id="intro-n6" value="PNG" oninput="syncNicheKeyword('intro-n6')" tabindex="7"><div style="width:36px;"></div></div>
-  <div class="niche-row"><div class="niche-num">Niche 7</div><input class="fi" id="intro-n7" value="Frame TV Art" oninput="syncNicheKeyword('intro-n7')" tabindex="8"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 1</div><input class="fi" id="intro-n1" value="Printable Wall Art" oninput="applyTitleCase(this);syncNicheKeyword('intro-n1')" tabindex="2"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 2</div><input class="fi" id="intro-n2" value="PNG" oninput="applyTitleCase(this);syncNicheKeyword('intro-n2')" tabindex="3"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 3</div><input class="fi" id="intro-n3" value="Frame TV Art" oninput="applyTitleCase(this);syncNicheKeyword('intro-n3')" tabindex="4"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 4</div><input class="fi" id="intro-n4" value="Printable (Journal/Checklist/Planner)" oninput="applyTitleCase(this);syncNicheKeyword('intro-n4')" tabindex="5"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 5</div><input class="fi" id="intro-n5" value="Printable Wall Art" oninput="applyTitleCase(this);syncNicheKeyword('intro-n5')" tabindex="6"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 6</div><input class="fi" id="intro-n6" value="PNG" oninput="applyTitleCase(this);syncNicheKeyword('intro-n6')" tabindex="7"><div style="width:36px;"></div></div>
+  <div class="niche-row"><div class="niche-num">Niche 7</div><input class="fi" id="intro-n7" value="Frame TV Art" oninput="applyTitleCase(this);syncNicheKeyword('intro-n7')" tabindex="8"><div style="width:36px;"></div></div>
   <div style="height:1px;background:#ead9d5;margin:12px 0;"></div>
-  <div class="niche-row"><div class="bonus-num">Bonus</div><input class="fi" id="intro-bonus" value="Tumbler/Digital Invitation/Journal/Coloring Pages/Checklist" oninput="syncNicheKeyword('intro-bonus')" tabindex="9"><button class="toggle-btn active" id="bonus-toggle">X</button></div>
+  <div class="niche-row"><div class="bonus-num">Bonus</div><input class="fi" id="intro-bonus" value="Tumbler/Digital Invitation/Journal/Coloring Pages/Checklist" oninput="applyTitleCase(this);syncNicheKeyword('intro-bonus')" tabindex="9"><button class="toggle-btn active" id="bonus-toggle">X</button></div>
   <p class="hint" id="bonus-hint">Bonus is ON — click X to hide it this week</p>
 </div>
 
@@ -222,6 +222,17 @@ var GEN_TOOLS = [
 ];
 
 function v(id){ return (document.getElementById(id)||{}).value||''; }
+
+function toTitleCase(str){
+  return str.replace(/\w\S*/g, function(word){
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
+}
+function applyTitleCase(el){
+  var pos = el.selectionStart;
+  el.value = toTitleCase(el.value);
+  try{ el.selectionStart = el.selectionEnd = pos; }catch(e){}
+}
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; setTimeout(function(){t.style.display='none';},2500); }
 function setStatus(s,t){ document.getElementById('sdot').className='sdot '+(s==='saved'?'saved':'unsaved'); document.getElementById('stxt').textContent=t; }
@@ -352,7 +363,7 @@ function buildAllSections(){
     html += '<div class="card"><p class="card-title">'+label+' Basics</p><p class="card-sub">Niche stats and info</p>';
     html += '<div class="full" style="margin-bottom:12px;"><label class="fl">Keyword <span class="fl-note">(auto-filled from the menu above)</span></label>';
     var introSyncId = isBonus ? 'intro-bonus' : 'intro-n'+n;
-    html += '<input class="fi" id="n'+n+'-kw" oninput="syncNicheKeyword(\''+introSyncId+'\');updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
+    html += '<input class="fi" id="n'+n+'-kw" oninput="applyTitleCase(this);syncNicheKeyword(\''+introSyncId+'\');updateKwRef(\''+n+'\')" tabindex="'+tabIdx+'" placeholder="e.g. Cat Eating Ramen Printable Wall Art"></div>';
     tabIdx++;
     html += '<div class="g2">';
     html += '<div><label class="fl">Competition</label><input class="fi" id="n'+n+'-comp" tabindex="'+tabIdx+'" placeholder="e.g. 572"></div>';
