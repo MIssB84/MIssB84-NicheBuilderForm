@@ -140,7 +140,34 @@ function loadData(){try{var raw=localStorage.getItem(SK);if(raw){var d=JSON.pars
 function clearAll(){if(!confirm('Clear this weekly tip draft?'))return;['f-title','f-body','f-img','f-video','f-btn-text','f-btn-link'].forEach(function(id){el(id).value='';});el('img-thumb').className='preview-thumb';el('img-thumb').src='';el('img-err').style.display='none';localStorage.removeItem(SK);el('out').style.display='none';isDirty=false;setStatus('unsaved','Cleared');toast('Cleared.');}
 function updateThumb(){var url=v('f-img').trim();var thumb=el('img-thumb');var err=el('img-err');if(!url){thumb.className='preview-thumb';thumb.src='';err.style.display='none';return;}thumb.onload=function(){thumb.className='preview-thumb show';err.style.display='none';};thumb.onerror=function(){thumb.className='preview-thumb';err.style.display='block';};thumb.src=url;}
 function paragraphs(text){var parts=String(text||'').split(/\n\s*\n/).map(function(p){return p.trim();}).filter(Boolean);return parts.map(function(p){var safe=esc(p).replace(/\n/g,'<br>');return '<p style="font-family:Jost,Arial,sans-serif;font-size:17px;color:#5a4a45;line-height:1.85;margin:0 0 1rem;">'+safe+'</p>';}).join('');}
-function videoEmbed(url){url=(url||'').trim();if(!url)return '';var safe=esc(url);var isEmbed=/youtube\.com\/embed|player\.vimeo\.com|loom\.com\/embed/i.test(url);var yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);if(yt){safe='https://www.youtube.com/embed/'+yt[1];isEmbed=true;}return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin:1.25rem 0;text-align:center;">'+(isEmbed?'<div style="position:relative;width:100%;padding-top:56.25%;"><iframe src="'+safe+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:10px;" allowfullscreen></iframe></div>':'<a href="'+safe+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:12px 26px;border-radius:30px;text-decoration:none;display:inline-block;">▶ Watch Video</a>')+'</div>';}
+function addParams(url,params){var join=url.indexOf('?')>-1?'&':'?';return url+join+params;}
+function videoEmbed(url){
+  url=(url||'').trim();
+  if(!url)return '';
+  var safe=esc(url);
+  var yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]+)/i);
+  var isVimeo=/player\.vimeo\.com\/video\//i.test(url);
+  var isLoom=/loom\.com\/embed\//i.test(url);
+  var isDirectVideo=/\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+  var embed='';
+  if(yt){
+    var yid=yt[1];
+    safe='https://www.youtube.com/embed/'+yid;
+    safe=addParams(safe,'autoplay=1&mute=1&loop=1&playlist='+encodeURIComponent(yid)+'&playsinline=1&rel=0');
+    embed='<div style="position:relative;width:100%;padding-top:56.25%;"><iframe src="'+safe+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:10px;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>';
+  } else if(isVimeo){
+    safe=addParams(safe,'autoplay=1&loop=1&muted=1&playsinline=1');
+    embed='<div style="position:relative;width:100%;padding-top:56.25%;"><iframe src="'+safe+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:10px;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+  } else if(isLoom){
+    safe=addParams(safe,'autoplay=1&muted=1');
+    embed='<div style="position:relative;width:100%;padding-top:56.25%;"><iframe src="'+safe+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:10px;" allow="autoplay; fullscreen" allowfullscreen></iframe></div>';
+  } else if(isDirectVideo){
+    embed='<video src="'+safe+'" autoplay muted loop playsinline controls style="width:100%;border-radius:10px;display:block;"></video>';
+  } else {
+    embed='<a href="'+safe+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:12px 26px;border-radius:30px;text-decoration:none;display:inline-block;">▶ Watch Video</a>';
+  }
+  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1rem;margin:1.25rem 0;text-align:center;">'+embed+'</div>';
+}
 function buildHTML(){var d=getData();var html='<div style="font-family:Jost,Arial,sans-serif;font-size:115%;max-width:920px;margin:0 auto;color:#2a1f1c;background:#fff;border:1px solid #ead9d5;border-radius:16px;overflow:hidden;">';
 html+='<div style="background:#2a1f1c;padding:2rem 2.25rem;text-align:center;">';
 html+='<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .65rem;">DFY Niche Club Weekly Tip</p>';
