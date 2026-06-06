@@ -18,9 +18,8 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .fl{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5a4a45;margin-bottom:6px;display:block;}
 .fi,.ta{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:14px 16px;font-family:'Jost',sans-serif;font-size:17px;color:#2a1f1c;background:#fdf7f2;outline:none;transition:border-color .2s;}
 .fi:focus,.ta:focus{border-color:#dea193;}
-.ta{min-height:260px;resize:vertical;line-height:1.55;}
+.ta{min-height:120px;resize:vertical;line-height:1.55;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-.help{font-size:13px;color:#8b746d;line-height:1.55;margin-top:6px;}
 .save-bar{position:fixed;bottom:0;left:0;right:0;background:#2a1f1c;border-top:1px solid rgba(222,161,147,.3);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;z-index:100;gap:10px;}
 .save-status{font-size:13px;color:#c4b0a8;display:flex;align-items:center;gap:7px;flex-shrink:0;}
 .sdot{width:7px;height:7px;border-radius:50%;background:#c4b0a8;}.sdot.saved{background:#7a9e7e;}.sdot.unsaved{background:#dea193;}
@@ -36,6 +35,14 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 .copy-all-btn{font-family:'Jost',sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:none;padding:11px 28px;border-radius:30px;cursor:pointer;transition:all .2s;display:none;}.copy-all-btn.show{display:inline-block;}.copy-all-btn:hover{background:#bb7d72;color:#fff;}
 .out-preview{padding:1.5rem;background:#f0e8df;}
 .toast{position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%);background:#2a1f1c;color:#dea193;font-family:'Jost',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;padding:11px 24px;border-radius:30px;border:1px solid #dea193;display:none;z-index:9999;white-space:nowrap;}
+/* Section builder styles */
+.section-block{background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:12px;padding:1.25rem;margin-bottom:1rem;position:relative;}
+.section-block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;gap:10px;}
+.section-num{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#dea193;}
+.remove-section-btn{font-family:'Jost',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:1.5px solid rgba(196,176,168,.5);color:#c4b0a8;padding:5px 11px;border-radius:20px;cursor:pointer;transition:all .2s;}.remove-section-btn:hover{border-color:#dea193;color:#dea193;}
+.section-heading-input{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:11px 14px;font-family:'Jost',sans-serif;font-size:16px;font-weight:700;color:#2a1f1c;background:#fff;outline:none;transition:border-color .2s;margin-bottom:.65rem;}.section-heading-input:focus{border-color:#dea193;}
+.section-bullets-input{width:100%;border:1.5px solid #ead9d5;border-radius:8px;padding:11px 14px;font-family:'Jost',sans-serif;font-size:15px;color:#2a1f1c;background:#fff;outline:none;transition:border-color .2s;resize:vertical;min-height:110px;line-height:1.6;}.section-bullets-input:focus{border-color:#dea193;}
+.add-section-btn{display:flex;align-items:center;gap:8px;font-family:'Jost',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:2px dashed #c9a96e;color:#c9a96e;padding:12px 20px;border-radius:10px;cursor:pointer;width:100%;justify-content:center;transition:all .2s;margin-top:.25rem;}.add-section-btn:hover{background:#c9a96e22;}
 @media(max-width:760px){.row2{grid-template-columns:1fr}.save-bar{align-items:flex-start;flex-direction:column}.save-bar>div:last-child{width:100%;justify-content:flex-start!important}.sbtn{font-size:11px;padding:9px 12px}}
 </style>
 </head>
@@ -43,7 +50,7 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <div class="page-header">
   <div class="badge">Live Call Recap</div>
   <h1 class="page-title">Recap Builder</h1>
-  <p class="page-sub">Enter your replay link and summarized notes. Your work saves automatically.</p>
+  <p class="page-sub">Enter your replay link and notes. Your work saves automatically.</p>
 </div>
 
 <div class="card">
@@ -72,43 +79,43 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
       <label class="fl" for="f-year">Year Dropdown</label>
       <select class="fi" id="f-year">
         <option value="">Select Year...</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
         <option value="2026">2026</option>
         <option value="2027">2027</option>
-        <option value="2028">2028</option>
       </select>
     </div>
   </div>
-  <div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:14px;">
-    <p style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#dea193;margin:0 0 .35rem;">Generated Title Preview</p>
-    <p id="title-preview" style="font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#2a1f1c;margin:0;">Select Month + Year</p>
-    <p class="help" style="margin-top:.45rem;">The member-facing page will show the title only, not the dropdowns. Use the dropdowns here in the builder to create the title.</p>
+  <div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:10px;padding:12px 16px;margin-top:6px;">
+    <span class="fl" style="margin-bottom:4px;">Title Preview</span>
+    <p id="title-preview" style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;">Select Month + Year</p>
   </div>
+</div>
+
+<div class="card">
+  <p class="card-title">Video + Button</p>
+  <p class="card-sub">Paste your replay link. The button is optional — use it to link to a resource, replay page, or offer.</p>
   <div style="margin-bottom:14px;">
-    <label class="fl" for="f-video">Replay Video Embed URL</label>
-    <input class="fi" id="f-video" placeholder="Paste YouTube embed link or video URL here...">
-    <p class="help">Optional. If blank, no video section will show. YouTube embed links work best.</p>
+    <label class="fl" for="f-video">Replay Video URL</label>
+    <input class="fi" type="url" id="f-video" placeholder="https://www.youtube.com/watch?v=...">
   </div>
   <div class="row2">
     <div>
-      <label class="fl" for="f-button-text">Optional Button Text</label>
-      <input class="fi" id="f-button-text" placeholder="e.g. Submit Questions For Next Call">
+      <label class="fl" for="f-button-text">Button Text (optional)</label>
+      <input class="fi" type="text" id="f-button-text" placeholder="Watch the Full Replay">
     </div>
     <div>
-      <label class="fl" for="f-button-link">Optional Button Link</label>
-      <input class="fi" id="f-button-link" placeholder="Paste link here...">
+      <label class="fl" for="f-button-link">Button Link (optional)</label>
+      <input class="fi" type="url" id="f-button-link" placeholder="https://...">
     </div>
   </div>
 </div>
 
 <div class="card">
   <p class="card-title">Recap Notes</p>
-  <p class="card-sub">Paste your summarized notes here. To create a large bold section heading, type the heading on its own line with no dash. Then put each takeaway underneath with a dash.</p>
-  <div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;">
-    <p style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#dea193;margin:0 0 .5rem;">Formatting Guide</p>
-    <p style="font-size:14px;color:#5a4a45;line-height:1.6;margin:0;">Type a section heading by itself, then bullets underneath with a dash. Example:<br><strong>Using AI Tools to Create Unique Designs</strong><br>- Ask specific questions<br>- Generate several prompt variations</p>
-  </div>
-  <label class="fl" for="f-notes">Summarized Notes</label>
-  <textarea class="ta" id="f-notes" placeholder="Using AI Tools to Create Unique Designs&#10;- When revising an AI-generated prompt, ask specific questions&#10;- Generate several prompt variations&#10;&#10;Running Your Shop Like a Business&#10;- Shop activity goes beyond adding new listings&#10;- Audit your listings weekly"></textarea>
+  <p class="card-sub">Add a section for each topic covered in the call. Type the section heading, then the bullet points for that section — one bullet per line.</p>
+  <div id="sections-container"></div>
+  <button class="add-section-btn" onclick="addSection()">+ Add Section</button>
 </div>
 
 <div id="out">
@@ -137,26 +144,204 @@ body{font-family:'Jost',sans-serif;background:#f0e8df;min-height:100vh;padding:2
 <div class="toast" id="toast"></div>
 
 <script>
-var SK='live_call_recap_builder_v4_dropdowns';
+var SK='live_call_recap_builder_v5_sections';
 var isDirty=false;
+var sectionCount=0;
+
 function v(id){return(document.getElementById(id)||{}).value||'';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function recapTitle(){var m=v('f-month');var y=v('f-year');return (m&&y)?(m+' '+y+' Live Call Recap'):'Live Call Recap';}
+function recapTitle(){var m=v('f-month');var y=v('f-year');return(m&&y)?(m+' '+y+' Live Call Recap'):'Live Call Recap';}
 function updateTitlePreview(){var el=document.getElementById('title-preview');if(el)el.textContent=recapTitle()==='Live Call Recap'?'Select Month + Year':recapTitle();}
 function setStatus(state,txt){document.getElementById('sdot').className='sdot '+(state==='saved'?'saved':'unsaved');document.getElementById('stxt').textContent=txt;}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2400);}
 function markDirty(){isDirty=true;updateTitlePreview();setStatus('unsaved','Unsaved changes');scheduleAutoSave();}
 var autoTimer;
 function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(function(){saveData(true);},1100);}
-function saveData(auto){var data={month:v('f-month'),year:v('f-year'),video:v('f-video'),buttonText:v('f-button-text'),buttonLink:v('f-button-link'),notes:v('f-notes')};try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved',auto?'Auto-saved':'Saved just now');if(!auto)toast('Saved!');}catch(e){toast('Could not save');}}
-function loadData(){try{var raw=localStorage.getItem(SK);if(raw){var d=JSON.parse(raw);document.getElementById('f-month').value=d.month||'';document.getElementById('f-year').value=d.year||'';document.getElementById('f-video').value=d.video||'';document.getElementById('f-button-text').value=d.buttonText||'';document.getElementById('f-button-link').value=d.buttonLink||'';document.getElementById('f-notes').value=d.notes||'';setStatus('saved','Saved recap loaded');}else{setStatus('saved','Ready');}updateTitlePreview();}catch(e){setStatus('unsaved','Could not load');updateTitlePreview();}}
-function clearAll(){if(!confirm('Clear everything in this builder?'))return;['f-month','f-year','f-video','f-button-text','f-button-link','f-notes'].forEach(function(id){document.getElementById(id).value='';});localStorage.removeItem(SK);document.getElementById('out').style.display='none';updateTitlePreview();isDirty=false;setStatus('saved','Cleared');toast('Cleared.');}
-function videoSrc(url){url=(url||'').trim();if(!url)return'';if(url.indexOf('youtube.com/watch')>-1){var id=(url.split('v=')[1]||'').split('&')[0];if(id)return'https://www.youtube.com/embed/'+id;}if(url.indexOf('youtu.be/')>-1){var id=url.split('youtu.be/')[1].split('?')[0];if(id)return'https://www.youtube.com/embed/'+id;}return url;}
-function notesHTML(text){var lines=String(text||'').split(/\r?\n/);var html='';var inList=false;lines.forEach(function(line){var raw=line.trim();if(!raw){if(inList){html+='</ul>';inList=false;}return;}raw=raw.replace(/^#+\s*/,'').replace(/\*\*/g,'').replace(/\*/g,'').trim();if(!raw)return;if(raw.charAt(0)==='-'||raw.charAt(0)==='•'){if(!inList){html+='<ul style="margin:0 0 1.35rem 1.2rem;padding:0;">';inList=true;}html+='<li style="font-size:16px;color:#5a4a45;line-height:1.65;margin:0 0 .45rem;padding-left:.2rem;">'+esc(raw.replace(/^[-•]\s*/,''))+'</li>';}else{if(inList){html+='</ul>';inList=false;}html+='<p style="font-family:Jost,Arial,sans-serif;font-size:16px;font-weight:700;text-decoration:underline;color:#2a1f1c;margin:1.75rem 0 .5rem;border-top:1px solid #ead9d5;padding-top:1.15rem;">'+esc(raw)+'</p>';}});if(inList)html+='</ul>';return html;}
-function buildHTML(){var title=recapTitle();var date=(v('f-month')&&v('f-year'))?(v('f-month')+' '+v('f-year')):'';var vid=videoSrc(v('f-video'));var btnText=v('f-button-text');var btnLink=v('f-button-link');var notes=v('f-notes');var html='<div style="font-family:Jost,Arial,sans-serif;max-width:920px;margin:0 auto;color:#2a1f1c;background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;overflow:hidden;">';html+='<div style="background:#2a1f1c;padding:2rem 2.25rem;text-align:center;">';html+='<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .6rem;">Live Call Replay</p>';html+='<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;line-height:1.15;color:#f5eddf;margin:0;font-weight:700;">'+esc(title)+'</h2>';if(date){html+='<p style="font-size:1.1rem;font-weight:700;color:#c4b0a8;margin:.55rem 0 0;">'+esc(date)+'</p>';}html+='</div>';html+='<div style="background:#fff;padding:1.75rem 2.25rem;">';html+='<p style="font-size:16px;color:#5a4a45;line-height:1.75;margin:0;text-align:center;">This recap covers the key takeaways from the live call in case you missed it or want to revisit the main points.</p>';html+='</div>';if(vid){html+='<div style="background:#fdf7f2;border-top:1px solid #ead9d5;border-bottom:1px solid #ead9d5;padding:1.5rem 2.25rem;">';html+='<div style="position:relative;width:100%;padding-top:56.25%;border-radius:14px;overflow:hidden;background:#2a1f1c;border:1px solid #ead9d5;">';html+='<iframe src="'+esc(vid)+'" title="Live Call Replay" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';html+='</div>';html+='</div>';}if(btnText&&btnLink){html+='<div style="background:#fff;padding:1.5rem 2.25rem;text-align:center;border-bottom:1px solid #ead9d5;">';html+='<a href="'+esc(btnLink)+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:12px 28px;border-radius:30px;text-decoration:none;display:inline-block;">✨ '+esc(btnText)+'</a>';html+='</div>';}html+='<div style="background:#fff;padding:2rem 2.25rem;">';html+='<h3 style="font-family:Playfair Display,Georgia,serif;font-size:1.65rem;font-weight:700;color:#2a1f1c;margin:0 0 1rem;text-align:center;">Key Takeaways</h3>';html+='<div style="max-width:760px;margin:0 auto;">'+notesHTML(notes)+'</div>';html+='</div>';html+='</div>';return html;}
-function previewRecap(){if(!v('f-month')||!v('f-year')){toast('Please select the month and year first.');return;}document.getElementById('out-title').textContent='Recap Preview';document.getElementById('copy-all-btn').className='copy-all-btn';document.getElementById('out-preview').innerHTML=buildHTML();document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
-function generate(){if(!v('f-month')||!v('f-year')){toast('Please select the month and year first.');return;}var html=buildHTML();document.getElementById('out-code').value=html;document.getElementById('out-preview').innerHTML=html;document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';document.getElementById('copy-all-btn').className='copy-all-btn show';document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
-function copyAll(){var code=document.getElementById('out-code').value;var btn=document.getElementById('copy-all-btn');try{var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2200);toast('HTML copied!');}catch(e){toast('Copy failed. Try Ctrl+C.');}}
+
+function addSection(heading, bullets){
+  sectionCount++;
+  var id=sectionCount;
+  var container=document.getElementById('sections-container');
+  var div=document.createElement('div');
+  div.className='section-block';
+  div.id='section-'+id;
+  div.innerHTML='<div class="section-block-head"><span class="section-num">Section '+id+'</span><button class="remove-section-btn" onclick="removeSection('+id+')">Remove</button></div>'
+    +'<input class="section-heading-input" type="text" placeholder="Section heading (e.g. Using AI Tools to Create Unique Designs)" id="sh-'+id+'" value="'+esc(heading||'')+'">'
+    +'<textarea class="section-bullets-input" placeholder="One bullet per line&#10;Like this&#10;And this" id="sb-'+id+'">'+esc(bullets||'')+'</textarea>';
+  container.appendChild(div);
+  div.querySelectorAll('input,textarea').forEach(function(el){el.addEventListener('input',markDirty);});
+  markDirty();
+}
+
+function removeSection(id){
+  var el=document.getElementById('section-'+id);
+  if(el)el.remove();
+  renumberSections();
+  markDirty();
+}
+
+function renumberSections(){
+  var blocks=document.querySelectorAll('.section-block');
+  blocks.forEach(function(b,i){
+    var numEl=b.querySelector('.section-num');
+    if(numEl)numEl.textContent='Section '+(i+1);
+  });
+}
+
+function getSections(){
+  var blocks=document.querySelectorAll('.section-block');
+  var sections=[];
+  blocks.forEach(function(b){
+    var hEl=b.querySelector('[id^="sh-"]');
+    var bEl=b.querySelector('[id^="sb-"]');
+    sections.push({heading:(hEl?hEl.value:'').trim(),bullets:(bEl?bEl.value:'').trim()});
+  });
+  return sections;
+}
+
+function notesHTML(){
+  var sections=getSections();
+  var html='';
+  sections.forEach(function(s,i){
+    if(!s.heading&&!s.bullets)return;
+    var topBorder=i>0?'border-top:1px solid #ead9d5;padding-top:1.15rem;margin-top:1.75rem;':'margin-top:0;';
+    if(s.heading){
+      html+='<p style="font-family:Jost,Arial,sans-serif;font-size:16px;font-weight:700;text-decoration:underline;color:#2a1f1c;margin-bottom:.6rem;'+topBorder+'">'+esc(s.heading)+'</p>';
+    }
+    if(s.bullets){
+      var lines=s.bullets.split(/\r?\n/);
+      html+='<ul style="margin:0 0 .5rem 1.2rem;padding:0;">';
+      lines.forEach(function(line){
+        var t=line.trim();
+        if(!t)return;
+        html+='<li style="font-size:16px;color:#5a4a45;line-height:1.65;margin:0 0 .45rem;padding-left:.2rem;">'+esc(t)+'</li>';
+      });
+      html+='</ul>';
+    }
+  });
+  return html;
+}
+
+function saveData(auto){
+  var sections=getSections();
+  var data={month:v('f-month'),year:v('f-year'),video:v('f-video'),buttonText:v('f-button-text'),buttonLink:v('f-button-link'),sections:sections};
+  try{localStorage.setItem(SK,JSON.stringify(data));isDirty=false;setStatus('saved',auto?'Auto-saved':'Saved just now');if(!auto)toast('Saved!');}
+  catch(e){toast('Could not save');}
+}
+
+function loadData(){
+  try{
+    var raw=localStorage.getItem(SK);
+    if(raw){
+      var d=JSON.parse(raw);
+      document.getElementById('f-month').value=d.month||'';
+      document.getElementById('f-year').value=d.year||'';
+      document.getElementById('f-video').value=d.video||'';
+      document.getElementById('f-button-text').value=d.buttonText||'';
+      document.getElementById('f-button-link').value=d.buttonLink||'';
+      if(d.sections&&d.sections.length){
+        d.sections.forEach(function(s){addSection(s.heading,s.bullets);});
+      } else {
+        addSection();
+      }
+      setStatus('saved','Saved recap loaded');
+    } else {
+      addSection();
+      setStatus('saved','Ready');
+    }
+    updateTitlePreview();
+  } catch(e){
+    addSection();
+    setStatus('unsaved','Could not load');
+    updateTitlePreview();
+  }
+}
+
+function clearAll(){
+  if(!confirm('Clear everything in this builder?'))return;
+  ['f-month','f-year','f-video','f-button-text','f-button-link'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('sections-container').innerHTML='';
+  sectionCount=0;
+  addSection();
+  localStorage.removeItem(SK);
+  document.getElementById('out').style.display='none';
+  updateTitlePreview();
+  isDirty=false;
+  setStatus('saved','Cleared');
+  toast('Cleared.');
+}
+
+function videoSrc(url){
+  url=(url||'').trim();
+  if(!url)return'';
+  if(url.indexOf('youtube.com/watch')>-1){var id=(url.split('v=')[1]||'').split('&')[0];if(id)return'https://www.youtube.com/embed/'+id;}
+  if(url.indexOf('youtu.be/')>-1){var id=url.split('youtu.be/')[1].split('?')[0];if(id)return'https://www.youtube.com/embed/'+id;}
+  return url;
+}
+
+function buildHTML(){
+  var title=recapTitle();
+  var date=(v('f-month')&&v('f-year'))?(v('f-month')+' '+v('f-year')):'';
+  var vid=videoSrc(v('f-video'));
+  var btnText=v('f-button-text');
+  var btnLink=v('f-button-link');
+  var html='<div style="font-family:Jost,Arial,sans-serif;max-width:920px;margin:0 auto;color:#2a1f1c;background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;overflow:hidden;">';
+  html+='<div style="background:#2a1f1c;padding:2rem 2.25rem;text-align:center;">';
+  html+='<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .6rem;">Live Call Replay</p>';
+  html+='<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;line-height:1.15;color:#f5eddf;margin:0;font-weight:700;">'+esc(title)+'</h2>';
+  if(date){html+='<p style="font-size:1.1rem;font-weight:700;color:#c4b0a8;margin:.55rem 0 0;">'+esc(date)+'</p>';}
+  html+='</div>';
+  html+='<div style="background:#fff;padding:1.75rem 2.25rem;">';
+  html+='<p style="font-size:16px;color:#5a4a45;line-height:1.75;margin:0;text-align:center;">This recap covers the key takeaways from the live call in case you missed it or want to revisit the main points.</p>';
+  html+='</div>';
+  if(vid){
+    html+='<div style="background:#fdf7f2;border-top:1px solid #ead9d5;border-bottom:1px solid #ead9d5;padding:1.5rem 2.25rem;">';
+    html+='<div style="position:relative;width:100%;padding-top:56.25%;border-radius:14px;overflow:hidden;background:#2a1f1c;border:1px solid #ead9d5;">';
+    html+='<iframe src="'+esc(vid)+'" title="Live Call Replay" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+    html+='</div></div>';
+  }
+  if(btnText&&btnLink){
+    html+='<div style="background:#fff;padding:1.5rem 2.25rem;text-align:center;border-bottom:1px solid #ead9d5;">';
+    html+='<a href="'+esc(btnLink)+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:12px 28px;border-radius:30px;text-decoration:none;display:inline-block;">✨ '+esc(btnText)+'</a>';
+    html+='</div>';
+  }
+  html+='<div style="background:#fff;padding:2rem 2.25rem;">';
+  html+='<h3 style="font-family:Playfair Display,Georgia,serif;font-size:1.65rem;font-weight:700;color:#2a1f1c;margin:0 0 1rem;text-align:center;">Key Takeaways</h3>';
+  html+='<div style="max-width:760px;margin:0 auto;">'+notesHTML()+'</div>';
+  html+='</div></div>';
+  return html;
+}
+
+function previewRecap(){
+  if(!v('f-month')||!v('f-year')){toast('Please select the month and year first.');return;}
+  document.getElementById('out-title').textContent='Recap Preview';
+  document.getElementById('copy-all-btn').className='copy-all-btn';
+  document.getElementById('out-preview').innerHTML=buildHTML();
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+function generate(){
+  if(!v('f-month')||!v('f-year')){toast('Please select the month and year first.');return;}
+  var html=buildHTML();
+  document.getElementById('out-code').value=html;
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';
+  document.getElementById('copy-all-btn').className='copy-all-btn show';
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+function copyAll(){
+  var code=document.getElementById('out-code').value;
+  var btn=document.getElementById('copy-all-btn');
+  try{
+    var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2200);toast('HTML copied!');
+  }catch(e){toast('Copy failed. Try Ctrl+C.');}
+}
+
 document.addEventListener('input',function(e){if(e.target.matches('input,textarea,select'))markDirty();});
 document.addEventListener('change',function(e){if(e.target.matches('select'))markDirty();});
 window.addEventListener('beforeunload',function(e){if(isDirty){e.preventDefault();e.returnValue='';}});
