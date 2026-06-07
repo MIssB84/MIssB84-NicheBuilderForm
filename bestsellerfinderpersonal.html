@@ -2,36 +2,40 @@
 
 <style>
   .bsf * { box-sizing: border-box; margin: 0; padding: 0; }
-  .bsf { font-family: 'Jost', sans-serif; background: #fdf7f2; font-size: 14px; }
-  .bsf-hero { background: #2a1f1c; padding: 1.2rem 1.6rem 1.8rem; text-align: center; min-height: 100vh; }
-  .bsf-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: #c9a96e; margin-bottom: 0.6rem; display: block; }
-  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; color: #f5eddf; margin-bottom: 0.7rem; font-weight: 700; }
+  .bsf { font-family: 'Jost', sans-serif; background: #fdf7f2; font-size: 15px; }
+  .bsf-hero { background: #2a1f1c; padding: 1.4rem 1.8rem 2rem; text-align: center; min-height: 100vh; }
+  .bsf-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: #c9a96e; margin-bottom: 0.7rem; display: block; }
+  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(30px, 3.9vw, 52px); line-height: 1.05; color: #f5eddf; margin-bottom: 0.75rem; font-weight: 700; }
   .bsf-h1 em { color: #dea193; font-style: italic; }
-  .bsf-sub { font-size: 14px; font-weight: 300; color: #d9cfc8; line-height: 1.55; max-width: 680px; margin: 0 auto 1.1rem; }
+  .bsf-sub { font-size: 15px; font-weight: 300; color: #d9cfc8; line-height: 1.55; max-width: 700px; margin: 0 auto 1.2rem; }
 
-  .bsf-dashboard { display: flex; flex-direction: column; gap: 1.1rem; max-width: 1080px; margin: 0 auto; align-items: center; }
+  .bsf-dashboard { display: flex; flex-direction: column; gap: 1.2rem; max-width: 1100px; margin: 0 auto; align-items: center; }
   .bsf-quickfills { min-width: 0; width: 100%; }
-  .bsf-chips-section { margin-bottom: 0.85rem; }
-  .bsf-chips-label { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: #c9a96e; margin-bottom: 8px; display: block; }
-  .bsf-chips-hint { font-size: 10px; font-weight: 300; color: #a09090; margin-bottom: 8px; display: block; font-style: italic; }
-  .bsf-chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; max-width: 1040px; margin: 0 auto; }
-  .bsf-chip { background-color: #e8ddd6 !important; border: 2px solid #e8ddd6 !important; color: #2a1f1c !important; font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 700; padding: 9px 20px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s, transform 0.12s; -webkit-appearance: none; appearance: none; white-space: nowrap; }
+  .bsf-chips-section { margin-bottom: 0.9rem; }
+  .bsf-chips-label { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: #c9a96e; margin-bottom: 8px; display: block; }
+  .bsf-chips-hint { font-size: 11px; font-weight: 300; color: #a09090; margin-bottom: 9px; display: block; font-style: italic; }
+  .bsf-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 1040px; margin: 0 auto; }
+  .bsf-chip { background-color: #e8ddd6 !important; border: 2px solid #e8ddd6 !important; color: #2a1f1c !important; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 22px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s, transform 0.12s; -webkit-appearance: none; appearance: none; white-space: nowrap; }
   .bsf-chip:hover { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
   .bsf-chip:active { transform: scale(0.97); }
   .bsf-chip.active { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
-  .bsf-divider { width: 54px; height: 1px; background: rgba(201,169,110,0.35); margin: 0.85rem auto; }
+  .bsf-divider { width: 54px; height: 1px; background: rgba(201,169,110,0.35); margin: 0.9rem auto; }
 
-  .bsf-card { background: #ffffff !important; border: 1.5px solid #ead9d5 !important; border-radius: 20px; padding: 1.4rem 1.4rem; text-align: left; box-shadow: 0 18px 45px rgba(0,0,0,0.18); max-width: 580px; width: 100%; margin: 0 auto; }
-  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #2a1f1c !important; text-align: center; margin-bottom: 4px; }
-  .bsf-card-sub { font-size: 13px; font-weight: 300; color: #7a6660 !important; text-align: center; margin-bottom: 1.1rem; line-height: 1.45; }
-  .bsf-field { margin-bottom: 0.9rem; }
+  .bsf-card { background: #ffffff !important; border: 1.5px solid #ead9d5 !important; border-radius: 20px; padding: 1.5rem 1.5rem; text-align: left; box-shadow: 0 18px 45px rgba(0,0,0,0.18); max-width: 600px; width: 100%; margin: 0 auto; }
+  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 23px; font-weight: 700; color: #2a1f1c !important; text-align: center; margin-bottom: 4px; }
+  .bsf-card-sub { font-size: 13px; font-weight: 300; color: #7a6660 !important; text-align: center; margin-bottom: 1.15rem; line-height: 1.45; }
+  .bsf-field { margin-bottom: 0.95rem; }
   .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .bsf-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #2a1f1c !important; }
-  .bsf-optional { font-size: 9px; font-weight: 400; color: #b09a94 !important; font-style: italic; }
-  .bsf-input { width: 100%; padding: 12px 14px; border: 1.5px solid #ead9d5 !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 400; color: #2a1f1c !important; background: #fdf7f2 !important; outline: none; transition: border-color 0.2s, background 0.2s; }
+  .bsf-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #2a1f1c !important; }
+  .bsf-label-right { display: flex; align-items: center; gap: 10px; }
+  .bsf-optional { font-size: 10px; font-weight: 400; color: #b09a94 !important; font-style: italic; }
+  .bsf-clear-link { font-size: 10px; font-weight: 600; color: #c9a96e !important; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Jost', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 2px; -webkit-appearance: none; appearance: none; }
+  .bsf-clear-link:hover { color: #dea193 !important; }
+  .bsf-input-wrap { position: relative; }
+  .bsf-input { width: 100%; padding: 13px 15px; border: 1.5px solid #ead9d5 !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 400; color: #2a1f1c !important; background: #fdf7f2 !important; outline: none; transition: border-color 0.2s, background 0.2s; }
   .bsf-input:focus { border-color: #dea193 !important; background: #fff !important; }
   .bsf-input::placeholder { color: #c4b0a8 !important; }
-  .bsf-btn { width: 100%; padding: 14px; background-color: #dea193 !important; color: #2a1f1c !important; border: none !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.2rem; -webkit-appearance: none; appearance: none; }
+  .bsf-btn { width: 100%; padding: 15px; background-color: #dea193 !important; color: #2a1f1c !important; border: none !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.2rem; -webkit-appearance: none; appearance: none; }
   .bsf-btn:active { transform: scale(0.985); }
   .bsf-confirm { display: none; margin-top: 0.9rem; padding: 0.9rem; background: #fdf7f2 !important; border: 1.5px solid #ead9d5 !important; border-radius: 12px; text-align: center; }
   .bsf-confirm.show { display: block; animation: fadeUp 0.3s ease; }
@@ -39,14 +43,9 @@
   .bsf-confirm-sub { font-size: 11px; color: #b09a94 !important; font-weight: 300; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  @media (min-width: 1100px) {
-    .bsf-chips { max-width: 1080px; }
-  }
-
   @media (max-width: 900px) {
     .bsf-hero { min-height: auto; padding: 1.5rem 1rem; }
-    .bsf-dashboard { max-width: 720px; }
-    .bsf-card { max-width: 480px; margin: 0 auto; }
+    .bsf-card { max-width: 500px; margin: 0 auto; }
     .bsf-chips { max-width: 100%; }
   }
 </style>
@@ -67,6 +66,7 @@
             <button class="bsf-chip" onclick="toggleNiche(this,'boho')">boho</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'bookish')">bookish</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'christian')">christian</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'christmas')">christmas</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'coffee')">coffee</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'coquette')">coquette</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'cottagecore')">cottagecore</button>
@@ -75,7 +75,6 @@
             <button class="bsf-chip" onclick="toggleNiche(this,'funny')">funny</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'groovy')">groovy</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'halloween')">halloween</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'christmas')">christmas</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'maximalist')">maximalist</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'mental health')">mental health</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'mom life')">mom life</button>
@@ -114,17 +113,30 @@
       <div class="bsf-card">
         <p class="bsf-card-title">Find Bestsellers</p>
         <p class="bsf-card-sub">Pick chips or type your own. Product type is optional but sharpens results.</p>
-        <div class="bsf-field">
-          <div class="bsf-label-row"><span class="bsf-label">Niche</span></div>
-          <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. coquette teacher samsung"/>
-        </div>
+
         <div class="bsf-field">
           <div class="bsf-label-row">
-            <span class="bsf-label">Product Type</span>
-            <span class="bsf-optional">optional</span>
+            <span class="bsf-label">Niche</span>
+            <button class="bsf-clear-link" onclick="clearNiche()">Clear</button>
           </div>
-          <input class="bsf-input" type="text" id="bsf-product" placeholder="e.g. printable wall art, png"/>
+          <div class="bsf-input-wrap">
+            <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. coquette teacher samsung"/>
+          </div>
         </div>
+
+        <div class="bsf-field">
+          <div class="bsf-label-row">
+            <div class="bsf-label-right">
+              <span class="bsf-label">Product Type</span>
+              <span class="bsf-optional">optional</span>
+            </div>
+            <button class="bsf-clear-link" onclick="clearProduct()">Clear</button>
+          </div>
+          <div class="bsf-input-wrap">
+            <input class="bsf-input" type="text" id="bsf-product" placeholder="e.g. printable wall art, png"/>
+          </div>
+        </div>
+
         <button class="bsf-btn" id="bsf-main-btn" onclick="bsfGo()">Find Bestsellers</button>
         <div class="bsf-confirm" id="bsf-confirm">
           <p class="bsf-confirm-text">Opening your results on Etsy...</p>
@@ -150,10 +162,22 @@ function toggleNiche(el, val) {
   document.getElementById('bsf-niche').value = selectedNiches.join(' ');
 }
 
+function clearNiche() {
+  selectedNiches = [];
+  document.getElementById('bsf-niche').value = '';
+  document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('bsf-niche').style.removeProperty('border-color');
+}
+
 function fillProduct(el, val) {
   document.getElementById('bsf-product').value = val;
   document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
   el.classList.add('active');
+}
+
+function clearProduct() {
+  document.getElementById('bsf-product').value = '';
+  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
 }
 
 function bsfGo() {
