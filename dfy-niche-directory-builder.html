@@ -131,6 +131,19 @@ select.detected{border-color:#c9a96e !important;background:#fffbf3 !important;}
       <input class="fi" id="drop-link" placeholder="Paste Systeme weekly drop link here...">
     </div>
   </div>
+  <div style="margin-bottom:1rem;">
+    <label class="fl">Drop Status</label>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px;font-weight:600;color:#2a1f1c;">
+        <input type="radio" name="drop-status" id="status-live" value="live" checked style="accent-color:#dea193;width:16px;height:16px;"> Live
+        <span style="font-size:11px;font-weight:700;background:#f0faf0;color:#7a9e7e;border:1px solid #7a9e7e;border-radius:999px;padding:3px 8px;">Included in directory</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px;font-weight:600;color:#8b746d;">
+        <input type="radio" name="drop-status" id="status-draft" value="draft" style="accent-color:#c9a96e;width:16px;height:16px;"> Draft
+        <span style="font-size:11px;font-weight:700;background:#fff8ec;color:#c9a96e;border:1px solid #c9a96e;border-radius:999px;padding:3px 8px;">Hidden until you flip Live</span>
+      </label>
+    </div>
+  </div>
   <p class="small-note"><strong>Tip:</strong> Paste names like "Niche 4: Real Estate Template" — the directory strips "Niche 4:" automatically. The <span style="color:#c9a96e;font-weight:700;">✦ wand</span> or <strong>Auto-Detect All</strong> guesses product type from the name.</p>
 
   <div style="margin:1rem 0 .5rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -226,7 +239,7 @@ function sanitizeWeeks(arr) {
     niches = niches.filter(function(n) { return n && n.name; }).map(function(n) {
       return { name: String(n.name || ''), type: String(n.type || 'Other') };
     });
-    return { date: String(w.date), link: String(w.link), niches: niches };
+    return { date: String(w.date), link: String(w.link), niches: niches, status: String(w.status||"live") };
   });
 }
 
@@ -441,7 +454,8 @@ function addWeek() {
   if (!link) { toast('Please paste the weekly drop link.'); return; }
   if (!niches || !niches.length) { toast('Please add at least one niche.'); return; }
   var existing = weeks.findIndex(function(w){ return w.date === date; });
-  var item = { date: date, link: link, niches: niches };
+  var status = document.querySelector('input[name="drop-status"]:checked').value || "live";
+  var item = { date: date, link: link, niches: niches, status: status };
   if (existing > -1) { if (!confirm('A drop for this date already exists. Replace it?')) return; weeks[existing] = item; }
   else { weeks.push(item); }
   sortWeeks(); renderSavedWeeks(); clearCurrentForm(); saveData();
@@ -461,8 +475,12 @@ function renderSavedWeeks() {
     var nicheCount = w.niches ? w.niches.length : 0;
     var div = document.createElement('div');
     div.className = 'week-chip';
-    div.innerHTML = '<div><strong>'+esc(p.label)+'</strong><br><span>'+nicheCount+' niches</span></div>'
+    var isDraft = w.status === 'draft';
+    var draftBadge = isDraft ? '<span style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#fff8ec;color:#c9a96e;border:1px solid #c9a96e;border-radius:999px;padding:3px 8px;margin-left:8px;">Draft</span>' : '<span style="font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#f0faf0;color:#7a9e7e;border:1px solid #7a9e7e;border-radius:999px;padding:3px 8px;margin-left:8px;">Live</span>';
+    var toggleLabel = isDraft ? 'Set Live' : 'Set Draft';
+    div.innerHTML = '<div><strong>'+esc(p.label)+'</strong>'+draftBadge+'<br><span>'+nicheCount+' niches</span></div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">'
+      + '<button class="btn btn-muted" style="padding:8px 12px;font-size:11px;" onclick="toggleWeekStatus('+idx+')">'+toggleLabel+'</button>'
       + '<button class="btn btn-muted" style="padding:8px 12px;font-size:11px;" onclick="editWeek('+idx+')">Edit</button>'
       + '<button class="btn btn-muted" style="padding:8px 12px;font-size:11px;" onclick="deleteWeek('+idx+')">Delete</button>'
       + '</div>';
@@ -476,12 +494,22 @@ function editWeek(idx) {
   document.getElementById('drop-link').value = w.link;
   document.getElementById('niche-inputs').innerHTML = '';
   (w.niches || []).forEach(function(n){ addNicheInput(n); });
+  var statusVal = w.status || 'live';
+  var radio = document.querySelector('input[name="drop-status"][value="'+statusVal+'"]');
+  if (radio) radio.checked = true;
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function deleteWeek(idx) {
   if (!confirm('Delete this weekly drop?')) return;
   weeks.splice(idx, 1); renderSavedWeeks(); saveData(); updateStats();
+}
+
+function toggleWeekStatus(idx) {
+  if (!weeks[idx]) return;
+  weeks[idx].status = weeks[idx].status === 'draft' ? 'live' : 'draft';
+  renderSavedWeeks(); saveData();
+  toast(weeks[idx].status === 'live' ? 'Set to Live!' : 'Set to Draft.');
 }
 
 function updateStats() {
@@ -545,13 +573,14 @@ function loadData() {
 function buildDirectoryHTML() {
   sortWeeks();
   var rid = 'dfy_' + Math.random().toString(36).slice(2,9);
-  var latest = weeks[0];
   var groups = {}, groupOrder = [];
-  weeks.forEach(function(w) {
+  var liveWeeks = weeks.filter(function(w){ return w.status !== "draft"; });
+  liveWeeks.forEach(function(w) {
     var p = dateParts(w.date);
     if (!groups[p.monthYear]) { groups[p.monthYear] = []; groupOrder.push(p.monthYear); }
     groups[p.monthYear].push(w);
   });
+  var latest = liveWeeks[0];
 
   var s = '';
 
