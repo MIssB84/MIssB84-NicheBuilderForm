@@ -156,6 +156,7 @@ select.detected{border-color:#c9a96e !important;background:#fffbf3 !important;}
   <div class="action-row">
     <button class="btn btn-outline" onclick="addNicheInput()">+ Add Niche Row</button>
     <button class="btn btn-detect-all btn" onclick="detectAllTypes()">✦ Auto-Detect All</button>
+    <button class="btn btn-muted" onclick="clearCurrentForm()">Clear Form</button>
     <button class="btn btn-primary" onclick="addWeek()">Add Weekly Drop</button>
   </div>
 </div>
@@ -180,7 +181,6 @@ select.detected{border-color:#c9a96e !important;background:#fffbf3 !important;}
 <div class="save-bar">
   <div class="save-status"><div class="sdot" id="sdot"></div><span id="stxt">Loading...</span></div>
   <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
-    <button class="sbtn sbtn-clear" onclick="clearAll()">Clear All</button>
     <button class="sbtn sbtn-save" onclick="saveData()">Save</button>
     <button class="sbtn sbtn-preview" onclick="previewDirectory()">Preview</button>
     <button class="sbtn sbtn-gen" onclick="generateHTML()">Generate HTML</button>
@@ -504,12 +504,6 @@ function loadData(){
     else{setStatus('unsaved','Nothing saved yet');}
   }catch(e){weeks=[];setStatus('unsaved','Could not load');}
   clearCurrentForm();renderSavedWeeks();updateStats();
-}
-function clearAll(){
-  if(!confirm('Clear all saved weekly drops and reset the builder?'))return;
-  weeks=[];localStorage.removeItem(SK);clearCurrentForm();renderSavedWeeks();
-  document.getElementById('out').style.display='none';
-  setStatus('unsaved','Cleared');toast('Cleared.');updateStats();
 }
 
 // ── Build Directory HTML ─────────────────────────────────────────────────────
