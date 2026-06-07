@@ -203,7 +203,7 @@ var SK = 'dfy_niche_directory_v4';
 var weeks = [];
 var dirty = false;
 var bulkParsed = [];
-var productTypes = ['PNG','Printable Wall Art','Frame TV Art','Tumbler Wrap','Tumbler Wrap PNG','Template','Checklist','Invitation','Planner','Journal','POD','Other'];
+var productTypes = ['PNG','Printable Wall Art','Printable','Frame TV Art','Tumbler Wrap','Tumbler Wrap PNG','Template','Checklist','Invitation','Planner','Journal','POD','Other'];
 
 // ── Storage helpers (safe — never crash if localStorage unavailable) ──────────
 function lsGet(key) {
@@ -237,6 +237,7 @@ var detectRules = [
   { type: 'Tumbler Wrap',    patterns: [/tumbler/i, /wrap/i, /stanley/i, /skinny\s*can/i] },
   { type: 'PNG',             patterns: [/\bpng\b/i, /clipart/i, /clip\s*art/i, /sticker\s*sheet/i, /sublimation/i, /\bsvg\b/i, /\bdxf\b/i, /cut\s*file/i, /transparent/i] },
   { type: 'Printable Wall Art', patterns: [/wall\s*art/i, /printable\s*art/i, /poster/i, /art\s*print/i, /nursery\s*print/i, /gallery\s*wall/i, /botanical\s*print/i] },
+  { type: 'Printable',        patterns: [/printable/i, /print\s*&\s*go/i, /printout/i] },
   { type: 'Invitation',      patterns: [/invitation/i, /invite/i, /rsvp/i, /save\s*the\s*date/i, /birthday\s*card/i, /shower\s*card/i] },
   { type: 'Checklist',       patterns: [/checklist/i, /check\s*list/i, /packing\s*list/i, /shopping\s*list/i, /bucket\s*list/i] },
   { type: 'Planner',         patterns: [/planner/i, /daily\s*plan/i, /weekly\s*plan/i, /meal\s*plan/i, /content\s*plan/i, /social\s*media\s*plan/i] },
