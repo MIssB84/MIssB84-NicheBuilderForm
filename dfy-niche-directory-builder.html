@@ -271,15 +271,38 @@ function parseBulkText(raw){
     return results;
   }
 
-  // Strategy 2: plain lines — "Niche N: Name" or just "Name"
-  var lines=raw.split(/\r?\n/);
-  lines.forEach(function(line){
-    line=line.trim();
-    if(!line)return;
-    // Strip leading markdown bullets or numbers
-    line=line.replace(/^[-*•]\s*/,'').replace(/^\d+[.)]\s*/,'').trim();
+  // Strategy 2: plain lines — handle multiple formats:
+  //   "Niche 1: Cat Eating Ramen Printable Wall Art"  (all on one line)
+  //   "Niche 1\nCat Eating Ramen Printable Wall Art"  (label on own line, name on next)
+  //   "Bonus\nOpal and Gold Tumbler Wrap PNG"          (bonus label + name on next line)
+  //   "Cat Eating Ramen Printable Wall Art"            (bare name, no label)
+  var lines=raw.split(/\r?\n/).map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  var i=0;
+  while(i<lines.length){
+    var line=lines[i];
+    // Is this line JUST a stub label with no niche name? e.g. "Niche 1", "Niche 7:", "Bonus", "Extra:"
+    var isStubLabel=/^(niche\s*\d+\s*:?\s*|bonus\s*:?\s*|extra\s*:?\s*)$/i.test(line);
+    if(isStubLabel){
+      // Peek at next line
+      if(i+1<lines.length){
+        var nextLine=lines[i+1];
+        var nextIsStub=/^(niche\s*\d+\s*:?\s*|bonus\s*:?\s*|extra\s*:?\s*)$/i.test(nextLine);
+        if(!nextIsStub){
+          // Combine: keep the label so cleanNicheName() can strip it, plus the actual name
+          results.push(line.replace(/:?\s*$/,'')+': '+nextLine);
+          i+=2;
+          continue;
+        }
+      }
+      // Stub label with nothing useful after it — skip
+      i++;
+      continue;
+    }
+    // Normal line with actual content
+    line=line.replace(/^[-*\u2022]\s*/,'').replace(/^\d+[.)]\s*/,'').trim();
     if(line)results.push(line);
-  });
+    i++;
+  }
   return results;
 }
 
@@ -528,6 +551,13 @@ function buildDirectoryHTML(){
   html+='#'+rid+' .dfy-week-exp-row{display:flex;gap:6px;margin:8px 18px 0;flex-wrap:wrap;}';
   html+='#'+rid+' .dfy-wk-btn{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;background:transparent;color:#a98f87;border:1px solid #ead9d5;border-radius:20px;padding:5px 10px;cursor:pointer;}';
   html+='#'+rid+' .dfy-wk-btn:hover{border-color:#dea193;color:#2a1f1c;}';
+  // Jump nav styles
+  html+='#'+rid+' .dfy-jump-nav{padding:0 0 14px;margin-bottom:4px;}';
+  html+='#'+rid+' .dfy-jump-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#a98f87;margin-bottom:8px;}';
+  html+='#'+rid+' .dfy-jump-pills{display:flex;flex-wrap:wrap;gap:7px;}';
+  html+='#'+rid+' .dfy-jump-pill{font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;background:#f5eddf;color:#5a4a45;border:1.5px solid #ead9d5;border-radius:999px;padding:7px 14px;cursor:pointer;transition:all .18s;white-space:nowrap;}';
+  html+='#'+rid+' .dfy-jump-pill:hover{background:#dea193;border-color:#dea193;color:#2a1f1c;}';
+  html+='#'+rid+' .dfy-jump-pill.active{background:#2a1f1c;border-color:#2a1f1c;color:#f5eddf;}';
   html+='@media(max-width:700px){#'+rid+' .dfy-controls{grid-template-columns:1fr;}#'+rid+' .dfy-niche{align-items:flex-start;flex-direction:column;gap:6px;}}';
   html+='</style>';
 
@@ -562,6 +592,18 @@ function buildDirectoryHTML(){
   html+='<button class="dfy-bulk-btn" onclick="'+rid+'_expandAll()">Expand All Months</button>';
   html+='<button class="dfy-bulk-btn" onclick="'+rid+'_collapseAll()">Collapse All Months</button>';
   html+='</div>';
+
+  // ── Jump-to-month nav ──
+  if(groupOrder.length>1){
+    html+='<div class="dfy-jump-nav">';
+    html+='<div class="dfy-jump-label">Jump to Month</div>';
+    html+='<div class="dfy-jump-pills">';
+    groupOrder.forEach(function(my,mi){
+      var monthId=rid+'_month_'+mi;
+      html+='<button class="dfy-jump-pill'+(mi===0?' active':'')+'" id="'+monthId+'_pill" onclick="'+rid+'_jumpTo(\''+monthId+'\')">'+esc(my)+'</button>';
+    });
+    html+='</div></div>';
+  }
 
   html+='<div id="'+rid+'_results">';
 
@@ -625,6 +667,22 @@ function buildDirectoryHTML(){
 
   // ── Scripts ──
   html+='<script>';
+  html+='function '+rid+'_jumpTo(monthId){';
+  html+='// Open the target month';
+  html+='var card=document.getElementById(monthId);';
+  html+='if(!card)return;';
+  html+='var body=card.querySelector(".dfy-month-content");';
+  html+='var btn=card.querySelector(".dfy-month-btn");';
+  html+='if(body){body.style.display="block";}';
+  html+='if(btn){btn.classList.add("open");}';
+  html+='// Update active pill';
+  html+='document.querySelectorAll("#'+rid+' .dfy-jump-pill").forEach(function(p){p.classList.remove("active");});';
+  html+='var pill=document.getElementById(monthId+"_pill");';
+  html+='if(pill)pill.classList.add("active");';
+  html+='// Scroll the month card into view smoothly';
+  html+='setTimeout(function(){card.scrollIntoView({behavior:"smooth",block:"start"});},60);';
+  html+='}';
+
   html+='function '+rid+'_filter(){';
   html+='var q=(document.getElementById("'+rid+'_search").value||"").toLowerCase();';
   html+='var type=document.getElementById("'+rid+'_type").value;';
@@ -637,6 +695,8 @@ function buildDirectoryHTML(){
   html+='month.style.display=monthVisible?"block":"none";';
   html+='if(q||type!=="all"){var c=month.querySelector(".dfy-month-content");if(c)c.style.display="block";}';
   html+='});';
+  // Clear pill active state when searching so it doesn't mislead
+  html+='if(q||type!=="all"){document.querySelectorAll("#'+rid+' .dfy-jump-pill").forEach(function(p){p.classList.remove("active");});}';
   html+='document.getElementById("'+rid+'_empty").style.display=total?"none":"block";}';
 
   html+='function '+rid+'_toggleMonth(id){var card=document.getElementById(id);if(!card)return;var btn=card.querySelector(".dfy-month-btn");var body=card.querySelector(".dfy-month-content");var open=body.style.display!=="none";body.style.display=open?"none":"block";if(open){btn.classList.remove("open");}else{btn.classList.add("open");}}';
