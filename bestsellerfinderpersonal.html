@@ -2,52 +2,51 @@
 
 <style>
   .bsf * { box-sizing: border-box; margin: 0; padding: 0; }
-  .bsf { font-family: 'Jost', sans-serif; background: #fdf7f2; }
-  .bsf-hero { background: #2a1f1c; padding: 1.6rem 2rem 2.25rem; text-align: center; min-height: 100vh; }
-  .bsf-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: #c9a96e; margin-bottom: 0.8rem; display: block; }
-  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(34px, 4.4vw, 58px); line-height: 1.05; color: #f5eddf; margin-bottom: 0.85rem; font-weight: 700; }
+  .bsf { font-family: 'Jost', sans-serif; background: #fdf7f2; font-size: 14px; }
+  .bsf-hero { background: #2a1f1c; padding: 1.2rem 1.6rem 1.8rem; text-align: center; min-height: 100vh; }
+  .bsf-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: #c9a96e; margin-bottom: 0.6rem; display: block; }
+  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.6vw, 48px); line-height: 1.05; color: #f5eddf; margin-bottom: 0.7rem; font-weight: 700; }
   .bsf-h1 em { color: #dea193; font-style: italic; }
-  .bsf-sub { font-size: 16px; font-weight: 300; color: #d9cfc8; line-height: 1.55; max-width: 760px; margin: 0 auto 1.35rem; }
+  .bsf-sub { font-size: 14px; font-weight: 300; color: #d9cfc8; line-height: 1.55; max-width: 680px; margin: 0 auto 1.1rem; }
 
-  .bsf-dashboard { display: flex; flex-direction: column; gap: 1.35rem; max-width: 1120px; margin: 0 auto; align-items: center; }
-  .bsf-quickfills { min-width: 0; }
-  .bsf-chips-section { margin-bottom: 1.05rem; }
-  .bsf-chips-label { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: #c9a96e; margin-bottom: 10px; display: block; }
-  .bsf-chips-hint { font-size: 11px; font-weight: 300; color: #a09090; margin-bottom: 10px; display: block; font-style: italic; }
-  .bsf-chips { display: flex; flex-wrap: wrap; gap: 11px; justify-content: center; max-width: 1040px; margin: 0 auto; }
-  .bsf-chip { background-color: #e8ddd6 !important; border: 2px solid #e8ddd6 !important; color: #2a1f1c !important; font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 700; padding: 11px 24px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s, transform 0.12s; -webkit-appearance: none; appearance: none; white-space: nowrap; }
+  .bsf-dashboard { display: flex; flex-direction: column; gap: 1.1rem; max-width: 1080px; margin: 0 auto; align-items: center; }
+  .bsf-quickfills { min-width: 0; width: 100%; }
+  .bsf-chips-section { margin-bottom: 0.85rem; }
+  .bsf-chips-label { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: #c9a96e; margin-bottom: 8px; display: block; }
+  .bsf-chips-hint { font-size: 10px; font-weight: 300; color: #a09090; margin-bottom: 8px; display: block; font-style: italic; }
+  .bsf-chips { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; max-width: 1040px; margin: 0 auto; }
+  .bsf-chip { background-color: #e8ddd6 !important; border: 2px solid #e8ddd6 !important; color: #2a1f1c !important; font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 700; padding: 9px 20px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s, transform 0.12s; -webkit-appearance: none; appearance: none; white-space: nowrap; }
   .bsf-chip:hover { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
   .bsf-chip:active { transform: scale(0.97); }
   .bsf-chip.active { background-color: #dea193 !important; border-color: #dea193 !important; color: #2a1f1c !important; }
-  .bsf-divider { width: 54px; height: 1px; background: rgba(201,169,110,0.35); margin: 1.05rem auto; }
+  .bsf-divider { width: 54px; height: 1px; background: rgba(201,169,110,0.35); margin: 0.85rem auto; }
 
-  .bsf-card { background: #ffffff !important; border: 1.5px solid #ead9d5 !important; border-radius: 22px; padding: 1.65rem 1.6rem; text-align: left; box-shadow: 0 18px 45px rgba(0,0,0,0.18); max-width: 640px; width: 100%; margin: 0 auto; }
-  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 25px; font-weight: 700; color: #2a1f1c !important; text-align: center; margin-bottom: 4px; }
-  .bsf-card-sub { font-size: 14px; font-weight: 300; color: #7a6660 !important; text-align: center; margin-bottom: 1.25rem; line-height: 1.45; }
-  .bsf-field { margin-bottom: 1rem; }
-  .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
-  .bsf-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #2a1f1c !important; }
-  .bsf-optional { font-size: 10px; font-weight: 400; color: #b09a94 !important; font-style: italic; }
-  .bsf-input { width: 100%; padding: 14px 16px; border: 1.5px solid #ead9d5 !important; border-radius: 13px; font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 400; color: #2a1f1c !important; background: #fdf7f2 !important; outline: none; transition: border-color 0.2s, background 0.2s; }
+  .bsf-card { background: #ffffff !important; border: 1.5px solid #ead9d5 !important; border-radius: 20px; padding: 1.4rem 1.4rem; text-align: left; box-shadow: 0 18px 45px rgba(0,0,0,0.18); max-width: 580px; width: 100%; margin: 0 auto; }
+  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #2a1f1c !important; text-align: center; margin-bottom: 4px; }
+  .bsf-card-sub { font-size: 13px; font-weight: 300; color: #7a6660 !important; text-align: center; margin-bottom: 1.1rem; line-height: 1.45; }
+  .bsf-field { margin-bottom: 0.9rem; }
+  .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .bsf-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #2a1f1c !important; }
+  .bsf-optional { font-size: 9px; font-weight: 400; color: #b09a94 !important; font-style: italic; }
+  .bsf-input { width: 100%; padding: 12px 14px; border: 1.5px solid #ead9d5 !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 400; color: #2a1f1c !important; background: #fdf7f2 !important; outline: none; transition: border-color 0.2s, background 0.2s; }
   .bsf-input:focus { border-color: #dea193 !important; background: #fff !important; }
   .bsf-input::placeholder { color: #c4b0a8 !important; }
-  .bsf-btn { width: 100%; padding: 16px; background-color: #dea193 !important; color: #2a1f1c !important; border: none !important; border-radius: 13px; font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.25rem; -webkit-appearance: none; appearance: none; }
+  .bsf-btn { width: 100%; padding: 14px; background-color: #dea193 !important; color: #2a1f1c !important; border: none !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.2rem; -webkit-appearance: none; appearance: none; }
   .bsf-btn:active { transform: scale(0.985); }
-  .bsf-confirm { display: none; margin-top: 1rem; padding: 1rem; background: #fdf7f2 !important; border: 1.5px solid #ead9d5 !important; border-radius: 13px; text-align: center; }
+  .bsf-confirm { display: none; margin-top: 0.9rem; padding: 0.9rem; background: #fdf7f2 !important; border: 1.5px solid #ead9d5 !important; border-radius: 12px; text-align: center; }
   .bsf-confirm.show { display: block; animation: fadeUp 0.3s ease; }
-  .bsf-confirm-text { font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; color: #2a1f1c !important; margin-bottom: 3px; }
-  .bsf-confirm-sub { font-size: 12px; color: #b09a94 !important; font-weight: 300; }
+  .bsf-confirm-text { font-family: 'Playfair Display', serif; font-size: 15px; font-style: italic; color: #2a1f1c !important; margin-bottom: 3px; }
+  .bsf-confirm-sub { font-size: 11px; color: #b09a94 !important; font-weight: 300; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
   @media (min-width: 1100px) {
     .bsf-chips { max-width: 1080px; }
-    .bsf-chip { padding: 12px 26px; }
   }
 
   @media (max-width: 900px) {
-    .bsf-hero { min-height: auto; padding: 2rem 1rem; }
+    .bsf-hero { min-height: auto; padding: 1.5rem 1rem; }
     .bsf-dashboard { max-width: 720px; }
-    .bsf-card { max-width: 520px; margin: 0 auto; }
+    .bsf-card { max-width: 480px; margin: 0 auto; }
     .bsf-chips { max-width: 100%; }
   }
 </style>
@@ -64,31 +63,31 @@
           <span class="bsf-chips-label">Quick-fill a niche</span>
           <span class="bsf-chips-hint">Pick one or more — they'll combine automatically</span>
           <div class="bsf-chips" id="niche-chips">
-            <button class="bsf-chip" onclick="toggleNiche(this,'trendy')">trendy</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'vintage')">vintage</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'retro')">retro</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'groovy')">groovy</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'animals')">animals</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'boho')">boho</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'bookish')">bookish</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'christian')">christian</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'coffee')">coffee</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'coquette')">coquette</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'preppy')">preppy</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'cottagecore')">cottagecore</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'dark academia')">dark academia</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'western')">western</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'boho')">boho</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'floral')">floral</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'funny')">funny</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'groovy')">groovy</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'halloween')">halloween</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'christmas')">christmas</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'maximalist')">maximalist</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'mental health')">mental health</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'mom life')">mom life</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'nurse')">nurse</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'pets')">pets</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'preppy')">preppy</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'retro')">retro</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'samsung')">samsung</button>
             <button class="bsf-chip" onclick="toggleNiche(this,'teacher')">teacher</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'nurse')">nurse</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'mom life')">mom life</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'christian')">christian</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'bookish')">bookish</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'coffee')">coffee</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'mental health')">mental health</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'funny')">funny</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'pets')">pets</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'animals')">animals</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'floral')">floral</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'christmas')">christmas</button>
-            <button class="bsf-chip" onclick="toggleNiche(this,'halloween')">halloween</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'trendy')">trendy</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'vintage')">vintage</button>
+            <button class="bsf-chip" onclick="toggleNiche(this,'western')">western</button>
           </div>
         </div>
 
@@ -97,15 +96,17 @@
         <div class="bsf-chips-section">
           <span class="bsf-chips-label">Quick-fill a product type</span>
           <div class="bsf-chips" id="product-chips">
-            <button class="bsf-chip" onclick="fillProduct(this,'printable wall art')">printable wall art</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'canva template')">canva template</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'digital invitation')">digital invitation</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'digital journal')">digital journal</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'digital planner')">digital planner</button>
             <button class="bsf-chip" onclick="fillProduct(this,'frame tv art')">frame tv art</button>
             <button class="bsf-chip" onclick="fillProduct(this,'png')">png</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'printable wall art')">printable wall art</button>
             <button class="bsf-chip" onclick="fillProduct(this,'shirt png')">shirt png</button>
             <button class="bsf-chip" onclick="fillProduct(this,'tumbler wrap png')">tumbler wrap png</button>
-            <button class="bsf-chip" onclick="fillProduct(this,'digital invitation')">digital invitation</button>
-            <button class="bsf-chip" onclick="fillProduct(this,'digital planner')">digital planner</button>
-            <button class="bsf-chip" onclick="fillProduct(this,'digital journal')">digital journal</button>
-            <button class="bsf-chip" onclick="fillProduct(this,'canva template')">canva template</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'shirt')">shirt</button>
+            <button class="bsf-chip" onclick="fillProduct(this,'sweatshirt')">sweatshirt</button>
           </div>
         </div>
       </div>
@@ -115,7 +116,7 @@
         <p class="bsf-card-sub">Pick chips or type your own. Product type is optional but sharpens results.</p>
         <div class="bsf-field">
           <div class="bsf-label-row"><span class="bsf-label">Niche</span></div>
-          <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. coquette, teacher, samsung"/>
+          <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. coquette teacher samsung"/>
         </div>
         <div class="bsf-field">
           <div class="bsf-label-row">
@@ -135,7 +136,6 @@
 </div>
 
 <script>
-// Multi-select niche logic
 var selectedNiches = [];
 
 function toggleNiche(el, val) {
@@ -147,10 +147,9 @@ function toggleNiche(el, val) {
     selectedNiches.push(val);
     el.classList.add('active');
   }
-  document.getElementById('bsf-niche').value = selectedNiches.join(', ');
+  document.getElementById('bsf-niche').value = selectedNiches.join(' ');
 }
 
-// Single-select product type (unchanged behavior)
 function fillProduct(el, val) {
   document.getElementById('bsf-product').value = val;
   document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
@@ -172,11 +171,8 @@ function bsfGo() {
   setTimeout(function() { conf.classList.remove('show'); }, 4000);
 }
 
-// Sync manual typing — clear chip selections if user edits the field manually
 document.getElementById('bsf-niche').addEventListener('input', function() {
-  var typed = this.value.trim();
-  // If field was cleared, deselect all chips
-  if (!typed) {
+  if (!this.value.trim()) {
     selectedNiches = [];
     document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
   }
