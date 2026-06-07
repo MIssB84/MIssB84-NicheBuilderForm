@@ -708,8 +708,27 @@ function buildDirectoryHTML(){
   return html;
 }
 
-function previewDirectory(){if(!weeks.length){toast('Add at least one weekly drop first.');return;}var html=buildDirectoryHTML();document.getElementById('out-title').textContent='Directory Preview';document.getElementById('copy-all-btn').className='copy-all-btn';document.getElementById('out-preview').innerHTML=html;document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
-function generateHTML(){if(!weeks.length){toast('Add at least one weekly drop first.');return;}var html=buildDirectoryHTML();document.getElementById('out-code').value=html;document.getElementById('out-preview').innerHTML=html;document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';document.getElementById('copy-all-btn').className='copy-all-btn show';document.getElementById('out').style.display='block';document.getElementById('out').scrollIntoView({behavior:'smooth'});}
+function previewDirectory(){
+  if(!weeks.length){toast('Add at least one weekly drop first.');return;}
+  var html=buildDirectoryHTML();
+  document.getElementById('out-title').textContent='Directory Preview';
+  document.getElementById('copy-all-btn').className='copy-all-btn';
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+function generateHTML(){
+  if(!weeks.length){toast('Add at least one weekly drop first.');return;}
+  var html=buildDirectoryHTML();
+  // Show inline preview
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out-title').textContent='Your HTML is ready to paste into Systeme.io';
+  document.getElementById('copy-all-btn').className='copy-all-btn show';
+  document.getElementById('out-code').value=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+  toast('HTML ready! Scroll down and hit Copy HTML.');
+}
 function copyAll(){var code=document.getElementById('out-code').value;var btn=document.getElementById('copy-all-btn');try{var ta=document.createElement('textarea');ta.value=code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy HTML';},2500);toast('HTML copied.');}catch(e){toast('Copy failed.');}}
 
 ['week-date','drop-link'].forEach(function(id){document.addEventListener('input',function(e){if(e.target&&e.target.id===id)markDirty();});});
