@@ -472,7 +472,7 @@ function deleteWeek(idx){
   renderSavedWeeks();saveData();updateStats();
 }
 
-function totalNiches(){return weeks.reduce(function(t,w){return t+w.niches.length;},0);}
+function totalNiches(){return weeks.reduce(function(t,w){return t+(w.niches?w.niches.length:0);},0);}
 
 function updateStats(){
   var bar=document.getElementById('stats-bar');
@@ -498,11 +498,28 @@ function updateStats(){
 function saveData(){try{localStorage.setItem(SK,JSON.stringify({weeks:weeks}));dirty=false;setStatus('saved','Saved');}catch(e){toast('Could not save.');}}
 var autoTimer;function scheduleAutoSave(){clearTimeout(autoTimer);autoTimer=setTimeout(saveData,1000);}
 function loadData(){
-  try{
-    var raw=localStorage.getItem(SK);
-    if(raw){weeks=(JSON.parse(raw).weeks||[]);sortWeeks();setStatus('saved','Saved directory loaded');}
-    else{setStatus('unsaved','Nothing saved yet');}
-  }catch(e){weeks=[];setStatus('unsaved','Could not load');}
+  var KEYS=[SK,'dfy_niche_directory_v3_weekly_only'];
+  var loaded=false;
+  for(var k=0;k<KEYS.length;k++){
+    try{
+      var raw=localStorage.getItem(KEYS[k]);
+      if(raw){
+        var parsed=JSON.parse(raw);
+        weeks=(parsed.weeks||[]);
+        weeks=weeks.filter(function(w){return w&&w.date&&w.link&&Array.isArray(w.niches);});
+        weeks.forEach(function(w){
+          w.niches=w.niches.filter(function(n){return n&&n.name;});
+          w.niches.forEach(function(n){if(!n.type)n.type='Other';});
+        });
+        sortWeeks();
+        setStatus('saved','Saved directory loaded');
+        if(KEYS[k]!==SK){saveData();}
+        loaded=true;
+        break;
+      }
+    }catch(e){weeks=[];}
+  }
+  if(!loaded){weeks=[];setStatus('unsaved','Nothing saved yet');}
   clearCurrentForm();renderSavedWeeks();updateStats();
 }
 
@@ -660,7 +677,7 @@ function buildDirectoryHTML(){
   html+='</div>';
 
   // ── Scripts ──
-  html+='<script>';
+  html+='<scr'+'ipt>';
   html+='function '+rid+'_jumpTo(monthId){';
   html+='// Open the target month';
   html+='var card=document.getElementById(monthId);';
@@ -703,7 +720,7 @@ function buildDirectoryHTML(){
   html+='function '+rid+'_expandWeeks(monthId){var card=document.getElementById(monthId);if(!card)return;card.querySelectorAll("[id$=\'_body\']").forEach(function(b){b.style.display="block";});card.querySelectorAll("[id$=\'_chev\']").forEach(function(c){c.textContent="▲";});}';
   html+='function '+rid+'_collapseWeeks(monthId){var card=document.getElementById(monthId);if(!card)return;card.querySelectorAll("[id$=\'_body\']").forEach(function(b){b.style.display="none";});card.querySelectorAll("[id$=\'_chev\']").forEach(function(c){c.textContent="▼";});}';
 
-  html+='<\/script>';
+  html+='<'+'/script>';
   html+='</div>'; // #rid wrapper
   return html;
 }
