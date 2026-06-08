@@ -154,6 +154,7 @@ function previewBanner(){
     previewHtml+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+label+'</p>';
     previewHtml+='<div id="'+cdId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
     previewHtml+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(dt).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
+    previewHtml+=buildCalendarButtons(dt,label,url);
     previewHtml+='</div>';
     // inline countdown script via setTimeout after render
     window._previewCdTarget=tsMs;
@@ -292,6 +293,7 @@ function generate(){
     html+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+esc(premiereLabel)+'</p>';
     html+='<div id="'+countdownId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
     html+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(premiereDate).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
+    html+=buildCalendarButtons(premiereDate,esc(premiereLabel),esc(url));
     html+='</div>';
     html+='<script>';
     html+='(function(){';
@@ -341,6 +343,35 @@ function generate(){
   document.getElementById('out-preview').innerHTML=html;
   document.getElementById('out').style.display='block';
   document.getElementById('out').scrollIntoView({behavior:'smooth'});
+}
+
+function buildCalendarButtons(dtLocal,eventTitle,ytUrl){
+  var d=new Date(dtLocal);
+  // Format: YYYYMMDDTHHmmss (local, no Z)
+  function pad(n){return n<10?'0'+n:n;}
+  function fmt(date){
+    return date.getFullYear()+pad(date.getMonth()+1)+pad(date.getDate())+'T'+pad(date.getHours())+pad(date.getMinutes())+'00';
+  }
+  var start=fmt(d);
+  var endD=new Date(d.getTime()+60*60*1000); // 1hr duration
+  var end=fmt(endD);
+  var desc=encodeURIComponent('Watch the premiere here: '+ytUrl);
+  var titleEnc=encodeURIComponent(eventTitle);
+
+  // Google
+  var gUrl='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+titleEnc+'&dates='+start+'/'+end+'&details='+desc;
+
+  // ICS (Apple + Outlook)
+  var icsContent='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;TZID=America/Los_Angeles:'+start+'\r\nDTEND;TZID=America/Los_Angeles:'+end+'\r\nSUMMARY:'+eventTitle+'\r\nDESCRIPTION:Watch here: '+ytUrl+'\r\nEND:VEVENT\r\nEND:VCALENDAR';
+  var icsB64='data:text/calendar;base64,'+btoa(icsContent);
+
+  var btnStyle='display:inline-block;font-family:Jost,sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;padding:7px 16px;border-radius:30px;text-decoration:none;border:1px solid rgba(245,196,188,0.5);color:#f5c4bc;margin:4px;';
+  var out='<div style="margin-top:1rem;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">';
+  out+='<a href="'+gUrl+'" target="_blank" style="'+btnStyle+'">+ Google Calendar</a>';
+  out+='<a href="'+icsB64+'" download="premiere.ics" style="'+btnStyle+'">+ Apple Calendar</a>';
+  out+='<a href="'+icsB64+'" download="premiere.ics" style="'+btnStyle+'">+ Outlook</a>';
+  out+='</div>';
+  return out;
 }
 
 function copyAll(){
