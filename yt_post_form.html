@@ -26,6 +26,8 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
 .sbtn-gen:hover{background:#bb7d72;border-color:#bb7d72;color:#fff;}
 .sbtn-clear{background:transparent;color:#c4b0a8;border-color:rgba(196,176,168,0.4);font-size:11px;padding:7px 14px;}
 .sbtn-clear:hover{border-color:#c4b0a8;color:#fff;}
+.sbtn-preview{background:transparent;color:#dea193;border-color:rgba(222,161,147,0.5);font-size:11px;padding:7px 14px;}
+.sbtn-preview:hover{border-color:#dea193;}
 #out{display:none;max-width:700px;margin:0 auto;}
 .out-card{background:#fff;border-radius:14px;border:1px solid #ead9d5;overflow:hidden;margin-bottom:1.5rem;}
 .out-card-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
@@ -37,6 +39,12 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
 .thumb-preview{max-width:100%;border-radius:8px;border:1px solid #ead9d5;margin-top:8px;display:none;}
 .thumb-preview.show{display:block;}
 .img-err{font-size:11px;color:#e07070;margin-top:4px;display:none;}
+#preview-modal{display:none;position:fixed;inset:0;background:rgba(42,31,28,0.75);z-index:9998;padding:1.5rem;overflow-y:auto;}
+.modal-inner{background:#fdf7f2;border-radius:16px;max-width:680px;margin:2rem auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-head{background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;}
+.modal-close{background:transparent;border:none;color:#c4b0a8;font-size:1.4rem;cursor:pointer;line-height:1;padding:0;}
+#preview-modal-body{padding:1.5rem;}
 </style>
 </head>
 <body>
@@ -47,6 +55,7 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
   <p class="page-sub">Fill in your video details and generate a ready-to-paste post.</p>
 </div>
 
+<!-- Premiere Banner Card -->
 <div class="card" style="margin-bottom:1rem;">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.2rem;">
     <div>
@@ -63,38 +72,34 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
       <span id="toggle-label" style="font-family:'Jost',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#c4b0a8;">Off</span>
     </label>
   </div>
-
   <div id="premiere-fields" style="display:none;margin-top:1.25rem;border-top:1px solid #ead9d5;padding-top:1.25rem;">
     <label class="fl" for="f-premiere-label" style="margin-top:0;">Banner Label</label>
-    <input class="fi" id="f-premiere-label" placeholder="e.g. 🎬 Watching the Premiere Together!" value="🎬 Join Me for the Premiere!">
-
+    <input class="fi" id="f-premiere-label" placeholder="e.g. Watching the Premiere Together!" value="Join Me for the Premiere!">
     <label class="fl" for="f-premiere-date">Premiere Date &amp; Time</label>
     <input class="fi" id="f-premiere-date" type="datetime-local">
     <span style="font-size:11px;color:#c4b0a8;margin-top:4px;display:block;">Set to your local time — this is when the countdown hits zero.</span>
   </div>
 </div>
 
+<!-- Video Details Card -->
 <div class="card">
   <p class="card-title">Video Details</p>
   <p class="card-sub">Enter your video info below. Use an image URL for your thumbnail.</p>
-
   <label class="fl" for="f-title">Video Title</label>
   <input class="fi" id="f-title" placeholder="e.g. I Never List an Etsy Product Without Doing THIS First">
-
   <label class="fl" for="f-url">YouTube URL</label>
   <input class="fi" id="f-url" placeholder="https://www.youtube.com/watch?v=...">
-
   <label class="fl" for="f-thumb">Thumbnail Image URL</label>
   <input class="fi" id="f-thumb" placeholder="https://..." oninput="updateThumb()">
   <img class="thumb-preview" id="thumb-preview" alt="Thumbnail preview">
   <span class="img-err" id="thumb-err">Image not found — check the URL</span>
-
   <label class="fl" for="f-desc">Video Description</label>
   <textarea class="fi" id="f-desc" placeholder="Paste your video description here..."></textarea>
 </div>
 
 <div style="height:80px;"></div>
 
+<!-- Output Section -->
 <div id="out">
   <div class="out-card">
     <div class="out-card-head">
@@ -109,121 +114,37 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
   </div>
 </div>
 
+<!-- Save Bar -->
 <div class="save-bar">
   <div style="font-size:12px;color:#c4b0a8;">DFY Niche Group · YT Post</div>
   <div style="display:flex;gap:10px;">
     <button class="sbtn sbtn-clear" onclick="clearAll()">Clear</button>
-    <button class="sbtn" style="background:transparent;color:#dea193;border-color:rgba(222,161,147,0.5);font-size:11px;padding:7px 14px;" onclick="previewBanner()">Preview Post</button>
+    <button class="sbtn sbtn-preview" onclick="previewPost()">Preview Post</button>
     <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
   </div>
 </div>
 
 <!-- Preview Modal -->
-<div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(42,31,28,0.7);z-index:9998;padding:1.5rem;overflow-y:auto;" onclick="closePreview(event)">
-  <div style="background:#fdf7f2;border-radius:16px;max-width:680px;margin:2rem auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-    <div style="background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;">
-      <span id="preview-modal-title" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;">Post Preview</span>
-      <button onclick="closePreview()" style="background:transparent;border:none;color:#c4b0a8;font-size:1.3rem;cursor:pointer;line-height:1;">&times;</button>
+<div id="preview-modal" onclick="modalBgClick(event)">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <span class="modal-title">Post Preview</span>
+      <button class="modal-close" onclick="closePreview()">&times;</button>
     </div>
-    <div id="preview-modal-body" style="padding:1.5rem;font-family:'Jost',sans-serif;"></div>
+    <div id="preview-modal-body"></div>
   </div>
 </div>
 
-<script>
-function previewBanner(){
-  var title=v('f-title').trim();
-  var url=v('f-url').trim();
-  var desc=v('f-desc').trim();
-  var thumb=v('f-thumb').trim();
-  var on=document.getElementById('premiere-toggle').checked;
-  var label=v('f-premiere-label').trim()||'Join Me for the Premiere!';
-  var dt=v('f-premiere-date');
-
-  if(!title&&!url&&!desc&&!on){toast('Fill in some fields first.');return;}
-  if(on&&!dt){toast('Set a premiere date and time first.');return;}
-
-  function esc2(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-  var previewHtml='<div style="font-family:Jost,sans-serif;max-width:100%;">';
-
-  // Banner
-  if(on&&dt){
-    var tsMs=new Date(dt).getTime();
-    var cdId='modal-cd';
-    previewHtml+='<div style="background:#6b1212;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;border:1px solid #8b2020;">';
-    previewHtml+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+label+'</p>';
-    previewHtml+='<div id="'+cdId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
-    previewHtml+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(dt).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
-    previewHtml+=buildCalendarButtons(dt,label,url);
-    previewHtml+='</div>';
-    // inline countdown script via setTimeout after render
-    window._previewCdTarget=tsMs;
-    window._previewCdId=cdId;
-  }
-
-  // Title
-  if(title) previewHtml+='<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#2a1f1c;margin-bottom:1.25rem;line-height:1.3;">'+esc2(title)+'</h2>';
-
-  // Thumbnail
-  if(thumb){
-    previewHtml+='<div style="margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">';
-    previewHtml+='<img src="'+esc2(thumb)+'" alt="'+esc2(title)+'" style="width:100%;display:block;">';
-    previewHtml+='</div>';
-  }
-
-  // Watch link
-  if(url) previewHtml+='<p style="margin-bottom:1.5rem;"><span style="font-family:Jost,sans-serif;font-size:0.95rem;font-weight:600;color:#dea193;">&#9658;&nbsp;&nbsp;Click here to watch on YouTube</span></p>';
-
-  // Description
-  if(desc){
-    var descHTML=desc;
-    var firstEnd=desc.search(/[.!?](\s|$)/);
-    if(firstEnd!==-1){
-      descHTML='<strong>'+esc2(desc.slice(0,firstEnd+1))+'</strong>'+esc2(desc.slice(firstEnd+1));
-    } else {
-      descHTML=esc2(desc);
-    }
-    previewHtml+='<p style="font-family:Jost,sans-serif;font-size:1rem;line-height:1.8;color:#2a1f1c;margin-bottom:1.5rem;white-space:pre-wrap;">'+descHTML+'</p>';
-  }
-
-  // Divider + static line
-  previewHtml+='<hr style="border:none;border-top:1px solid #ead9d5;margin-bottom:1rem;">';
-  previewHtml+='<p style="font-family:Jost,sans-serif;font-size:0.88rem;font-style:italic;color:#c4b0a8;">(Please leave any questions or comments on the video and I\'ll get back to you there!)</p>';
-  previewHtml+='</div>';
-
-  var body=document.getElementById('preview-modal-body');
-  body.innerHTML=previewHtml;
-  document.getElementById('preview-modal-title').textContent='Post Preview';
-  document.getElementById('preview-modal').style.display='block';
-
-  // Start countdown if banner is on
-  if(on&&dt){
-    function pad(n){return n<10?'0'+n:n;}
-    function tick(){
-      var el=document.getElementById(window._previewCdId);
-      if(!el)return;
-      var diff=window._previewCdTarget-Date.now();
-      if(diff<=0){el.textContent='Live now!';return;}
-      var h=Math.floor(diff/3600000);
-      var m=Math.floor((diff%3600000)/60000);
-      var s=Math.floor((diff%60000)/1000);
-      el.textContent=(h>0?pad(h)+'h ':'')+pad(m)+'m '+pad(s)+'s';
-      setTimeout(tick,1000);
-    }
-    setTimeout(tick,50);
-  }
-}
-function closePreview(e){
-  if(!e||e.target===document.getElementById('preview-modal')){
-    document.getElementById('preview-modal').style.display='none';
-  }
-  if(!e)document.getElementById('preview-modal').style.display='none';
-}
-</script>
+<div class="toast" id="toast"></div>
 
 <script>
-function v(id){return(document.getElementById(id)||{}).value||'';}
+// ── Utilities ──────────────────────────────────────────────────────────────
+function v(id){ var el=document.getElementById(id); return el?el.value:''; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(function(){ t.style.display='none'; },2500); }
+function pad(n){ return n<10?'0'+n:String(n); }
 
+// ── Toggle ─────────────────────────────────────────────────────────────────
 function togglePremiere(){
   var on=document.getElementById('premiere-toggle').checked;
   document.getElementById('premiere-fields').style.display=on?'block':'none';
@@ -232,23 +153,183 @@ function togglePremiere(){
   document.getElementById('toggle-label').textContent=on?'On':'Off';
   document.getElementById('toggle-label').style.color=on?'#dea193':'#c4b0a8';
 }
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none';},2500);}
 
+// ── Thumbnail preview ──────────────────────────────────────────────────────
 function updateThumb(){
   var url=v('f-thumb').trim();
   var img=document.getElementById('thumb-preview');
   var err=document.getElementById('thumb-err');
-  if(!url){img.className='thumb-preview';img.src='';err.style.display='none';return;}
-  img.onload=function(){img.className='thumb-preview show';err.style.display='none';};
-  img.onerror=function(){img.className='thumb-preview';err.style.display='block';};
+  if(!url){ img.className='thumb-preview'; img.src=''; err.style.display='none'; return; }
+  img.onload=function(){ img.className='thumb-preview show'; err.style.display='none'; };
+  img.onerror=function(){ img.className='thumb-preview'; err.style.display='block'; };
   img.src=url;
 }
 
+// ── Calendar buttons ───────────────────────────────────────────────────────
+function buildCalendarButtons(dtLocal, eventTitle, ytUrl){
+  var d=new Date(dtLocal);
+  function fmt(date){ return date.getFullYear()+pad(date.getMonth()+1)+pad(date.getDate())+'T'+pad(date.getHours())+pad(date.getMinutes())+'00'; }
+  var start=fmt(d);
+  var endD=new Date(d.getTime()+60*60*1000);
+  var end=fmt(endD);
+  var gUrl='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(eventTitle)+'&dates='+start+'/'+end+'&details='+encodeURIComponent('Watch the premiere here: '+ytUrl);
+  var icsContent='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:'+start+'Z\r\nDTEND:'+end+'Z\r\nSUMMARY:'+eventTitle+'\r\nDESCRIPTION:Watch here: '+ytUrl+'\r\nEND:VEVENT\r\nEND:VCALENDAR';
+  var icsB64='data:text/calendar;base64,'+btoa(icsContent);
+  var btn='display:inline-block;font-family:Jost,sans-serif;font-size:0.72rem;font-weight:600;letter-spacing:0.05em;padding:6px 14px;border-radius:30px;text-decoration:none;border:1px solid rgba(245,196,188,0.45);color:#f5c4bc;margin:3px;';
+  return '<div style="margin-top:1rem;display:flex;flex-wrap:wrap;justify-content:center;">'
+    +'<a href="'+gUrl+'" target="_blank" style="'+btn+'">+ Google Calendar</a>'
+    +'<a href="'+icsB64+'" download="premiere.ics" style="'+btn+'">+ Apple Calendar</a>'
+    +'<a href="'+icsB64+'" download="premiere.ics" style="'+btn+'">+ Outlook</a>'
+    +'</div>';
+}
+
+// ── Build banner HTML ──────────────────────────────────────────────────────
+function buildBannerHTML(premiereLabel, premiereDate, ytUrl, countdownId){
+  var tsMs=new Date(premiereDate).getTime();
+  var out='<div style="background:#6b1212;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;border:1px solid #8b2020;">';
+  out+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+esc(premiereLabel)+'</p>';
+  out+='<div id="'+countdownId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
+  out+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(premiereDate).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
+  out+=buildCalendarButtons(premiereDate, premiereLabel, ytUrl);
+  out+='</div>';
+  return out;
+}
+
+// ── Start a countdown on an already-rendered element ──────────────────────
+function startCountdown(elId, tsMs){
+  function tick(){
+    var el=document.getElementById(elId);
+    if(!el) return;
+    var diff=tsMs-Date.now();
+    if(diff<=0){ el.textContent='Live now!'; el.style.color='#f5c4bc'; return; }
+    var h=Math.floor(diff/3600000);
+    var m=Math.floor((diff%3600000)/60000);
+    var s=Math.floor((diff%60000)/1000);
+    el.textContent=(h>0?pad(h)+'h ':'')+pad(m)+'m '+pad(s)+'s';
+    setTimeout(tick,1000);
+  }
+  tick();
+}
+
+// ── Build description HTML ─────────────────────────────────────────────────
+function buildDescHTML(desc){
+  if(!desc) return '';
+  var firstEnd=desc.search(/[.!?](\s|$)/);
+  if(firstEnd!==-1){
+    return '<strong>'+esc(desc.slice(0,firstEnd+1))+'</strong>'+esc(desc.slice(firstEnd+1));
+  }
+  return esc(desc);
+}
+
+// ── Generate ───────────────────────────────────────────────────────────────
+function generate(){
+  var title=v('f-title').trim();
+  var url=v('f-url').trim();
+  var desc=v('f-desc').trim();
+  var thumb=v('f-thumb').trim();
+  var premiereOn=document.getElementById('premiere-toggle').checked;
+  var premiereLabel=v('f-premiere-label').trim()||'Join Me for the Premiere!';
+  var premiereDate=v('f-premiere-date');
+
+  if(!title||!url){ toast('Please enter a title and YouTube URL.'); return; }
+  if(premiereOn&&!premiereDate){ toast('Please set a premiere date and time.'); return; }
+
+  var html='<div style="font-family:Jost,sans-serif;max-width:700px;margin:0 auto;">';
+
+  if(premiereOn&&premiereDate){
+    var tsMs=new Date(premiereDate).getTime();
+    var cdId='cd'+Math.floor(Math.random()*99999);
+    html+=buildBannerHTML(premiereLabel,premiereDate,url,cdId);
+    html+='<script>(function(){var end='+tsMs+';var id="'+cdId+'";function pad(n){return n<10?"0"+n:String(n);}function tick(){var el=document.getElementById(id);if(!el)return;var diff=end-Date.now();if(diff<=0){el.textContent="Live now!";return;}var h=Math.floor(diff/3600000);var m=Math.floor((diff%3600000)/60000);var s=Math.floor((diff%60000)/1000);el.textContent=(h>0?pad(h)+"h ":"")+pad(m)+"m "+pad(s)+"s";setTimeout(tick,1000);}tick();})();<\/script>';
+  }
+
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#2a1f1c;margin-bottom:1.25rem;line-height:1.3;">'+esc(title)+'</h2>';
+
+  if(thumb){
+    html+='<a href="'+esc(url)+'" target="_blank" style="display:block;margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">';
+    html+='<img src="'+esc(thumb)+'" alt="'+esc(title)+'" style="width:100%;display:block;"></a>';
+  }
+
+  html+='<p style="margin-bottom:1.5rem;"><a href="'+esc(url)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:0.95rem;font-weight:600;color:#dea193;text-decoration:none;">&#9658;&nbsp;&nbsp;Click here to watch on YouTube</a></p>';
+
+  if(desc){
+    html+='<p style="font-family:Jost,sans-serif;font-size:1rem;line-height:1.8;color:#2a1f1c;margin-bottom:1.5rem;white-space:pre-wrap;">'+buildDescHTML(desc)+'</p>';
+  }
+
+  html+='<hr style="border:none;border-top:1px solid #ead9d5;margin-bottom:1rem;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:0.88rem;font-style:italic;color:#c4b0a8;">(Please leave any questions or comments on the video and I\'ll get back to you there!)</p>';
+  html+='</div>';
+
+  document.getElementById('out-code').value=html;
+  document.getElementById('out-preview').innerHTML=html;
+  document.getElementById('out').style.display='block';
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+
+  if(premiereOn&&premiereDate){
+    startCountdown(document.querySelector('#out-preview [id^="cd"]').id, new Date(premiereDate).getTime());
+  }
+}
+
+// ── Preview Post ───────────────────────────────────────────────────────────
+function previewPost(){
+  var title=v('f-title').trim();
+  var url=v('f-url').trim();
+  var desc=v('f-desc').trim();
+  var thumb=v('f-thumb').trim();
+  var on=document.getElementById('premiere-toggle').checked;
+  var label=v('f-premiere-label').trim()||'Join Me for the Premiere!';
+  var dt=v('f-premiere-date');
+
+  if(!title&&!url&&!desc&&!on){ toast('Fill in some fields first.'); return; }
+  if(on&&!dt){ toast('Set a premiere date and time first.'); return; }
+
+  var html='<div style="font-family:Jost,sans-serif;">';
+  var cdId='prev-cd-'+Date.now();
+
+  if(on&&dt){
+    html+=buildBannerHTML(label,dt,url,cdId);
+  }
+
+  if(title) html+='<h2 style="font-family:Playfair Display,serif;font-size:1.4rem;font-weight:700;color:#2a1f1c;margin-bottom:1.25rem;line-height:1.3;">'+esc(title)+'</h2>';
+
+  if(thumb){
+    html+='<div style="margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">';
+    html+='<img src="'+esc(thumb)+'" alt="'+esc(title)+'" style="width:100%;display:block;"></div>';
+  }
+
+  if(url) html+='<p style="margin-bottom:1.5rem;"><span style="font-family:Jost,sans-serif;font-size:0.95rem;font-weight:600;color:#dea193;">&#9658;&nbsp;&nbsp;Click here to watch on YouTube</span></p>';
+
+  if(desc){
+    html+='<p style="font-family:Jost,sans-serif;font-size:1rem;line-height:1.8;color:#2a1f1c;margin-bottom:1.5rem;white-space:pre-wrap;">'+buildDescHTML(desc)+'</p>';
+  }
+
+  html+='<hr style="border:none;border-top:1px solid #ead9d5;margin-bottom:1rem;">';
+  html+='<p style="font-family:Jost,sans-serif;font-size:0.88rem;font-style:italic;color:#c4b0a8;">(Please leave any questions or comments on the video and I\'ll get back to you there!)</p>';
+  html+='</div>';
+
+  document.getElementById('preview-modal-body').innerHTML=html;
+  document.getElementById('preview-modal').style.display='block';
+  document.body.style.overflow='hidden';
+
+  if(on&&dt){
+    setTimeout(function(){ startCountdown(cdId, new Date(dt).getTime()); }, 50);
+  }
+}
+
+// ── Modal close ────────────────────────────────────────────────────────────
+function closePreview(){
+  document.getElementById('preview-modal').style.display='none';
+  document.body.style.overflow='';
+}
+function modalBgClick(e){
+  if(e.target===document.getElementById('preview-modal')) closePreview();
+}
+
+// ── Clear ──────────────────────────────────────────────────────────────────
 function clearAll(){
-  if(!confirm('Clear all fields?'))return;
-  ['f-title','f-url','f-thumb','f-desc','f-premiere-label','f-premiere-date'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('f-premiere-label').value='🎬 Join Me for the Premiere!';
+  if(!confirm('Clear all fields?')) return;
+  ['f-title','f-url','f-thumb','f-desc','f-premiere-date'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('f-premiere-label').value='Join Me for the Premiere!';
   document.getElementById('premiere-toggle').checked=false;
   togglePremiere();
   document.getElementById('thumb-preview').className='thumb-preview';
@@ -258,135 +339,20 @@ function clearAll(){
   toast('Cleared.');
 }
 
-function generate(){
-  var title=v('f-title').trim();
-  var url=v('f-url').trim();
-  var desc=v('f-desc').trim();
-  var thumb=v('f-thumb').trim();
-
-  if(!title||!url){toast('Please enter a title and YouTube URL.');return;}
-
-  // Bold first sentence of description
-  var descHTML=desc;
-  var firstEnd=desc.search(/[.!?](\s|$)/);
-  if(firstEnd!==-1){
-    descHTML='<strong>'+esc(desc.slice(0,firstEnd+1))+'</strong>'+esc(desc.slice(firstEnd+1));
-  } else {
-    descHTML=esc(desc);
-  }
-
-  var staticLine="(Please leave any questions or comments on the video and I'll get back to you there!)";
-
-  var premiereOn=document.getElementById('premiere-toggle').checked;
-  var premiereLabel=v('f-premiere-label').trim()||'Join Me for the Premiere!';
-  var premiereDate=v('f-premiere-date');
-
-  if(premiereOn&&!premiereDate){toast('Please set a premiere date and time.');return;}
-
-  var html='<div style="font-family:Jost,sans-serif;max-width:700px;margin:0 auto;">';
-
-  // Premiere Banner
-  if(premiereOn&&premiereDate){
-    var tsMs=new Date(premiereDate).getTime();
-    var countdownId='cd'+Math.floor(Math.random()*99999);
-    html+='<div style="background:#6b1212;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;border:1px solid #8b2020;">';
-    html+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+esc(premiereLabel)+'</p>';
-    html+='<div id="'+countdownId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
-    html+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(premiereDate).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
-    html+=buildCalendarButtons(premiereDate,esc(premiereLabel),esc(url));
-    html+='</div>';
-    html+='<script>';
-    html+='(function(){';
-    html+='var end='+tsMs+';';
-    html+='var el=document.getElementById("'+countdownId+'");';
-    html+='function tick(){';
-    html+='var diff=end-Date.now();';
-    html+='if(!el)return;';
-    html+='if(diff<=0){el.textContent="Live now!";el.style.color="#dea193";return;}';
-    html+='var h=Math.floor(diff/3600000);';
-    html+='var m=Math.floor((diff%3600000)/60000);';
-    html+='var s=Math.floor((diff%60000)/1000);';
-    html+='el.textContent=(h>0?pad(h)+"h ":"")+pad(m)+"m "+pad(s)+"s";';
-    html+='setTimeout(tick,1000);';
-    html+='}';
-    html+='function pad(n){return n<10?"0"+n:n;}';
-    html+='tick();';
-    html+='})();';
-    html+='<\/script>';
-  }
-
-  // Title
-  html+='<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#2a1f1c;margin-bottom:1.25rem;line-height:1.3;">'+esc(title)+'</h2>';
-
-  // Thumbnail
-  if(thumb){
-    html+='<a href="'+esc(url)+'" target="_blank" style="display:block;margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">';
-    html+='<img src="'+esc(thumb)+'" alt="'+esc(title)+'" style="width:100%;display:block;">';
-    html+='</a>';
-  }
-
-  // Watch link
-  html+='<p style="margin-bottom:1.5rem;"><a href="'+esc(url)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:0.95rem;font-weight:600;color:#dea193;text-decoration:none;">&#9658;&nbsp;&nbsp;Click here to watch on YouTube</a></p>';
-
-  // Description
-  html+='<p style="font-family:Jost,sans-serif;font-size:1rem;line-height:1.8;color:#2a1f1c;margin-bottom:1.5rem;white-space:pre-wrap;">'+descHTML+'</p>';
-
-  // Divider
-  html+='<hr style="border:none;border-top:1px solid #ead9d5;margin-bottom:1rem;">';
-
-  // Static line
-  html+='<p style="font-family:Jost,sans-serif;font-size:0.88rem;font-style:italic;color:#c4b0a8;">'+esc(staticLine)+'</p>';
-
-  html+='</div>';
-
-  document.getElementById('out-code').value=html;
-  document.getElementById('out-preview').innerHTML=html;
-  document.getElementById('out').style.display='block';
-  document.getElementById('out').scrollIntoView({behavior:'smooth'});
-}
-
-function buildCalendarButtons(dtLocal,eventTitle,ytUrl){
-  var d=new Date(dtLocal);
-  // Format: YYYYMMDDTHHmmss (local, no Z)
-  function pad(n){return n<10?'0'+n:n;}
-  function fmt(date){
-    return date.getFullYear()+pad(date.getMonth()+1)+pad(date.getDate())+'T'+pad(date.getHours())+pad(date.getMinutes())+'00';
-  }
-  var start=fmt(d);
-  var endD=new Date(d.getTime()+60*60*1000); // 1hr duration
-  var end=fmt(endD);
-  var desc=encodeURIComponent('Watch the premiere here: '+ytUrl);
-  var titleEnc=encodeURIComponent(eventTitle);
-
-  // Google
-  var gUrl='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+titleEnc+'&dates='+start+'/'+end+'&details='+desc;
-
-  // ICS (Apple + Outlook)
-  var icsContent='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART;TZID=America/Los_Angeles:'+start+'\r\nDTEND;TZID=America/Los_Angeles:'+end+'\r\nSUMMARY:'+eventTitle+'\r\nDESCRIPTION:Watch here: '+ytUrl+'\r\nEND:VEVENT\r\nEND:VCALENDAR';
-  var icsB64='data:text/calendar;base64,'+btoa(icsContent);
-
-  var btnStyle='display:inline-block;font-family:Jost,sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;padding:7px 16px;border-radius:30px;text-decoration:none;border:1px solid rgba(245,196,188,0.5);color:#f5c4bc;margin:4px;';
-  var out='<div style="margin-top:1rem;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;">';
-  out+='<a href="'+gUrl+'" target="_blank" style="'+btnStyle+'">+ Google Calendar</a>';
-  out+='<a href="'+icsB64+'" download="premiere.ics" style="'+btnStyle+'">+ Apple Calendar</a>';
-  out+='<a href="'+icsB64+'" download="premiere.ics" style="'+btnStyle+'">+ Outlook</a>';
-  out+='</div>';
-  return out;
-}
-
+// ── Copy ───────────────────────────────────────────────────────────────────
 function copyAll(){
   var code=document.getElementById('out-code').value;
   var btn=document.getElementById('copy-all-btn');
   try{
     var ta=document.createElement('textarea');
-    ta.value=code;ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta);ta.select();
+    ta.value=code; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
     btn.textContent='Copied!';
-    setTimeout(function(){btn.textContent='Copy HTML';},2500);
+    setTimeout(function(){ btn.textContent='Copy HTML'; },2500);
     toast('HTML copied! Paste into Systeme.io.');
-  }catch(e){toast('Copy failed — try Ctrl+C');}
+  }catch(e){ toast('Copy failed — try Ctrl+C'); }
 }
 </script>
 </body>
