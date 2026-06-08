@@ -113,7 +113,7 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
   <div style="font-size:12px;color:#c4b0a8;">DFY Niche Group · YT Post</div>
   <div style="display:flex;gap:10px;">
     <button class="sbtn sbtn-clear" onclick="clearAll()">Clear</button>
-    <button class="sbtn" style="background:transparent;color:#dea193;border-color:rgba(222,161,147,0.5);font-size:11px;padding:7px 14px;" onclick="previewBanner()">Preview Banner</button>
+    <button class="sbtn" style="background:transparent;color:#dea193;border-color:rgba(222,161,147,0.5);font-size:11px;padding:7px 14px;" onclick="previewBanner()">Preview Post</button>
     <button class="sbtn sbtn-gen" onclick="generate()">Generate HTML</button>
   </div>
 </div>
@@ -122,7 +122,7 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
 <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(42,31,28,0.7);z-index:9998;padding:1.5rem;overflow-y:auto;" onclick="closePreview(event)">
   <div style="background:#fdf7f2;border-radius:16px;max-width:680px;margin:2rem auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
     <div style="background:#2a1f1c;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;">Banner Preview</span>
+      <span id="preview-modal-title" style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:#f5eddf;">Post Preview</span>
       <button onclick="closePreview()" style="background:transparent;border:none;color:#c4b0a8;font-size:1.3rem;cursor:pointer;line-height:1;">&times;</button>
     </div>
     <div id="preview-modal-body" style="padding:1.5rem;font-family:'Jost',sans-serif;"></div>
@@ -131,37 +131,89 @@ textarea.fi{resize:vertical;min-height:120px;line-height:1.6;}
 
 <script>
 function previewBanner(){
+  var title=v('f-title').trim();
+  var url=v('f-url').trim();
+  var desc=v('f-desc').trim();
+  var thumb=v('f-thumb').trim();
   var on=document.getElementById('premiere-toggle').checked;
-  if(!on){toast('Toggle the Premiere Banner on first.');return;}
   var label=v('f-premiere-label').trim()||'Join Me for the Premiere!';
   var dt=v('f-premiere-date');
-  if(!dt){toast('Set a premiere date and time first.');return;}
-  var tsMs=new Date(dt).getTime();
-  var countdownId='prev-cd';
-  var body=document.getElementById('preview-modal-body');
-  body.innerHTML='<div style="background:#2a1f1c;border-radius:12px;padding:1.25rem 1.5rem;text-align:center;">'
-    +'<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#f5eddf;margin-bottom:0.6rem;">'+label+'</p>'
-    +'<div id="'+countdownId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#dea193;letter-spacing:0.05em;">Loading...</div>'
-    +'<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:#c4b0a8;margin-top:0.5rem;">Starts at '+new Date(dt).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>'
-    +'</div>'
-    +'<p style="font-size:11px;color:#c4b0a8;margin-top:1rem;text-align:center;">This is exactly how it will look in your post. Click outside to close.</p>';
-  document.getElementById('preview-modal').style.display='block';
-  function pad(n){return n<10?'0'+n:n;}
-  function tick(){
-    var el=document.getElementById(countdownId);
-    if(!el)return;
-    var diff=tsMs-Date.now();
-    if(diff<=0){el.textContent='Live now!';return;}
-    var h=Math.floor(diff/3600000);
-    var m=Math.floor((diff%3600000)/60000);
-    var s=Math.floor((diff%60000)/1000);
-    el.textContent=(h>0?pad(h)+'h ':'')+pad(m)+'m '+pad(s)+'s';
-    setTimeout(tick,1000);
+
+  if(!title&&!url&&!desc&&!on){toast('Fill in some fields first.');return;}
+  if(on&&!dt){toast('Set a premiere date and time first.');return;}
+
+  function esc2(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+  var previewHtml='<div style="font-family:Jost,sans-serif;max-width:100%;">';
+
+  // Banner
+  if(on&&dt){
+    var tsMs=new Date(dt).getTime();
+    var cdId='modal-cd';
+    previewHtml+='<div style="background:#6b1212;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;border:1px solid #8b2020;">';
+    previewHtml+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+label+'</p>';
+    previewHtml+='<div id="'+cdId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
+    previewHtml+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(dt).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
+    previewHtml+='</div>';
+    // inline countdown script via setTimeout after render
+    window._previewCdTarget=tsMs;
+    window._previewCdId=cdId;
   }
-  tick();
+
+  // Title
+  if(title) previewHtml+='<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#2a1f1c;margin-bottom:1.25rem;line-height:1.3;">'+esc2(title)+'</h2>';
+
+  // Thumbnail
+  if(thumb){
+    previewHtml+='<div style="margin-bottom:10px;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">';
+    previewHtml+='<img src="'+esc2(thumb)+'" alt="'+esc2(title)+'" style="width:100%;display:block;">';
+    previewHtml+='</div>';
+  }
+
+  // Watch link
+  if(url) previewHtml+='<p style="margin-bottom:1.5rem;"><span style="font-family:Jost,sans-serif;font-size:0.95rem;font-weight:600;color:#dea193;">&#9658;&nbsp;&nbsp;Click here to watch on YouTube</span></p>';
+
+  // Description
+  if(desc){
+    var descHTML=desc;
+    var firstEnd=desc.search(/[.!?](\s|$)/);
+    if(firstEnd!==-1){
+      descHTML='<strong>'+esc2(desc.slice(0,firstEnd+1))+'</strong>'+esc2(desc.slice(firstEnd+1));
+    } else {
+      descHTML=esc2(desc);
+    }
+    previewHtml+='<p style="font-family:Jost,sans-serif;font-size:1rem;line-height:1.8;color:#2a1f1c;margin-bottom:1.5rem;white-space:pre-wrap;">'+descHTML+'</p>';
+  }
+
+  // Divider + static line
+  previewHtml+='<hr style="border:none;border-top:1px solid #ead9d5;margin-bottom:1rem;">';
+  previewHtml+='<p style="font-family:Jost,sans-serif;font-size:0.88rem;font-style:italic;color:#c4b0a8;">(Please leave any questions or comments on the video and I\'ll get back to you there!)</p>';
+  previewHtml+='</div>';
+
+  var body=document.getElementById('preview-modal-body');
+  body.innerHTML=previewHtml;
+  document.getElementById('preview-modal-title').textContent='Post Preview';
+  document.getElementById('preview-modal').style.display='block';
+
+  // Start countdown if banner is on
+  if(on&&dt){
+    function pad(n){return n<10?'0'+n:n;}
+    function tick(){
+      var el=document.getElementById(window._previewCdId);
+      if(!el)return;
+      var diff=window._previewCdTarget-Date.now();
+      if(diff<=0){el.textContent='Live now!';return;}
+      var h=Math.floor(diff/3600000);
+      var m=Math.floor((diff%3600000)/60000);
+      var s=Math.floor((diff%60000)/1000);
+      el.textContent=(h>0?pad(h)+'h ':'')+pad(m)+'m '+pad(s)+'s';
+      setTimeout(tick,1000);
+    }
+    setTimeout(tick,50);
+  }
 }
 function closePreview(e){
-  if(!e||e.target===document.getElementById('preview-modal')||e.currentTarget===document.getElementById('preview-modal')&&e.target===document.getElementById('preview-modal')){
+  if(!e||e.target===document.getElementById('preview-modal')){
     document.getElementById('preview-modal').style.display='none';
   }
   if(!e)document.getElementById('preview-modal').style.display='none';
@@ -236,10 +288,10 @@ function generate(){
   if(premiereOn&&premiereDate){
     var tsMs=new Date(premiereDate).getTime();
     var countdownId='cd'+Math.floor(Math.random()*99999);
-    html+='<div style="background:#2a1f1c;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;">';
-    html+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#f5eddf;margin-bottom:0.6rem;">'+esc(premiereLabel)+'</p>';
-    html+='<div id="'+countdownId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#dea193;letter-spacing:0.05em;">Loading...</div>';
-    html+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:#c4b0a8;margin-top:0.5rem;">Starts at '+new Date(premiereDate).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
+    html+='<div style="background:#6b1212;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;border:1px solid #8b2020;">';
+    html+='<p style="font-family:Playfair Display,serif;font-size:1.1rem;font-weight:700;color:#fdf0ee;margin-bottom:0.6rem;">'+esc(premiereLabel)+'</p>';
+    html+='<div id="'+countdownId+'" style="font-family:Jost,sans-serif;font-size:1.5rem;font-weight:600;color:#f5c4bc;letter-spacing:0.05em;">Loading...</div>';
+    html+='<p style="font-family:Jost,sans-serif;font-size:0.8rem;color:rgba(245,200,190,0.7);margin-top:0.5rem;">Starts at '+new Date(premiereDate).toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</p>';
     html+='</div>';
     html+='<script>';
     html+='(function(){';
