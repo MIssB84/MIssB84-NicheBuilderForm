@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Group Post Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Jost:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Jost',Arial,sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:2rem;font-weight:700;color:#2a1f1c;margin-bottom:.25rem;}
+  .subtitle{font-size:13px;color:#5a4a45;margin-bottom:2rem;letter-spacing:.03em;}
+  .builder{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1100px;margin:0 auto;align-items:start;}
+  @media(max-width:700px){.builder{grid-template-columns:1fr;}}
+  .header{max-width:1100px;margin:0 auto 1.5rem;}
+  .panel{background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1.5rem;}
+  .panel-title{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid #ead9d5;}
+  .field{margin-bottom:1rem;}
+  .field label{display:block;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5a4a45;margin-bottom:.35rem;}
+  .field input[type=text],
+  .field textarea,
+  .field input[type=url]{width:100%;padding:9px 12px;border:1px solid #ead9d5;border-radius:8px;font-family:'Jost',Arial,sans-serif;font-size:14px;color:#2a1f1c;background:#fff;outline:none;transition:border-color .2s;}
+  .field input:focus,.field textarea:focus{border-color:#dea193;}
+  .field textarea{resize:vertical;min-height:100px;line-height:1.6;}
+  .toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:.5rem;}
+  .toggle-row label{font-size:13px;font-weight:700;color:#2a1f1c;cursor:pointer;}
+  .toggle-row input[type=checkbox]{accent-color:#dea193;width:16px;height:16px;cursor:pointer;flex-shrink:0;}
+  .sub-field{padding-left:14px;border-left:2px solid #ead9d5;margin-bottom:1rem;}
+  .copy-btn{width:100%;padding:12px;background:#2a1f1c;color:#f5eddf;border:none;border-radius:8px;font-family:'Jost',Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:.5rem;}
+  .copy-btn:hover{background:#dea193;color:#2a1f1c;}
+  .copy-btn:active{transform:scale(.98);}
+  .toast{text-align:center;font-size:12px;color:#5a4a45;margin-top:.5rem;min-height:18px;}
+  .preview-wrap{background:#e8ddd5;border:1px solid #ead9d5;border-radius:14px;padding:1rem;}
+  .preview-label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#5a4a45;margin-bottom:.75rem;}
+  .divider{border:none;border-top:1px solid #ead9d5;margin:1rem 0;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Group Post Builder</h1>
+  <p class="subtitle">DFY Niche Club &mdash; Thrive With Dania</p>
+</div>
+
+<div class="builder">
+  <div class="panel">
+    <div class="panel-title">Post Content</div>
+
+    <div class="field">
+      <label>Headline</label>
+      <input type="text" id="headline" placeholder="Your post title here">
+    </div>
+
+    <div class="field">
+      <label>Body Text</label>
+      <textarea id="body" placeholder="Write your post content here. Press Enter for new paragraphs."></textarea>
+    </div>
+
+    <hr class="divider">
+
+    <div class="toggle-row">
+      <input type="checkbox" id="toggle-photo">
+      <label for="toggle-photo">Include a photo at the top</label>
+    </div>
+    <div class="sub-field" id="photo-field" style="display:none;">
+      <div class="field" style="margin-bottom:0;">
+        <label>Image URL</label>
+        <input type="url" id="photo-url" placeholder="https://...">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="toggle-row">
+      <input type="checkbox" id="toggle-btn1">
+      <label for="toggle-btn1">Include a button</label>
+    </div>
+    <div class="sub-field" id="btn1-fields" style="display:none;">
+      <div class="field">
+        <label>Button Label</label>
+        <input type="text" id="btn1-label" placeholder="e.g. Learn More">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Button URL</label>
+        <input type="url" id="btn1-url" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <input type="checkbox" id="toggle-btn2">
+      <label for="toggle-btn2">Include a second button</label>
+    </div>
+    <div class="sub-field" id="btn2-fields" style="display:none;">
+      <div class="field">
+        <label>Button Label</label>
+        <input type="text" id="btn2-label" placeholder="e.g. Join Now">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Button URL</label>
+        <input type="url" id="btn2-url" placeholder="https://...">
+      </div>
+    </div>
+
+    <button class="copy-btn" onclick="copyHTML()">Copy HTML</button>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div>
+    <div class="preview-wrap">
+      <div class="preview-label">Live Preview</div>
+      <div id="preview-inner"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function g(id){return document.getElementById(id);}
+
+function toggleField(checkId,fieldId){
+  g(checkId).addEventListener('change',function(){
+    g(fieldId).style.display=this.checked?'block':'none';
+    render();
+  });
+}
+toggleField('toggle-photo','photo-field');
+toggleField('toggle-btn1','btn1-fields');
+toggleField('toggle-btn2','btn2-fields');
+
+['headline','body','photo-url','btn1-label','btn1-url','btn2-label','btn2-url'].forEach(function(id){
+  g(id).addEventListener('input',render);
+});
+
+function buildHTML(){
+  var headline=g('headline').value.trim();
+  var body=g('body').value.trim();
+  var showPhoto=g('toggle-photo').checked;
+  var photoUrl=g('photo-url').value.trim();
+  var showBtn1=g('toggle-btn1').checked;
+  var btn1Label=g('btn1-label').value.trim()||'Click Here';
+  var btn1Url=g('btn1-url').value.trim()||'#';
+  var showBtn2=g('toggle-btn2').checked;
+  var btn2Label=g('btn2-label').value.trim()||'Click Here';
+  var btn2Url=g('btn2-url').value.trim()||'#';
+
+  var photoBlock='';
+  if(showPhoto&&photoUrl){
+    photoBlock='<div><img src="'+photoUrl+'" alt="" style="width:100%;display:block;"></div>';
+  }
+
+  var headlineBlock='';
+  if(headline){
+    headlineBlock='<h2 style="font-family:Playfair Display,Georgia,serif;font-size:1.9rem;font-weight:700;color:#f5eddf;margin:0;line-height:1.2;">'+headline+'</h2>';
+  }
+
+  var bodyParas='';
+  if(body){
+    body.split(/\n+/).forEach(function(p){
+      if(p.trim()) bodyParas+='<p style="font-size:15px;color:#5a4a45;line-height:1.75;margin:0 0 .75rem;">'+p.trim()+'</p>';
+    });
+  }
+
+  var btnsHTML='';
+  if(showBtn1||showBtn2){
+    btnsHTML+='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;">';
+    if(showBtn1) btnsHTML+='<a href="'+btn1Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn1Label+'</a>';
+    if(showBtn2) btnsHTML+='<a href="'+btn2Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:#2a1f1c;border:1.5px solid #ead9d5;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn2Label+'</a>';
+    btnsHTML+='</div>';
+  }
+
+  var topRadius=photoBlock?'0':'16px';
+
+  return '<div style="font-family:Jost,Arial,sans-serif;max-width:680px;margin:0 auto;color:#2a1f1c;">'
+    +photoBlock
+    +'<div style="background:#2a1f1c;border-radius:'+topRadius+' '+topRadius+' 0 0;padding:1.75rem 2rem;">'
+    +headlineBlock
+    +'</div>'
+    +'<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:0;border-radius:0 0 16px 16px;padding:1.5rem 2rem;">'
+    +bodyParas
+    +btnsHTML
+    +'</div>'
+    +'</div>';
+}
+
+function render(){
+  g('preview-inner').innerHTML=buildHTML();
+}
+
+function copyHTML(){
+  navigator.clipboard.writeText(buildHTML()).then(function(){
+    g('toast').textContent='Copied!';
+    setTimeout(function(){g('toast').textContent='';},2000);
+  }).catch(function(){
+    g('toast').textContent='Copy failed — try again';
+  });
+}
+
+render();
+</script>
+</body>
+</html>
