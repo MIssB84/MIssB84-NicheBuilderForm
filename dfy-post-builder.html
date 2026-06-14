@@ -10,9 +10,8 @@
   body{font-family:'Jost',Arial,sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem;}
   h1{font-family:'Playfair Display',Georgia,serif;font-size:2rem;font-weight:700;color:#2a1f1c;margin-bottom:.25rem;}
   .subtitle{font-size:13px;color:#5a4a45;margin-bottom:2rem;letter-spacing:.03em;}
-  .builder{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1100px;margin:0 auto;align-items:start;}
-  @media(max-width:700px){.builder{grid-template-columns:1fr;}}
-  .header{max-width:1100px;margin:0 auto 1.5rem;}
+  .builder{display:grid;grid-template-columns:1fr;gap:24px;max-width:780px;margin:0 auto;align-items:start;}
+  .header{max-width:780px;margin:0 auto 1.5rem;}
   .panel{background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1.5rem;}
   .panel-title{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid #ead9d5;}
   .field{margin-bottom:1rem;}
@@ -102,6 +101,7 @@
     </div>
 
     <button class="copy-btn" onclick="copyHTML()">Copy HTML</button>
+    <button class="copy-btn" onclick="clearAll()" style="margin-top:.5rem;background:transparent;color:#5a4a45;border:1.5px solid #ead9d5;">Clear Form</button>
     <div class="toast" id="toast"></div>
   </div>
 
@@ -116,9 +116,45 @@
 <script>
 function g(id){return document.getElementById(id);}
 
+var TEXT_IDS=['headline','body','photo-url','btn1-label','btn1-url','btn2-label','btn2-url'];
+var CHECK_IDS=['toggle-photo','toggle-btn1','toggle-btn2'];
+var SK='dfy_post_builder';
+
+function saveState(){
+  var state={};
+  TEXT_IDS.forEach(function(id){state[id]=g(id).value;});
+  CHECK_IDS.forEach(function(id){state[id]=g(id).checked;});
+  localStorage.setItem(SK,JSON.stringify(state));
+}
+
+function loadState(){
+  var raw=localStorage.getItem(SK);
+  if(!raw) return;
+  try{
+    var state=JSON.parse(raw);
+    TEXT_IDS.forEach(function(id){if(state[id]!==undefined) g(id).value=state[id];});
+    CHECK_IDS.forEach(function(id){if(state[id]!==undefined) g(id).checked=state[id];});
+    g('photo-field').style.display=g('toggle-photo').checked?'block':'none';
+    g('btn1-fields').style.display=g('toggle-btn1').checked?'block':'none';
+    g('btn2-fields').style.display=g('toggle-btn2').checked?'block':'none';
+  }catch(e){}
+}
+
+function clearAll(){
+  if(!confirm('Clear everything and start fresh?')) return;
+  TEXT_IDS.forEach(function(id){g(id).value='';});
+  CHECK_IDS.forEach(function(id){g(id).checked=false;});
+  g('photo-field').style.display='none';
+  g('btn1-fields').style.display='none';
+  g('btn2-fields').style.display='none';
+  localStorage.removeItem(SK);
+  render();
+}
+
 function toggleField(checkId,fieldId){
   g(checkId).addEventListener('change',function(){
     g(fieldId).style.display=this.checked?'block':'none';
+    saveState();
     render();
   });
 }
@@ -126,8 +162,8 @@ toggleField('toggle-photo','photo-field');
 toggleField('toggle-btn1','btn1-fields');
 toggleField('toggle-btn2','btn2-fields');
 
-['headline','body','photo-url','btn1-label','btn1-url','btn2-label','btn2-url'].forEach(function(id){
-  g(id).addEventListener('input',render);
+TEXT_IDS.forEach(function(id){
+  g(id).addEventListener('input',function(){saveState();render();});
 });
 
 function buildHTML(){
@@ -194,6 +230,7 @@ function copyHTML(){
   });
 }
 
+loadState();
 render();
 </script>
 </body>
