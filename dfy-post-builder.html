@@ -161,7 +161,7 @@ function buildHTML(){
 
   var btnsHTML='';
   if(showBtn1||showBtn2){
-    btnsHTML+='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;">';
+    btnsHTML+='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;justify-content:center;">';
     if(showBtn1) btnsHTML+='<a href="'+btn1Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn1Label+'</a>';
     if(showBtn2) btnsHTML+='<a href="'+btn2Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:#2a1f1c;border:1.5px solid #ead9d5;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn2Label+'</a>';
     btnsHTML+='</div>';
