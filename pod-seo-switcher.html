@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POD SEO Switcher | Thrive With Dania</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #2a1f1c;
+  --surface: #ffffff;
+  --surface2: #faf4ef;
+  --ink: #2a1f1c;
+  --mid: #5a4a45;
+  --muted: #a0867e;
+  --border: #e8d9d3;
+  --gold: #b8924a;
+  --blush: #d4887a;
+  --rose: #e8c4bc;
+  --sage: #5a9e72;
+  --amber: #d4903a;
+  --red: #c05050;
+  --green: #5a9e72;
+}
+html { font-size: 17px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Jost', sans-serif;
+  min-height: 100vh;
+  padding: 40px 24px 80px;
+}
+.wrap { max-width: 960px; margin: 0 auto; }
+
+header { text-align: center; margin-bottom: 38px; }
+.header-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 8px;
+}
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #fdf7f2;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+header h1 em { font-style: italic; color: var(--rose); }
+header p { font-size: 0.88rem; color: #c4b0a8; margin-top: 8px; font-weight: 300; }
+
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 30px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+.clear-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.clear-btn:hover { border-color: var(--blush); color: var(--blush); }
+
+label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+textarea, .editable-field {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--ink);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.95rem;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.55;
+}
+textarea { resize: vertical; }
+textarea:focus, .editable-field:focus {
+  border-color: var(--blush);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(212,136,122,0.12);
+}
+textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+.char-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 5px;
+  text-align: right;
+  font-weight: 500;
+}
+.char-hint.amber { color: var(--amber); }
+.char-hint.good { color: var(--green); }
+.char-hint.over { color: var(--red); }
+
+.field-gap { margin-top: 20px; }
+
+.btn {
+  display: block;
+  width: 100%;
+  background: var(--blush);
+  color: white;
+  border: none;
+  border-radius: 11px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 22px;
+  box-shadow: 0 3px 10px rgba(212,136,122,0.35);
+}
+.btn:hover { background: #c8786a; box-shadow: 0 5px 16px rgba(212,136,122,0.45); }
+.btn:active { transform: scale(0.99); }
+.btn:disabled { opacity: 0.38; cursor: not-allowed; box-shadow: none; }
+
+.loading {
+  display: none;
+  text-align: center;
+  padding: 30px;
+  color: #c4b0a8;
+  font-size: 0.9rem;
+}
+.loading.visible { display: block; }
+.spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 2px solid rgba(232,196,188,0.4);
+  border-top-color: var(--rose);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.results { display: none; }
+.results.visible { display: block; }
+
+.product-section {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 30px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+.product-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.product-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+.regen-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.regen-btn:hover { border-color: var(--blush); color: var(--blush); }
+.regen-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.output-row { margin-bottom: 18px; }
+.output-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+/* Editable textareas for output */
+.output-textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--ink);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.95rem;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 70px;
+}
+.output-textarea:focus {
+  border-color: var(--blush);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(212,136,122,0.12);
+}
+.output-textarea.tags-field { min-height: 90px; }
+
+.output-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 7px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.char-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.char-badge.good { background: rgba(90,158,114,0.12); color: var(--green); }
+.char-badge.amber { background: rgba(212,144,58,0.12); color: var(--amber); }
+.char-badge.over { background: rgba(192,80,80,0.12); color: var(--red); }
+.char-badge.neutral { background: rgba(160,134,126,0.1); color: var(--muted); }
+
+.copy-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--muted);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.copy-btn:hover { border-color: var(--blush); color: var(--blush); }
+.copy-btn.copied { border-color: var(--sage); color: var(--sage); }
+
+.tag-warnings { margin-top: 5px; }
+.tag-warning {
+  font-size: 0.7rem;
+  color: var(--red);
+  margin-bottom: 2px;
+}
+
+.divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+.suggestions-block { }
+.suggestions-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+.tag-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+.output-tag-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.output-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--mid);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 5px 10px 5px 13px;
+  transition: all 0.15s;
+  user-select: none;
+}
+.output-tag-pill:hover { border-color: var(--blush); background: #fdf0ed; }
+.output-tag-pill.copied-pill { border-color: var(--sage); color: var(--sage); background: #f0f7f3; }
+.output-tag-pill.too-long { border-color: var(--red); color: var(--red); }
+.pill-label { cursor: pointer; }
+.pill-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: rgba(160,134,126,0.15);
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.pill-delete:hover { background: rgba(192,80,80,0.15); color: var(--red); }
+.pill-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  height: 16px;
+  border-radius: 8px;
+  background: rgba(90,158,114,0.12);
+  color: var(--sage);
+  font-size: 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+.pill-add:hover { background: rgba(90,158,114,0.25); }
+.pill-add.added { background: rgba(90,158,114,0.25); }
+.tag-counter {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-left: 4px;
+}
+.tag-counter.full { color: var(--green); }
+.tag-counter.over { color: var(--red); }
+.tag-pill {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  color: var(--mid);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.tag-pill:hover { border-color: var(--blush); color: var(--blush); background: #fdf0ed; }
+.tag-pill.copied-pill { border-color: var(--sage); color: var(--sage); background: #f0f7f3; }
+.tag-pill.too-long { border-color: var(--red); color: var(--red); }
+
+.error-msg {
+  display: none;
+  background: #fdf0f0;
+  border: 1px solid #e8c0c0;
+  border-radius: 9px;
+  padding: 12px 16px;
+  color: var(--red);
+  font-size: 0.88rem;
+  margin-top: 14px;
+}
+.error-msg.visible { display: block; }
+
+footer {
+  text-align: center;
+  margin-top: 55px;
+  color: #c4b0a8;
+  font-size: 0.72rem;
+  opacity: 0.4;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="header-eyebrow">Thrive With Dania</div>
+    <h1>POD SEO <em>Switcher</em></h1>
+    <p>Paste your title and tags once &mdash; get all three product versions instantly. Edit any field before copying.</p>
+  </header>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Your Source Listing</div>
+      <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    </div>
+
+    <label for="source-title">Title</label>
+    <textarea id="source-title" rows="3" placeholder="Paste your existing Etsy title here..."></textarea>
+    <div class="char-hint" id="title-count">0 / 140</div>
+
+    <div class="field-gap">
+      <label for="source-tags">Tags (comma-separated, paste from Everbee)</label>
+      <textarea id="source-tags" rows="3" placeholder="live laugh lobotomy, ironic shirt, unhinged shirt, gag gift, weird shirt..."></textarea>
+    </div>
+
+    <button class="btn" id="generate-btn" onclick="generateAll()">Generate All 3 Versions</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="spinner"></span> Switching your SEO...
+  </div>
+
+  <div class="results" id="results">
+
+    <!-- Baby Tee -->
+    <div class="product-section">
+      <div class="product-header">
+        <div class="product-label">Baby Tee</div>
+        <button class="regen-btn" id="regen-bt" onclick="regenOne('babytee')">Regenerate</button>
+      </div>
+      <div class="output-row">
+        <div class="output-label">Title <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;">&mdash; edit before copying</span></div>
+        <textarea class="output-textarea" id="bt-title" rows="2" oninput="updateBadge('bt-badge', this.value)"></textarea>
+        <div class="output-meta">
+          <span class="char-badge neutral" id="bt-badge"></span>
+          <button class="copy-btn" onclick="copyField('bt-title', this)">Copy Title</button>
+        </div>
+      </div>
+      <div class="output-row">
+        <div class="output-label">Tags <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;">&mdash; edit before copying</span></div>
+        <textarea class="output-textarea tags-field" id="bt-tags" rows="3" oninput="onTagsInput('bt')"></textarea>
+        <div class="tag-warnings" id="bt-tag-warnings"></div>
+        <div class="output-tag-pills" id="bt-output-pills"></div>
+        <div class="output-meta">
+          <span class="tag-counter" id="bt-tag-counter"></span>
+          <button class="copy-btn" onclick="copyField('bt-tags', this)">Copy All Tags</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="suggestions-block">
+        <div class="suggestions-label">Suggested Tags &mdash; tap to copy</div>
+        <div class="tag-pills" id="bt-suggestions"></div>
+      </div>
+    </div>
+
+    <!-- Comfort Colors -->
+    <div class="product-section">
+      <div class="product-header">
+        <div class="product-label">Comfort Colors 1717</div>
+        <button class="regen-btn" id="regen-cc" onclick="regenOne('cc1717')">Regenerate</button>
+      </div>
+      <div class="output-row">
+        <div class="output-label">Title <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;">&mdash; edit before copying</span></div>
+        <textarea class="output-textarea" id="cc-title" rows="2" oninput="updateBadge('cc-badge', this.value)"></textarea>
+        <div class="output-meta">
+          <span class="char-badge neutral" id="cc-badge"></span>
+          <button class="copy-btn" onclick="copyField('cc-title', this)">Copy Title</button>
+        </div>
+      </div>
+      <div class="output-row">
+        <div class="output-label">Tags <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;">&mdash; edit before copying</span></div>
+        <textarea class="output-textarea tags-field" id="cc-tags" rows="3" oninput="onTagsInput('cc')"></textarea>
+        <div class="tag-warnings" id="cc-tag-warnings"></div>
+        <div class="output-tag-pills" id="cc-output-pills"></div>
+        <div class="output-meta">
+          <span class="tag-counter" id="cc-tag-counter"></span>
+          <button class="copy-btn" onclick="copyField('cc-tags', this)">Copy All Tags</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="suggestions-block">
+        <div class="suggestions-label">Suggested Tags &mdash; tap to copy</div>
+        <div class="tag-pills" id="cc-suggestions"></div>
+      </div>
+    </div>
+
+    <!-- Gildan Sweatshirt -->
+    <div class="product-section">
+      <div class="product-header">
+        <div class="product-label">Gildan 18000 Sweatshirt</div>
+        <button class="regen-btn" id="regen-g" onclick="regenOne('gildan')">Regenerate</button>
+      </div>
+      <div class="output-row">
+        <div class="output-label">Title <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;">&mdash; edit before copying</span></div>
+        <textarea class="output-textarea" id="g-title" rows="2" oninput="updateBadge('g-badge', this.value)"></textarea>
+        <div class="output-meta">
+          <span class="char-badge neutral" id="g-badge"></span>
+          <button class="copy-btn" onclick="copyField('g-title', this)">Copy Title</button>
+        </div>
+      </div>
+      <div class="output-row">
+        <div class="output-label">Tags <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;">&mdash; edit before copying</span></div>
+        <textarea class="output-textarea tags-field" id="g-tags" rows="3" oninput="onTagsInput('g')"></textarea>
+        <div class="tag-warnings" id="g-tag-warnings"></div>
+        <div class="output-tag-pills" id="g-output-pills"></div>
+        <div class="output-meta">
+          <span class="tag-counter" id="g-tag-counter"></span>
+          <button class="copy-btn" onclick="copyField('g-tags', this)">Copy All Tags</button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="suggestions-block">
+        <div class="suggestions-label">Suggested Tags &mdash; tap to copy</div>
+        <div class="tag-pills" id="g-suggestions"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>Thrive With Dania &mdash; Internal Tool</footer>
+</div>
+
+<script>
+const STORAGE_KEY = 'pod_seo_v3';
+
+function etsyLen(text) { return [...text].length; }
+
+function updateBadge(badgeId, text) {
+  const el = document.getElementById(badgeId);
+  const len = etsyLen(text);
+  el.textContent = `${len} / 140`;
+  el.className = 'char-badge ' + (len > 140 ? 'over' : len >= 130 ? 'good' : len >= 120 ? 'amber' : 'neutral');
+}
+
+function checkTagWarnings(containerId, tagsStr) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  tagsStr.split(',').map(t => t.trim()).filter(Boolean).forEach(tag => {
+    if (tag.length > 20) {
+      const w = document.createElement('div');
+      w.className = 'tag-warning';
+      w.textContent = `"${tag}" is ${tag.length} chars (max 20)`;
+      container.appendChild(w);
+    }
+  });
+}
+
+function renderPills(containerId, tags) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  tags.forEach(tag => {
+    const t = tag.trim();
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill' + (t.length > 20 ? ' too-long' : '');
+    pill.textContent = t + (t.length > 20 ? ' ⚠' : '');
+    pill.title = `${t.length} chars`;
+    pill.onclick = () => {
+      navigator.clipboard.writeText(t).then(() => {
+        pill.classList.add('copied-pill');
+        setTimeout(() => pill.classList.remove('copied-pill'), 1500);
+      });
+    };
+    container.appendChild(pill);
+  });
+}
+
+function copyField(elId, btn) {
+  const el = document.getElementById(elId);
+  const text = el.value || el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function setField(id, value) {
+  const el = document.getElementById(id);
+  el.value = value;
+}
+
+function updateTagCounter(prefix, tagsStr) {
+  const el = document.getElementById(prefix + '-tag-counter');
+  if (!el) return;
+  const count = tagsStr.split(',').map(t => t.trim()).filter(Boolean).length;
+  el.textContent = count + ' / 13 tags';
+  el.className = 'tag-counter' + (count > 13 ? ' over' : count === 13 ? ' full' : '');
+}
+
+function onTagsInput(prefix) {
+  const tagsStr = document.getElementById(prefix + '-tags').value;
+  checkTagWarnings(prefix + '-tag-warnings', tagsStr);
+  renderOutputPills(prefix + '-output-pills', tagsStr, prefix);
+  updateTagCounter(prefix, tagsStr);
+}
+
+function renderOutputPills(containerId, tagsStr, prefix) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const tags = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
+  tags.forEach((tag, idx) => {
+    const pill = document.createElement('span');
+    pill.className = 'output-tag-pill' + (tag.length > 20 ? ' too-long' : '');
+
+    const label = document.createElement('span');
+    label.className = 'pill-label';
+    label.textContent = tag;
+    label.title = tag.length + ' chars — click to copy';
+    label.onclick = () => {
+      navigator.clipboard.writeText(tag).then(() => {
+        pill.classList.add('copied-pill');
+        setTimeout(() => pill.classList.remove('copied-pill'), 1500);
+      });
+    };
+
+    const add = document.createElement('span');
+    add.className = 'pill-add';
+    add.textContent = '+ Title';
+    add.title = 'Append to title';
+    add.onclick = () => {
+      if (!prefix) return;
+      const titleMap = { bt: 'bt-title', cc: 'cc-title', g: 'g-title' };
+      const titleEl = document.getElementById(titleMap[prefix]);
+      if (!titleEl) return;
+      const current = titleEl.value.trimEnd();
+      const separator = current.length > 0 && !current.endsWith(',') ? ', ' : '';
+      titleEl.value = current + separator + tag;
+      updateBadge(prefix + '-badge', titleEl.value);
+      add.classList.add('added');
+      add.textContent = '✓';
+      setTimeout(() => { add.textContent = '+ Title'; add.classList.remove('added'); }, 1500);
+    };
+
+    const del = document.createElement('span');
+    del.className = 'pill-delete';
+    del.textContent = '✕';
+    del.title = 'Remove tag';
+    del.onclick = () => {
+      if (!prefix) return;
+      const textarea = document.getElementById(prefix + '-tags');
+      const current = textarea.value.split(',').map(t => t.trim()).filter(Boolean);
+      current.splice(idx, 1);
+      textarea.value = current.join(', ');
+      onTagsInput(prefix);
+    };
+
+    pill.appendChild(label);
+    pill.appendChild(add);
+    pill.appendChild(del);
+    container.appendChild(pill);
+  });
+}
+
+function renderProduct(key, data) {
+  const map = { babytee: 'bt', cc1717: 'cc', gildan: 'g' };
+  const p = map[key];
+  setField(`${p}-title`, data.title);
+  setField(`${p}-tags`, data.tags);
+  updateBadge(`${p}-badge`, data.title);
+  checkTagWarnings(`${p}-tag-warnings`, data.tags);
+  renderOutputPills(`${p}-output-pills`, data.tags, p);
+  updateTagCounter(p, data.tags);
+  renderPills(`${p}-suggestions`, data.suggestions);
+}
+
+// Source input listeners
+const titleInput = document.getElementById('source-title');
+const titleCount = document.getElementById('title-count');
+titleInput.addEventListener('input', () => {
+  const len = etsyLen(titleInput.value);
+  titleCount.textContent = `${len} / 140`;
+  titleCount.className = 'char-hint ' + (len > 140 ? 'over' : len >= 130 ? 'good' : len >= 120 ? 'amber' : '');
+  saveInputs();
+});
+document.getElementById('source-tags').addEventListener('input', saveInputs);
+
+function saveInputs() {
+  try {
+    localStorage.setItem(STORAGE_KEY + '_inputs', JSON.stringify({
+      title: titleInput.value,
+      tags: document.getElementById('source-tags').value
+    }));
+  } catch(e) {}
+}
+
+function saveResults(results) {
+  try { localStorage.setItem(STORAGE_KEY + '_results', JSON.stringify(results)); } catch(e) {}
+}
+
+function loadSaved() {
+  try {
+    const inputs = JSON.parse(localStorage.getItem(STORAGE_KEY + '_inputs') || 'null');
+    if (inputs) {
+      titleInput.value = inputs.title || '';
+      document.getElementById('source-tags').value = inputs.tags || '';
+      const len = etsyLen(titleInput.value);
+      if (len > 0) {
+        titleCount.textContent = `${len} / 140`;
+        titleCount.className = 'char-hint ' + (len > 140 ? 'over' : len >= 130 ? 'good' : len >= 120 ? 'amber' : '');
+      }
+    }
+    const results = JSON.parse(localStorage.getItem(STORAGE_KEY + '_results') || 'null');
+    if (results) {
+      ['babytee','cc1717','gildan'].forEach(k => {
+        if (results[k]) {
+          renderProduct(k, results[k]);
+        }
+      });
+      document.getElementById('results').classList.add('visible');
+    }
+  } catch(e) {}
+}
+
+function clearAll() {
+  titleInput.value = '';
+  document.getElementById('source-tags').value = '';
+  titleCount.textContent = '0 / 140';
+  titleCount.className = 'char-hint';
+  ['bt','cc','g'].forEach(p => {
+    const tf = document.getElementById(`${p}-title`);
+    const tg = document.getElementById(`${p}-tags`);
+    if (tf) tf.value = '';
+    if (tg) tg.value = '';
+    const b = document.getElementById(`${p}-badge`);
+    if (b) { b.textContent = ''; b.className = 'char-badge neutral'; }
+    const tw = document.getElementById(`${p}-tag-warnings`);
+    if (tw) tw.innerHTML = '';
+    const op = document.getElementById(`${p}-output-pills`);
+    if (op) op.innerHTML = '';
+    const tc = document.getElementById(`${p}-tag-counter`);
+    if (tc) { tc.textContent = ''; tc.className = 'tag-counter'; }
+    const ps = document.getElementById(`${p}-suggestions`);
+    if (ps) ps.innerHTML = '';
+  });
+  document.getElementById('results').classList.remove('visible');
+  document.getElementById('error-msg').classList.remove('visible');
+  try {
+    localStorage.removeItem(STORAGE_KEY + '_inputs');
+    localStorage.removeItem(STORAGE_KEY + '_results');
+  } catch(e) {}
+}
+
+function buildPrompt(type, title, tags) {
+  const typeInstructions = {
+    babytee: `BABY TEE:
+- Title: "Y2K Baby Tee" must appear immediately after the FIRST descriptive keyword. Can also use: shirt, tshirt, tee, t-shirt later in title.
+- Tags: replace garment tags with Title Case versions of: Y2K Baby Tee, Baby Tee, Cropped Tee, Y2K Top, Fitted Tee`,
+    cc1717: `COMFORT COLORS 1717:
+- Title: must include "Comfort Colors" and "Unisex T Shirt" or "Tee" near each other. No trademark symbol.
+- Tags: replace garment tags with Title Case versions of: Comfort Colors Tee, Unisex Tee, Heavyweight Tee, Vintage Tee, Comfort Colors`,
+    gildan: `GILDAN SWEATSHIRT:
+- Title: must include "Crewneck", "Pullover", and "Sweatshirt" or "Sweater". NEVER include shirt, tshirt, t-shirt, tee, or baby tee anywhere.
+- Tags: replace garment tags with Title Case versions of: Crewneck Sweatshirt, Pullover Sweatshirt, Unisex Sweatshirt, Fleece Sweatshirt, Sweater`
+  };
+
+  return `You are an expert Etsy SEO copywriter for print-on-demand apparel.
+
+Source title: "${title}"
+Source tags: "${tags}"
+Product type to generate: ${type}
+
+${typeInstructions[type]}
+
+TITLE RULES:
+- Max 140 characters HARD LIMIT — count every character including spaces
+- No em dashes
+- Keep ALL design/niche keywords from source title
+- Make the title as full and keyword-rich as possible up to 140 chars
+- Only change garment-specific language
+
+TAG RULES:
+- Keep all non-garment tags exactly as-is but in Title Case (capitalize first letter of each word)
+- Replace any garment-related tags with the product-specific tags listed above
+- Every tag must be 20 characters or fewer INCLUDING spaces — hard limit, shorten if needed
+- All tags in Title Case
+
+SUGGESTED TAGS:
+- Suggest exactly 5 additional niche-relevant tags NOT already in the tag list
+- Each must be 20 characters or fewer including spaces
+- All in Title Case
+
+Respond ONLY with valid JSON, no markdown, no backticks:
+{"title":"...","tags":"Tag One, Tag Two, Tag Three...","suggestions":["Tag","Tag","Tag","Tag","Tag"]}`;
+}
+
+async function callAPI(prompt) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || 'API error');
+  const raw = data.content.find(b => b.type === 'text')?.text || '';
+  return JSON.parse(raw.replace(/```json|```/g, '').trim());
+}
+
+async function generateAll() {
+  const title = titleInput.value.trim();
+  const tags = document.getElementById('source-tags').value.trim();
+  if (!title) { showError('Please paste your title first.'); return; }
+
+  const btn = document.getElementById('generate-btn');
+  const loading = document.getElementById('loading');
+  const results = document.getElementById('results');
+  document.getElementById('error-msg').classList.remove('visible');
+
+  btn.disabled = true;
+  ['regen-bt','regen-cc','regen-g'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = true; });
+  loading.classList.add('visible');
+  results.classList.remove('visible');
+
+  try {
+    const [bt, cc, g] = await Promise.all([
+      callAPI(buildPrompt('babytee', title, tags)),
+      callAPI(buildPrompt('cc1717', title, tags)),
+      callAPI(buildPrompt('gildan', title, tags))
+    ]);
+    const allResults = { babytee: bt, cc1717: cc, gildan: g };
+    renderProduct('babytee', bt);
+    renderProduct('cc1717', cc);
+    renderProduct('gildan', g);
+    saveResults(allResults);
+    results.classList.add('visible');
+  } catch(err) {
+    showError('Something went wrong: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    ['regen-bt','regen-cc','regen-g'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = false; });
+    loading.classList.remove('visible');
+  }
+}
+
+async function regenOne(type) {
+  const title = titleInput.value.trim();
+  const tags = document.getElementById('source-tags').value.trim();
+  if (!title) { showError('Paste your source title first.'); return; }
+
+  const map = { babytee: 'regen-bt', cc1717: 'regen-cc', gildan: 'regen-g' };
+  const btn = document.getElementById(map[type]);
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  try {
+    const data = await callAPI(buildPrompt(type, title, tags));
+    renderProduct(type, data);
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY + '_results') || '{}');
+      saved[type] = data;
+      saveResults(saved);
+    } catch(e) {}
+  } catch(err) {
+    showError('Regenerate failed: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Regenerate';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+loadSaved();
+</script>
+</body>
+</html>
