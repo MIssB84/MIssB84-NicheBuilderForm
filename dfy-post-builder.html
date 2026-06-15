@@ -20,7 +20,7 @@
   .field textarea,
   .field input[type=url]{width:100%;padding:9px 12px;border:1px solid #ead9d5;border-radius:8px;font-family:'Jost',Arial,sans-serif;font-size:14px;color:#2a1f1c;background:#fff;outline:none;transition:border-color .2s;}
   .field input:focus,.field textarea:focus{border-color:#dea193;}
-  .field textarea{resize:vertical;min-height:100px;line-height:1.6;}
+  .field textarea{resize:vertical;min-height:320px;line-height:1.6;}
   .toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:.5rem;}
   .toggle-row label{font-size:13px;font-weight:700;color:#2a1f1c;cursor:pointer;}
   .toggle-row input[type=checkbox]{accent-color:#dea193;width:16px;height:16px;cursor:pointer;flex-shrink:0;}
@@ -68,6 +68,17 @@
       </div>
     </div>
 
+    <div class="toggle-row" style="margin-top:.5rem;">
+      <input type="checkbox" id="toggle-video">
+      <label for="toggle-video">Include a video</label>
+    </div>
+    <div class="sub-field" id="video-field" style="display:none;">
+      <div class="field" style="margin-bottom:0;">
+        <label>Video URL (YouTube or direct embed)</label>
+        <input type="url" id="video-url" placeholder="https://www.youtube.com/embed/...">
+      </div>
+    </div>
+
     <hr class="divider">
 
     <div class="toggle-row">
@@ -100,6 +111,21 @@
       </div>
     </div>
 
+    <div class="toggle-row">
+      <input type="checkbox" id="toggle-btn3">
+      <label for="toggle-btn3">Include a third button</label>
+    </div>
+    <div class="sub-field" id="btn3-fields" style="display:none;">
+      <div class="field">
+        <label>Button Label</label>
+        <input type="text" id="btn3-label" placeholder="e.g. Get It Here">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Button URL</label>
+        <input type="url" id="btn3-url" placeholder="https://...">
+      </div>
+    </div>
+
     <button class="copy-btn" onclick="copyHTML()">Copy HTML</button>
     <button class="copy-btn" onclick="clearAll()" style="margin-top:.5rem;background:transparent;color:#5a4a45;border:1.5px solid #ead9d5;">Clear Form</button>
     <div class="toast" id="toast"></div>
@@ -116,8 +142,8 @@
 <script>
 function g(id){return document.getElementById(id);}
 
-var TEXT_IDS=['headline','body','photo-url','btn1-label','btn1-url','btn2-label','btn2-url'];
-var CHECK_IDS=['toggle-photo','toggle-btn1','toggle-btn2'];
+var TEXT_IDS=['headline','body','photo-url','video-url','btn1-label','btn1-url','btn2-label','btn2-url','btn3-label','btn3-url'];
+var CHECK_IDS=['toggle-photo','toggle-video','toggle-btn1','toggle-btn2','toggle-btn3'];
 var SK='dfy_post_builder';
 
 function saveState(){
@@ -135,8 +161,10 @@ function loadState(){
     TEXT_IDS.forEach(function(id){if(state[id]!==undefined) g(id).value=state[id];});
     CHECK_IDS.forEach(function(id){if(state[id]!==undefined) g(id).checked=state[id];});
     g('photo-field').style.display=g('toggle-photo').checked?'block':'none';
+    g('video-field').style.display=g('toggle-video').checked?'block':'none';
     g('btn1-fields').style.display=g('toggle-btn1').checked?'block':'none';
     g('btn2-fields').style.display=g('toggle-btn2').checked?'block':'none';
+    g('btn3-fields').style.display=g('toggle-btn3').checked?'block':'none';
   }catch(e){}
 }
 
@@ -145,8 +173,10 @@ function clearAll(){
   TEXT_IDS.forEach(function(id){g(id).value='';});
   CHECK_IDS.forEach(function(id){g(id).checked=false;});
   g('photo-field').style.display='none';
+  g('video-field').style.display='none';
   g('btn1-fields').style.display='none';
   g('btn2-fields').style.display='none';
+  g('btn3-fields').style.display='none';
   localStorage.removeItem(SK);
   render();
 }
@@ -159,8 +189,10 @@ function toggleField(checkId,fieldId){
   });
 }
 toggleField('toggle-photo','photo-field');
+toggleField('toggle-video','video-field');
 toggleField('toggle-btn1','btn1-fields');
 toggleField('toggle-btn2','btn2-fields');
+toggleField('toggle-btn3','btn3-fields');
 
 TEXT_IDS.forEach(function(id){
   g(id).addEventListener('input',function(){saveState();render();});
@@ -171,16 +203,26 @@ function buildHTML(){
   var body=g('body').value.trim();
   var showPhoto=g('toggle-photo').checked;
   var photoUrl=g('photo-url').value.trim();
+  var showVideo=g('toggle-video').checked;
+  var videoUrl=g('video-url').value.trim();
   var showBtn1=g('toggle-btn1').checked;
   var btn1Label=g('btn1-label').value.trim()||'Click Here';
   var btn1Url=g('btn1-url').value.trim()||'#';
   var showBtn2=g('toggle-btn2').checked;
   var btn2Label=g('btn2-label').value.trim()||'Click Here';
   var btn2Url=g('btn2-url').value.trim()||'#';
+  var showBtn3=g('toggle-btn3').checked;
+  var btn3Label=g('btn3-label').value.trim()||'Click Here';
+  var btn3Url=g('btn3-url').value.trim()||'#';
 
   var photoBlock='';
   if(showPhoto&&photoUrl){
     photoBlock='<div><img src="'+photoUrl+'" alt="" style="width:100%;display:block;"></div>';
+  }
+
+  var videoBlock='';
+  if(showVideo&&videoUrl){
+    videoBlock='<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="'+videoUrl+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>';
   }
 
   var headlineBlock='';
@@ -196,17 +238,19 @@ function buildHTML(){
   }
 
   var btnsHTML='';
-  if(showBtn1||showBtn2){
+  if(showBtn1||showBtn2||showBtn3){
     btnsHTML+='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;justify-content:center;">';
     if(showBtn1) btnsHTML+='<a href="'+btn1Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn1Label+'</a>';
-    if(showBtn2) btnsHTML+='<a href="'+btn2Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:transparent;color:#2a1f1c;border:1.5px solid #ead9d5;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn2Label+'</a>';
+    if(showBtn2) btnsHTML+='<a href="'+btn2Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn2Label+'</a>';
+    if(showBtn3) btnsHTML+='<a href="'+btn3Url+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+btn3Label+'</a>';
     btnsHTML+='</div>';
   }
 
-  var topRadius=photoBlock?'0':'16px';
+  var topRadius=(photoBlock||videoBlock)?'0':'16px';
 
   return '<div style="font-family:Jost,Arial,sans-serif;max-width:680px;margin:0 auto;color:#2a1f1c;">'
     +photoBlock
+    +videoBlock
     +'<div style="background:#2a1f1c;border-radius:'+topRadius+' '+topRadius+' 0 0;padding:1.75rem 2rem;">'
     +headlineBlock
     +'</div>'
