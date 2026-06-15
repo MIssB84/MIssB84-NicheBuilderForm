@@ -10,8 +10,8 @@
   body{font-family:'Jost',Arial,sans-serif;background:#f0e8df;min-height:100vh;padding:2rem 1rem;}
   h1{font-family:'Playfair Display',Georgia,serif;font-size:2rem;font-weight:700;color:#2a1f1c;margin-bottom:.25rem;}
   .subtitle{font-size:13px;color:#5a4a45;margin-bottom:2rem;letter-spacing:.03em;}
-  .builder{display:grid;grid-template-columns:1fr;gap:24px;max-width:780px;margin:0 auto;align-items:start;}
-  .header{max-width:780px;margin:0 auto 1.5rem;}
+  .builder{display:grid;grid-template-columns:1fr;gap:24px;max-width:960px;margin:0 auto;align-items:start;}
+  .header{max-width:960px;margin:0 auto 1.5rem;}
   .panel{background:#fdf7f2;border:1px solid #ead9d5;border-radius:14px;padding:1.5rem;}
   .panel-title{font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700;color:#2a1f1c;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid #ead9d5;}
   .field{margin-bottom:1rem;}
@@ -222,7 +222,16 @@ function buildHTML(){
 
   var videoBlock='';
   if(showVideo&&videoUrl){
-    videoBlock='<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="'+videoUrl+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe></div>';
+    // Append autoplay, loop, mute params — works for YouTube embed URLs and direct video files
+    var vUrl=videoUrl;
+    if(vUrl.indexOf('youtube.com/embed')!==-1||vUrl.indexOf('youtu.be')!==-1){
+      vUrl+=( vUrl.indexOf('?')===-1?'?':'&')+'autoplay=1&loop=1&mute=1&playlist='+vUrl.split('/').pop().split('?')[0];
+    }
+    if(vUrl.match(/\.(mp4|webm|ogg)(\?|$)/i)){
+      videoBlock='<div><video src="'+vUrl+'" autoplay loop muted playsinline style="width:100%;display:block;"></video></div>';
+    } else {
+      videoBlock='<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="'+vUrl+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen allow="autoplay; loop"></iframe></div>';
+    }
   }
 
   var headlineBlock='';
