@@ -78,7 +78,7 @@ textarea:focus{outline:none;border-color:var(--blush)}
 
 .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 
-.col-header{display:grid;grid-template-columns:28px 64px 1fr 95px 95px 95px 32px;gap:8px;align-items:center;padding:0 12px 5px;font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.col-header{display:grid;grid-template-columns:28px 90px 1fr 95px 95px 95px 32px;gap:8px;align-items:center;padding:0 12px 5px;font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
 
 .design-list{display:flex;flex-direction:column;gap:5px}
 .design-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .15s}
@@ -86,13 +86,13 @@ textarea:focus{outline:none;border-color:var(--blush)}
 .design-card.complete{opacity:.5}
 .design-card.selected{border-color:var(--blush);box-shadow:0 0 0 2px rgba(222,161,147,.25)}
 
-.card-main{display:grid;grid-template-columns:28px 64px 1fr 95px 95px 95px 32px;gap:8px;align-items:center;padding:10px 12px;cursor:pointer}
+.card-main{display:grid;grid-template-columns:28px 90px 1fr 95px 95px 95px 32px;gap:8px;align-items:center;padding:10px 12px;cursor:pointer}
 .card-main:hover{background:var(--parchment)}
 
 .cb{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:10px}
 .cb.checked{background:var(--blush);border-color:var(--blush);color:#fff}
 
-.thumb-wrap{width:48px;height:48px;border-radius:7px;overflow:hidden;border:1px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0}
+.thumb-wrap{width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0}
 .thumb-wrap img{width:100%;height:100%;object-fit:cover}
 .thumb-placeholder{font-size:16px;color:var(--border)}
 .thumb-overlay{display:none;position:absolute;inset:0;background:rgba(42,31,28,.4);align-items:center;justify-content:center;color:#fff;font-size:13px}
@@ -135,7 +135,7 @@ textarea:focus{outline:none;border-color:var(--blush)}
 @media(max-width:700px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .col-header{display:none}
-  .card-main{grid-template-columns:28px 48px 1fr 32px;grid-template-rows:auto auto}
+  .card-main{grid-template-columns:28px 80px 1fr 32px;grid-template-rows:auto auto}
   .pill-tee,.pill-baby,.pill-sweat{display:none}
 }
 </style>
@@ -481,7 +481,7 @@ function renderList() {
   el.innerHTML=list.map(d=>{
     const n=countListed(d);
     const pct=Math.round((n/3)*100);
-    const r=18; const circ=2*Math.PI*r;
+    const r=28; const circ=2*Math.PI*r;
     const dash=Math.round((pct/100)*circ);
     const gap=circ-dash;
     const ringColor=pct===100?'#2d6a40':pct>0?'var(--gold)':'var(--border)';
@@ -492,12 +492,12 @@ function renderList() {
     <div class="design-card ${isComplete(d)?'complete':''} ${isSel?'selected':''}" id="card-${d.id}">
       <div class="card-main" onclick="toggleExpand(${d.id},event)">
         <div class="cb ${isSel?'checked':''}" onclick="toggleSelect(${d.id},event)">${isSel?'✓':''}</div>
-        <div style="position:relative;width:48px;height:48px;flex-shrink:0">
-          <svg width="48" height="48" viewBox="0 0 48 48" style="position:absolute;top:0;left:0;transform:rotate(-90deg)">
-            <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--border)" stroke-width="2.5"/>
-            <circle cx="24" cy="24" r="${r}" fill="none" stroke="${ringColor}" stroke-width="2.5" stroke-dasharray="${dash} ${gap}" stroke-linecap="round"/>
+        <div style="position:relative;width:80px;height:80px;flex-shrink:0">
+          <svg width="80" height="80" viewBox="0 0 80 80" style="position:absolute;top:0;left:0;transform:rotate(-90deg)">
+            <circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--border)" stroke-width="2.5"/>
+            <circle cx="40" cy="40" r="${r}" fill="none" stroke="${ringColor}" stroke-width="2.5" stroke-dasharray="${dash} ${gap}" stroke-linecap="round"/>
           </svg>
-          <div class="thumb-wrap" style="position:absolute;inset:4px;width:40px;height:40px;border-radius:5px;" onclick="openThumbModal(${d.id},event)">
+          <div class="thumb-wrap" style="position:absolute;inset:5px;width:70px;height:70px;border-radius:5px;" onclick="openThumbModal(${d.id},event)">
             ${thumbInner}
             <div class="thumb-overlay">✎</div>
           </div>
