@@ -207,9 +207,15 @@ textarea:focus{outline:none;border-color:var(--blush)}
       <input class="search-input" type="text" id="searchInput" placeholder="Search designs..." oninput="renderList()">
       <select id="filterSelect" onchange="renderList()">
         <option value="all">All products</option>
-        <option value="tee">Missing t-shirt</option>
-        <option value="baby">Missing baby tee</option>
-        <option value="sweat">Missing sweatshirt</option>
+        <option value="tee">Missing t-shirt #1</option>
+        <option value="tee2">Missing t-shirt #2</option>
+        <option value="baby">Missing baby tee #1</option>
+        <option value="baby2">Missing baby tee #2</option>
+        <option value="sweat">Missing sweatshirt #1</option>
+        <option value="sweat2">Missing sweatshirt #2</option>
+        <option value="any_tee">Missing any t-shirt</option>
+        <option value="any_baby">Missing any baby tee</option>
+        <option value="any_sweat">Missing any sweatshirt</option>
       </select>
       <select id="catFilter" onchange="renderList()">
         <option value="all">All categories</option>
@@ -323,7 +329,7 @@ let expandedIds=new Set();
 
 function load(){
   try{ const r=localStorage.getItem(KEY); if(r) designs=JSON.parse(r); }catch(e){ designs=[]; }
-  try{ const r=localStorage.getItem(CAT_KEY); if(r) categories=JSON.parse(r); }catch(e){ categories=[]; }
+  try{ const r=localStorage.getItem(CAT_KEY); if(r) categories=JSON.parse(r); categories.sort((a,b)=>a.localeCompare(b)); }catch(e){ categories=[]; }
 }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(designs)); }catch(e){} }
 function saveCats(){ try{ localStorage.setItem(CAT_KEY,JSON.stringify(categories)); }catch(e){} }
@@ -463,15 +469,18 @@ function addCategory(){
   const inp=document.getElementById('newCatInput');
   const name=inp.value.trim(); if(!name) return;
   if(categories.find(c=>c.toLowerCase()===name.toLowerCase())) return;
-  categories.push(name); inp.value=''; saveCats(); renderCatList();
+  categories.push(name);
+  categories.sort((a,b)=>a.localeCompare(b));
+  inp.value=''; saveCats(); renderCatList();
 }
 function renameCategory(idx,newName){
   newName=newName.trim(); if(!newName) return;
   const old=categories[idx];
-  if(old===newName) return;
-  // auto-update all designs assigned to old name
+  if(!old||old===newName) return;
   designs.forEach(d=>{ if(d.category===old) d.category=newName; });
-  categories[idx]=newName; saveCats(); save();
+  categories[idx]=newName;
+  categories.sort((a,b)=>a.localeCompare(b));
+  saveCats(); save(); renderCatList();
 }
 function deleteCategory(idx){
   const name=categories[idx];
@@ -540,8 +549,14 @@ function getFilteredList(){
   const catFilter=document.getElementById('catFilter').value;
   let list=designs.filter(d=>d.name.toLowerCase().includes(q));
   if(filter==='tee') list=list.filter(d=>!d.tee);
+  else if(filter==='tee2') list=list.filter(d=>!d.tee2);
   else if(filter==='baby') list=list.filter(d=>!d.baby);
+  else if(filter==='baby2') list=list.filter(d=>!d.baby2);
   else if(filter==='sweat') list=list.filter(d=>!d.sweat);
+  else if(filter==='sweat2') list=list.filter(d=>!d.sweat2);
+  else if(filter==='any_tee') list=list.filter(d=>!d.tee||!d.tee2);
+  else if(filter==='any_baby') list=list.filter(d=>!d.baby||!d.baby2);
+  else if(filter==='any_sweat') list=list.filter(d=>!d.sweat||!d.sweat2);
   if(catFilter!=='all') list=list.filter(d=>d.category===catFilter);
   if(currentTab==='incomplete') list=list.filter(d=>!isComplete(d));
   else if(currentTab==='complete') list=list.filter(d=>isComplete(d));
