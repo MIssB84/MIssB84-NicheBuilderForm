@@ -21,157 +21,122 @@
   --warn-bg:#fff8ec;
   --warn-text:#7a5200;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--espresso);min-height:100vh;font-size:16px}
+body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--espresso);min-height:100vh;font-size:14px}
 header{background:var(--espresso);color:var(--cream);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-header h1{font-size:19px;font-weight:600;letter-spacing:.02em}
-header span{font-size:16px;opacity:.55}
-.main{max-width:1140px;margin:0 auto;padding:22px 18px}
+header h1{font-size:16px;font-weight:600;letter-spacing:.02em}
+header span{font-size:12px;opacity:.55}
+.main{max-width:1100px;margin:0 auto;padding:22px 18px}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
 .stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-.stat-label{font-size:19px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-.stat-num{font-size:30px;font-weight:600;color:var(--espresso)}
-.stat-sub{font-size:19px;color:var(--muted);margin-top:2px}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.stat-num{font-size:24px;font-weight:600;color:var(--espresso)}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .progress-bar{height:4px;background:var(--border);border-radius:2px;margin-top:7px;overflow:hidden}
 .progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s}
 
-/* Missing summary banner */
-.missing-banner{background:var(--warn-bg);border:1px solid #f0d9a0;border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:19px;color:var(--warn-text);display:none}
+.missing-banner{background:var(--warn-bg);border:1px solid #f0d9a0;border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:13px;color:var(--warn-text);display:none}
 .missing-banner.show{display:block}
 
-/* Controls */
-.controls{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:16px}
-.controls-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.search-input{flex:1;min-width:160px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment)}
+.controls{background:#fff;border:1px solid var(--border);border-radius:12px;padding:15px 17px;margin-bottom:14px}
+.controls-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:11px}
+.search-input{flex:1;min-width:160px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}
 .search-input:focus{outline:none;border-color:var(--blush)}
-select{padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment);cursor:pointer}
+select{padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment);cursor:pointer}
 select:focus{outline:none;border-color:var(--blush)}
-.tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
-.tab{padding:5px 13px;border-radius:20px;font-size:16px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted);transition:all .15s}
+.tabs{display:flex;gap:5px;margin-bottom:11px;flex-wrap:wrap}
+.tab{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted);transition:all .15s}
 .tab.active{background:var(--espresso);color:var(--cream);border-color:var(--espresso)}
 .mode-row{display:flex;gap:6px;margin-bottom:10px}
-.mode-btn{padding:5px 12px;border-radius:20px;font-size:16px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}
+.mode-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}
 .mode-btn.active{background:var(--blush);color:#fff;border-color:var(--blush)}
 .add-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.add-row input[type=text]{flex:1;min-width:160px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment)}
+.add-row input[type=text]{flex:1;min-width:160px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}
 .add-row input[type=text]:focus{outline:none;border-color:var(--blush)}
-.add-row input[type=date]{padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment)}
-.add-row input[type=date]:focus{outline:none;border-color:var(--blush)}
-textarea{width:100%;min-height:75px;resize:vertical;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment)}
+textarea{width:100%;min-height:75px;resize:vertical;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}
 textarea:focus{outline:none;border-color:var(--blush)}
-.btn{padding:7px 15px;border-radius:8px;font-family:inherit;font-size:19px;font-weight:500;cursor:pointer;border:1px solid transparent;background:var(--espresso);color:var(--cream);transition:opacity .15s}
+.btn{padding:7px 15px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;background:var(--espresso);color:var(--cream);transition:opacity .15s}
 .btn:hover{opacity:.85}
-.btn-sm{padding:5px 11px;font-size:16px}
+.btn-sm{padding:5px 12px;font-size:12px}
 .btn-outline{background:var(--parchment);color:var(--muted);border-color:var(--border)}
 .btn-outline:hover{background:var(--cream)}
-.hint{font-size:19px;color:var(--muted);margin-top:5px}
+.hint{font-size:11px;color:var(--muted)}
+.divider{height:1px;background:var(--border);margin:11px 0}
 
-/* Bulk bar */
-.bulk-bar{background:var(--espresso);color:var(--cream);border-radius:10px;padding:10px 14px;display:none;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.sort-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sort-bar span{font-size:11px;color:var(--muted);font-weight:500}
+.sort-btn{padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}
+.sort-btn.active{background:var(--espresso);color:var(--cream);border-color:var(--espresso)}
+
+.bulk-bar{background:var(--espresso);color:var(--cream);border-radius:10px;padding:10px 14px;display:none;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .bulk-bar.show{display:flex}
-.bulk-bar span{font-size:19px}
-.bulk-btn{padding:5px 12px;border-radius:6px;font-size:16px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:var(--cream);transition:background .15s}
+.bulk-bar span{font-size:13px}
+.bulk-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:var(--cream);transition:background .15s}
 .bulk-btn:hover{background:rgba(255,255,255,.2)}
 .bulk-btn.danger{border-color:rgba(220,80,80,.5);background:rgba(220,80,80,.15)}
 .bulk-btn.danger:hover{background:rgba(220,80,80,.3)}
 
-/* Table header */
-.col-header{display:grid;grid-template-columns:28px 78px 1fr 110px 110px 110px 125px 36px;gap:8px;align-items:center;padding:0 12px 5px;font-size:19px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 
-/* Design card */
+.col-header{display:grid;grid-template-columns:28px 64px 1fr 95px 95px 95px 32px;gap:8px;align-items:center;padding:0 12px 5px;font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+
 .design-list{display:flex;flex-direction:column;gap:5px}
 .design-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .15s}
 .design-card:hover{box-shadow:0 2px 8px rgba(42,31,28,.07)}
 .design-card.complete{opacity:.5}
 .design-card.selected{border-color:var(--blush);box-shadow:0 0 0 2px rgba(222,161,147,.25)}
 
-.card-main{display:grid;grid-template-columns:28px 78px 1fr 110px 110px 110px 125px 36px;gap:8px;align-items:center;padding:12px 14px;cursor:pointer}
+.card-main{display:grid;grid-template-columns:28px 64px 1fr 95px 95px 95px 32px;gap:8px;align-items:center;padding:10px 12px;cursor:pointer}
 .card-main:hover{background:var(--parchment)}
 
-/* Checkbox */
-.cb{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
-.cb.checked{background:var(--blush);border-color:var(--blush);color:#fff;font-size:10px}
+.cb{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:10px}
+.cb.checked{background:var(--blush);border-color:var(--blush);color:#fff}
 
-/* Thumb */
-.thumb-wrap{width:64px;height:64px;border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0}
+.thumb-wrap{width:48px;height:48px;border-radius:7px;overflow:hidden;border:1px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0}
 .thumb-wrap img{width:100%;height:100%;object-fit:cover}
-.thumb-placeholder{font-size:20px;color:var(--border)}
-.thumb-overlay{display:none;position:absolute;inset:0;background:rgba(42,31,28,.4);align-items:center;justify-content:center;color:#fff;font-size:16px}
+.thumb-placeholder{font-size:16px;color:var(--border)}
+.thumb-overlay{display:none;position:absolute;inset:0;background:rgba(42,31,28,.4);align-items:center;justify-content:center;color:#fff;font-size:13px}
 .thumb-wrap:hover .thumb-overlay{display:flex}
 
-/* Progress ring */
-.ring-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
-.ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
-.ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600;color:var(--espresso)}
+.design-name{font-size:13px;font-weight:600;color:var(--espresso);line-height:1.3}
 
-/* Design info */
-.design-name{font-size:19px;font-weight:600;color:var(--espresso);margin-bottom:1px;line-height:1.3}
-.design-date{font-size:19px;color:var(--muted)}
-
-/* Pills */
-.pill{display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;border-radius:6px;padding:7px 12px;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;width:100px}
+.pill{display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:6px;padding:5px 10px;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;width:85px}
 .pill.done{background:var(--done-bg);color:var(--done-text);border-color:var(--done-border)}
 .pill.todo{background:var(--parchment);color:var(--muted);border-color:var(--border)}
 .pill:hover{filter:brightness(.94)}
 
-/* Date listed */
-.date-listed-wrap{display:flex;align-items:center;gap:4px}
-.date-listed-input{width:100px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment);cursor:pointer}
-.date-listed-input:focus{outline:none;border-color:var(--blush)}
-
-/* Del */
-.del-btn{background:none;border:none;color:var(--border);cursor:pointer;font-size:16px;padding:0;width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.del-btn{background:none;border:none;color:var(--border);cursor:pointer;font-size:15px;padding:0;width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .del-btn:hover{color:#c0392b;background:#fdf0ed}
 
-/* Expandable details */
 .card-details{border-top:1px solid var(--border);padding:12px 14px;background:var(--parchment);display:none}
 .card-details.open{display:block}
-.details-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.detail-field label{font-size:19px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}
-.detail-field input[type=text]{width:100%;padding:6px 9px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:16px;color:var(--espresso);background:#fff}
-.detail-field input[type=text]:focus{outline:none;border-color:var(--blush)}
-.detail-field input[type=text]::placeholder{color:var(--border)}
-.url-link{font-size:19px;color:var(--blush);text-decoration:none;margin-top:2px;display:inline-block}
-.url-link:hover{text-decoration:underline}
-.notes-field{grid-column:1/-1}
-.notes-field textarea{min-height:55px;width:100%;padding:6px 9px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:16px;color:var(--espresso);background:#fff;resize:vertical}
-.notes-field textarea:focus{outline:none;border-color:var(--blush)}
-.expand-hint{font-size:19px;color:var(--muted);text-align:right;padding:0 12px 8px}
+.detail-field label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}
+.detail-field textarea{min-height:55px;width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--espresso);background:#fff;resize:vertical}
+.detail-field textarea:focus{outline:none;border-color:var(--blush)}
 
-/* Sort bar */
-.sort-bar{display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
-.sort-bar span{font-size:19px;color:var(--muted);font-weight:500}
-.sort-btn{padding:4px 10px;border-radius:6px;font-size:19px;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}
-.sort-btn.active{background:var(--espresso);color:var(--cream);border-color:var(--espresso)}
+.ring-wrap{position:relative;width:48px;height:48px;flex-shrink:0}
 
-/* Export */
-.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.empty{text-align:center;padding:36px;color:var(--muted);font-size:14px}
 
-.empty{text-align:center;padding:36px;color:var(--muted);font-size:16px}
-.divider{height:1px;background:var(--border);margin:11px 0}
-
-/* Modal */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(42,31,28,.5);z-index:100;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:#fff;border-radius:14px;padding:22px;width:340px;max-width:95vw}
-.modal h3{font-size:19px;font-weight:600;margin-bottom:4px;color:var(--espresso)}
-.modal-name{font-size:16px;color:var(--muted);margin-bottom:14px}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:4px;color:var(--espresso)}
+.modal-name{font-size:12px;color:var(--muted);margin-bottom:14px}
 .modal-preview{width:100%;height:130px;object-fit:cover;border-radius:8px;margin-bottom:10px;display:none}
-.file-drop{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;margin-bottom:8px;color:var(--muted);font-size:19px;transition:border-color .15s}
+.file-drop{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;margin-bottom:8px;color:var(--muted);font-size:13px;transition:border-color .15s}
 .file-drop:hover{border-color:var(--blush)}
-.modal input[type=text]{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:19px;color:var(--espresso);background:var(--parchment);margin-bottom:8px}
+.modal input[type=text]{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment);margin-bottom:8px}
 .modal input[type=text]:focus{outline:none;border-color:var(--blush)}
 .modal-actions{display:flex;gap:7px;margin-top:4px;flex-wrap:wrap}
-.btn-ghost{padding:7px 13px;border-radius:8px;font-family:inherit;font-size:19px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}
+.btn-ghost{padding:7px 13px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}
 .btn-ghost:hover{background:var(--cream)}
 
-@media(max-width:720px){
+@media(max-width:700px){
   .stats{grid-template-columns:repeat(2,1fr)}
   .col-header{display:none}
-  .card-main{grid-template-columns:28px 52px 1fr 32px;grid-template-rows:auto auto}
-  .card-main .pill-tee,.card-main .pill-baby,.card-main .pill-sweat,.card-main .date-listed-wrap{display:none}
-  .card-details.open .details-grid{grid-template-columns:1fr}
+  .card-main{grid-template-columns:28px 48px 1fr 32px;grid-template-rows:auto auto}
+  .pill-tee,.pill-baby,.pill-sweat{display:none}
 }
 </style>
 </head>
@@ -216,7 +181,6 @@ textarea:focus{outline:none;border-color:var(--blush)}
       <div class="tab" onclick="setTab('incomplete',this)">Missing products</div>
       <div class="tab" onclick="setTab('complete',this)">Complete</div>
     </div>
-
     <div class="controls-row">
       <input class="search-input" type="text" id="searchInput" placeholder="Search designs..." oninput="renderList()">
       <select id="filterSelect" onchange="renderList()">
@@ -225,44 +189,35 @@ textarea:focus{outline:none;border-color:var(--blush)}
         <option value="baby">Missing baby tee</option>
         <option value="sweat">Missing sweatshirt</option>
       </select>
+      <div class="sort-bar">
+        <span>Sort:</span>
+        <div class="sort-btn active" onclick="setSort('az',this)">A–Z</div>
+        <div class="sort-btn" onclick="setSort('incomplete',this)">Least complete</div>
+      </div>
     </div>
-
-    <div class="sort-bar">
-      <span>Sort:</span>
-      <div class="sort-btn active" onclick="setSort('newest',this)">Newest first</div>
-      <div class="sort-btn" onclick="setSort('oldest',this)">Oldest first</div>
-      <div class="sort-btn" onclick="setSort('incomplete',this)">Least complete</div>
-      <div class="sort-btn" onclick="setSort('alpha',this)">A–Z</div>
-    </div>
-
     <div class="divider"></div>
-
     <div class="mode-row">
       <div class="mode-btn active" onclick="setMode('single',this)">+ Add one</div>
       <div class="mode-btn" onclick="setMode('paste',this)">Paste list</div>
     </div>
-
     <div id="singleArea">
       <div class="add-row">
         <input type="text" id="newName" placeholder="Design name..." onkeydown="if(event.key==='Enter')addSingle()">
-        <input type="date" id="newDate">
         <button class="btn btn-sm" onclick="addSingle()">Add</button>
       </div>
     </div>
-
     <div id="pasteArea" style="display:none">
       <textarea id="pasteText" placeholder="Paste design names here, one per line..."></textarea>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:7px;flex-wrap:wrap">
-        <input type="date" id="pasteDate">
+      <div style="display:flex;gap:8px;align-items:center;margin-top:7px">
         <button class="btn btn-sm" onclick="addPaste()">Add all</button>
-        <span class="hint">Duplicates skipped. Date applies to all.</span>
+        <span class="hint">Duplicates skipped automatically</span>
       </div>
     </div>
   </div>
 
   <div class="toolbar">
     <button class="btn btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
-    <span id="countLabel" style="font-size:16px;color:var(--muted);margin-left:4px"></span>
+    <span id="countLabel" style="font-size:12px;color:var(--muted)"></span>
   </div>
 
   <div class="bulk-bar" id="bulkBar">
@@ -276,30 +231,28 @@ textarea:focus{outline:none;border-color:var(--blush)}
   </div>
 
   <div class="col-header">
-    <div id="selectAllCb" class="cb" onclick="toggleSelectAll()" title="Select all" style="cursor:pointer"></div>
+    <div id="selectAllCb" class="cb" onclick="toggleSelectAll()" title="Select all"></div>
     <span>Image</span>
     <span>Design</span>
     <span>T-shirt</span>
     <span>Baby tee</span>
     <span>Sweatshirt</span>
-    <span>Date added</span>
     <span></span>
   </div>
 
   <div class="design-list" id="designList"></div>
 </div>
 
-<!-- Thumbnail modal -->
 <div class="modal-bg" id="thumbModal">
   <div class="modal">
     <h3>Add thumbnail</h3>
     <div class="modal-name" id="modalDesignName"></div>
     <img class="modal-preview" id="modalPreview" alt="preview">
     <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()">
-      Click to upload image<br><span style="font-size:19px;opacity:.6">or drag and drop — JPG, PNG, WEBP</span>
+      Click to upload image<br><span style="font-size:11px;opacity:.6">or drag and drop — JPG, PNG, WEBP</span>
     </div>
     <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
-    <div style="font-size:16px;color:var(--muted);margin-bottom:6px;text-align:center">— or paste a URL —</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-align:center">— or paste a URL —</div>
     <input type="text" id="urlInput" placeholder="https://...">
     <div class="modal-actions">
       <button class="btn" onclick="saveThumb()">Save</button>
@@ -310,10 +263,10 @@ textarea:focus{outline:none;border-color:var(--blush)}
 </div>
 
 <script>
-const KEY = 'pod_tracker_v2';
+const KEY = 'pod_tracker_v3';
 let designs = [];
 let currentTab = 'all';
-let currentSort = 'newest';
+let currentSort = 'az';
 let selected = new Set();
 let editingId = null;
 let pendingThumb = null;
@@ -325,23 +278,6 @@ function load() {
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(designs)); } catch(e) {}
 }
-
-function todayVal() {
-  return new Date().toISOString().slice(0,10);
-}
-
-function fmtDate(val) {
-  if(!val) return '';
-  const [y,m,d] = val.split('-');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return months[parseInt(m)-1]+' '+parseInt(d)+', '+y;
-}
-
-// Set today as default for date inputs
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('newDate').value = todayVal();
-  document.getElementById('pasteDate').value = todayVal();
-});
 
 function setMode(m, el) {
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
@@ -368,19 +304,17 @@ function addSingle() {
   const inp = document.getElementById('newName');
   const name = inp.value.trim();
   if(!name) return;
-  const dateVal = document.getElementById('newDate').value || todayVal();
-  designs.unshift({ id: Date.now(), name, tee:false, baby:false, sweat:false, thumb:null, added:dateVal, dateListed:'', urlTee:'', urlBaby:'', urlSweat:'', notes:'' });
+  designs.push({ id: Date.now(), name, tee:false, baby:false, sweat:false, thumb:null, notes:'' });
   inp.value = '';
   save(); render();
 }
 
 function addPaste() {
   const lines = document.getElementById('pasteText').value.split('\n').map(l=>l.trim()).filter(Boolean);
-  const dateVal = document.getElementById('pasteDate').value || todayVal();
   let added = 0;
   lines.forEach(name => {
     if(!designs.find(d=>d.name.toLowerCase()===name.toLowerCase())) {
-      designs.unshift({ id: Date.now()+Math.random(), name, tee:false, baby:false, sweat:false, thumb:null, added:dateVal, dateListed:'', urlTee:'', urlBaby:'', urlSweat:'', notes:'' });
+      designs.push({ id: Date.now()+Math.random(), name, tee:false, baby:false, sweat:false, thumb:null, notes:'' });
       added++;
     }
   });
@@ -394,28 +328,25 @@ function toggle(id, field, e) {
   if(d){ d[field]=!d[field]; save(); render(); }
 }
 
-function updateField(id, field, val) {
+function updateNotes(id, val) {
   const d = designs.find(x=>x.id===id);
-  if(d){ d[field]=val; save(); renderStats(); }
+  if(d){ d.notes=val; save(); }
 }
 
 function remove(id, e) {
   e && e.stopPropagation();
   if(!confirm('Remove this design?')) return;
   designs = designs.filter(x=>x.id!==id);
-  selected.delete(id);
-  expandedIds.delete(id);
+  selected.delete(id); expandedIds.delete(id);
   save(); render();
 }
 
 function isComplete(d){ return d.tee && d.baby && d.sweat; }
 function countListed(d){ return [d.tee,d.baby,d.sweat].filter(Boolean).length; }
 
-// Selection
 function toggleSelect(id, e) {
   e && e.stopPropagation();
-  if(selected.has(id)) selected.delete(id);
-  else selected.add(id);
+  if(selected.has(id)) selected.delete(id); else selected.add(id);
   renderList();
 }
 
@@ -430,211 +361,160 @@ function clearSelection(){ selected.clear(); renderList(); }
 
 function bulkMark(field) {
   selected.forEach(id => {
-    const d = designs.find(x=>x.id===id);
-    if(!d) return;
-    if(field==='all'){ d.tee=true; d.baby=true; d.sweat=true; }
-    else d[field]=true;
+    const d = designs.find(x=>x.id===id); if(!d) return;
+    if(field==='all'){ d.tee=true; d.baby=true; d.sweat=true; } else d[field]=true;
   });
-  selected.clear();
-  save(); render();
+  selected.clear(); save(); render();
 }
 
 function bulkDelete() {
-  if(!confirm(`Delete ${selected.size} design(s)?`)) return;
+  if(!confirm('Delete '+selected.size+' design(s)?')) return;
   designs = designs.filter(x=>!selected.has(x.id));
-  selected.clear();
-  save(); render();
+  selected.clear(); save(); render();
 }
 
-// Expand/collapse
 function toggleExpand(id, e) {
-  if(e.target.closest('.cb,.pill,.del-btn,.thumb-wrap,.date-listed-input')) return;
-  if(expandedIds.has(id)) expandedIds.delete(id);
-  else expandedIds.add(id);
+  if(e.target.closest('.cb,.pill,.del-btn,.thumb-wrap')) return;
+  if(expandedIds.has(id)) expandedIds.delete(id); else expandedIds.add(id);
   renderList();
 }
 
-// Thumbnail modal
 function openThumbModal(id, e) {
   e && e.stopPropagation();
-  editingId = id; pendingThumb = null;
+  editingId=id; pendingThumb=null;
   const d = designs.find(x=>x.id===id);
   document.getElementById('modalDesignName').textContent = d.name;
   document.getElementById('urlInput').value = '';
   const prev = document.getElementById('modalPreview');
-  if(d.thumb){ prev.src=d.thumb; prev.style.display='block'; }
-  else prev.style.display='none';
+  if(d.thumb){ prev.src=d.thumb; prev.style.display='block'; } else prev.style.display='none';
   document.getElementById('thumbModal').classList.add('open');
 }
 function closeModal(){ document.getElementById('thumbModal').classList.remove('open'); editingId=null; pendingThumb=null; }
 function handleFile(inp) {
-  const file = inp.files[0]; if(!file) return;
-  const r = new FileReader();
-  r.onload = e => { pendingThumb=e.target.result; const p=document.getElementById('modalPreview'); p.src=pendingThumb; p.style.display='block'; };
+  const file=inp.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{ pendingThumb=e.target.result; const p=document.getElementById('modalPreview'); p.src=pendingThumb; p.style.display='block'; };
   r.readAsDataURL(file);
 }
 function saveThumb() {
-  const d = designs.find(x=>x.id===editingId); if(!d){ closeModal(); return; }
-  const url = document.getElementById('urlInput').value.trim();
-  if(pendingThumb) d.thumb=pendingThumb;
-  else if(url) d.thumb=url;
+  const d=designs.find(x=>x.id===editingId); if(!d){ closeModal(); return; }
+  const url=document.getElementById('urlInput').value.trim();
+  if(pendingThumb) d.thumb=pendingThumb; else if(url) d.thumb=url;
   save(); render(); closeModal();
 }
 function removeThumb() {
-  const d = designs.find(x=>x.id===editingId);
+  const d=designs.find(x=>x.id===editingId);
   if(d){ d.thumb=null; save(); render(); }
   closeModal();
 }
 
-const fd = document.getElementById('fileDrop');
-fd.addEventListener('dragover', e=>{ e.preventDefault(); fd.style.borderColor='var(--blush)'; });
-fd.addEventListener('dragleave', ()=>{ fd.style.borderColor='var(--border)'; });
-fd.addEventListener('drop', e=>{ e.preventDefault(); fd.style.borderColor='var(--border)'; const f=e.dataTransfer.files[0]; if(f){ const r=new FileReader(); r.onload=ev=>{ pendingThumb=ev.target.result; const p=document.getElementById('modalPreview'); p.src=pendingThumb; p.style.display='block'; }; r.readAsDataURL(f); } });
-document.getElementById('thumbModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+const fd=document.getElementById('fileDrop');
+fd.addEventListener('dragover',e=>{ e.preventDefault(); fd.style.borderColor='var(--blush)'; });
+fd.addEventListener('dragleave',()=>{ fd.style.borderColor='var(--border)'; });
+fd.addEventListener('drop',e=>{ e.preventDefault(); fd.style.borderColor='var(--border)'; const f=e.dataTransfer.files[0]; if(f){ const r=new FileReader(); r.onload=ev=>{ pendingThumb=ev.target.result; const p=document.getElementById('modalPreview'); p.src=pendingThumb; p.style.display='block'; }; r.readAsDataURL(f); } });
+document.getElementById('thumbModal').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
 
-// Export CSV
 function exportCSV() {
-  const rows = [['Name','T-shirt','Baby Tee','Sweatshirt','Date Added','Date Listed','Tee URL','Baby Tee URL','Sweatshirt URL','Notes']];
-  designs.forEach(d => rows.push([d.name, d.tee?'Yes':'No', d.baby?'Yes':'No', d.sweat?'Yes':'No', fmtDate(d.added), fmtDate(d.dateListed), d.urlTee||'', d.urlBaby||'', d.urlSweat||'', d.notes||'']));
-  const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download = 'pod-tracker-export.csv';
-  a.click();
+  const rows=[['Name','T-shirt','Baby Tee','Sweatshirt','Notes']];
+  designs.forEach(d=>rows.push([d.name,d.tee?'Yes':'No',d.baby?'Yes':'No',d.sweat?'Yes':'No',d.notes||'']));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='pod-tracker-export.csv'; a.click();
 }
 
 function getFilteredList() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const filter = document.getElementById('filterSelect').value;
-  let list = designs.filter(d=>d.name.toLowerCase().includes(q));
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const filter=document.getElementById('filterSelect').value;
+  let list=designs.filter(d=>d.name.toLowerCase().includes(q));
   if(filter==='tee') list=list.filter(d=>!d.tee);
   else if(filter==='baby') list=list.filter(d=>!d.baby);
   else if(filter==='sweat') list=list.filter(d=>!d.sweat);
   if(currentTab==='incomplete') list=list.filter(d=>!isComplete(d));
   else if(currentTab==='complete') list=list.filter(d=>isComplete(d));
-  // Sort
-  if(currentSort==='newest') list.sort((a,b)=>(b.added||'').localeCompare(a.added||''));
-  else if(currentSort==='oldest') list.sort((a,b)=>(a.added||'').localeCompare(b.added||''));
+  if(currentSort==='az') list.sort((a,b)=>a.name.localeCompare(b.name));
   else if(currentSort==='incomplete') list.sort((a,b)=>countListed(a)-countListed(b));
-  else if(currentSort==='alpha') list.sort((a,b)=>a.name.localeCompare(b.name));
   return list;
 }
 
 function renderStats() {
-  const total = designs.length;
-  const complete = designs.filter(isComplete).length;
-  const tees = designs.filter(d=>d.tee).length;
-  const babies = designs.filter(d=>d.baby).length;
-  const sweats = designs.filter(d=>d.sweat).length;
-  const pct = total ? Math.round((complete/total)*100) : 0;
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statTee').textContent = tees;
-  document.getElementById('statBaby').textContent = babies;
-  document.getElementById('statSweat').textContent = sweats;
-  document.getElementById('statTeeSub').textContent = total ? (total-tees)+' remaining' : '';
-  document.getElementById('statBabySub').textContent = total ? (total-babies)+' remaining' : '';
-  document.getElementById('statSweatSub').textContent = total ? (total-sweats)+' remaining' : '';
-  document.getElementById('statBar').style.width = pct+'%';
-  document.getElementById('statPct').textContent = pct+'% fully listed';
-
-  // Missing banner
-  const banner = document.getElementById('missingBanner');
-  if(total>0 && complete<total) {
-    const parts = [];
+  const total=designs.length;
+  const complete=designs.filter(isComplete).length;
+  const tees=designs.filter(d=>d.tee).length;
+  const babies=designs.filter(d=>d.baby).length;
+  const sweats=designs.filter(d=>d.sweat).length;
+  const pct=total?Math.round((complete/total)*100):0;
+  document.getElementById('statTotal').textContent=total;
+  document.getElementById('statTee').textContent=tees;
+  document.getElementById('statBaby').textContent=babies;
+  document.getElementById('statSweat').textContent=sweats;
+  document.getElementById('statTeeSub').textContent=total?(total-tees)+' remaining':'';
+  document.getElementById('statBabySub').textContent=total?(total-babies)+' remaining':'';
+  document.getElementById('statSweatSub').textContent=total?(total-sweats)+' remaining':'';
+  document.getElementById('statBar').style.width=pct+'%';
+  document.getElementById('statPct').textContent=pct+'% fully listed';
+  const banner=document.getElementById('missingBanner');
+  if(total>0&&complete<total){
+    const parts=[];
     if(total-tees>0) parts.push((total-tees)+' t-shirts');
     if(total-babies>0) parts.push((total-babies)+' baby tees');
     if(total-sweats>0) parts.push((total-sweats)+' sweatshirts');
-    banner.textContent = 'Still needed: '+parts.join(', ')+'.';
+    banner.textContent='Still needed: '+parts.join(', ')+'.';
     banner.classList.add('show');
   } else banner.classList.remove('show');
 }
 
 function renderList() {
-  const list = getFilteredList();
-  const el = document.getElementById('designList');
-  document.getElementById('countLabel').textContent = list.length+' design'+(list.length!==1?'s':'');
-
-  // Bulk bar
-  const bulkBar = document.getElementById('bulkBar');
+  const list=getFilteredList();
+  document.getElementById('countLabel').textContent=list.length+' design'+(list.length!==1?'s':'');
+  const bulkBar=document.getElementById('bulkBar');
   if(selected.size>0){ bulkBar.classList.add('show'); document.getElementById('bulkCount').textContent=selected.size+' selected'; }
   else bulkBar.classList.remove('show');
-
-  // Select all checkbox
-  const saCb = document.getElementById('selectAllCb');
-  const visIds = list.map(d=>d.id);
-  const allSelected = visIds.length>0 && visIds.every(id=>selected.has(id));
-  saCb.className = 'cb'+(allSelected?' checked':'');
-  saCb.textContent = allSelected ? '✓' : '';
-
+  const saCb=document.getElementById('selectAllCb');
+  const visIds=list.map(d=>d.id);
+  const allSel=visIds.length>0&&visIds.every(id=>selected.has(id));
+  saCb.className='cb'+(allSel?' checked':'');
+  saCb.textContent=allSel?'✓':'';
+  const el=document.getElementById('designList');
   if(!list.length){ el.innerHTML='<div class="empty">No designs found</div>'; return; }
 
-  el.innerHTML = list.map(d => {
-    const n = countListed(d);
-    const pct = Math.round((n/3)*100);
-    const r = 20; const circ = 2*Math.PI*r;
-    const dash = Math.round((pct/100)*circ);
-    const gap = circ - dash;
-    const ringColor = pct===100?'#2d6a40':pct>0?'var(--gold)':'var(--border)';
-
-    const thumbInner = d.thumb
-      ? `<img src="${d.thumb}" alt="${d.name}">`
-      : `<span class="thumb-placeholder">+</span>`;
-
-    const isExp = expandedIds.has(d.id);
-    const isSel = selected.has(d.id);
-
+  el.innerHTML=list.map(d=>{
+    const n=countListed(d);
+    const pct=Math.round((n/3)*100);
+    const r=18; const circ=2*Math.PI*r;
+    const dash=Math.round((pct/100)*circ);
+    const gap=circ-dash;
+    const ringColor=pct===100?'#2d6a40':pct>0?'var(--gold)':'var(--border)';
+    const thumbInner=d.thumb?`<img src="${d.thumb}" alt="${d.name}">`:`<span class="thumb-placeholder">+</span>`;
+    const isExp=expandedIds.has(d.id);
+    const isSel=selected.has(d.id);
     return `
     <div class="design-card ${isComplete(d)?'complete':''} ${isSel?'selected':''}" id="card-${d.id}">
       <div class="card-main" onclick="toggleExpand(${d.id},event)">
         <div class="cb ${isSel?'checked':''}" onclick="toggleSelect(${d.id},event)">${isSel?'✓':''}</div>
-        <div style="position:relative;width:52px;height:52px;flex-shrink:0">
-          <svg width="52" height="52" viewBox="0 0 52 52" style="position:absolute;top:0;left:0;transform:rotate(-90deg)">
-            <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--border)" stroke-width="3"/>
-            <circle cx="26" cy="26" r="${r}" fill="none" stroke="${ringColor}" stroke-width="3"
-              stroke-dasharray="${dash} ${gap}" stroke-linecap="round"/>
+        <div style="position:relative;width:48px;height:48px;flex-shrink:0">
+          <svg width="48" height="48" viewBox="0 0 48 48" style="position:absolute;top:0;left:0;transform:rotate(-90deg)">
+            <circle cx="24" cy="24" r="${r}" fill="none" stroke="var(--border)" stroke-width="2.5"/>
+            <circle cx="24" cy="24" r="${r}" fill="none" stroke="${ringColor}" stroke-width="2.5" stroke-dasharray="${dash} ${gap}" stroke-linecap="round"/>
           </svg>
-          <div class="thumb-wrap" style="position:absolute;inset:4px;width:44px;height:44px;border-radius:5px;" onclick="openThumbModal(${d.id},event)">
+          <div class="thumb-wrap" style="position:absolute;inset:4px;width:40px;height:40px;border-radius:5px;" onclick="openThumbModal(${d.id},event)">
             ${thumbInner}
             <div class="thumb-overlay">✎</div>
           </div>
         </div>
-        <div>
-          <div class="design-name">${d.name}</div>
-          <div class="design-date">${fmtDate(d.added)}</div>
-        </div>
+        <div class="design-name">${d.name}</div>
         <div class="pill-tee"><span class="pill ${d.tee?'done':'todo'}" onclick="toggle(${d.id},'tee',event)">${d.tee?'✓ Listed':'To do'}</span></div>
         <div class="pill-baby"><span class="pill ${d.baby?'done':'todo'}" onclick="toggle(${d.id},'baby',event)">${d.baby?'✓ Listed':'To do'}</span></div>
         <div class="pill-sweat"><span class="pill ${d.sweat?'done':'todo'}" onclick="toggle(${d.id},'sweat',event)">${d.sweat?'✓ Listed':'To do'}</span></div>
-        <div class="date-listed-wrap" onclick="event.stopPropagation()">
-          <input type="date" class="date-listed-input" value="${d.dateListed||''}" title="Date listed on Etsy" onchange="updateField(${d.id},'dateListed',this.value)">
-        </div>
         <button class="del-btn" onclick="remove(${d.id},event)" title="Remove">✕</button>
       </div>
       ${isExp?`
       <div class="card-details open">
-        <div class="details-grid">
-          <div class="detail-field">
-            <label>T-shirt Etsy URL</label>
-            <input type="text" placeholder="https://etsy.com/listing/..." value="${d.urlTee||''}" onchange="updateField(${d.id},'urlTee',this.value)">
-            ${d.urlTee?`<a href="${d.urlTee}" target="_blank" class="url-link">View listing ↗</a>`:''}
-          </div>
-          <div class="detail-field">
-            <label>Baby tee Etsy URL</label>
-            <input type="text" placeholder="https://etsy.com/listing/..." value="${d.urlBaby||''}" onchange="updateField(${d.id},'urlBaby',this.value)">
-            ${d.urlBaby?`<a href="${d.urlBaby}" target="_blank" class="url-link">View listing ↗</a>`:''}
-          </div>
-          <div class="detail-field">
-            <label>Sweatshirt Etsy URL</label>
-            <input type="text" placeholder="https://etsy.com/listing/..." value="${d.urlSweat||''}" onchange="updateField(${d.id},'urlSweat',this.value)">
-            ${d.urlSweat?`<a href="${d.urlSweat}" target="_blank" class="url-link">View listing ↗</a>`:''}
-          </div>
-          <div class="detail-field notes-field">
-            <label>Notes</label>
-            <textarea placeholder="Colorways, mockup status, reminders..." onchange="updateField(${d.id},'notes',this.value)">${d.notes||''}</textarea>
-          </div>
+        <div class="detail-field">
+          <label>Notes</label>
+          <textarea placeholder="Colorways, mockup status, reminders..." onchange="updateNotes(${d.id},this.value)">${d.notes||''}</textarea>
         </div>
-      </div>
-      `:''}
+      </div>`:''}
     </div>`;
   }).join('');
 }
