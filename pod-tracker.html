@@ -566,7 +566,6 @@ function renderList(){
   const el=document.getElementById('designList');
   if(!list.length){el.innerHTML='<div class="empty">No designs found</div>';return;}
 
-  const catOptions=categories.map(c=>`<option value="${c}">${c}</option>`).join('');
 
   el.innerHTML=list.map(d=>{
     const n=countListed(d);
@@ -596,14 +595,8 @@ function renderList(){
         <div class="cat-col" onclick="event.stopPropagation()">
           <select class="cat-select ${noCat?'unset':''}" onchange="updateCat(${d.id},this.value,event)">
             <option value="" ${noCat?'selected':''}>-- none --</option>
-            ${catOptions}
+            ${categories.map(c=>`<option value="${c}" ${d.category===c?'selected':''}>${c}</option>`).join('')}
           </select>
-          <script>
-            (function(){
-              var sel=document.currentScript.previousElementSibling;
-              sel.value=${JSON.stringify(d.category||'')};
-            })();
-          <\/script>
         </div>
         <div class="pill-tee" style="display:flex;flex-direction:column;gap:3px">
           <span class="pill ${d.tee?'done':'todo'}" onclick="toggle(${d.id},'tee',event)" style="width:82px;font-size:11px">${d.tee?'✓ #1':'Tee #1'}</span>
