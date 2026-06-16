@@ -98,6 +98,9 @@ textarea:focus{outline:none;border-color:var(--blush)}
 .thumb-wrap:hover .thumb-overlay{display:flex}
 
 .design-name{font-size:13px;font-weight:600;color:var(--espresso);line-height:1.3}
+.name-edit{font-size:13px;font-weight:600;color:var(--espresso);border:1.5px solid var(--blush);border-radius:6px;padding:3px 7px;font-family:inherit;background:#fff;outline:none;width:100%;margin-bottom:2px}
+.design-name-wrap{cursor:text}
+.design-name-wrap:hover .design-name{text-decoration:underline dotted var(--blush)}
 
 /* Category dropdown on card */
 .cat-select{width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:12px;color:var(--espresso);background:var(--parchment);cursor:pointer}
@@ -368,6 +371,28 @@ function updateCat(id,val,e){
 function updateNotes(id,val){
   const d=designs.find(x=>x.id===id); if(d){ d.notes=val; save(); }
 }
+function startNameEdit(id, wrap){
+  if(wrap.querySelector('.name-edit')) return; // already editing
+  const d=designs.find(x=>x.id===id); if(!d) return;
+  const nameDiv=wrap.querySelector('.design-name');
+  const subDiv=wrap.querySelector('div[style]');
+  nameDiv.style.display='none';
+  const inp=document.createElement('input');
+  inp.className='name-edit';
+  inp.value=d.name;
+  inp.onclick=e=>e.stopPropagation();
+  inp.onkeydown=e=>{
+    if(e.key==='Enter'){inp.blur();}
+    if(e.key==='Escape'){nameDiv.style.display='';inp.remove();}
+  };
+  inp.onblur=()=>{
+    const newName=inp.value.trim();
+    if(newName && newName!==d.name){ d.name=newName; save(); render(); }
+    else{ nameDiv.style.display=''; inp.remove(); }
+  };
+  wrap.insertBefore(inp, subDiv);
+  inp.focus(); inp.select();
+}
 function remove(id,e){
   e&&e.stopPropagation();
   if(!confirm('Remove this design?')) return;
@@ -591,7 +616,10 @@ function renderList(){
             <div class="thumb-overlay">✎</div>
           </div>
         </div>
-        <div class="design-name">${d.name}<div style="font-size:11px;color:var(--muted);font-weight:400;margin-top:2px">${n}/6 listings</div></div>
+        <div class="design-name-wrap" onclick="event.stopPropagation();startNameEdit(${d.id},this)" title="Click to rename">
+          <div class="design-name">${d.name}</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:400;margin-top:2px">${n}/6 listings</div>
+        </div>
         <div class="cat-col" onclick="event.stopPropagation()">
           <select class="cat-select ${noCat?'unset':''}" onchange="updateCat(${d.id},this.value,event)">
             <option value="" ${noCat?'selected':''}>-- none --</option>
