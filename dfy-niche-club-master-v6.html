@@ -284,20 +284,65 @@ function updateCharCount(inputId){
   countEl.className = 'char-count' + (len > 140 ? ' over' : '');
 }
 
-// Tag length warnings
+// Tag warnings: length, count over 13, duplicates (case-insensitive, words matter not case)
 function updateTagWarnings(n){
   var raw = v('n'+n+'-tags');
   var tags = raw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  var msgs = [];
+
+  var countEl = document.getElementById('tag-count-'+n);
+  if(countEl){
+    countEl.textContent = tags.length + '/13';
+    countEl.className = 'char-count' + (tags.length > 13 ? ' over' : '');
+  }
+
+  if(tags.length > 13){
+    msgs.push('You have ' + tags.length + ' tags — Etsy only allows 13.');
+  }
+
   var over = tags.filter(function(t){ return t.length > 20; });
+  if(over.length > 0){
+    msgs.push('Over 20 chars: ' + over.map(function(t){ return '"'+t+'" ('+t.length+')'; }).join(', '));
+  }
+
+  var counts = {};
+  tags.forEach(function(t){
+    var key = t.toLowerCase();
+    counts[key] = (counts[key]||0) + 1;
+  });
+  var dupeKeys = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
+  if(dupeKeys.length > 0){
+    msgs.push('Duplicate tags: ' + dupeKeys.join(', '));
+  }
+
   var warnEl = document.getElementById('tag-warn-'+n);
   if(!warnEl) return;
-  if(over.length > 0){
-    warnEl.textContent = 'Tags over 20 chars: ' + over.map(function(t){ return '"'+t+'" ('+t.length+')'; }).join(', ');
+  if(msgs.length > 0){
+    warnEl.innerHTML = msgs.join('<br>');
     warnEl.className = 'tag-warn show';
   } else {
     warnEl.className = 'tag-warn';
   }
   updateReadyDot(n);
+}
+
+// Enter key in tags field adds a comma separator instead of a newline
+function handleTagKeydown(e, n){
+  if(e.key !== 'Enter') return;
+  e.preventDefault();
+  var el = e.target;
+  var val = el.value.replace(/\s+$/, '');
+  if(!val) return;
+  if(/,\s*$/.test(val)){
+    val = val.replace(/,\s*$/, ', ');
+  } else {
+    val += ', ';
+  }
+  el.value = val;
+  stripSpecial(el);
+  updateTagWarnings(n);
+  el.focus();
+  el.selectionStart = el.selectionEnd = el.value.length;
 }
 
 // Field completion dot
@@ -308,6 +353,74 @@ function updateReadyDot(n){
   var t1 = v('n'+n+'-t1');
   var tags = v('n'+n+'-tags');
   dot.className = 'sec-ready-dot' + (kw && t1 && tags ? ' ready' : '');
+}
+
+// Build the Listing Notes sentence from the structured sub-fields.
+// Returns '' if Listing # is blank — no listing number means no note.
+// Carts and Buyers (last 24hrs) are independent — either, neither, or both can be filled.
+function buildListingNoteText(n){
+  var listingNum = v('n'+n+'-note-listing').trim();
+  if(!listingNum) return '';
+  var age = v('n'+n+'-note-age').trim();
+  var carts = v('n'+n+'-note-carts').trim();
+  var buyers = v('n'+n+'-note-buyers').trim();
+  var bestsellerEl = document.getElementById('n'+n+'-note-bestseller');
+  var bestseller = !!(bestsellerEl && bestsellerEl.checked);
+  var sales = v('n'+n+'-note-sales').trim();
+
+  // Verbless predicates — need a shared leading "is"
+  var verbless = [];
+  if(age) verbless.push(age + ' months old');
+  if(carts){
+    var cartsNum = parseFloat(carts);
+    verbless.push((!isNaN(cartsNum) && cartsNum < 20 ? 'in ' : 'in over ') + carts + ' carts');
+  }
+
+  // Self-contained clauses — already carry their own subject/verb
+  var verbed = [];
+  if(buyers){
+    var buyersNum = parseFloat(buyers);
+    var personWord = (buyersNum === 1) ? 'person' : 'people';
+    verbed.push(buyers + ' ' + personWord + ' purchased it in the last 24 hours');
+  }
+  if(bestseller && sales) verbed.push('is a bestseller with approximately ' + sales + ' sales');
+  else if(bestseller && !sales) verbed.push('is a bestseller');
+  else if(!bestseller && sales) verbed.push('has approximately ' + sales + ' sales');
+
+  var all = verbless.concat(verbed);
+  if(all.length === 0) return '';
+
+  var body;
+  if(all.length === 1){
+    body = verbless.length > 0 ? ('is ' + all[0]) : all[0];
+  } else {
+    var last = all[all.length - 1];
+    var rest = all.slice(0, -1);
+    var joinedRest = rest.join(', ');
+    var sep = (all.length === 2 ? ' and ' : ', and ');
+    body = (verbless.length > 0 ? 'is ' + joinedRest : joinedRest) + sep + last;
+  }
+
+  var connector = /^(is |has )/.test(body) ? ' ' : ': ';
+  return 'Listing ' + listingNum + connector + body + '.';
+}
+
+// Update the live preview line under the Listing Notes fields (no dirty-flag side effects)
+function refreshListingNotePreview(n){
+  var text = buildListingNoteText(n);
+  var prevEl = document.getElementById('note-preview-'+n);
+  if(prevEl){
+    prevEl.textContent = text ? text : 'No listing note yet — fill in a field above.';
+    prevEl.style.color = text ? '#5a4a45' : '#c4b0a8';
+  }
+  updateReadyDot(n);
+}
+
+// Called from the Listing Notes input fields as the user types/toggles
+function updateListingNote(n){
+  refreshListingNotePreview(n);
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
 }
 
 // Keyword ref box copy
@@ -372,8 +485,26 @@ function buildAllSections(){
     tabIdx++;
     html += '<div><label class="fl">High Price $</label><input class="fi" id="n'+n+'-phi" tabindex="'+tabIdx+'" placeholder="7.50"></div></div>';
     tabIdx++;
-    html += '<div class="full"><label class="fl">Listing Notes</label><input class="fi" id="n'+n+'-note" tabindex="'+tabIdx+'" placeholder="e.g. Listing 2 is two months old, in 16 carts, and a bestseller"></div>';
+    html += '<div class="full"><label class="fl">Listing Notes <span class="fl-note">(fill in what applies, leave the rest blank)</span></label>';
+    html += '<div class="g2" style="margin-bottom:8px;">';
+    html += '<div><label class="fl" style="font-size:10px;">Listing #</label><input class="fi" id="n'+n+'-note-listing" placeholder="e.g. 2" oninput="updateListingNote(\''+n+'\')" tabindex="'+tabIdx+'"></div>';
     tabIdx++;
+    html += '<div><label class="fl" style="font-size:10px;">Months Old</label><input class="fi" id="n'+n+'-note-age" placeholder="e.g. 7" oninput="updateListingNote(\''+n+'\')" tabindex="'+tabIdx+'"></div>';
+    tabIdx++;
+    html += '</div>';
+    html += '<div class="g2" style="margin-bottom:2px;">';
+    html += '<div><label class="fl" style="font-size:10px;">Carts</label><input class="fi" id="n'+n+'-note-carts" placeholder="e.g. 20" oninput="updateListingNote(\''+n+'\')" tabindex="'+tabIdx+'"></div>';
+    tabIdx++;
+    html += '<div><label class="fl" style="font-size:10px;">Bought Last 24 Hrs</label><input class="fi" id="n'+n+'-note-buyers" placeholder="e.g. 5" oninput="updateListingNote(\''+n+'\')" tabindex="'+tabIdx+'"></div>';
+    tabIdx++;
+    html += '</div>';
+    html += '<div class="g2" style="margin-bottom:8px;align-items:center;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="n'+n+'-note-bestseller" onchange="updateListingNote(\''+n+'\')" tabindex="'+tabIdx+'" style="width:16px;height:16px;accent-color:#dea193;cursor:pointer;"><label class="fl" style="margin:0;font-size:10px;" for="n'+n+'-note-bestseller">Bestseller?</label></div>';
+    tabIdx++;
+    html += '<div><label class="fl" style="font-size:10px;">Approx. Sales</label><input class="fi" id="n'+n+'-note-sales" placeholder="e.g. 173" oninput="updateListingNote(\''+n+'\')" tabindex="'+tabIdx+'"></div>';
+    tabIdx++;
+    html += '</div>';
+    html += '<p class="hint" id="note-preview-'+n+'" style="font-style:normal;color:#c4b0a8;">No listing note yet — fill in a field above.</p>';
     html += '</div></div>';
 
     // Listings
@@ -417,9 +548,10 @@ function buildAllSections(){
     html += '<div><label class="fl">Title 3</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"></textarea><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
     tabIdx++;
     // Tags
-    html += '<div><label class="fl">Tags (comma separated)</label>';
-    html += '<textarea class="fi" id="n'+n+'-tags" tabindex="'+tabIdx+'" placeholder="Tag 1, Tag 2, Tag 3..." oninput="stripSpecial(this);updateTagWarnings(\''+n+'\')"></textarea>';
+    html += '<div><label class="fl">Tags (comma separated) <span class="fl-note">(hit Enter to add a tag without typing a comma)</span></label>';
+    html += '<textarea class="fi" id="n'+n+'-tags" tabindex="'+tabIdx+'" placeholder="Tag 1, Tag 2, Tag 3..." oninput="stripSpecial(this);updateTagWarnings(\''+n+'\')" onkeydown="handleTagKeydown(event,\''+n+'\')"></textarea>';
     tabIdx++;
+    html += '<span class="char-count" id="tag-count-'+n+'">0/13</span>';
     html += '<span class="tag-warn" id="tag-warn-'+n+'"></span></div>';
     html += '</div></div>';
 
@@ -462,6 +594,7 @@ function buildAllSections(){
     updateCharCount('n'+n+'-t3');
     updateKwRef(n);
     updateTagWarnings(n);
+    refreshListingNotePreview(n);
   });
 }
 
@@ -555,7 +688,7 @@ function buildNicheHTML(n){
   var plo = v('n'+n+'-plo').trim();
   var phi = v('n'+n+'-phi').trim();
   var price = (plo&&phi)?'$'+plo+' - $'+phi:(plo?'$'+plo:(phi?'$'+phi:''));
-  var note = v('n'+n+'-note').trim();
+  var note = buildListingNoteText(n);
   var l1=v('n'+n+'-l1').trim(); var l2=v('n'+n+'-l2').trim(); var l3=v('n'+n+'-l3').trim();
   var tips=[v('n'+n+'-tip1').trim(),v('n'+n+'-tip2').trim(),v('n'+n+'-tip3').trim()];
   var titles=[v('n'+n+'-t1').trim(),v('n'+n+'-t2').trim(),v('n'+n+'-t3').trim()].filter(Boolean);
@@ -750,7 +883,8 @@ function getAllFieldIds(){
   var ids = ['intro-date','intro-n1','intro-n2','intro-n3','intro-n4','intro-n5','intro-n6','intro-n7','intro-bonus'];
   ALL_NICHES.forEach(function(niche){
     var n = niche.n;
-    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi','n'+n+'-note',
+    ids = ids.concat(['n'+n+'-kw','n'+n+'-comp','n'+n+'-plo','n'+n+'-phi',
+      'n'+n+'-note-listing','n'+n+'-note-age','n'+n+'-note-carts','n'+n+'-note-buyers','n'+n+'-note-bestseller','n'+n+'-note-sales',
       'n'+n+'-l1','n'+n+'-l2','n'+n+'-l3',
       'n'+n+'-tip1','n'+n+'-tip2','n'+n+'-tip3',
       'n'+n+'-t1','n'+n+'-t2','n'+n+'-t3','n'+n+'-tags',
@@ -762,7 +896,11 @@ function getAllFieldIds(){
 
 function saveData(){
   var data = {};
-  getAllFieldIds().forEach(function(id){ data[id]=v(id); });
+  getAllFieldIds().forEach(function(id){
+    var el = document.getElementById(id);
+    if(el && el.type === 'checkbox'){ data[id] = el.checked ? '1' : '0'; }
+    else { data[id] = v(id); }
+  });
   data['bonus-on'] = bonusOn ? '1' : '0';
   data['completed'] = JSON.stringify(completedNiches);
   try{ localStorage.setItem(SK,JSON.stringify(data)); isDirty=false; setStatus('saved','Saved just now'); toast('Progress saved!'); }
@@ -776,7 +914,10 @@ function loadData(){
     var data = JSON.parse(raw);
     getAllFieldIds().forEach(function(id){
       var el = document.getElementById(id);
-      if(el && data[id] !== undefined) el.value = data[id];
+      if(el && data[id] !== undefined){
+        if(el.type === 'checkbox'){ el.checked = data[id] === '1'; }
+        else { el.value = data[id]; }
+      }
     });
     if(data['bonus-on'] === '0'){
       bonusOn = false;
@@ -808,6 +949,7 @@ function loadData(){
       updateCharCount('n'+n+'-t3');
       updateKwRef(n);
       updateTagWarnings(n);
+      refreshListingNotePreview(n);
     });
     updateProgress();
   }catch(e){ setStatus('unsaved','Could not load'); }
@@ -831,7 +973,9 @@ function clearAll(){
     var el = document.getElementById(id);
     if(!el) return;
 
-    if(defaultProductTypes.hasOwnProperty(id)){
+    if(el.type === 'checkbox'){
+      el.checked = false;
+    } else if(defaultProductTypes.hasOwnProperty(id)){
       el.value = defaultProductTypes[id];
     } else {
       el.value = '';
@@ -846,6 +990,7 @@ function clearAll(){
     updateKwRef(niche.n);
     updateReadyDot(niche.n);
     updateTagWarnings(niche.n);
+    refreshListingNotePreview(niche.n);
   });
   localStorage.removeItem(SK);
   document.getElementById('out-all').style.display='none';
