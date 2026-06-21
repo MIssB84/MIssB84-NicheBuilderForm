@@ -100,6 +100,11 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 /* Tag warning */
 .tag-warn{font-size:11px;color:#e07070;margin-top:4px;display:none;}
 .tag-warn.show{display:block;}
+.tag-pills-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;min-height:20px;}
+.tag-pill{display:inline-flex;align-items:center;gap:6px;background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:30px;padding:6px 8px 6px 14px;font-size:13px;color:#2a1f1c;font-family:'Jost',sans-serif;}
+.tag-pill-x{width:18px;height:18px;border-radius:50%;background:#f0e8df;color:#c4b0a8;border:none;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;cursor:pointer;padding:0;flex-shrink:0;}
+.tag-pill-x:hover{background:#e07070;color:#fff;}
+.tag-pill-empty{font-size:12px;color:#c4b0a8;font-style:italic;}
 /* Keyword ref box - builder only */
 .kw-ref-box{background:#2a1f1c;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .kw-ref-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;}
@@ -285,10 +290,13 @@ function updateCharCount(inputId){
 }
 
 // Tag warnings: length, count over 13, duplicates (case-insensitive, words matter not case)
+// Also renders the deletable tag pills from the canonical hidden field
 function updateTagWarnings(n){
   var raw = v('n'+n+'-tags');
   var tags = raw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
   var msgs = [];
+
+  renderTagPills(n, tags);
 
   var countEl = document.getElementById('tag-count-'+n);
   if(countEl){
@@ -326,23 +334,67 @@ function updateTagWarnings(n){
   updateReadyDot(n);
 }
 
-// Enter key in tags field adds a comma separator instead of a newline
-function handleTagKeydown(e, n){
+// Render tag pills with an X to delete each one
+function renderTagPills(n, tags){
+  var wrap = document.getElementById('tag-pills-'+n);
+  if(!wrap) return;
+  if(tags.length === 0){
+    wrap.innerHTML = '<span class="tag-pill-empty">No tags yet — type one and hit Enter, or paste your list below</span>';
+    return;
+  }
+  var html = '';
+  tags.forEach(function(t, i){
+    html += '<span class="tag-pill">' + esc(t) + '<button type="button" class="tag-pill-x" onclick="removeTagAt(\'' + n + '\',' + i + ')" title="Remove tag">&times;</button></span>';
+  });
+  wrap.innerHTML = html;
+}
+
+// Mark dirty + schedule autosave (shared by tag add/remove actions)
+function markTagsChanged(n){
+  updateTagWarnings(n);
+  isDirty = true; setStatus('unsaved','Unsaved changes');
+  clearTimeout(autoTimer); autoTimer = setTimeout(function(){ saveData(); }, 3000);
+}
+
+// Add one or more comma-separated tags (typed or pasted) into the canonical field
+function addTagsToField(n, rawText){
+  if(!rawText) return;
+  var cleaned = rawText.replace(/[^\x20-\x7E,]/g, '');
+  var newTags = cleaned.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  if(newTags.length === 0) return;
+  var hidden = document.getElementById('n'+n+'-tags');
+  if(!hidden) return;
+  var existing = hidden.value.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  hidden.value = existing.concat(newTags).join(', ');
+  markTagsChanged(n);
+}
+
+// Remove a single tag pill by its index
+function removeTagAt(n, idx){
+  var hidden = document.getElementById('n'+n+'-tags');
+  if(!hidden) return;
+  var tags = hidden.value.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+  tags.splice(idx, 1);
+  hidden.value = tags.join(', ');
+  markTagsChanged(n);
+}
+
+// Enter key in the tag entry input commits the typed tag(s) as pill(s)
+function handleTagEntryKeydown(e, n){
   if(e.key !== 'Enter') return;
   e.preventDefault();
   var el = e.target;
-  var val = el.value.replace(/\s+$/, '');
-  if(!val) return;
-  if(/,\s*$/.test(val)){
-    val = val.replace(/,\s*$/, ', ');
-  } else {
-    val += ', ';
-  }
-  el.value = val;
-  stripSpecial(el);
-  updateTagWarnings(n);
-  el.focus();
-  el.selectionStart = el.selectionEnd = el.value.length;
+  addTagsToField(n, el.value);
+  el.value = '';
+}
+
+// Pasting into the tag entry input splits the whole block into pills at once
+function handleTagEntryPaste(e, n){
+  e.preventDefault();
+  var clip = e.clipboardData || window.clipboardData;
+  var text = clip ? clip.getData('text') : '';
+  addTagsToField(n, text);
+  e.target.value = '';
 }
 
 // Field completion dot
@@ -548,9 +600,11 @@ function buildAllSections(){
     html += '<div><label class="fl">Title 3</label><textarea class="fi" style="min-height:60px;resize:none;" id="n'+n+'-t3" tabindex="'+tabIdx+'" placeholder="Full Etsy title, Keywords Here, Digital Download" oninput="updateCharCount(\'n'+n+'-t3\')"></textarea><span class="char-count" id="cc-n'+n+'-t3">0/140</span></div>';
     tabIdx++;
     // Tags
-    html += '<div><label class="fl">Tags (comma separated) <span class="fl-note">(hit Enter to add a tag without typing a comma)</span></label>';
-    html += '<textarea class="fi" id="n'+n+'-tags" tabindex="'+tabIdx+'" placeholder="Tag 1, Tag 2, Tag 3..." oninput="stripSpecial(this);updateTagWarnings(\''+n+'\')" onkeydown="handleTagKeydown(event,\''+n+'\')"></textarea>';
+    html += '<div><label class="fl">Tags <span class="fl-note">(type one and hit Enter, or paste your full list)</span></label>';
+    html += '<div class="tag-pills-wrap" id="tag-pills-'+n+'"></div>';
+    html += '<input class="fi" id="n'+n+'-tag-entry" placeholder="Type a tag and press Enter..." onkeydown="handleTagEntryKeydown(event,\''+n+'\')" onpaste="handleTagEntryPaste(event,\''+n+'\')" tabindex="'+tabIdx+'">';
     tabIdx++;
+    html += '<textarea id="n'+n+'-tags" style="display:none;"></textarea>';
     html += '<span class="char-count" id="tag-count-'+n+'">0/13</span>';
     html += '<span class="tag-warn" id="tag-warn-'+n+'"></span></div>';
     html += '</div></div>';
