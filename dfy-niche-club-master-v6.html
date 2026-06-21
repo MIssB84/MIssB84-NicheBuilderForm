@@ -138,8 +138,8 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 <div class="card">
   <p class="card-title">Week Info</p>
   <p class="card-sub">Just the date — that's the only thing that changes every single week.</p>
-  <label class="fl" for="intro-date">Week Date</label>
-  <input class="fi" id="intro-date" tabindex="1" placeholder="e.g. Week of June 2, 2026">
+  <label class="fl" for="intro-date">Week Date <span class="fl-note">(pick the date, output formats it automatically)</span></label>
+  <input type="date" class="fi" id="intro-date" tabindex="1">
 </div>
 <div class="card">
   <p class="card-title">Niche List</p>
@@ -849,8 +849,20 @@ function buildNicheHTML(n){
   return html;
 }
 
+// Format the native date input (YYYY-MM-DD) into "Week of Month Day, Year"
+// Parsed manually (not via new Date()) to avoid timezone-shift-by-one-day bugs
+function formatWeekDate(isoDate){
+  if(!isoDate) return '';
+  var parts = isoDate.split('-');
+  if(parts.length !== 3) return isoDate;
+  var y = parseInt(parts[0],10), m = parseInt(parts[1],10)-1, d = parseInt(parts[2],10);
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  if(isNaN(y) || m < 0 || m > 11 || isNaN(d)) return isoDate;
+  return 'Week of ' + months[m] + ' ' + d + ', ' + y;
+}
+
 function buildIntroHTML(){
-  var date = v('intro-date')||'DATE';
+  var date = formatWeekDate(v('intro-date')) || 'DATE';
   var niches = [
     {num:'Niche 1',label:v('intro-n1'),anchor:'niche-1'},
     {num:'Niche 2',label:v('intro-n2'),anchor:'niche-2'},
