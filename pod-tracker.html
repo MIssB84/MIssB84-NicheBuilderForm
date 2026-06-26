@@ -160,6 +160,26 @@ textarea:focus{outline:none;border-color:var(--blush)}
   .card-main{grid-template-columns:28px 80px 1fr 32px;grid-template-rows:auto auto}
   .cat-col,.pill-tee,.pill-baby,.pill-sweat{display:none}
 }
+
+/* Page nav tabs */
+.page-nav{display:flex;gap:6px;padding:0 28px;background:var(--espresso)}
+.page-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;color:var(--cream);opacity:.55;border-bottom:2px solid transparent;transition:all .15s}
+.page-tab.active{opacity:1;border-bottom-color:var(--blush)}
+.page-tab .badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--blush);color:#fff;font-size:11px;font-weight:600;margin-left:6px}
+.page{display:none}
+.page.active{display:block}
+
+/* To-be-added list */
+.tba-list{display:flex;flex-direction:column;gap:6px}
+.tba-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:all .15s}
+.tba-row:hover{border-color:var(--blush);box-shadow:0 2px 8px rgba(42,31,28,.06)}
+.tba-name{flex:1;font-size:13px;font-weight:600;color:var(--espresso)}
+.tba-add-icon{width:24px;height:24px;border-radius:50%;background:var(--parchment);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);flex-shrink:0;transition:all .15s}
+.tba-row:hover .tba-add-icon{background:var(--blush);color:#fff;border-color:var(--blush)}
+.tba-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.tba-header-row h2{font-size:16px;font-weight:600;color:var(--espresso)}
+.tba-count{font-size:12px;color:var(--muted)}
+.tba-bulk-row{display:flex;gap:8px;margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -169,6 +189,12 @@ textarea:focus{outline:none;border-color:var(--blush)}
   <span>Mediocre Millennials</span>
 </header>
 
+<div class="page-nav">
+  <div class="page-tab active" onclick="setPage('tracker',this)">Tracker</div>
+  <div class="page-tab" onclick="setPage('tba',this)">To Be Added <span class="badge" id="tbaBadge">0</span></div>
+</div>
+
+<div class="page active" id="page-tracker">
 <div class="main">
 
   <div class="stats">
@@ -272,6 +298,20 @@ textarea:focus{outline:none;border-color:var(--blush)}
 
   <div class="design-list" id="designList"></div>
 </div>
+</div>
+
+<div class="page" id="page-tba">
+<div class="main">
+  <div class="tba-header-row">
+    <h2>To Be Added</h2>
+    <span class="tba-count" id="tbaCount">0 designs</span>
+  </div>
+  <div class="tba-bulk-row">
+    <button class="btn btn-sm btn-outline" onclick="addAllTba()">Add all to tracker</button>
+  </div>
+  <div class="tba-list" id="tbaList"></div>
+</div>
+</div>
 
 <!-- Thumbnail modal -->
 <div class="modal-bg" id="thumbModal">
@@ -312,8 +352,10 @@ textarea:focus{outline:none;border-color:var(--blush)}
 <script>
 const KEY='pod_tracker_v3';
 const CAT_KEY='pod_categories_v1';
+const TBA_KEY='pod_to_be_added_v1';
 let designs=[];
 let categories=[]; // array of strings
+let tbaList=[]; // array of strings - designs waiting to be added
 let currentTab='all';
 let currentSort='az';
 let selected=new Set();
@@ -321,12 +363,94 @@ let editingThumbId=null;
 let pendingThumb=null;
 let expandedIds=new Set();
 
+const DEFAULT_TBA = [
+"90 Vintage Cats","Ain't My First Rodeo","All Panic No Disco Raccoon","Back to School Skeleton Teacher",
+"Baking Tee Sourdough","Ballpark Auntie","Be Kind of a Bitch","Big Pickle Energy","Boo Felicia Goose",
+"Boo Ghost Goose","Boo Ghost Raccoon","Book Lover Sweatshirt","Bookish Romance Reader","Books and Coffee",
+"Caffeinated and Feral Raccoon","Christmas Ghost","Christmas Tree Bow","Coffee Club","Coffee First Tan Later",
+"Cold Brew and Beach Days","Comfort Colors At Least My Trauma Made Me Funny","Comfort Colors Boho Daisy Flower",
+"Cute and Expensive","Dibs on the Villain","Easy Tiger","Even Baddies Get Saddies","Feral and Pregnant Raccoon",
+"Funny Christmas Geese","Funny Christmas Raccoon","Funny Dachshund Drinking Iced Coffee","Funny Goose Halloween",
+"Funny Halloween Country Boo Crew","Funny Lesbian Certified Muff Diver","Funny Lesbian Femme 4 Femme",
+"Funny Lesbian Gay Girl Summer","Funny Lesbian Masc Magnet","Funny Lesbian Save a Horse Ride a Cowgirl",
+"Funny Math Teacher","Funny Racoon Rodeo","Funny Sourdough All You Knead","Funny Sourdough Mama Makes the Dough",
+"Funny Unhinged Thanks Its the Trauma","Gator Done","Ghost Stories Camping","Golden Retriever Life Is Golden",
+"Goose Halloween","Halloween Deer Hunting","Hot Girls Rescue Cats","Hot Girls Rescue Dogs",
+"I Run on Coffee and Christmas Cheer","I Support Women's Rights and Wrongs Strawberry","I'd Rather be Reading",
+"Iced Coffee and Sunshine","In Carbs We Trust Spaghetti","In My Feral Era Raccoon","In My Sourdough Era",
+"It's Called a Trash Can Not a Trash Cannot","LGBT I Turned Her Gay","LGBT Lesbian Femme for Femme",
+"LGBT Lesbian Save a Horse Ride a Cowgirl","LGBT Lesbians Do It Better","LGBT Masc Magnet",
+"LGBT Hot Lesbians Social Club","LGBT I Like Girls Who Like Girls","LGBT Lesbians Eat What","LGBT World's Best Lesbian",
+"LGBT Lesbian University","Life Happens Dogs Help","Life Is Golden Retriever","Life is Short Buy the Tickets",
+"Live Laugh Lobotomy Cat","Live Laugh Lobotomy Dolphin","Live Laugh Lobotomy Frog","Live Laugh Lobotomy Llama",
+"Live Laugh Lobotomy Sloth","Live Laugh Lobotomy Unicorn","Mahalo Hawaii","Math Ain't Mathin","My Tummy Hurts Raccoon",
+"Never Underestimate a Public School Teacher","On the Rocks Christmas","Pasta la Vista","Pickle Queen",
+"Playing Dead Inside Opossum","Problem Solver Math Teacher","Raccoon Drinking Iced Coffee","Raccoon Halloween",
+"Remember Your Why","Retro Black Cat Halloween","Retro Coffee Brew Buddies Forever",
+"Retro Pickle Must Love Pickles and Cats","Retro Pickle Must Love Pickles and Dogs","Ride Wild","Salty Soul",
+"Santa Claus World Tour","Sea Turtle Save the Turtles","Self Starter Sourdough","Six Seven Christmas",
+"Smoking Chihuahua","Spaghetti Funny Food","Tattoos are Trashy","The World Needs You",
+"These Boots Are Made For Teaching","Tiger Face with Glasses Coquette","Tiger Face with Glasses Rainbow",
+"Tired Moms Book Club","Tired Moms Coffee Club","Tomato Girl Summer","Trick or Teach Halloween",
+"Vintage Halloween Creepin it Cozy Ghost","Vintage Halloween Spooky Vibes Ghost","Vintage Halloween Witchy Vibes",
+"Vintage Pressed Flowers","Vintage Rocky Mountains Colorado","Vintage Sasquatch","Your Little Ray of Sunshine Has Arrived"
+];
+
 function load(){
   try{ const r=localStorage.getItem(KEY); if(r) designs=JSON.parse(r); }catch(e){ designs=[]; }
   try{ const r=localStorage.getItem(CAT_KEY); if(r) categories=JSON.parse(r); categories.sort((a,b)=>a.localeCompare(b)); }catch(e){ categories=[]; }
+  try{
+    const r=localStorage.getItem(TBA_KEY);
+    if(r) tbaList=JSON.parse(r);
+    else { tbaList=[...DEFAULT_TBA]; saveTba(); } // first run seeds the list
+  }catch(e){ tbaList=[...DEFAULT_TBA]; }
 }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(designs)); }catch(e){} }
 function saveCats(){ try{ localStorage.setItem(CAT_KEY,JSON.stringify(categories)); }catch(e){} }
+function saveTba(){ try{ localStorage.setItem(TBA_KEY,JSON.stringify(tbaList)); }catch(e){} }
+
+function setPage(p, el){
+  document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('page-tracker').classList.toggle('active', p==='tracker');
+  document.getElementById('page-tba').classList.toggle('active', p==='tba');
+  if(p==='tba') renderTba();
+}
+
+function addFromTba(name){
+  if(!designs.find(d=>d.name.toLowerCase()===name.toLowerCase())){
+    designs.push({id:Date.now()+Math.random(),name,tee:false,tee2:false,baby:false,baby2:false,sweat:false,sweat2:false,thumb:null,notes:'',category:''});
+    save();
+  }
+  tbaList = tbaList.filter(n=>n!==name);
+  saveTba();
+  renderTba();
+  renderStats(); // update tracker count badge silently in background
+}
+
+function addAllTba(){
+  if(!tbaList.length) return;
+  if(!confirm('Add all '+tbaList.length+' designs to the tracker?')) return;
+  tbaList.forEach(name=>{
+    if(!designs.find(d=>d.name.toLowerCase()===name.toLowerCase())){
+      designs.push({id:Date.now()+Math.random(),name,tee:false,tee2:false,baby:false,baby2:false,sweat:false,sweat2:false,thumb:null,notes:'',category:''});
+    }
+  });
+  tbaList=[];
+  save(); saveTba(); renderTba(); render();
+}
+
+function renderTba(){
+  document.getElementById('tbaCount').textContent = tbaList.length+' design'+(tbaList.length!==1?'s':'');
+  document.getElementById('tbaBadge').textContent = tbaList.length;
+  const el=document.getElementById('tbaList');
+  if(!tbaList.length){ el.innerHTML='<div class="empty">All caught up — nothing left to add.</div>'; return; }
+  el.innerHTML = tbaList.map(name=>`
+    <div class="tba-row" onclick="addFromTba(${JSON.stringify(name)})" title="Click to add to tracker">
+      <span class="tba-name">${name}</span>
+      <div class="tba-add-icon">+</div>
+    </div>`).join('');
+}
 
 function setMode(m,el){
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
@@ -660,7 +784,7 @@ function renderList(){
   }).join('');
 }
 
-function render(){ renderStats(); renderList(); refreshCatDropdowns(); }
+function render(){ renderStats(); renderList(); refreshCatDropdowns(); document.getElementById('tbaBadge').textContent=tbaList.length; }
 load(); render();
 </script>
 </body>
