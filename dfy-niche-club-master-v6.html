@@ -422,7 +422,10 @@ function buildListingNoteText(n){
 
   // Verbless predicates — need a shared leading "is"
   var verbless = [];
-  if(age) verbless.push(age + ' months old');
+  if(age){
+    var ageNum = parseFloat(age);
+    verbless.push(age + (ageNum === 1 ? ' month old' : ' months old'));
+  }
   if(carts){
     var cartsNum = parseFloat(carts);
     verbless.push((!isNaN(cartsNum) && cartsNum < 20 ? 'in ' : 'in over ') + carts + ' carts');
