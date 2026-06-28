@@ -102,6 +102,7 @@ textarea.fi{resize:vertical;min-height:80px;line-height:1.6;}
 .tag-warn.show{display:block;}
 .tag-pills-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;min-height:20px;}
 .tag-pill{display:inline-flex;align-items:center;gap:6px;background:#fdf7f2;border:1.5px solid #ead9d5;border-radius:30px;padding:6px 8px 6px 14px;font-size:13px;color:#2a1f1c;font-family:'Jost',sans-serif;}
+.tag-pill.tag-pill-dupe{border-color:#e07070;background:rgba(224,112,112,0.1);color:#c0392b;}
 .tag-pill-x{width:18px;height:18px;border-radius:50%;background:#f0e8df;color:#c4b0a8;border:none;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;cursor:pointer;padding:0;flex-shrink:0;}
 .tag-pill-x:hover{background:#e07070;color:#fff;}
 .tag-pill-empty{font-size:12px;color:#c4b0a8;font-style:italic;}
@@ -296,7 +297,15 @@ function updateTagWarnings(n){
   var tags = raw.split(',').map(function(t){ return t.trim(); }).filter(Boolean);
   var msgs = [];
 
-  renderTagPills(n, tags);
+  // Case-insensitive duplicate check — "Vinyl Record Poster" and "vinyl record poster" count as the same tag
+  var counts = {};
+  tags.forEach(function(t){
+    var key = t.toLowerCase();
+    counts[key] = (counts[key]||0) + 1;
+  });
+  var dupeKeys = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
+
+  renderTagPills(n, tags, dupeKeys);
 
   var countEl = document.getElementById('tag-count-'+n);
   if(countEl){
@@ -313,14 +322,8 @@ function updateTagWarnings(n){
     msgs.push('Over 20 chars: ' + over.map(function(t){ return '"'+t+'" ('+t.length+')'; }).join(', '));
   }
 
-  var counts = {};
-  tags.forEach(function(t){
-    var key = t.toLowerCase();
-    counts[key] = (counts[key]||0) + 1;
-  });
-  var dupeKeys = Object.keys(counts).filter(function(k){ return counts[k] > 1; });
   if(dupeKeys.length > 0){
-    msgs.push('Duplicate tags: ' + dupeKeys.join(', '));
+    msgs.push('Duplicate tag' + (dupeKeys.length > 1 ? 's' : '') + ' (highlighted in red above): ' + dupeKeys.join(', '));
   }
 
   var warnEl = document.getElementById('tag-warn-'+n);
@@ -334,17 +337,20 @@ function updateTagWarnings(n){
   updateReadyDot(n);
 }
 
-// Render tag pills with an X to delete each one
-function renderTagPills(n, tags){
+// Render tag pills with an X to delete each one. Duplicate tags (case-insensitive)
+// get a red "dupe" highlight so they're easy to spot at a glance.
+function renderTagPills(n, tags, dupeKeys){
   var wrap = document.getElementById('tag-pills-'+n);
   if(!wrap) return;
   if(tags.length === 0){
     wrap.innerHTML = '<span class="tag-pill-empty">No tags yet — type one and hit Enter, or paste your list below</span>';
     return;
   }
+  dupeKeys = dupeKeys || [];
   var html = '';
   tags.forEach(function(t, i){
-    html += '<span class="tag-pill">' + esc(t) + '<button type="button" class="tag-pill-x" onclick="removeTagAt(\'' + n + '\',' + i + ')" title="Remove tag">&times;</button></span>';
+    var isDupe = dupeKeys.indexOf(t.toLowerCase()) > -1;
+    html += '<span class="tag-pill'+(isDupe?' tag-pill-dupe':'')+'">' + esc(t) + '<button type="button" class="tag-pill-x" onclick="removeTagAt(\'' + n + '\',' + i + ')" title="Remove tag">&times;</button></span>';
   });
   wrap.innerHTML = html;
 }
