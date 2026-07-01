@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💎 DAC Drill Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface2: #fdf5f8;
+    --accent: #c084a0;
+    --accent-dark: #a06882;
+    --accent2: #7a9e87;
+    --accent2-dark: #5d7d69;
+    --gold: #c9a96e;
+    --text: #2a2320;
+    --muted: #9b8e88;
+    --border: #e8e0d8;
+    --border2: #f0e8e4;
+    --chip-bg: #f5eef3;
+    --danger: #c0444a;
+    --danger-light: #fdf0f0;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--text);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    padding: 16px 0;
+    margin-right: 24px;
+    white-space: nowrap;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    flex: 1;
+  }
+
+  .nav-tab {
+    padding: 16px 20px;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: rgba(255,255,255,0.85); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .page { display: none; padding: 32px 24px; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    margin-bottom: 28px;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .section-header h2 em { font-style: italic; color: var(--accent); }
+  .section-header p { font-size: 0.875rem; color: var(--muted); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .row { display: flex; gap: 12px; }
+  .row .field { flex: 1; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-green { background: var(--accent2); color: white; }
+  .btn-green:hover { background: var(--accent2-dark); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; border: 1.5px solid #e8c5c5; color: var(--danger); font-size: 0.8rem; padding: 6px 12px; }
+  .btn-danger:hover { background: var(--danger-light); }
+  .btn-full { width: 100%; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+  /* ── DMC CHIPS ── */
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip {
+    background: var(--chip-bg);
+    border: 1px solid #e8d5e0;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── KIT LIST ── */
+  .kit-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    background: var(--surface);
+    transition: border-color 0.2s;
+  }
+  .kit-item:hover { border-color: var(--accent); }
+  .kit-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .kit-item-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .kit-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kit-meta { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .badge-shape { background: #f0ece6; color: var(--muted); }
+  .badge-count { background: var(--chip-bg); color: var(--accent); }
+  .kit-colors-preview { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+  .kit-expand { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border2); }
+  .kit-expand.open { display: block; }
+  .kit-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+  /* ── SEARCH RESULTS ── */
+  .search-result {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .search-result-left { flex: 1; min-width: 0; }
+  .search-result-name { font-weight: 600; font-size: 0.95rem; }
+  .search-result-shape { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── PULL LOG ── */
+  .pull-item {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .pull-item-left { flex: 1; }
+  .pull-dmc { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--accent); }
+  .pull-detail { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+  .pull-date { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+  /* ── DAC LOG ── */
+  .dac-item {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: var(--surface2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .dac-item-left { flex: 1; }
+  .dac-dmc { font-weight: 600; font-size: 0.95rem; }
+  .dac-date { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .status-badge {
+    font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; cursor: pointer;
+  }
+  .status-waiting { background: #fef3e2; color: #b07830; }
+  .status-received { background: #eaf4ee; color: var(--accent2-dark); }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+  /* ── SEARCH BOX ── */
+  .search-wrap { position: relative; }
+  .search-wrap input { padding-left: 38px; font-size: 1rem; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem; pointer-events: none; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* ── STATS ROW ── */
+  .stats-row { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-card {
+    flex: 1;
+    min-width: 120px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--accent); }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* gem decoration */
+  .gem-row { display: flex; gap: 4px; margin-bottom: 12px; }
+  .gem { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); }
+
+  @media (max-width: 600px) {
+    .row { flex-direction: column; }
+    .nav-tab { padding: 14px 12px; font-size: 0.78rem; }
+    .nav-brand { font-size: 0.95rem; margin-right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">💎 DAC Tracker</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('library')">Kit Library</div>
+    <div class="nav-tab" onclick="showPage('search')">Find a Color</div>
+    <div class="nav-tab" onclick="showPage('pulls')">Pull Log</div>
+    <div class="nav-tab" onclick="showPage('dac')">DAC Requests</div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — KIT LIBRARY
+══════════════════════════════════════════ -->
+<div class="page active" id="page-library">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#e8a0b8"></div>
+      <div class="gem" style="background:#a8c5b0"></div>
+      <div class="gem" style="background:#b5c8f0"></div>
+      <div class="gem" style="background:#f0d4a0"></div>
+    </div>
+    <h2>Kit <em>Library</em></h2>
+    <p>Add and manage your DAC kits and their DMC colors.</p>
+  </div>
+
+  <div id="stats-row" class="stats-row"></div>
+
+  <div class="card">
+    <div class="row">
+      <div class="field">
+        <label>Kit Name</label>
+        <input type="text" id="add-kit-name" placeholder="e.g. Ghost Cafe" />
+      </div>
+      <div class="field" style="max-width:140px">
+        <label>Shape</label>
+        <select id="add-kit-shape">
+          <option value="">Select</option>
+          <option value="Round">Round</option>
+          <option value="Square">Square</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>DMC Numbers — paste comma-separated list from Claude</label>
+      <textarea id="add-kit-dmc" placeholder="122, 129, 141, 152, 169, 223, 300, 310 ..."></textarea>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="addKit()">+ Add Kit</button>
+  </div>
+
+  <div class="field" style="margin-bottom:16px">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="library-search" placeholder="Filter kits by name..." oninput="renderLibrary()" />
+    </div>
+  </div>
+
+  <div id="kit-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — FIND A COLOR
+══════════════════════════════════════════ -->
+<div class="page" id="page-search">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#a8c5b0"></div>
+      <div class="gem" style="background:#b5c8f0"></div>
+      <div class="gem" style="background:#e8a0b8"></div>
+    </div>
+    <h2>Find a <em>Color</em></h2>
+    <p>Search a DMC number to see which of your kits have it — then log a pull.</p>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>DMC Number</label>
+      <div class="search-wrap">
+        <span class="search-icon">💎</span>
+        <input type="text" id="dmc-search-input" placeholder="e.g. 310 or blanc" oninput="searchDMC()" style="padding-left:38px;font-size:1.1rem;" />
+      </div>
+    </div>
+  </div>
+
+  <div id="search-results"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 3 — PULL LOG
+══════════════════════════════════════════ -->
+<div class="page" id="page-pulls">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#f0d4a0"></div>
+      <div class="gem" style="background:#e8a0b8"></div>
+      <div class="gem" style="background:#a8c5b0"></div>
+    </div>
+    <h2>Pull <em>Log</em></h2>
+    <p>Every time you borrow drills from a kit, it's recorded here.</p>
+  </div>
+
+  <div id="pull-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 4 — DAC REQUESTS
+══════════════════════════════════════════ -->
+<div class="page" id="page-dac">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#b5c8f0"></div>
+      <div class="gem" style="background:#f0d4a0"></div>
+      <div class="gem" style="background:#e8a0b8"></div>
+    </div>
+    <h2>DAC <em>Requests</em></h2>
+    <p>Track replacement requests you've submitted to Diamond Art Club.</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="field">
+        <label>DMC Number</label>
+        <input type="text" id="dac-dmc" placeholder="e.g. 310" />
+      </div>
+      <div class="field">
+        <label>Date Requested</label>
+        <input type="date" id="dac-date" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Kit it's for (optional)</label>
+      <input type="text" id="dac-kit" placeholder="e.g. Ghost Cafe" />
+    </div>
+    <button class="btn btn-green btn-full" onclick="addDACRequest()">Log Request</button>
+  </div>
+
+  <div id="dac-list"></div>
+</div>
+
+<!-- PULL MODAL -->
+<div id="pull-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:6px;">Log a Pull</h3>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;">Record drills borrowed from <strong id="pull-modal-kit"></strong></p>
+    <div class="field">
+      <label>DMC Number</label>
+      <input type="text" id="pull-modal-dmc" placeholder="e.g. 310" />
+    </div>
+    <div class="field">
+      <label>Number of Bags Pulled</label>
+      <input type="number" id="pull-modal-bags" min="1" value="1" />
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closePullModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="submitPull()">Log Pull</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ────────────────────────────────────────────
+const STORAGE_KEY = 'dac_tracker_v1';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { kits: [], pulls: [], dac: [] };
+  } catch { return { kits: [], pulls: [], dac: [] }; }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let data = loadData();
+let pullModalKit = null;
+let pullModalDMC = null;
+
+// ── NAV ──────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'library') renderLibrary();
+  if (id === 'search') { searchDMC(); }
+  if (id === 'pulls') renderPulls();
+  if (id === 'dac') renderDAC();
+}
+
+// ── ADD KIT ──────────────────────────────────────────
+function addKit() {
+  const name = document.getElementById('add-kit-name').value.trim();
+  const shape = document.getElementById('add-kit-shape').value;
+  const rawDMC = document.getElementById('add-kit-dmc').value.trim();
+
+  if (!name) { toast('Enter a kit name.'); return; }
+  if (!rawDMC) { toast('Paste DMC numbers.'); return; }
+
+  const dmc = rawDMC.split(',').map(s => s.trim()).filter(Boolean);
+  if (!dmc.length) { toast('No DMC numbers found.'); return; }
+
+  const kit = { id: Date.now(), name, shape: shape || 'Unknown', dmc };
+  data.kits.push(kit);
+  saveData(data);
+
+  document.getElementById('add-kit-name').value = '';
+  document.getElementById('add-kit-shape').value = '';
+  document.getElementById('add-kit-dmc').value = '';
+
+  renderLibrary();
+  toast(`✓ ${name} added (${dmc.length} colors)`);
+}
+
+// ── RENDER LIBRARY ───────────────────────────────────
+function renderLibrary() {
+  const filter = (document.getElementById('library-search')?.value || '').toLowerCase();
+
+  // Sort all kits alphabetically first, then filter for display
+  const sorted = [...data.kits].sort((a, b) => a.name.localeCompare(b.name));
+  const kits = sorted.filter(k => k.name.toLowerCase().includes(filter));
+
+  // stats
+  const statsEl = document.getElementById('stats-row');
+  statsEl.innerHTML = `
+    <div class="stat-card"><div class="stat-num">${data.kits.length}</div><div class="stat-label">Kits logged</div></div>
+    <div class="stat-card"><div class="stat-num">${data.pulls.length}</div><div class="stat-label">Pulls made</div></div>
+    <div class="stat-card"><div class="stat-num">${data.dac.length}</div><div class="stat-label">DAC requests</div></div>
+  `;
+
+  const el = document.getElementById('kit-list');
+  if (!kits.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📦</div>No kits yet. Add your first kit above.</div>`;
+    return;
+  }
+
+  el.innerHTML = kits.map((kit, idx) => {
+    // Number reflects alphabetical position across ALL kits, not just filtered
+    const globalNum = sorted.indexOf(kit) + 1;
+    return `
+    <div class="kit-item" id="kit-${kit.id}">
+      <div class="kit-item-header" onclick="toggleKit(${kit.id})">
+        <div class="kit-item-left">
+          <span style="font-size:0.78rem;font-weight:700;color:var(--muted);min-width:28px;flex-shrink:0;">#${globalNum}</span>
+          <div class="kit-name">${kit.name}</div>
+        </div>
+        <div class="kit-meta">
+          <span class="badge badge-shape">${kit.shape}</span>
+          <span class="badge badge-count">${kit.dmc.length} colors</span>
+          <span style="color:var(--muted);font-size:0.85rem">▾</span>
+        </div>
+      </div>
+      <div class="kit-expand" id="expand-${kit.id}">
+        <div class="chip-grid">${kit.dmc.map(d => `<span class="chip">${d}</span>`).join('')}</div>
+        <div class="kit-actions">
+          <button class="btn btn-primary" onclick="openPullFromLibrary(${kit.id})">Log a Pull</button>
+          <button class="btn btn-danger" onclick="deleteKit(${kit.id})">Delete Kit</button>
+        </div>
+      </div>
+    </div>
+  `}).join('');
+}
+
+function toggleKit(id) {
+  const el = document.getElementById('expand-' + id);
+  el.classList.toggle('open');
+}
+
+function deleteKit(id) {
+  if (!confirm('Delete this kit?')) return;
+  data.kits = data.kits.filter(k => k.id !== id);
+  saveData(data);
+  renderLibrary();
+  toast('Kit deleted.');
+}
+
+// ── SEARCH DMC ───────────────────────────────────────
+function searchDMC() {
+  const query = document.getElementById('dmc-search-input').value.trim().toLowerCase();
+  const el = document.getElementById('search-results');
+
+  if (!query) { el.innerHTML = ''; return; }
+
+  const matches = data.kits.filter(k =>
+    k.dmc.some(d => d.toString().toLowerCase() === query)
+  );
+
+  if (!matches.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div>No kits found with DMC ${query.toUpperCase()}.</div>`;
+    return;
+  }
+
+  el.innerHTML = matches.map(kit => `
+    <div class="search-result">
+      <div class="search-result-left">
+        <div class="search-result-name">${kit.name}</div>
+        <div class="search-result-shape">${kit.shape}</div>
+      </div>
+      <button class="btn btn-primary" onclick="openPullModal(${kit.id}, '${query}')">Log Pull</button>
+    </div>
+  `).join('');
+}
+
+// ── PULL MODAL ───────────────────────────────────────
+function openPullModal(kitId, dmc) {
+  pullModalKit = kitId;
+  const kit = data.kits.find(k => k.id === kitId);
+  document.getElementById('pull-modal-kit').textContent = kit?.name || '';
+  document.getElementById('pull-modal-dmc').value = dmc || '';
+  document.getElementById('pull-modal-bags').value = 1;
+  document.getElementById('pull-modal').style.display = 'flex';
+}
+
+function openPullFromLibrary(kitId) {
+  openPullModal(kitId, '');
+}
+
+function closePullModal() {
+  document.getElementById('pull-modal').style.display = 'none';
+  pullModalKit = null;
+}
+
+function submitPull() {
+  const kitId = pullModalKit;
+  const dmc = document.getElementById('pull-modal-dmc').value.trim();
+  const bags = parseInt(document.getElementById('pull-modal-bags').value) || 1;
+
+  if (!dmc) { toast('Enter a DMC number.'); return; }
+
+  const kit = data.kits.find(k => k.id === kitId);
+  const pull = {
+    id: Date.now(),
+    kitId,
+    kitName: kit?.name || 'Unknown',
+    dmc,
+    bags,
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  };
+
+  data.pulls.unshift(pull);
+  saveData(data);
+  closePullModal();
+  renderPulls();
+  toast(`✓ Logged: ${bags} bag${bags > 1 ? 's' : ''} of DMC ${dmc} from ${kit?.name}`);
+}
+
+// ── RENDER PULLS ─────────────────────────────────────
+function renderPulls() {
+  const el = document.getElementById('pull-list');
+  if (!data.pulls.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div>No pulls logged yet. Search a color and log a pull.</div>`;
+    return;
+  }
+  el.innerHTML = data.pulls.map(p => `
+    <div class="pull-item">
+      <div class="pull-item-left">
+        <div class="pull-dmc">DMC ${p.dmc}</div>
+        <div class="pull-detail">${p.bags} bag${p.bags > 1 ? 's' : ''} from <strong>${p.kitName}</strong></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="pull-date">${p.date}</div>
+        <button class="btn btn-danger" onclick="deletePull(${p.id})">Remove</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deletePull(id) {
+  data.pulls = data.pulls.filter(p => p.id !== id);
+  saveData(data);
+  renderPulls();
+  toast('Entry removed.');
+}
+
+// ── DAC REQUESTS ─────────────────────────────────────
+function addDACRequest() {
+  const dmc = document.getElementById('dac-dmc').value.trim();
+  const date = document.getElementById('dac-date').value;
+  const kit = document.getElementById('dac-kit').value.trim();
+
+  if (!dmc) { toast('Enter a DMC number.'); return; }
+  if (!date) { toast('Enter the request date.'); return; }
+
+  const req = {
+    id: Date.now(),
+    dmc,
+    date,
+    kit,
+    status: 'waiting'
+  };
+
+  data.dac.unshift(req);
+  saveData(data);
+
+  document.getElementById('dac-dmc').value = '';
+  document.getElementById('dac-date').value = '';
+  document.getElementById('dac-kit').value = '';
+
+  renderDAC();
+  toast(`✓ DAC request logged for DMC ${dmc}`);
+}
+
+function toggleDACStatus(id) {
+  const req = data.dac.find(r => r.id === id);
+  if (req) {
+    req.status = req.status === 'waiting' ? 'received' : 'waiting';
+    saveData(data);
+    renderDAC();
+  }
+}
+
+function deleteDACRequest(id) {
+  data.dac = data.dac.filter(r => r.id !== id);
+  saveData(data);
+  renderDAC();
+  toast('Request removed.');
+}
+
+function renderDAC() {
+  const el = document.getElementById('dac-list');
+  if (!data.dac.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📬</div>No DAC requests logged yet.</div>`;
+    return;
+  }
+
+  const waiting = data.dac.filter(r => r.status === 'waiting');
+  const received = data.dac.filter(r => r.status === 'received');
+
+  let html = '';
+
+  if (waiting.length) {
+    html += `<div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Waiting (${waiting.length})</div>`;
+    html += waiting.map(r => dacItem(r)).join('');
+  }
+
+  if (received.length) {
+    html += `<div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;">Received (${received.length})</div>`;
+    html += received.map(r => dacItem(r)).join('');
+  }
+
+  el.innerHTML = html;
+}
+
+function dacItem(r) {
+  const dateStr = r.date ? new Date(r.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+  return `
+    <div class="dac-item">
+      <div class="dac-item-left">
+        <div class="dac-dmc">DMC ${r.dmc}${r.kit ? ` — ${r.kit}` : ''}</div>
+        <div class="dac-date">Requested ${dateStr}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+        <span class="status-badge ${r.status === 'waiting' ? 'status-waiting' : 'status-received'}" onclick="toggleDACStatus(${r.id})">
+          ${r.status === 'waiting' ? '⏳ Waiting' : '✅ Received'}
+        </span>
+        <button class="btn btn-danger" onclick="deleteDACRequest(${r.id})">Remove</button>
+      </div>
+    </div>
+  `;
+}
+
+// ── TOAST ────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── INIT ─────────────────────────────────────────────
+renderLibrary();
+</script>
+</body>
+</html>
