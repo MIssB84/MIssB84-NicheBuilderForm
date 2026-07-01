@@ -77,7 +77,7 @@
   .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
   /* ── LAYOUT ── */
-  .page { display: none; padding: 32px 24px; max-width: 900px; margin: 0 auto; }
+  .page { display: none; padding: 32px 24px 80px; max-width: 900px; margin: 0 auto; }
   .page.active { display: block; }
 
   /* ── SECTION HEADER ── */
@@ -380,7 +380,7 @@
     <button class="btn btn-primary btn-full" onclick="addKit()">+ Add Kit</button>
   </div>
 
-  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+  <div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
     <div class="field" style="flex:1;min-width:160px;margin-bottom:0;">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
@@ -388,11 +388,21 @@
       </div>
     </div>
     <div class="field" style="flex:1;min-width:160px;margin-bottom:0;">
-      <div class="search-wrap">
-        <span class="search-icon">💎</span>
-        <input type="text" id="quick-dmc-search" placeholder="Quick DMC search..." oninput="quickDMCSearch()" />
+      <div style="display:flex;gap:6px;">
+        <div class="search-wrap" style="flex:1;">
+          <span class="search-icon">💎</span>
+          <input type="text" id="quick-dmc-search" placeholder="Quick DMC search..." oninput="quickDMCSearch()" />
+        </div>
+        <button class="btn btn-ghost" style="padding:10px 12px;flex-shrink:0;" onclick="clearQuickSearch()" title="Clear search">✕</button>
       </div>
     </div>
+  </div>
+
+  <div class="field" style="margin-bottom:16px;">
+    <label>Or browse all colors by DMC number</label>
+    <select id="dmc-dropdown" onchange="selectFromDropdown()" style="font-size:0.9rem;">
+      <option value="">— Select a DMC color —</option>
+    </select>
   </div>
 
   <div id="quick-dmc-results"></div>
@@ -606,6 +616,8 @@ function renderLibrary() {
       </div>
     </div>
   `}).join('');
+
+  populateDMCDropdown();
 }
 
 function toggleKit(id) {
@@ -653,8 +665,24 @@ function deleteSelected() {
 // ── QUICK DMC SEARCH (library page) ─────────────────
 function quickDMCSearch() {
   const query = document.getElementById('quick-dmc-search').value.trim().toLowerCase();
-  const el = document.getElementById('quick-dmc-results');
+  showDMCResults(query);
+}
 
+function clearQuickSearch() {
+  document.getElementById('quick-dmc-search').value = '';
+  document.getElementById('dmc-dropdown').value = '';
+  document.getElementById('quick-dmc-results').innerHTML = '';
+}
+
+function selectFromDropdown() {
+  const val = document.getElementById('dmc-dropdown').value;
+  if (!val) { document.getElementById('quick-dmc-results').innerHTML = ''; return; }
+  document.getElementById('quick-dmc-search').value = val;
+  showDMCResults(val.toLowerCase());
+}
+
+function showDMCResults(query) {
+  const el = document.getElementById('quick-dmc-results');
   if (!query) { el.innerHTML = ''; return; }
 
   const matches = data.kits.filter(k =>
@@ -667,19 +695,53 @@ function quickDMCSearch() {
   }
 
   el.innerHTML = `
-    <div style="margin-bottom:16px;">
-      <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Kits with DMC ${query.toUpperCase()}</div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+        ${matches.length} kit${matches.length > 1 ? 's' : ''} with DMC ${query.toUpperCase()}
+      </div>
       ${matches.map(kit => `
-        <div class="search-result">
-          <div class="search-result-left">
-            <div class="search-result-name">${kit.name}</div>
-            <div class="search-result-shape">${kit.shape}</div>
+        <div style="background:linear-gradient(135deg,#fdf0f5,#f5f0fd);border:1.5px solid var(--accent);border-radius:12px;padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:0 2px 8px rgba(192,132,160,0.12);">
+          <div>
+            <div style="font-weight:700;font-size:0.95rem;color:var(--text);">${kit.name}</div>
+            <div style="font-size:0.78rem;color:var(--accent);margin-top:2px;">${kit.shape} · ${kit.dmc.length} colors</div>
           </div>
           <button class="btn btn-primary" onclick="openPullModal(${kit.id}, '${query}')">Log Pull</button>
         </div>
       `).join('')}
     </div>
   `;
+}
+
+function populateDMCDropdown() {
+  const dropdown = document.getElementById('dmc-dropdown');
+  if (!dropdown) return;
+
+  // Count how many kits have each DMC number
+  const counts = {};
+  data.kits.forEach(k => {
+    k.dmc.forEach(d => {
+      const key = d.toString();
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+
+  // Sort: numeric first (ascending), then alpha (e.g. blanc, ecru, AB codes)
+  const allDMC = Object.keys(counts).sort((a, b) => {
+    const aNum = parseInt(a), bNum = parseInt(b);
+    const aIsNum = !isNaN(aNum), bIsNum = !isNaN(bNum);
+    if (aIsNum && bIsNum) return aNum - bNum;
+    if (aIsNum) return -1;
+    if (bIsNum) return 1;
+    return a.localeCompare(b);
+  });
+
+  const current = dropdown.value;
+  dropdown.innerHTML = '<option value="">— Select a DMC color —</option>' +
+    allDMC.map(d => {
+      const c = counts[d];
+      return `<option value="${d}">${d} — ${c} kit${c > 1 ? 's' : ''}</option>`;
+    }).join('');
+  dropdown.value = current;
 }
 
 
@@ -875,8 +937,31 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 2800);
 }
 
+// ── AUTOSAVE (every 3 seconds) ───────────────────────
+setInterval(() => {
+  saveData(data);
+  updateFooterSaveTime();
+}, 3000);
+
+function updateFooterSaveTime() {
+  const el = document.getElementById('footer-save-time');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+}
+
 // ── INIT ─────────────────────────────────────────────
 renderLibrary();
+updateFooterSaveTime();
 </script>
+
+<div style="position:fixed;bottom:0;left:0;right:0;background:var(--text);color:rgba(255,255,255,0.5);font-size:0.72rem;padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:6px;z-index:50;">
+  <span style="color:var(--accent2);">✓ Auto-saved</span>
+  <span>·</span>
+  <span>Last saved at <span id="footer-save-time">—</span></span>
+  <span>·</span>
+  <span>Data stored in this browser only — use Export Backup to keep a copy</span>
+</div>
+
 </body>
 </html>
