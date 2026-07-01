@@ -344,8 +344,16 @@
       <div class="gem" style="background:#b5c8f0"></div>
       <div class="gem" style="background:#f0d4a0"></div>
     </div>
-    <h2>Kit <em>Library</em></h2>
-    <p>Add and manage your DAC kits and their DMC colors.</p>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <h2>Kit <em>Library</em></h2>
+        <p>Add and manage your DAC kits and their DMC colors.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-top:6px;">
+        <span id="save-indicator" style="font-size:0.75rem;color:var(--accent2);font-weight:600;opacity:0;transition:opacity 0.3s;">✓ Saved</span>
+        <button class="btn btn-ghost" style="font-size:0.8rem;padding:8px 14px;" onclick="exportBackup()">⬇ Export Backup</button>
+      </div>
+    </div>
   </div>
 
   <div id="stats-row" class="stats-row"></div>
@@ -470,6 +478,28 @@ function loadData() {
 
 function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  showSaveIndicator();
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  el.textContent = '✓ Saved';
+  el.style.opacity = '1';
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(() => { el.style.opacity = '0'; }, 2000);
+}
+
+function exportBackup() {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dac_tracker_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded!');
 }
 
 let data = loadData();
@@ -485,7 +515,6 @@ function showPage(id) {
   if (id === 'library') renderLibrary();
   if (id === 'search') { searchDMC(); }
   if (id === 'pulls') renderPulls();
-  if (id === 'dac') renderDAC();
 }
 
 // ── ADD KIT ──────────────────────────────────────────
@@ -534,8 +563,18 @@ function renderLibrary() {
     return;
   }
 
-  el.innerHTML = kits.map((kit, idx) => {
-    // Number reflects alphabetical position across ALL kits, not just filtered
+  // Bulk delete toolbar
+  const bulkBar = `
+    <div id="bulk-toolbar" style="display:none;align-items:center;justify-content:space-between;background:#fff3e0;border:1px solid #f0d4a0;border-radius:10px;padding:10px 16px;margin-bottom:12px;gap:10px;flex-wrap:wrap;">
+      <span id="bulk-count" style="font-size:0.85rem;font-weight:600;color:var(--text);">0 kits selected</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:0.8rem;padding:7px 14px;" onclick="clearSelection()">Clear</button>
+        <button class="btn btn-danger" style="font-size:0.8rem;padding:7px 14px;" onclick="deleteSelected()">Delete Selected</button>
+      </div>
+    </div>
+  `;
+
+  el.innerHTML = bulkBar + kits.map((kit) => {
     const globalNum = sorted.indexOf(kit) + 1;
     const pullCount = data.pulls.filter(p => p.kitId === kit.id).length;
     const pulledBadge = pullCount > 0
@@ -543,16 +582,19 @@ function renderLibrary() {
       : '';
     return `
     <div class="kit-item" id="kit-${kit.id}" style="${pullCount > 0 ? 'border-left: 3px solid var(--gold);' : ''}">
-      <div class="kit-item-header" onclick="toggleKit(${kit.id})">
-        <div class="kit-item-left">
-          <span style="font-size:0.78rem;font-weight:700;color:var(--muted);min-width:28px;flex-shrink:0;">#${globalNum}</span>
-          <div class="kit-name">${kit.name}</div>
-        </div>
-        <div class="kit-meta">
-          ${pulledBadge}
-          <span class="badge badge-shape">${kit.shape}</span>
-          <span class="badge badge-count">${kit.dmc.length} colors</span>
-          <span style="color:var(--muted);font-size:0.85rem">▾</span>
+      <div class="kit-item-header" style="gap:10px;">
+        <input type="checkbox" class="kit-checkbox" data-id="${kit.id}" onchange="updateBulkToolbar()" style="flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--accent);" />
+        <div style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;" onclick="toggleKit(${kit.id})">
+          <div class="kit-item-left">
+            <span style="font-size:0.78rem;font-weight:700;color:var(--muted);min-width:28px;flex-shrink:0;">#${globalNum}</span>
+            <div class="kit-name">${kit.name}</div>
+          </div>
+          <div class="kit-meta">
+            ${pulledBadge}
+            <span class="badge badge-shape">${kit.shape}</span>
+            <span class="badge badge-count">${kit.dmc.length} colors</span>
+            <span style="color:var(--muted);font-size:0.85rem">▾</span>
+          </div>
         </div>
       </div>
       <div class="kit-expand" id="expand-${kit.id}">
@@ -577,6 +619,35 @@ function deleteKit(id) {
   saveData(data);
   renderLibrary();
   toast('Kit deleted.');
+}
+
+function updateBulkToolbar() {
+  const checked = document.querySelectorAll('.kit-checkbox:checked');
+  const toolbar = document.getElementById('bulk-toolbar');
+  const countEl = document.getElementById('bulk-count');
+  if (!toolbar) return;
+  if (checked.length > 0) {
+    toolbar.style.display = 'flex';
+    countEl.textContent = `${checked.length} kit${checked.length > 1 ? 's' : ''} selected`;
+  } else {
+    toolbar.style.display = 'none';
+  }
+}
+
+function clearSelection() {
+  document.querySelectorAll('.kit-checkbox').forEach(cb => cb.checked = false);
+  updateBulkToolbar();
+}
+
+function deleteSelected() {
+  const checked = [...document.querySelectorAll('.kit-checkbox:checked')];
+  if (!checked.length) return;
+  if (!confirm(`Delete ${checked.length} kit${checked.length > 1 ? 's' : ''}? This can't be undone.`)) return;
+  const ids = checked.map(cb => parseInt(cb.dataset.id));
+  data.kits = data.kits.filter(k => !ids.includes(k.id));
+  saveData(data);
+  renderLibrary();
+  toast(`${ids.length} kit${ids.length > 1 ? 's' : ''} deleted.`);
 }
 
 // ── QUICK DMC SEARCH (library page) ─────────────────
