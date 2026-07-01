@@ -170,6 +170,12 @@
     font-weight: 500;
     color: var(--text);
     font-variant-numeric: tabular-nums;
+    transition: all 0.15s;
+  }
+  .chip:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
   }
 
   /* ── KIT LIST ── */
@@ -608,7 +614,8 @@ function renderLibrary() {
         </div>
       </div>
       <div class="kit-expand" id="expand-${kit.id}">
-        <div class="chip-grid">${kit.dmc.map(d => `<span class="chip">${d}</span>`).join('')}</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;">Tap a color to pre-fill the pull form</div>
+        <div class="chip-grid">${kit.dmc.map(d => `<span class="chip" style="cursor:pointer;" onclick="openPullModal(${kit.id},'${d}')" title="Log pull for DMC ${d}">${d}</span>`).join('')}</div>
         <div class="kit-actions">
           <button class="btn btn-primary" onclick="openPullFromLibrary(${kit.id})">Log a Pull</button>
           <button class="btn btn-danger" onclick="deleteKit(${kit.id})">Delete Kit</button>
