@@ -330,7 +330,6 @@
     <div class="nav-tab active" onclick="showPage('library')">Kit Library</div>
     <div class="nav-tab" onclick="showPage('search')">Find a Color</div>
     <div class="nav-tab" onclick="showPage('pulls')">Pull Log</div>
-    <div class="nav-tab" onclick="showPage('dac')">DAC Requests</div>
   </div>
 </nav>
 
@@ -373,13 +372,22 @@
     <button class="btn btn-primary btn-full" onclick="addKit()">+ Add Kit</button>
   </div>
 
-  <div class="field" style="margin-bottom:16px">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="library-search" placeholder="Filter kits by name..." oninput="renderLibrary()" />
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+    <div class="field" style="flex:1;min-width:160px;margin-bottom:0;">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="library-search" placeholder="Filter kits by name..." oninput="renderLibrary()" />
+      </div>
+    </div>
+    <div class="field" style="flex:1;min-width:160px;margin-bottom:0;">
+      <div class="search-wrap">
+        <span class="search-icon">💎</span>
+        <input type="text" id="quick-dmc-search" placeholder="Quick DMC search..." oninput="quickDMCSearch()" />
+      </div>
     </div>
   </div>
 
+  <div id="quick-dmc-results"></div>
   <div id="kit-list"></div>
 </div>
 
@@ -425,41 +433,6 @@
   </div>
 
   <div id="pull-list"></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     PAGE 4 — DAC REQUESTS
-══════════════════════════════════════════ -->
-<div class="page" id="page-dac">
-  <div class="section-header">
-    <div class="gem-row">
-      <div class="gem" style="background:#b5c8f0"></div>
-      <div class="gem" style="background:#f0d4a0"></div>
-      <div class="gem" style="background:#e8a0b8"></div>
-    </div>
-    <h2>DAC <em>Requests</em></h2>
-    <p>Track replacement requests you've submitted to Diamond Art Club.</p>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <div class="field">
-        <label>DMC Number</label>
-        <input type="text" id="dac-dmc" placeholder="e.g. 310" />
-      </div>
-      <div class="field">
-        <label>Date Requested</label>
-        <input type="date" id="dac-date" />
-      </div>
-    </div>
-    <div class="field">
-      <label>Kit it's for (optional)</label>
-      <input type="text" id="dac-kit" placeholder="e.g. Ghost Cafe" />
-    </div>
-    <button class="btn btn-green btn-full" onclick="addDACRequest()">Log Request</button>
-  </div>
-
-  <div id="dac-list"></div>
 </div>
 
 <!-- PULL MODAL -->
@@ -564,14 +537,19 @@ function renderLibrary() {
   el.innerHTML = kits.map((kit, idx) => {
     // Number reflects alphabetical position across ALL kits, not just filtered
     const globalNum = sorted.indexOf(kit) + 1;
+    const pullCount = data.pulls.filter(p => p.kitId === kit.id).length;
+    const pulledBadge = pullCount > 0
+      ? `<span class="badge" style="background:#fff3e0;color:#b07830;">⬇ ${pullCount} pull${pullCount > 1 ? 's' : ''}</span>`
+      : '';
     return `
-    <div class="kit-item" id="kit-${kit.id}">
+    <div class="kit-item" id="kit-${kit.id}" style="${pullCount > 0 ? 'border-left: 3px solid var(--gold);' : ''}">
       <div class="kit-item-header" onclick="toggleKit(${kit.id})">
         <div class="kit-item-left">
           <span style="font-size:0.78rem;font-weight:700;color:var(--muted);min-width:28px;flex-shrink:0;">#${globalNum}</span>
           <div class="kit-name">${kit.name}</div>
         </div>
         <div class="kit-meta">
+          ${pulledBadge}
           <span class="badge badge-shape">${kit.shape}</span>
           <span class="badge badge-count">${kit.dmc.length} colors</span>
           <span style="color:var(--muted);font-size:0.85rem">▾</span>
@@ -601,7 +579,39 @@ function deleteKit(id) {
   toast('Kit deleted.');
 }
 
-// ── SEARCH DMC ───────────────────────────────────────
+// ── QUICK DMC SEARCH (library page) ─────────────────
+function quickDMCSearch() {
+  const query = document.getElementById('quick-dmc-search').value.trim().toLowerCase();
+  const el = document.getElementById('quick-dmc-results');
+
+  if (!query) { el.innerHTML = ''; return; }
+
+  const matches = data.kits.filter(k =>
+    k.dmc.some(d => d.toString().toLowerCase() === query)
+  );
+
+  if (!matches.length) {
+    el.innerHTML = `<div style="font-size:0.85rem;color:var(--muted);padding:10px 4px;">No kits found with DMC ${query.toUpperCase()}.</div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Kits with DMC ${query.toUpperCase()}</div>
+      ${matches.map(kit => `
+        <div class="search-result">
+          <div class="search-result-left">
+            <div class="search-result-name">${kit.name}</div>
+            <div class="search-result-shape">${kit.shape}</div>
+          </div>
+          <button class="btn btn-primary" onclick="openPullModal(${kit.id}, '${query}')">Log Pull</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+
 function searchDMC() {
   const query = document.getElementById('dmc-search-input').value.trim().toLowerCase();
   const el = document.getElementById('search-results');
