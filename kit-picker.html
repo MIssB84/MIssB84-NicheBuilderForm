@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Picker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#2a1f1c;
+    --cream:#f5eddf;
+    --gold:#c9a96e;
+    --rose:#dea193;
+    --border:#ead9d5;
+    --mid:#5a4a45;
+    --muted:#c4b0a8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Jost',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 60px;
+  }
+  .wrap{width:100%;max-width:480px;}
+  h1{
+    font-family:'Playfair Display',serif;
+    font-size:28px;
+    font-weight:700;
+    margin:0 0 4px;
+    text-align:center;
+    letter-spacing:0.3px;
+  }
+  .sub{
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    margin:0 0 28px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+  }
+  .card{
+    background:rgba(245,237,223,0.04);
+    border:1px solid rgba(234,217,213,0.18);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:18px;
+  }
+  .card h2{
+    font-family:'Playfair Display',serif;
+    font-size:16px;
+    font-weight:600;
+    margin:0 0 14px;
+    color:var(--rose);
+  }
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:5px;
+    letter-spacing:0.3px;
+  }
+  input[type=text], input[type=number]{
+    width:100%;
+    background:rgba(0,0,0,0.2);
+    border:1px solid rgba(234,217,213,0.25);
+    border-radius:8px;
+    padding:10px 12px;
+    color:var(--cream);
+    font-family:'Jost',sans-serif;
+    font-size:14px;
+    outline:none;
+  }
+  input:focus{border-color:var(--gold);}
+  .row{display:flex;gap:10px;margin-bottom:10px;}
+  .row .name{flex:2;}
+  .row .colors{flex:1;}
+  button{
+    font-family:'Jost',sans-serif;
+    font-weight:600;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    letter-spacing:0.3px;
+  }
+  .add-btn{
+    width:100%;
+    padding:11px;
+    background:transparent;
+    border:1px solid var(--gold);
+    color:var(--gold);
+    font-size:13px;
+    margin-top:4px;
+  }
+  .add-btn:hover{background:rgba(201,169,110,0.1);}
+  .kit-list{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+  .kit{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 12px;
+    border-radius:8px;
+    background:rgba(0,0,0,0.15);
+    font-size:14px;
+  }
+  .kit.fits{border-left:3px solid var(--gold);}
+  .kit.no-fit{border-left:3px solid rgba(234,217,213,0.15); opacity:0.45;}
+  .kit-info{display:flex;flex-direction:column;}
+  .kit-name{font-weight:500;}
+  .kit-colors{font-size:11px;color:var(--muted);}
+  .remove-btn{
+    background:none;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1;
+    padding:2px 6px;
+  }
+  .remove-btn:hover{color:var(--rose);}
+  .empty{
+    color:var(--muted);
+    font-size:13px;
+    text-align:center;
+    padding:12px 0;
+    font-style:italic;
+  }
+  .spin-section{text-align:center;}
+  .spin-btn{
+    width:100%;
+    padding:16px;
+    background:var(--gold);
+    color:var(--bg);
+    font-size:15px;
+    font-weight:600;
+    border-radius:10px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+  }
+  .spin-btn:disabled{opacity:0.4;cursor:default;}
+  .spin-btn:not(:disabled):active{transform:scale(0.98);}
+  .result{
+    margin-top:18px;
+    min-height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .result-name{
+    font-family:'Playfair Display',serif;
+    font-size:26px;
+    font-weight:700;
+    color:var(--cream);
+    text-align:center;
+    transition:opacity 0.08s;
+  }
+  .result-colors{
+    font-size:12px;
+    color:var(--muted);
+    text-align:center;
+    margin-top:4px;
+  }
+  .fit-count{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:10px;
+    text-align:center;
+  }
+  .fit-count b{color:var(--gold);}
+  .capacity-row{display:flex;gap:10px;align-items:flex-end;}
+  .capacity-row .field{flex:1;}
+  .stat-line{
+    display:flex;
+    justify-content:space-between;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(234,217,213,0.15);
+    font-size:13px;
+  }
+  .stat{text-align:center;flex:1;}
+  .stat-num{
+    font-family:'Playfair Display',serif;
+    font-size:20px;
+    font-weight:700;
+    color:var(--gold);
+    display:block;
+  }
+  .stat-label{
+    font-size:10px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+  .stat-num.warn{color:var(--rose);}
+  .wip .kit-colors{color:var(--rose);}
+  .move-btn{
+    width:100%;
+    padding:9px;
+    background:transparent;
+    border:1px solid var(--rose);
+    color:var(--rose);
+    font-size:12px;
+    margin-top:10px;
+  }
+  .move-btn:hover{background:rgba(222,161,147,0.1);}
+  .move-btn:disabled{opacity:0.3;cursor:default;}
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:16px 0 12px;
+    color:var(--muted);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:rgba(234,217,213,0.15);
+  }
+  textarea{
+    width:100%;
+    background:rgba(0,0,0,0.2);
+    border:1px solid rgba(234,217,213,0.25);
+    border-radius:8px;
+    padding:10px 12px;
+    color:var(--cream);
+    font-family:'Jost',sans-serif;
+    font-size:13px;
+    outline:none;
+    resize:vertical;
+    min-height:70px;
+  }
+  textarea:focus{border-color:var(--gold);}
+  .bulk-hint{
+    font-size:11px;
+    color:var(--muted);
+    margin:5px 0 8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Kit Picker</h1>
+  <p class="sub">what gets kitted up next</p>
+
+  <div class="card">
+    <h2>Storage Collection</h2>
+    <div class="capacity-row">
+      <div class="field">
+        <label for="capacityInput">Total color slots</label>
+        <input type="number" id="capacityInput" placeholder="e.g. 90" min="0">
+      </div>
+    </div>
+    <div class="stat-line">
+      <div class="stat">
+        <span class="stat-num" id="capacityStat">0</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="usedStat">0</span>
+        <span class="stat-label">In Use</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="openStat">0</span>
+        <span class="stat-label">Open</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Active WIPs</h2>
+    <div class="kit-list" id="activeList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Stash Queue</h2>
+    <div class="row">
+      <div class="name">
+        <label for="kitName">Kit name</label>
+        <input type="text" id="kitName" placeholder="e.g. Coastal Cowgirl">
+      </div>
+      <div class="colors">
+        <label for="kitColors"># colors</label>
+        <input type="number" id="kitColors" placeholder="45" min="1">
+      </div>
+    </div>
+    <button class="add-btn" id="addBtn">+ Add to Queue</button>
+
+    <div class="divider">or add a haul</div>
+    <p class="bulk-hint">One kit per line: name, color count</p>
+    <textarea id="bulkInput" placeholder="Coastal Cowgirl, 42&#10;Dark Apothecary, 58&#10;Vintage Italian Summer, 30"></textarea>
+    <button class="add-btn" id="bulkAddBtn" style="margin-top:8px;">+ Add All</button>
+
+    <div class="kit-list" id="kitList"></div>
+    <div class="fit-count" id="fitCount"></div>
+  </div>
+
+  <div class="card spin-section">
+    <h2>Spin</h2>
+    <button class="spin-btn" id="spinBtn">Pick My Next Kit</button>
+    <div class="result" id="result"></div>
+    <button class="move-btn" id="moveBtn" style="display:none;">Move to Active WIPs</button>
+  </div>
+</div>
+
+<script>
+let kits = [];
+let activeWips = [];
+let capacity = null;
+let spinning = false;
+let currentWinner = null;
+
+const kitListEl = document.getElementById('kitList');
+const activeListEl = document.getElementById('activeList');
+const fitCountEl = document.getElementById('fitCount');
+const resultEl = document.getElementById('result');
+const spinBtn = document.getElementById('spinBtn');
+const moveBtn = document.getElementById('moveBtn');
+const capacityInput = document.getElementById('capacityInput');
+const capacityStat = document.getElementById('capacityStat');
+const usedStat = document.getElementById('usedStat');
+const openStat = document.getElementById('openStat');
+
+async function loadData(){
+  try{
+    const kitsRes = await window.storage.get('kit-picker-kits');
+    kits = kitsRes ? JSON.parse(kitsRes.value) : [];
+  }catch(e){ kits = []; }
+  try{
+    const activeRes = await window.storage.get('kit-picker-active');
+    activeWips = activeRes ? JSON.parse(activeRes.value) : [];
+  }catch(e){ activeWips = []; }
+  try{
+    const capRes = await window.storage.get('kit-picker-capacity');
+    capacity = capRes ? JSON.parse(capRes.value) : null;
+  }catch(e){ capacity = null; }
+  if(capacity !== null) capacityInput.value = capacity;
+  render();
+}
+
+async function saveKits(){
+  try{ await window.storage.set('kit-picker-kits', JSON.stringify(kits)); }
+  catch(e){ console.error('save failed', e); }
+}
+
+async function saveActive(){
+  try{ await window.storage.set('kit-picker-active', JSON.stringify(activeWips)); }
+  catch(e){ console.error('save failed', e); }
+}
+
+async function saveCapacity(val){
+  try{ await window.storage.set('kit-picker-capacity', JSON.stringify(val)); }
+  catch(e){ console.error('save failed', e); }
+}
+
+function getCapacityVal(){
+  const v = parseInt(capacityInput.value, 10);
+  return isNaN(v) ? null : v;
+}
+
+function getUsedSlots(){
+  return activeWips.reduce((sum, w) => sum + w.colors, 0);
+}
+
+function getOpenSlots(){
+  const cap = getCapacityVal();
+  if(cap === null) return null;
+  return cap - getUsedSlots();
+}
+
+function getFittingKits(){
+  const open = getOpenSlots();
+  if(open === null) return kits;
+  return kits.filter(k => k.colors <= open);
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function render(){
+  const cap = getCapacityVal();
+  const used = getUsedSlots();
+  const open = getOpenSlots();
+
+  capacityStat.textContent = cap === null ? '—' : cap;
+  usedStat.textContent = used;
+  openStat.textContent = open === null ? '—' : open;
+  openStat.className = 'stat-num' + (open !== null && open < 0 ? ' warn' : '');
+
+  // Active WIPs list
+  activeListEl.innerHTML = '';
+  if(activeWips.length === 0){
+    activeListEl.innerHTML = '<div class="empty">No active WIPs yet. Move a kit here once you frame it up.</div>';
+  }
+  activeWips.forEach((wip, idx) => {
+    const div = document.createElement('div');
+    div.className = 'kit wip';
+    div.innerHTML = `
+      <div class="kit-info">
+        <span class="kit-name">${escapeHtml(wip.name)}</span>
+        <span class="kit-colors">${wip.colors} colors — active</span>
+      </div>
+      <button class="remove-btn" data-active-idx="${idx}" title="Finished / remove">×</button>
+    `;
+    activeListEl.appendChild(div);
+  });
+  document.querySelectorAll('[data-active-idx]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const idx = parseInt(e.target.getAttribute('data-active-idx'), 10);
+      activeWips.splice(idx, 1);
+      await saveActive();
+      render();
+    });
+  });
+
+  // Stash queue list
+  kitListEl.innerHTML = '';
+  if(kits.length === 0){
+    kitListEl.innerHTML = '<div class="empty">No kits queued yet. Add a few from your stash.</div>';
+  }
+  kits.forEach((kit, idx) => {
+    const fits = open === null ? true : kit.colors <= open;
+    const div = document.createElement('div');
+    div.className = 'kit ' + (fits ? 'fits' : 'no-fit');
+    div.innerHTML = `
+      <div class="kit-info">
+        <span class="kit-name">${escapeHtml(kit.name)}</span>
+        <span class="kit-colors">${kit.colors} colors${fits ? '' : ' — over limit'}</span>
+      </div>
+      <button class="remove-btn" data-idx="${idx}">×</button>
+    `;
+    kitListEl.appendChild(div);
+  });
+  document.querySelectorAll('[data-idx]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const idx = parseInt(e.target.getAttribute('data-idx'), 10);
+      kits.splice(idx, 1);
+      await saveKits();
+      render();
+    });
+  });
+
+  const fitting = getFittingKits();
+  if(kits.length > 0){
+    fitCountEl.innerHTML = open === null
+      ? `<b>${kits.length}</b> kits queued — set total capacity above to filter by fit`
+      : `<b>${fitting.length}</b> of ${kits.length} kits fit your open slots`;
+  } else {
+    fitCountEl.innerHTML = '';
+  }
+
+  spinBtn.disabled = fitting.length === 0;
+}
+
+document.getElementById('addBtn').addEventListener('click', async () => {
+  const nameEl = document.getElementById('kitName');
+  const colorsEl = document.getElementById('kitColors');
+  const name = nameEl.value.trim();
+  const colors = parseInt(colorsEl.value, 10);
+  if(!name || isNaN(colors) || colors <= 0) return;
+  kits.push({name, colors});
+  await saveKits();
+  nameEl.value = '';
+  colorsEl.value = '';
+  nameEl.focus();
+  render();
+});
+
+document.getElementById('kitName').addEventListener('keypress', (e) => {
+  if(e.key === 'Enter') document.getElementById('kitColors').focus();
+});
+document.getElementById('kitColors').addEventListener('keypress', (e) => {
+  if(e.key === 'Enter') document.getElementById('addBtn').click();
+});
+
+document.getElementById('bulkAddBtn').addEventListener('click', async () => {
+  const bulkEl = document.getElementById('bulkInput');
+  const lines = bulkEl.value.split('\n').map(l => l.trim()).filter(Boolean);
+  let added = 0;
+  lines.forEach(line => {
+    const lastComma = line.lastIndexOf(',');
+    if(lastComma === -1) return;
+    const name = line.slice(0, lastComma).trim();
+    const colors = parseInt(line.slice(lastComma + 1).trim(), 10);
+    if(!name || isNaN(colors) || colors <= 0) return;
+    kits.push({name, colors});
+    added++;
+  });
+  if(added > 0){
+    await saveKits();
+    bulkEl.value = '';
+    render();
+  }
+});
+
+capacityInput.addEventListener('input', async () => {
+  const val = getCapacityVal();
+  await saveCapacity(val);
+  currentWinner = null;
+  moveBtn.style.display = 'none';
+  render();
+});
+
+spinBtn.addEventListener('click', () => {
+  if(spinning) return;
+  const fitting = getFittingKits();
+  if(fitting.length === 0) return;
+
+  spinning = true;
+  spinBtn.disabled = true;
+  moveBtn.style.display = 'none';
+  currentWinner = null;
+  const winner = fitting[Math.floor(Math.random() * fitting.length)];
+
+  let cycles = 0;
+  const maxCycles = 14 + Math.floor(Math.random() * 6);
+  const interval = setInterval(() => {
+    const flash = fitting[Math.floor(Math.random() * fitting.length)];
+    resultEl.innerHTML = `<div class="result-name">${escapeHtml(flash.name)}</div>`;
+    cycles++;
+    if(cycles >= maxCycles){
+      clearInterval(interval);
+      resultEl.innerHTML = `
+        <div>
+          <div class="result-name">${escapeHtml(winner.name)}</div>
+          <div class="result-colors">${winner.colors} colors</div>
+        </div>
+      `;
+      spinning = false;
+      spinBtn.disabled = false;
+      currentWinner = winner;
+      moveBtn.style.display = 'block';
+    }
+  }, 80);
+});
+
+moveBtn.addEventListener('click', async () => {
+  if(!currentWinner) return;
+  const idx = kits.findIndex(k => k.name === currentWinner.name && k.colors === currentWinner.colors);
+  if(idx !== -1) kits.splice(idx, 1);
+  activeWips.push(currentWinner);
+  await saveKits();
+  await saveActive();
+  currentWinner = null;
+  moveBtn.style.display = 'none';
+  resultEl.innerHTML = '';
+  render();
+});
+
+loadData();
+</script>
+</body>
+</html>
