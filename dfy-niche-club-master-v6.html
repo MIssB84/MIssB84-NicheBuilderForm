@@ -222,7 +222,7 @@ var GEN_TOOLS = [
   {id:'kittl',    name:'Kittl',           url:'https://kittl.com?ref=dania'},
   {id:'canva',    name:'Canva Dream Lab',  url:'https://www.mydesigns.io/?via=dania'},
   {id:'nano',     name:'Nano Banana',     url:'https://www.mydesigns.io/?via=dania'},
-  {id:'seed',     name:'Seedream V3',     url:'https://galaxyai.io/?ref=dania'},
+  {id:'flux',     name:'Flux',            url:'https://galaxyai.io/?ref=dania'},
   {id:'gpt2',     name:'GPT Image 2',     url:'https://www.mydesigns.io/?via=dania'}
 ];
 
@@ -230,6 +230,7 @@ function v(id){ return (document.getElementById(id)||{}).value||''; }
 
 function toTitleCase(str){
   return str.replace(/\w\S*/g, function(word){
+    if(word.toLowerCase()==='png') return 'PNG';
     return word.charAt(0).toUpperCase() + word.slice(1);
   });
 }
