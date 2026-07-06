@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Personal Shop Builder</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #2a1f1c;
+    --cream: #f5eddf;
+    --gold: #c9a96e;
+    --rose: #dea193;
+    --border: #ead9d5;
+    --light-bg: #fdf7f2;
+    --mid-text: #5a4a45;
+    --muted: #c4b0a8;
+    --warn: #b3453f;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    padding: 32px 20px 80px;
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--gold);
+    margin: 0 0 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .subhead { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+  .card {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    color: var(--mid-text);
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--bg);
+    font-size: 19px;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-tag {
+    font-size: 11px;
+    background: var(--gold);
+    color: var(--bg);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .type-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+
+  .type-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--mid-text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+
+  .type-btn:hover { border-color: var(--gold); }
+  .type-btn.active { background: var(--bg); border-color: var(--bg); color: var(--gold); }
+
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--bg); margin: 16px 0 6px; }
+  label.first { margin-top: 0; }
+
+  .hint { font-size: 12px; color: #9a877f; margin-top: -2px; margin-bottom: 6px; }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: var(--mid-text);
+    resize: vertical;
+    background: #fff;
+  }
+
+  textarea:focus, input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.15s ease;
+  }
+
+  .drop-zone:hover { border-color: var(--gold); }
+  .drop-zone input { display: none; }
+  .drop-zone p { margin: 0; font-size: 13px; color: #9a877f; }
+  .drop-zone p.small { font-size: 11px; margin-top: 4px; }
+
+  .thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+  .thumb { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .thumb button {
+    position: absolute; top: 2px; right: 2px;
+    background: rgba(42,31,28,0.85); color: #fff; border: none;
+    border-radius: 50%; width: 18px; height: 18px; font-size: 11px;
+    line-height: 18px; cursor: pointer; padding: 0;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg); color: var(--gold); border: none;
+    padding: 11px 22px; border-radius: 8px; font-family: 'Jost', sans-serif;
+    font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 16px;
+  }
+
+  .btn:hover { background: #3a2c27; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn.secondary {
+    background: transparent; color: var(--bg); border: 1.5px solid var(--border);
+    padding: 7px 14px; font-size: 12px; margin-top: 0;
+  }
+
+  .btn.secondary:hover { border-color: var(--gold); background: #fff; }
+  .btn.small { padding: 8px 14px; font-size: 12.5px; margin-top: 0; }
+
+  .status { font-size: 13px; color: var(--gold); margin-top: 10px; display: none; }
+  .status.show { display: block; }
+
+  .error { font-size: 13px; color: var(--warn); margin-top: 10px; display: none; }
+  .error.show { display: block; }
+
+  .output-block { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+  .prompt-item {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin-bottom: 10px; font-size: 13.5px; line-height: 1.5; position: relative;
+  }
+  .prompt-item .copy-btn { position: absolute; top: 10px; right: 10px; }
+
+  .title-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; gap: 10px;
+  }
+  .title-item .text { font-size: 13.5px; }
+  .title-item .count { font-size: 11px; color: #9a877f; white-space: nowrap; }
+  .title-item .count.over { color: var(--warn); font-weight: 700; }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  .tag-chip {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 20px;
+    padding: 5px 6px 5px 12px; font-size: 12.5px; display: flex; align-items: center; gap: 6px;
+  }
+  .tag-chip .len { color: #9a877f; font-size: 10px; }
+  .tag-chip .len.over { color: var(--warn); font-weight: 700; }
+  .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.chosen { background: var(--bg); color: var(--cream); border-color: var(--bg); }
+
+  .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
+  .pill-text { outline: none; min-width: 20px; cursor: text; }
+  .pill-text:focus { background: #fbf3e3; border-radius: 4px; padding: 0 2px; }
+  .pill .remove-btn {
+    background: none; border: none; color: #9a877f; cursor: pointer; font-size: 13px; padding: 0 2px;
+  }
+  .pill .remove-btn:hover { color: var(--warn); }
+  .copy-btn-pill {
+    background: none; border: 1px solid var(--border); border-radius: 12px; color: var(--mid-text);
+    cursor: pointer; font-size: 10.5px; padding: 2px 8px; font-family: 'Jost', sans-serif;
+  }
+  .copy-btn-pill:hover { border-color: var(--gold); color: var(--bg); }
+  .tag-chip button {
+    background: none; border: none; color: #9a877f; cursor: pointer;
+    font-size: 13px; line-height: 1; padding: 2px;
+  }
+  .tag-chip button:hover { color: var(--warn); }
+
+  .tag-meta { display: flex; gap: 16px; align-items: center; margin-top: 10px; font-size: 12.5px; }
+  .tag-meta .count-badge { font-weight: 600; }
+  .tag-meta .count-badge.over { color: var(--warn); }
+  .tag-meta .dupe-flag { color: var(--warn); font-weight: 600; display: none; }
+  .tag-meta .dupe-flag.show { display: inline; }
+
+  .add-tag-row { display: flex; gap: 8px; margin-top: 10px; }
+  .add-tag-row input { flex: 1; }
+
+  .copy-all-row { display: flex; gap: 10px; margin-top: 14px; }
+
+  .baked-tags-box, .baked-titles-box {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-top: 6px;
+  }
+
+  .divider-label { text-align: center; color: var(--muted); font-size: 12px; letter-spacing: 1px; margin: 30px 0 -6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Personal Shop Builder</h1>
+  <div class="subhead">Screenshot to prompts, plus titles and tags built from your own baked in language and keywords.</div>
+
+  <div class="card">
+    <h2><span class="step-tag">Product Type</span></h2>
+    <div class="type-row" id="typeRow">
+      <button class="type-btn" data-type="Tumbler Wrap PNG">Tumbler Wrap PNG</button>
+      <button class="type-btn" data-type="Shirt PNG">Shirt PNG</button>
+      <button class="type-btn" data-type="Laser Wrap SVG">Laser Wrap SVG</button>
+    </div>
+    <div class="hint">Applies to both the prompt builder and the title and tag builder below.</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 1</span> Image Prompts</h2>
+
+    <label class="first">Inspo screenshot(s)</label>
+    <div class="drop-zone" id="dropZone">
+      <p>Click to upload, or paste a screenshot with Ctrl+V</p>
+      <p class="small">You can upload multiple, or paste more than one</p>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+
+    <label>Creative direction (optional)</label>
+    <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating.</div>
+    <textarea id="creativeDirection" rows="2" placeholder="e.g. deeper color palette, add more stars, softer background"></textarea>
+
+    <button class="btn" id="generatePromptsBtn">Generate 5 Prompts</button>
+    <div class="status" id="promptsStatus"></div>
+    <div class="error" id="promptsError"></div>
+
+    <div class="output-block" id="promptsOutputBlock" style="display:none;">
+      <div id="suggestionsNote" style="display:none; font-size:12.5px; color:#9a877f; margin-bottom:12px;"></div>
+      <div id="promptsList"></div>
+      <div class="copy-all-row">
+        <button class="btn secondary" id="copyAllPromptsBtn">Copy all prompts</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider-label">— then —</div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags
+      <button class="btn secondary" id="clearAllBtn" style="margin-left:auto; font-size:11px;">Clear everything</button>
+    </h2>
+
+    <div style="background:var(--bg); border-radius:10px; padding:16px;">
+      <div style="font-size:11px; letter-spacing:1px; color:var(--gold); font-weight:700;">LIVE TITLE</div>
+      <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--cream); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
+      <div id="liveTitleCount" style="font-size:13px; color:var(--gold); margin-top:10px; font-weight:700;">0 / 140 chars</div>
+    </div>
+    <div class="hint" style="margin-top:6px;">Starts filled in with your baked in wording for this product type. Click directly into it to type, edit, or delete anything by hand.</div>
+    <div class="copy-all-row">
+      <button class="btn secondary" id="copyLiveTitleBtn">Copy this title</button>
+      <button class="btn secondary" id="resetLiveTitleBtn">Reset for next title</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Title builder</label>
+      <div class="hint">Paste keywords or a full title below, press Enter or hit Add and they'll show up as pills, each with its own character count. Click a pill to add it to the end of the title above. Click a pill's text to edit it first.</div>
+    </div>
+
+    <label class="first" style="margin-top:10px;">Paste keywords or a full title</label>
+    <textarea id="poolBulkInput" rows="3" placeholder="Paste keywords separated by commas, or paste a whole title with no commas at all, then press Enter or hit Add"></textarea>
+    <div class="add-tag-row">
+      <button class="btn small" id="addPoolBulkBtn">Add to pool</button>
+      <input type="text" id="poolSingleInput" placeholder="Or type one keyword and press Enter">
+    </div>
+    <div class="status" id="poolStatus"></div>
+
+    <div class="tag-list" id="keywordPoolList" style="margin-top:12px;"></div>
+    <button class="btn secondary" id="clearPoolBtn" style="margin-top:10px;">Clear pool</button>
+
+    <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Tags</label>
+      <div class="hint">Starts filled in with your baked in tags for this product type. Click × on any pill you don't want for this particular design, then add your own below.</div>
+    </div>
+
+    <div class="tag-meta">
+      <span class="count-badge" id="tagCountBadge">0/13 tags</span>
+      <span class="dupe-flag" id="tagDupeFlag">Duplicate tags found</span>
+    </div>
+    <div class="tag-list" id="tagsList"></div>
+    <div class="add-tag-row">
+      <input type="text" id="addTagInput" placeholder="Add a tag and press Enter">
+      <button class="btn small" id="addTagBtn">Add</button>
+    </div>
+    <button class="btn secondary" id="copyAllTagsBtn" style="margin-top:12px;">Copy all tags</button>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Suggest more tags (optional)</label>
+      <div class="hint">Adds AI suggested tags on top of what's already there, based on your live title and image prompts. Won't remove or replace anything.</div>
+    </div>
+
+    <label>Reference tags (optional)</label>
+    <div class="hint">Paste tags from bestseller listings if you want the style modeled off them.</div>
+    <textarea id="exampleTags" rows="2" placeholder="Paste reference tags here if you have any"></textarea>
+
+    <button class="btn" id="generateTitlesBtn">Suggest More Tags</button>
+    <div class="status" id="titlesStatus"></div>
+    <div class="error" id="titlesError"></div>
+  </div>
+</div>
+
+<script>
+let selectedType = null;
+let uploadedImages = [];
+let lastPromptsText = [];
+let tagsArray = [];
+let bakedPiecesValue = '';
+let bakedTagsValue = '';
+
+const typeRow = document.getElementById('typeRow');
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const thumbs = document.getElementById('thumbs');
+
+typeRow.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.type-btn');
+  if (!btn) return;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedType = btn.dataset.type;
+  try { await window.storage.set('session:productType', selectedType); } catch (e) {}
+  await loadBakedTags(selectedType);
+  await loadBakedPieces(selectedType);
+  await restoreWorkSession(selectedType);
+  if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
+  if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
+});
+
+const DEFAULT_BAKED_TAGS = {
+  'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler'
+};
+
+async function loadBakedTags(type) {
+  try {
+    const result = await window.storage.get('baked-tags:' + type);
+    if (result && result.value) {
+      bakedTagsValue = result.value;
+    } else if (DEFAULT_BAKED_TAGS[type]) {
+      bakedTagsValue = DEFAULT_BAKED_TAGS[type];
+    } else {
+      bakedTagsValue = '';
+    }
+  } catch (err) {
+    bakedTagsValue = DEFAULT_BAKED_TAGS[type] || '';
+  }
+
+  if (bakedTagsValue) {
+    const seen = new Set();
+    const deduped = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean).filter(t => {
+      const key = t.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    const cleaned = deduped.join(', ');
+    if (cleaned !== bakedTagsValue) {
+      bakedTagsValue = cleaned;
+      try { await window.storage.set('baked-tags:' + type, cleaned); } catch (e) {}
+    }
+  }
+}
+
+const DEFAULT_BAKED = {
+  'Tumbler Wrap PNG': 'Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download'
+};
+
+async function loadBakedPieces(type) {
+  try {
+    const result = await window.storage.get('baked-titles:' + type);
+    if (result && result.value) {
+      bakedPiecesValue = result.value;
+    } else if (DEFAULT_BAKED[type]) {
+      bakedPiecesValue = DEFAULT_BAKED[type];
+      try { await window.storage.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
+    } else {
+      bakedPiecesValue = '';
+    }
+  } catch (err) {
+    bakedPiecesValue = DEFAULT_BAKED[type] || '';
+  }
+  seedLiveTitle();
+}
+
+function debounce(fn, delay) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+const autosavePool = debounce(async () => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:pool:' + selectedType, JSON.stringify(pastedPool)); } catch (e) { console.error(e); }
+}, 600);
+
+const autosaveTitle = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:liveTitle:' + selectedType, val); } catch (e) { console.error(e); }
+}, 600);
+
+const autosaveTags = debounce(async () => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:tags:' + selectedType, JSON.stringify(tagsArray)); } catch (e) { console.error(e); }
+}, 600);
+
+const autosaveRefTags = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:refTags:' + selectedType, val); } catch (e) { console.error(e); }
+}, 600);
+
+function seedTagsFromBakedIn() {
+  tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  renderTags();
+}
+
+async function restoreWorkSession(type) {
+  try {
+    const savedPool = await window.storage.get('session:pool:' + type);
+    pastedPool = (savedPool && savedPool.value) ? JSON.parse(savedPool.value) : [];
+  } catch (e) { pastedPool = []; }
+  renderPool();
+
+  try {
+    const savedTitle = await window.storage.get('session:liveTitle:' + type);
+    if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null && savedTitle.value !== '') {
+      const preview = document.getElementById('liveTitlePreview');
+      preview.value = savedTitle.value;
+      updateLiveTitleCount(savedTitle.value);
+    }
+  } catch (e) {}
+
+  try {
+    const savedTags = await window.storage.get('session:tags:' + type);
+    tagsArray = (savedTags && savedTags.value) ? JSON.parse(savedTags.value) : [];
+    if (tagsArray.length === 0) tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  } catch (e) {
+    tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  const seenTags = new Set();
+  tagsArray = tagsArray.filter(t => {
+    const key = t.trim().toLowerCase();
+    if (seenTags.has(key)) return false;
+    seenTags.add(key);
+    return true;
+  });
+  renderTags();
+
+  try {
+    const savedRefTags = await window.storage.get('session:refTags:' + type);
+    document.getElementById('exampleTags').value = (savedRefTags && savedRefTags.value) ? savedRefTags.value : '';
+  } catch (e) {
+    document.getElementById('exampleTags').value = '';
+  }
+}
+
+function seedLiveTitle() {
+  const preview = document.getElementById('liveTitlePreview');
+  preview.value = bakedPiecesValue.trim();
+  updateLiveTitleCount(preview.value);
+}
+
+let pastedPool = [];
+
+function renderPool() {
+  const hadCommas = pastedPool.some(item => /[,\n，、]/.test(item.text));
+  if (hadCommas) {
+    const flat = pastedPool.map(item => item.text).join(',');
+    pastedPool = [];
+    pushSplit(flat);
+  }
+  const listEl = document.getElementById('keywordPoolList');
+  listEl.innerHTML = '';
+  pastedPool.forEach((item, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip pill';
+    chip.title = 'Click to add to the title';
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'pill-text';
+    textSpan.contentEditable = 'true';
+    textSpan.textContent = item.text;
+    textSpan.addEventListener('input', () => {
+      item.text = textSpan.textContent;
+      lenSpan.textContent = item.text.length;
+    });
+    textSpan.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); textSpan.blur(); }
+    });
+    textSpan.addEventListener('click', (e) => e.stopPropagation());
+
+    const lenSpan = document.createElement('span');
+    lenSpan.className = 'len';
+    lenSpan.textContent = item.text.length;
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-btn-pill';
+    copyBtn.textContent = 'Copy';
+    copyBtn.title = 'Copy this keyword';
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(item.text);
+      copyBtn.textContent = 'Copied';
+      setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1000);
+    });
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'Remove from pool';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pastedPool.splice(i, 1);
+      renderPool();
+    });
+
+    chip.addEventListener('click', () => {
+      const preview = document.getElementById('liveTitlePreview');
+      const current = preview.value.trim();
+      const casedText = toTitleCase(item.text);
+      preview.value = current ? `${current} ${casedText}` : casedText;
+      updateLiveTitleCount(preview.value);
+      autosaveTitle(preview.value);
+    });
+
+    chip.appendChild(textSpan);
+    chip.appendChild(lenSpan);
+    chip.appendChild(copyBtn);
+    chip.appendChild(removeBtn);
+    listEl.appendChild(chip);
+  });
+  autosavePool();
+}
+
+const KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
+
+Break the text into short descriptive keyword phrases, 2 to 4 words each, that the seller could reuse in a new title. Keep small connector words like "I", "a", "for" attached to the phrase they belong with rather than dropping them, for example "I Could Be Meaner" should stay together as one phrase, not become "Could Be Meaner". Skip generic product type or format words like PNG, SVG, digital download, tumbler, wrap, sublimation, design, seamless, skinny, 20oz, unless they are part of a distinctly descriptive phrase. Do not return duplicate phrases.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"keywords": ["phrase 1", "phrase 2"]}`;
+
+async function extractKeywords(text) {
+  const result = await callClaude(KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }]);
+  return result.keywords || [];
+}
+
+function pushSplit(text) {
+  const normalized = text.replace(/[，、]/g, ',');
+  const parts = normalized.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+  parts.forEach(p => pastedPool.push({ text: p }));
+}
+
+async function addToPastedPool(text, allowExtraction) {
+  const trimmed = text.trim();
+  const hasDelimiters = /[,\n，、]/.test(trimmed);
+  const statusEl = document.getElementById('poolStatus');
+  if (hasDelimiters) {
+    pushSplit(trimmed);
+    renderPool();
+  } else if (allowExtraction && trimmed.split(/\s+/).length > 5) {
+    setStatus(statusEl, 'Reading that title for keywords...');
+    try {
+      const keywords = await extractKeywords(trimmed);
+      keywords.forEach(k => pushSplit(k));
+      renderPool();
+    } catch (err) {
+      console.error(err);
+      pushSplit(trimmed);
+      renderPool();
+    } finally {
+      setStatus(statusEl, '');
+    }
+  } else {
+    pushSplit(trimmed);
+    renderPool();
+  }
+}
+
+document.getElementById('addPoolBulkBtn').addEventListener('click', async () => {
+  const box = document.getElementById('poolBulkInput');
+  if (!box.value.trim()) return;
+  await addToPastedPool(box.value, true);
+  box.value = '';
+});
+
+document.getElementById('poolBulkInput').addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const box = e.target;
+    if (!box.value.trim()) return;
+    await addToPastedPool(box.value, true);
+    box.value = '';
+  }
+});
+
+document.getElementById('poolSingleInput').addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const input = e.target;
+    if (!input.value.trim()) return;
+    await addToPastedPool(input.value, false);
+    input.value = '';
+  }
+});
+
+document.getElementById('clearPoolBtn').addEventListener('click', () => {
+  pastedPool = [];
+  renderPool();
+});
+
+function toTitleCase(str) {
+  return str.split(' ').map(word => {
+    if (!word) return word;
+    const match = word.match(/^(.*?)([,.:;!?]*)$/);
+    const core = match[1];
+    const trailing = match[2];
+    if (!core) return word;
+    if (/^[A-Z0-9]+$/.test(core) && core.length > 1) return core + trailing;
+    return core.charAt(0).toUpperCase() + core.slice(1).toLowerCase() + trailing;
+  }).join(' ');
+}
+
+function updateLiveTitleCount(text) {
+  const countEl = document.getElementById('liveTitleCount');
+  countEl.textContent = `${text.length} / 140 chars`;
+  countEl.style.color = text.length > 140 ? '#e88a83' : 'var(--gold)';
+  window._liveTitle = text;
+}
+
+document.getElementById('liveTitlePreview').addEventListener('input', (e) => {
+  updateLiveTitleCount(e.target.value);
+  autosaveTitle(e.target.value);
+});
+
+document.getElementById('copyLiveTitleBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(window._liveTitle || '');
+  const btn = document.getElementById('copyLiveTitleBtn');
+  btn.textContent = 'Copied';
+  setTimeout(() => btn.textContent = 'Copy this title', 1200);
+});
+
+document.getElementById('resetLiveTitleBtn').addEventListener('click', () => {
+  seedLiveTitle();
+});
+
+
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+document.addEventListener('paste', (e) => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  const files = [];
+  for (const item of items) {
+    if (item.type && item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) files.push(file);
+    }
+  }
+  if (files.length) handleFiles(files);
+});
+
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      uploadedImages.push({ base64, mediaType: file.type });
+      renderThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+  fileInput.value = '';
+}
+
+function renderThumbs() {
+  thumbs.innerHTML = '';
+  uploadedImages.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb';
+    div.innerHTML = `<img src="data:${img.mediaType};base64,${img.base64}"><button data-i="${i}">×</button>`;
+    thumbs.appendChild(div);
+  });
+}
+
+thumbs.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  uploadedImages.splice(Number(btn.dataset.i), 1);
+  renderThumbs();
+});
+
+function setStatus(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
+function setError(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
+
+async function callClaude(systemPrompt, userContent) {
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1200,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userContent }]
+    })
+  });
+  if (!response.ok) throw new Error('API request failed: ' + response.status);
+  const data = await response.json();
+  const textBlock = data.content.find(b => b.type === 'text');
+  if (!textBlock) throw new Error('No text in response');
+  let cleaned = textBlock.text.trim().replace(/^```json/i, '').replace(/```$/,'').trim();
+  return JSON.parse(cleaned);
+}
+
+const PROMPTS_SYSTEM = `You are a production assistant that writes AI image generation prompts for Etsy digital products (Tumbler Wrap PNG, Shirt PNG, Laser Wrap SVG).
+
+You will be given one or more inspo screenshots, a product type, and either creative direction or an instruction to auto suggest improvements.
+
+Study the screenshot(s) in full detail: exact subject, pose, expression, any text or wording shown, color palette and how colors are distributed, background elements and patterns, layout, and overall mood.
+
+If no creative direction is given, generate 2 to 3 quick one sentence design suggestions to elevate the design past the original, and use those as the creative direction for the prompts. Return these suggestions in the "suggestions" field. If creative direction was given, leave "suggestions" as an empty string.
+
+Then write exactly 5 image prompts that closely recreate the actual inspo design, not a generic version of the general theme. Every prompt must read like it was written by someone who studied the specific screenshot.
+
+Rules for every prompt:
+- Name the specific subject, pose, and expression exactly as seen, not generic descriptions
+- If the design includes any text or wording, treat it as one complete phrase and include the full phrase intact in every single prompt, never split across prompts. Put the exact full phrase in quotation marks as its own clear clause (for example: the words "I COULD BE MEANER" rendered in bold gold distressed lettering). Specify roughly where it sits and its style based on the analysis
+- Name specific background elements and patterns exactly as seen rather than generic filler
+- Describe exact color relationships, not just a palette list
+- Vary sentence structure and opening line across the 5 prompts (start with scene, subject, mood, setting, or a visual detail, never with the product name)
+- Use approximately 70% proven visual direction from the screenshot, 30% creative improvement from the direction/suggestions
+- Do not number or label prompts, no bullets, no introductions
+- Never use em dashes, use commas, colons, periods, or parentheses instead
+
+Product type specific rules:
+Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested.
+Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation."
+Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"suggestions": "string or empty string", "prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
+
+document.getElementById('generatePromptsBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('promptsStatus');
+  const errorEl = document.getElementById('promptsError');
+  const outputBlock = document.getElementById('promptsOutputBlock');
+  setError(errorEl, '');
+  outputBlock.style.display = 'none';
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+  if (uploadedImages.length === 0) { setError(errorEl, 'Upload or paste at least one screenshot.'); return; }
+
+  const direction = document.getElementById('creativeDirection').value.trim();
+  const btn = document.getElementById('generatePromptsBtn');
+  btn.disabled = true;
+  setStatus(statusEl, 'Analyzing design and writing prompts...');
+
+  try {
+    const userContent = [];
+    uploadedImages.forEach(img => {
+      userContent.push({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } });
+    });
+    userContent.push({
+      type: 'text',
+      text: `Product type: ${selectedType}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}`
+    });
+
+    const result = await callClaude(PROMPTS_SYSTEM, userContent);
+    lastPromptsText = result.prompts || [];
+
+    const noteEl = document.getElementById('suggestionsNote');
+    if (result.suggestions) {
+      noteEl.style.display = 'block';
+      noteEl.textContent = 'Auto suggestions since no direction given: ' + result.suggestions;
+    } else {
+      noteEl.style.display = 'none';
+    }
+
+    const list = document.getElementById('promptsList');
+    list.innerHTML = '';
+    lastPromptsText.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'prompt-item';
+      div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${escapeHtml(p)}</div>`;
+      list.appendChild(div);
+    });
+    outputBlock.style.display = 'block';
+    setStatus(statusEl, '');
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong generating prompts. Try again.');
+  } finally {
+    btn.disabled = false;
+    setStatus(statusEl, '');
+  }
+});
+
+document.getElementById('promptsList').addEventListener('click', (e) => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  navigator.clipboard.writeText(lastPromptsText[Number(btn.dataset.idx)]);
+  btn.textContent = 'Copied';
+  setTimeout(() => btn.textContent = 'Copy', 1200);
+});
+
+document.getElementById('copyAllPromptsBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(lastPromptsText.join('\n\n\n'));
+  const btn = document.getElementById('copyAllPromptsBtn');
+  btn.textContent = 'Copied';
+  setTimeout(() => btn.textContent = 'Copy all prompts', 1200);
+});
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+const TAGS_SYSTEM = `You are a production assistant that suggests a few additional Etsy tags for the seller's own Etsy shop, on top of tags they already have.
+
+Inputs: product type, tags already in use (do not repeat these), reference tags (optional, for style only), the current live title the seller is building, and design context from image prompts already written for this design.
+
+Suggest new tags derived from the live title and design context, and style inspiration from reference tags if given. Do not duplicate or rephrase any tag already in use. Suggest as many as make sense up to a maximum of 13 minus however many tags are already in use, so the combined total never exceeds 13. Each tag must be 20 characters or fewer including spaces. Never use em dashes.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"tags": ["new tag 1", "new tag 2"]}`;
+
+document.getElementById('generateTitlesBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('titlesStatus');
+  const errorEl = document.getElementById('titlesError');
+  setError(errorEl, '');
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+  const exampleTags = document.getElementById('exampleTags').value.trim();
+
+  const btn = document.getElementById('generateTitlesBtn');
+  btn.disabled = true;
+  setStatus(statusEl, 'Finding more tags...');
+
+  try {
+    const designContext = lastPromptsText.length
+      ? lastPromptsText.join('\n\n')
+      : 'No image prompts generated yet in this session.';
+
+    const userText = `Product type: ${selectedType}\n\nTags already in use: ${tagsArray.join(', ') || 'none yet'}\n\nReference tags: ${exampleTags || 'none given'}\n\nCurrent live title: ${window._liveTitle || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+
+    const result = await callClaude(TAGS_SYSTEM, [{ type: 'text', text: userText }]);
+
+    const rawTags = result.tags || [];
+    const flattened = [];
+    rawTags.forEach(t => {
+      String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flattened.push(p));
+    });
+    const seen = new Set(tagsArray.map(t => t.toLowerCase()));
+    flattened.forEach(t => {
+      const key = t.toLowerCase();
+      if (seen.has(key)) return;
+      if (tagsArray.length >= 13) return;
+      seen.add(key);
+      tagsArray.push(t);
+    });
+    renderTags();
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong finding more tags. Try again.');
+  } finally {
+    btn.disabled = false;
+    setStatus(statusEl, '');
+  }
+});
+
+function renderTags() {
+  const hadCommas = tagsArray.some(t => /[,\n，、]/.test(t));
+  if (hadCommas) {
+    const flattened = [];
+    tagsArray.forEach(t => {
+      String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flattened.push(p));
+    });
+    tagsArray = flattened;
+  }
+
+  const tagsList = document.getElementById('tagsList');
+  const countBadge = document.getElementById('tagCountBadge');
+  const dupeFlag = document.getElementById('tagDupeFlag');
+
+  const lowerCounts = {};
+  tagsArray.forEach(t => {
+    const key = t.trim().toLowerCase();
+    lowerCounts[key] = (lowerCounts[key] || 0) + 1;
+  });
+  const hasDupes = Object.values(lowerCounts).some(c => c > 1);
+
+  tagsList.innerHTML = '';
+  tagsArray.forEach((tag, i) => {
+    const key = tag.trim().toLowerCase();
+    const isDupe = lowerCounts[key] > 1;
+    const overLen = tag.length > 20;
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip' + (isDupe ? ' dupe' : '');
+    chip.innerHTML = `<span>${escapeHtml(tag)}</span><span class="len${overLen ? ' over' : ''}">${tag.length}</span><button class="copy-btn-pill" data-action="copy" data-i="${i}" title="Copy this tag">Copy</button><button data-action="remove" data-i="${i}" title="Remove">×</button>`;
+    tagsList.appendChild(chip);
+  });
+
+  countBadge.textContent = `${tagsArray.length}/13 tags`;
+  countBadge.classList.toggle('over', tagsArray.length > 13);
+  dupeFlag.classList.toggle('show', hasDupes);
+
+  window._lastTags = tagsArray;
+  autosaveTags();
+}
+
+document.getElementById('tagsList').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const i = Number(btn.dataset.i);
+  if (btn.dataset.action === 'copy') {
+    navigator.clipboard.writeText(tagsArray[i]);
+    const original = btn.textContent;
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = original; }, 1000);
+    return;
+  }
+  tagsArray.splice(i, 1);
+  renderTags();
+});
+
+function addTagFromInput() {
+  const input = document.getElementById('addTagInput');
+  const val = input.value.trim();
+  if (!val) return;
+  val.replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(t => tagsArray.push(t));
+  input.value = '';
+  renderTags();
+}
+
+document.getElementById('addTagBtn').addEventListener('click', addTagFromInput);
+document.getElementById('addTagInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); addTagFromInput(); }
+});
+
+document.getElementById('copyAllTagsBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(tagsArray.join(', '));
+  const btn = document.getElementById('copyAllTagsBtn');
+  btn.textContent = 'Copied';
+  setTimeout(() => btn.textContent = 'Copy all tags', 1200);
+});
+
+document.getElementById('exampleTags').addEventListener('input', (e) => {
+  autosaveRefTags(e.target.value);
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', async () => {
+  if (!selectedType) return;
+  pastedPool = [];
+  document.getElementById('exampleTags').value = '';
+  renderPool();
+  seedTagsFromBakedIn();
+  seedLiveTitle();
+  try {
+    await window.storage.set('session:pool:' + selectedType, JSON.stringify([]));
+    await window.storage.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+    await window.storage.set('session:refTags:' + selectedType, '');
+  } catch (e) { console.error(e); }
+});
+
+(async function initLastSession() {
+  try {
+    const savedType = await window.storage.get('session:productType');
+    if (savedType && savedType.value) {
+      const btn = document.querySelector(`.type-btn[data-type="${savedType.value}"]`);
+      if (btn) {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = savedType.value;
+        await loadBakedTags(selectedType);
+        await loadBakedPieces(selectedType);
+        await restoreWorkSession(selectedType);
+        if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
+        if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
+      }
+    }
+  } catch (e) { console.error(e); }
+})();
+</script>
+</body>
+</html>
