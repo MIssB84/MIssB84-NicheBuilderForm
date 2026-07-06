@@ -271,20 +271,16 @@
   <div class="divider-label">— then —</div>
 
   <div class="card">
-    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags</h2>
+    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags
+      <button class="btn secondary" id="clearAllBtn" style="margin-left:auto; font-size:11px;">Clear everything</button>
+    </h2>
 
-    <label class="first">Baked in keywords for this product type</label>
-    <div class="hint">Automatically starts every new title below. Saved per product type, edit anytime.</div>
-    <div class="baked-titles-box">
-      <input type="text" id="bakedPiecesInput" placeholder="e.g. Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download">
-    </div>
-
-    <div style="margin-top:14px; background:var(--bg); border-radius:10px; padding:16px;">
+    <div style="background:var(--bg); border-radius:10px; padding:16px;">
       <div style="font-size:11px; letter-spacing:1px; color:var(--gold); font-weight:700;">LIVE TITLE</div>
       <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--cream); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
       <div id="liveTitleCount" style="font-size:13px; color:var(--gold); margin-top:10px; font-weight:700;">0 / 140 chars</div>
     </div>
-    <div class="hint" style="margin-top:6px;">Click directly into the title above to type, edit, or delete anything by hand.</div>
+    <div class="hint" style="margin-top:6px;">Starts filled in with your baked in wording for this product type. Click directly into it to type, edit, or delete anything by hand.</div>
     <div class="copy-all-row">
       <button class="btn secondary" id="copyLiveTitleBtn">Copy this title</button>
       <button class="btn secondary" id="resetLiveTitleBtn">Reset for next title</button>
@@ -306,37 +302,34 @@
     <div class="tag-list" id="keywordPoolList" style="margin-top:12px;"></div>
     <button class="btn secondary" id="clearPoolBtn" style="margin-top:10px;">Clear pool</button>
 
-    <label style="margin-top:20px;">Baked in tags for this product type</label>
-    <div class="hint">Always included automatically, saved per product type. Comma separated.</div>
-    <div class="baked-tags-box">
-      <input type="text" id="bakedTagsInput" placeholder="Select a product type above to load its baked in tags">
-    </div>
-
     <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
       <label class="first" style="margin-top:0;">Tags</label>
+      <div class="hint">Starts filled in with your baked in tags for this product type. Click × on any pill you don't want for this particular design, then add your own below.</div>
+    </div>
+
+    <div class="tag-meta">
+      <span class="count-badge" id="tagCountBadge">0/13 tags</span>
+      <span class="dupe-flag" id="tagDupeFlag">Duplicate tags found</span>
+    </div>
+    <div class="tag-list" id="tagsList"></div>
+    <div class="add-tag-row">
+      <input type="text" id="addTagInput" placeholder="Add a tag and press Enter">
+      <button class="btn small" id="addTagBtn">Add</button>
+    </div>
+    <button class="btn secondary" id="copyAllTagsBtn" style="margin-top:12px;">Copy all tags</button>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Suggest more tags (optional)</label>
+      <div class="hint">Adds AI suggested tags on top of what's already there, based on your live title and image prompts. Won't remove or replace anything.</div>
     </div>
 
     <label>Reference tags (optional)</label>
     <div class="hint">Paste tags from bestseller listings if you want the style modeled off them.</div>
     <textarea id="exampleTags" rows="2" placeholder="Paste reference tags here if you have any"></textarea>
 
-    <button class="btn" id="generateTitlesBtn">Generate Tags</button>
+    <button class="btn" id="generateTitlesBtn">Suggest More Tags</button>
     <div class="status" id="titlesStatus"></div>
     <div class="error" id="titlesError"></div>
-
-    <div class="output-block" id="titlesOutputBlock" style="display:none;">
-      <label class="first" style="margin-top:0;">Tags</label>
-      <div class="tag-meta">
-        <span class="count-badge" id="tagCountBadge">0/13 tags</span>
-        <span class="dupe-flag" id="tagDupeFlag">Duplicate tags found</span>
-      </div>
-      <div class="tag-list" id="tagsList"></div>
-      <div class="add-tag-row">
-        <input type="text" id="addTagInput" placeholder="Add a tag and press Enter">
-        <button class="btn small" id="addTagBtn">Add</button>
-      </div>
-      <button class="btn secondary" id="copyAllTagsBtn" style="margin-top:12px;">Copy all tags</button>
-    </div>
   </div>
 </div>
 
@@ -345,13 +338,13 @@ let selectedType = null;
 let uploadedImages = [];
 let lastPromptsText = [];
 let tagsArray = [];
+let bakedPiecesValue = '';
+let bakedTagsValue = '';
 
 const typeRow = document.getElementById('typeRow');
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const thumbs = document.getElementById('thumbs');
-const bakedTagsInput = document.getElementById('bakedTagsInput');
-const bakedPiecesInput = document.getElementById('bakedPiecesInput');
 
 typeRow.addEventListener('click', async (e) => {
   const btn = e.target.closest('.type-btn');
@@ -359,19 +352,46 @@ typeRow.addEventListener('click', async (e) => {
   document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedType = btn.dataset.type;
+  try { await window.storage.set('session:productType', selectedType); } catch (e) {}
   await loadBakedTags(selectedType);
   await loadBakedPieces(selectedType);
+  await restoreWorkSession(selectedType);
+  if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
+  if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
 });
 
+const DEFAULT_BAKED_TAGS = {
+  'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler'
+};
+
 async function loadBakedTags(type) {
-  bakedTagsInput.placeholder = 'Loading...';
   try {
     const result = await window.storage.get('baked-tags:' + type);
-    bakedTagsInput.value = result ? result.value : '';
+    if (result && result.value) {
+      bakedTagsValue = result.value;
+    } else if (DEFAULT_BAKED_TAGS[type]) {
+      bakedTagsValue = DEFAULT_BAKED_TAGS[type];
+    } else {
+      bakedTagsValue = '';
+    }
   } catch (err) {
-    bakedTagsInput.value = '';
+    bakedTagsValue = DEFAULT_BAKED_TAGS[type] || '';
   }
-  bakedTagsInput.placeholder = 'e.g. digital download, sublimation png, seamless wrap';
+
+  if (bakedTagsValue) {
+    const seen = new Set();
+    const deduped = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean).filter(t => {
+      const key = t.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    const cleaned = deduped.join(', ');
+    if (cleaned !== bakedTagsValue) {
+      bakedTagsValue = cleaned;
+      try { await window.storage.set('baked-tags:' + type, cleaned); } catch (e) {}
+    }
+  }
 }
 
 const DEFAULT_BAKED = {
@@ -379,41 +399,97 @@ const DEFAULT_BAKED = {
 };
 
 async function loadBakedPieces(type) {
-  bakedPiecesInput.placeholder = 'Loading...';
   try {
     const result = await window.storage.get('baked-titles:' + type);
     if (result && result.value) {
-      bakedPiecesInput.value = result.value;
+      bakedPiecesValue = result.value;
     } else if (DEFAULT_BAKED[type]) {
-      bakedPiecesInput.value = DEFAULT_BAKED[type];
+      bakedPiecesValue = DEFAULT_BAKED[type];
       try { await window.storage.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
     } else {
-      bakedPiecesInput.value = '';
+      bakedPiecesValue = '';
     }
   } catch (err) {
-    bakedPiecesInput.value = DEFAULT_BAKED[type] || '';
+    bakedPiecesValue = DEFAULT_BAKED[type] || '';
   }
-  bakedPiecesInput.placeholder = 'e.g. Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download';
   seedLiveTitle();
 }
 
-bakedPiecesInput.addEventListener('change', async () => {
+function debounce(fn, delay) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+const autosavePool = debounce(async () => {
   if (!selectedType) return;
-  try { await window.storage.set('baked-titles:' + selectedType, bakedPiecesInput.value); }
-  catch (err) { console.error('Could not save baked pieces', err); }
-});
+  try { await window.storage.set('session:pool:' + selectedType, JSON.stringify(pastedPool)); } catch (e) { console.error(e); }
+}, 600);
+
+const autosaveTitle = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:liveTitle:' + selectedType, val); } catch (e) { console.error(e); }
+}, 600);
+
+const autosaveTags = debounce(async () => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:tags:' + selectedType, JSON.stringify(tagsArray)); } catch (e) { console.error(e); }
+}, 600);
+
+const autosaveRefTags = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await window.storage.set('session:refTags:' + selectedType, val); } catch (e) { console.error(e); }
+}, 600);
+
+function seedTagsFromBakedIn() {
+  tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  renderTags();
+}
+
+async function restoreWorkSession(type) {
+  try {
+    const savedPool = await window.storage.get('session:pool:' + type);
+    pastedPool = (savedPool && savedPool.value) ? JSON.parse(savedPool.value) : [];
+  } catch (e) { pastedPool = []; }
+  renderPool();
+
+  try {
+    const savedTitle = await window.storage.get('session:liveTitle:' + type);
+    if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null && savedTitle.value !== '') {
+      const preview = document.getElementById('liveTitlePreview');
+      preview.value = savedTitle.value;
+      updateLiveTitleCount(savedTitle.value);
+    }
+  } catch (e) {}
+
+  try {
+    const savedTags = await window.storage.get('session:tags:' + type);
+    tagsArray = (savedTags && savedTags.value) ? JSON.parse(savedTags.value) : [];
+    if (tagsArray.length === 0) tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  } catch (e) {
+    tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  const seenTags = new Set();
+  tagsArray = tagsArray.filter(t => {
+    const key = t.trim().toLowerCase();
+    if (seenTags.has(key)) return false;
+    seenTags.add(key);
+    return true;
+  });
+  renderTags();
+
+  try {
+    const savedRefTags = await window.storage.get('session:refTags:' + type);
+    document.getElementById('exampleTags').value = (savedRefTags && savedRefTags.value) ? savedRefTags.value : '';
+  } catch (e) {
+    document.getElementById('exampleTags').value = '';
+  }
+}
 
 function seedLiveTitle() {
   const preview = document.getElementById('liveTitlePreview');
-  preview.value = bakedPiecesInput.value.trim();
+  preview.value = bakedPiecesValue.trim();
   updateLiveTitleCount(preview.value);
 }
-
-bakedTagsInput.addEventListener('change', async () => {
-  if (!selectedType) return;
-  try { await window.storage.set('baked-tags:' + selectedType, bakedTagsInput.value); }
-  catch (err) { console.error('Could not save baked tags', err); }
-});
 
 let pastedPool = [];
 
@@ -475,6 +551,7 @@ function renderPool() {
       const casedText = toTitleCase(item.text);
       preview.value = current ? `${current} ${casedText}` : casedText;
       updateLiveTitleCount(preview.value);
+      autosaveTitle(preview.value);
     });
 
     chip.appendChild(textSpan);
@@ -483,6 +560,7 @@ function renderPool() {
     chip.appendChild(removeBtn);
     listEl.appendChild(chip);
   });
+  autosavePool();
 }
 
 const KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
@@ -582,6 +660,7 @@ function updateLiveTitleCount(text) {
 
 document.getElementById('liveTitlePreview').addEventListener('input', (e) => {
   updateLiveTitleCount(e.target.value);
+  autosaveTitle(e.target.value);
 });
 
 document.getElementById('copyLiveTitleBtn').addEventListener('click', () => {
@@ -769,35 +848,33 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-const TAGS_SYSTEM = `You are a production assistant that writes Etsy tags for the seller's own Etsy shop.
+const TAGS_SYSTEM = `You are a production assistant that suggests a few additional Etsy tags for the seller's own Etsy shop, on top of tags they already have.
 
-Inputs: product type, baked in tags (always included), reference tags (optional, for style only), the current live title the seller is building, and design context from image prompts already written for this design.
+Inputs: product type, tags already in use (do not repeat these), reference tags (optional, for style only), the current live title the seller is building, and design context from image prompts already written for this design.
 
-Build one tag list combining: all baked in tags (always include every one), tags derived from the live title and design context, and style inspiration from reference tags if given. Deduplicate case insensitively. Cap the list at 13 tags total. Each tag must be 20 characters or fewer including spaces. Never use em dashes.
+Suggest new tags derived from the live title and design context, and style inspiration from reference tags if given. Do not duplicate or rephrase any tag already in use. Suggest as many as make sense up to a maximum of 13 minus however many tags are already in use, so the combined total never exceeds 13. Each tag must be 20 characters or fewer including spaces. Never use em dashes.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
-{"tags": ["tag1", "tag2"]}`;
+{"tags": ["new tag 1", "new tag 2"]}`;
 
 document.getElementById('generateTitlesBtn').addEventListener('click', async () => {
   const statusEl = document.getElementById('titlesStatus');
   const errorEl = document.getElementById('titlesError');
-  const outputBlock = document.getElementById('titlesOutputBlock');
   setError(errorEl, '');
-  outputBlock.style.display = 'none';
 
   if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
   const exampleTags = document.getElementById('exampleTags').value.trim();
 
   const btn = document.getElementById('generateTitlesBtn');
   btn.disabled = true;
-  setStatus(statusEl, 'Building tags...');
+  setStatus(statusEl, 'Finding more tags...');
 
   try {
     const designContext = lastPromptsText.length
       ? lastPromptsText.join('\n\n')
       : 'No image prompts generated yet in this session.';
 
-    const userText = `Product type: ${selectedType}\n\nBaked in tags: ${bakedTagsInput.value || 'none set'}\n\nReference tags: ${exampleTags || 'none given'}\n\nCurrent live title: ${window._liveTitle || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+    const userText = `Product type: ${selectedType}\n\nTags already in use: ${tagsArray.join(', ') || 'none yet'}\n\nReference tags: ${exampleTags || 'none given'}\n\nCurrent live title: ${window._liveTitle || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
 
     const result = await callClaude(TAGS_SYSTEM, [{ type: 'text', text: userText }]);
 
@@ -806,19 +883,18 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
     rawTags.forEach(t => {
       String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flattened.push(p));
     });
-    const seen = new Set();
-    tagsArray = flattened.filter(t => {
+    const seen = new Set(tagsArray.map(t => t.toLowerCase()));
+    flattened.forEach(t => {
       const key = t.toLowerCase();
-      if (seen.has(key)) return false;
+      if (seen.has(key)) return;
+      if (tagsArray.length >= 13) return;
       seen.add(key);
-      return true;
-    }).slice(0, 13);
+      tagsArray.push(t);
+    });
     renderTags();
-
-    outputBlock.style.display = 'block';
   } catch (err) {
     console.error(err);
-    setError(errorEl, 'Something went wrong generating tags. Try again.');
+    setError(errorEl, 'Something went wrong finding more tags. Try again.');
   } finally {
     btn.disabled = false;
     setStatus(statusEl, '');
@@ -862,6 +938,7 @@ function renderTags() {
   dupeFlag.classList.toggle('show', hasDupes);
 
   window._lastTags = tagsArray;
+  autosaveTags();
 }
 
 document.getElementById('tagsList').addEventListener('click', (e) => {
@@ -899,6 +976,43 @@ document.getElementById('copyAllTagsBtn').addEventListener('click', () => {
   btn.textContent = 'Copied';
   setTimeout(() => btn.textContent = 'Copy all tags', 1200);
 });
+
+document.getElementById('exampleTags').addEventListener('input', (e) => {
+  autosaveRefTags(e.target.value);
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', async () => {
+  if (!selectedType) return;
+  pastedPool = [];
+  document.getElementById('exampleTags').value = '';
+  renderPool();
+  seedTagsFromBakedIn();
+  seedLiveTitle();
+  try {
+    await window.storage.set('session:pool:' + selectedType, JSON.stringify([]));
+    await window.storage.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+    await window.storage.set('session:refTags:' + selectedType, '');
+  } catch (e) { console.error(e); }
+});
+
+(async function initLastSession() {
+  try {
+    const savedType = await window.storage.get('session:productType');
+    if (savedType && savedType.value) {
+      const btn = document.querySelector(`.type-btn[data-type="${savedType.value}"]`);
+      if (btn) {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = savedType.value;
+        await loadBakedTags(selectedType);
+        await loadBakedPieces(selectedType);
+        await restoreWorkSession(selectedType);
+        if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
+        if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
+      }
+    }
+  } catch (e) { console.error(e); }
+})();
 </script>
 </body>
 </html>
