@@ -736,12 +736,30 @@ async function callClaude(systemPrompt, userContent) {
       messages: [{ role: "user", content: userContent }]
     })
   });
-  if (!response.ok) throw new Error('API request failed: ' + response.status);
+  if (!response.ok) {
+    let detail = '';
+    try { const errBody = await response.json(); detail = errBody?.error?.message || ''; } catch (e) {}
+    throw new Error(`API request failed (${response.status})${detail ? ': ' + detail : ''}`);
+  }
   const data = await response.json();
   const textBlock = data.content.find(b => b.type === 'text');
-  if (!textBlock) throw new Error('No text in response');
-  let cleaned = textBlock.text.trim().replace(/^```json/i, '').replace(/```$/,'').trim();
-  return JSON.parse(cleaned);
+  if (!textBlock) throw new Error('Response had no text content to parse.');
+  const raw = textBlock.text.trim();
+  let cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+      } catch (e2) {
+        throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+      }
+    }
+    throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+  }
 }
 
 const PROMPTS_SYSTEM = `You are a production assistant that writes AI image generation prompts for Etsy digital products (Tumbler Wrap PNG, Shirt PNG, Laser Wrap SVG).
@@ -820,7 +838,7 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
     setStatus(statusEl, '');
   } catch (err) {
     console.error(err);
-    setError(errorEl, 'Something went wrong generating prompts. Try again.');
+    setError(errorEl, 'Something went wrong generating prompts: ' + (err.message || 'try again') + '.');
   } finally {
     btn.disabled = false;
     setStatus(statusEl, '');
@@ -894,7 +912,7 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
     renderTags();
   } catch (err) {
     console.error(err);
-    setError(errorEl, 'Something went wrong finding more tags. Try again.');
+    setError(errorEl, 'Something went wrong finding more tags: ' + (err.message || 'try again') + '.');
   } finally {
     btn.disabled = false;
     setStatus(statusEl, '');
