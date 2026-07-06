@@ -288,7 +288,7 @@
 
     <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
       <label class="first" style="margin-top:0;">Title builder</label>
-      <div class="hint">Paste keywords or a full title below, press Enter or hit Add and they'll show up as pills, each with its own character count. Click a pill to add it to the end of the title above. Click a pill's text to edit it first.</div>
+      <div class="hint">Paste keywords or a full title below, press Enter or hit Add. If you paste a full title, product and format wording (tumbler, wrap, PNG, digital download, etc) gets stripped automatically, leaving just the descriptive part as pills. Click a pill to add it to the end of the title above. Click a pill's text to edit it first.</div>
     </div>
 
     <label class="first" style="margin-top:10px;">Paste keywords or a full title</label>
@@ -575,6 +575,20 @@ async function extractKeywords(text) {
   return result.keywords || [];
 }
 
+const STRIP_PRODUCT_WORDING_SYSTEM = `You are helping an Etsy seller pull just the descriptive part out of a full title they pasted from a listing.
+
+The pasted text has comma separated segments. Each segment mixes a descriptive phrase with generic product or format wording tacked onto the end, for example "Salty Heifer Seamless Tumbler Wrap" mixes the descriptive phrase "Salty Heifer" with the generic tail "Seamless Tumbler Wrap".
+
+For every segment, strip off the generic product or format wording and return only the descriptive lead phrase. Generic wording includes things like: tumbler, wrap, png, svg, design, sublimation, seamless, skinny, 20oz, 20 oz, digital download, instant download, download, gift. Keep the descriptive phrase exactly as cased in the original. Return one phrase per segment, in the same order, even if a segment turns out to be entirely generic with nothing descriptive left (in that case return an empty string for that segment). Do not merge segments together.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"phrases": ["phrase 1", "phrase 2", "phrase 3"]}`;
+
+async function stripProductWording(text) {
+  const result = await callClaude(STRIP_PRODUCT_WORDING_SYSTEM, [{ type: 'text', text }]);
+  return (result.phrases || []).filter(Boolean);
+}
+
 function pushSplit(text) {
   const normalized = text.replace(/[，、]/g, ',');
   const parts = normalized.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
@@ -585,7 +599,24 @@ async function addToPastedPool(text, allowExtraction) {
   const trimmed = text.trim();
   const hasDelimiters = /[,\n，、]/.test(trimmed);
   const statusEl = document.getElementById('poolStatus');
-  if (hasDelimiters) {
+  if (hasDelimiters && allowExtraction) {
+    setStatus(statusEl, 'Stripping product wording, keeping the descriptive part...');
+    try {
+      const phrases = await stripProductWording(trimmed);
+      if (phrases.length) {
+        phrases.forEach(p => pushSplit(p));
+      } else {
+        pushSplit(trimmed);
+      }
+      renderPool();
+    } catch (err) {
+      console.error(err);
+      pushSplit(trimmed);
+      renderPool();
+    } finally {
+      setStatus(statusEl, '');
+    }
+  } else if (hasDelimiters) {
     pushSplit(trimmed);
     renderPool();
   } else if (allowExtraction && trimmed.split(/\s+/).length > 5) {
@@ -731,7 +762,7 @@ async function callClaude(systemPrompt, userContent) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "claude-sonnet-4-6",
-      max_tokens: 1200,
+      max_tokens: 4000,
       system: systemPrompt,
       messages: [{ role: "user", content: userContent }]
     })
