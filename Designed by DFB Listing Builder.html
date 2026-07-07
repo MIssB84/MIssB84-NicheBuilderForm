@@ -51,13 +51,13 @@
     margin-right: auto;
   }
 
-  .bottom-bar-btn {
+  .bottom-bar .btn.bottom-bar-btn {
     background: transparent;
     color: var(--cream);
     border: 1.5px solid var(--gold);
   }
 
-  .bottom-bar-btn:hover { background: var(--gold); color: var(--bg); }
+  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--gold); color: var(--bg); }
 
   h1 {
     font-family: 'Playfair Display', serif;
@@ -401,7 +401,7 @@
 
 <div class="bottom-bar">
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
-  <button class="btn secondary bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
+  <button class="btn bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
 </div>
 
 <script>
