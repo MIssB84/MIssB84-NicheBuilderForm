@@ -25,10 +25,39 @@
     background: var(--bg);
     color: var(--cream);
     font-family: 'Jost', sans-serif;
-    padding: 32px 20px 80px;
+    padding: 32px 20px 90px;
   }
 
   .wrap { max-width: 880px; margin: 0 auto; }
+
+  .bottom-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg);
+    border-top: 1px solid #4a3a34;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    z-index: 50;
+  }
+
+  .bottom-bar-status {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-right: auto;
+  }
+
+  .bottom-bar-btn {
+    background: transparent;
+    color: var(--cream);
+    border: 1.5px solid var(--gold);
+  }
+
+  .bottom-bar-btn:hover { background: var(--gold); color: var(--bg); }
 
   h1 {
     font-family: 'Playfair Display', serif;
@@ -167,6 +196,17 @@
     padding: 14px; margin-bottom: 10px; font-size: 13.5px; line-height: 1.5; position: relative;
   }
   .prompt-item .copy-btn { position: absolute; top: 10px; right: 10px; }
+  .prompt-item.used { background: #ece5df; color: #a89a92; opacity: 0.7; }
+  .prompt-item.used .copy-btn { color: var(--gold); border-color: var(--gold); }
+
+  .history-batch {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  .history-batch-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; color: #9a877f; margin-bottom: 8px;
+  }
 
   .title-item {
     display: flex; justify-content: space-between; align-items: center;
@@ -186,6 +226,8 @@
   .tag-chip .len { color: #9a877f; font-size: 10px; }
   .tag-chip .len.over { color: var(--warn); font-weight: 700; }
   .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.suggested { border-color: #7d9b8f; background: #eaf1ee; }
+  .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
   .tag-chip.chosen { background: var(--bg); color: var(--cream); border-color: var(--bg); }
 
   .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
@@ -270,6 +312,7 @@
     <textarea id="creativeDirection" rows="2" placeholder="e.g. deeper color palette, add more stars, softer background"></textarea>
 
     <button class="btn" id="generatePromptsBtn">Generate 5 Prompts</button>
+    <button class="btn secondary" id="viewHistoryBtn" style="display:none;">View Past Prompts (0)</button>
     <div class="status" id="promptsStatus"></div>
     <div class="error" id="promptsError"></div>
 
@@ -280,14 +323,17 @@
         <button class="btn secondary" id="copyAllPromptsBtn">Copy all prompts</button>
       </div>
     </div>
+
+    <div id="historyPanel" style="display:none; margin-top:18px; border-top:1px solid var(--border); padding-top:16px;">
+      <label class="first" style="margin-top:0;">Past Prompts This Session</label>
+      <div id="historyList"></div>
+    </div>
   </div>
 
   <div class="divider-label">— then —</div>
 
   <div class="card">
-    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags
-      <button class="btn secondary" id="clearAllBtn" style="margin-left:auto; font-size:11px;">Clear everything</button>
-    </h2>
+    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags</h2>
 
     <div style="background:var(--bg); border-radius:10px; padding:16px;">
       <div style="font-size:11px; letter-spacing:1px; color:var(--gold); font-weight:700;">LIVE TITLE</div>
@@ -353,6 +399,11 @@
   </div>
 </div>
 
+<div class="bottom-bar">
+  <span class="bottom-bar-status" id="bottomBarStatus"></span>
+  <button class="btn secondary bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
+</div>
+
 <script>
 const storageAPI = {
   async get(key) {
@@ -378,6 +429,8 @@ const storageAPI = {
 let selectedType = null;
 let uploadedImages = [];
 let lastPromptsText = [];
+let promptHistory = [];
+let suggestedTagKeys = new Set();
 let tagsArray = [];
 let referenceTagsArray = [];
 let bakedPiecesValue = '';
@@ -437,6 +490,10 @@ async function loadBakedTags(type) {
 }
 
 const DEFAULT_BAKED = {
+  'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download'
+};
+
+const OLD_DEFAULT_BAKED = {
   'Tumbler Wrap PNG': 'Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download'
 };
 
@@ -444,7 +501,12 @@ async function loadBakedPieces(type) {
   try {
     const result = await storageAPI.get('baked-titles:' + type);
     if (result && result.value) {
-      bakedPiecesValue = result.value;
+      if (OLD_DEFAULT_BAKED[type] && result.value.trim() === OLD_DEFAULT_BAKED[type]) {
+        bakedPiecesValue = DEFAULT_BAKED[type];
+        try { await storageAPI.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
+      } else {
+        bakedPiecesValue = result.value;
+      }
     } else if (DEFAULT_BAKED[type]) {
       bakedPiecesValue = DEFAULT_BAKED[type];
       try { await storageAPI.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
@@ -576,9 +638,11 @@ async function restoreWorkSession(type) {
   try {
     const savedTitle = await storageAPI.get('session:liveTitle:' + type);
     if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null && savedTitle.value !== '') {
+      const isStaleDefault = OLD_DEFAULT_BAKED[type] && savedTitle.value.trim() === OLD_DEFAULT_BAKED[type];
       const preview = document.getElementById('liveTitlePreview');
-      preview.value = savedTitle.value;
-      updateLiveTitleCount(savedTitle.value);
+      const valueToUse = isStaleDefault ? bakedPiecesValue : savedTitle.value;
+      preview.value = valueToUse;
+      updateLiveTitleCount(valueToUse);
     }
   } catch (e) {}
 
@@ -990,6 +1054,14 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
     });
     outputBlock.style.display = 'block';
     setStatus(statusEl, '');
+
+    promptHistory.unshift({
+      productType: selectedType,
+      timestamp: Date.now(),
+      prompts: lastPromptsText.slice(),
+      suggestions: result.suggestions || ''
+    });
+    renderPromptHistoryButton();
   } catch (err) {
     console.error(err);
     setError(errorEl, 'Something went wrong generating prompts: ' + (err.message || 'try again') + '.');
@@ -1002,11 +1074,19 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
 document.getElementById('promptsList').addEventListener('click', (e) => {
   const btn = e.target.closest('.copy-btn');
   if (!btn) return;
-  copyToClipboard(lastPromptsText[Number(btn.dataset.idx)], btn, 'Copy');
+  const item = btn.closest('.prompt-item');
+  const willBeUsed = !item.classList.contains('used');
+  item.classList.toggle('used', willBeUsed);
+  copyToClipboard(lastPromptsText[Number(btn.dataset.idx)], btn, willBeUsed ? 'Used' : 'Copy');
 });
 
 document.getElementById('copyAllPromptsBtn').addEventListener('click', () => {
   const btn = document.getElementById('copyAllPromptsBtn');
+  document.querySelectorAll('#promptsList .prompt-item').forEach(item => {
+    item.classList.add('used');
+    const copyBtn = item.querySelector('.copy-btn');
+    if (copyBtn) copyBtn.textContent = 'Used';
+  });
   copyToClipboard(lastPromptsText.join('\n\n\n'), btn, 'Copy all prompts');
 });
 
@@ -1014,6 +1094,81 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+function renderPromptHistoryButton() {
+  const btn = document.getElementById('viewHistoryBtn');
+  if (promptHistory.length === 0) {
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'inline-flex';
+  btn.textContent = `View Past Prompts (${promptHistory.length})`;
+}
+
+document.getElementById('viewHistoryBtn').addEventListener('click', () => {
+  const panel = document.getElementById('historyPanel');
+  const isOpen = panel.style.display !== 'none';
+  if (isOpen) {
+    panel.style.display = 'none';
+    return;
+  }
+  renderHistoryPanel();
+  panel.style.display = 'block';
+});
+
+function renderHistoryPanel() {
+  const listEl = document.getElementById('historyList');
+  listEl.innerHTML = '';
+  promptHistory.forEach((batch, batchIdx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'history-batch';
+
+    const time = new Date(batch.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const header = document.createElement('div');
+    header.className = 'history-batch-header';
+    header.innerHTML = `<span>${escapeHtml(batch.productType)} · ${time}</span>`;
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'btn secondary';
+    loadBtn.style.fontSize = '11px';
+    loadBtn.textContent = 'Load this batch';
+    loadBtn.addEventListener('click', () => {
+      lastPromptsText = batch.prompts.slice();
+      const list = document.getElementById('promptsList');
+      list.innerHTML = '';
+      lastPromptsText.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'prompt-item';
+        div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${escapeHtml(p)}</div>`;
+        list.appendChild(div);
+      });
+      document.getElementById('promptsOutputBlock').style.display = 'block';
+      document.getElementById('historyPanel').style.display = 'none';
+      document.getElementById('suggestionsNote').style.display = batch.suggestions ? 'block' : 'none';
+      if (batch.suggestions) document.getElementById('suggestionsNote').textContent = 'Auto suggestions since no direction given: ' + batch.suggestions;
+    });
+    header.appendChild(loadBtn);
+    wrap.appendChild(header);
+
+    batch.prompts.forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = 'prompt-item';
+      item.style.fontSize = '12.5px';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn secondary copy-btn';
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', () => {
+        copyToClipboard(p, copyBtn, 'Copy');
+      });
+      const textDiv = document.createElement('div');
+      textDiv.textContent = p;
+      item.appendChild(copyBtn);
+      item.appendChild(textDiv);
+      wrap.appendChild(item);
+    });
+
+    listEl.appendChild(wrap);
+  });
 }
 
 function copyToClipboard(text, btn, originalLabel) {
@@ -1084,6 +1239,7 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
       if (seen.has(key)) return;
       seen.add(key);
       tagsArray.push(t);
+      suggestedTagKeys.add(key);
     });
     renderTags();
   } catch (err) {
@@ -1121,8 +1277,9 @@ function renderTags() {
     const key = tag.trim().toLowerCase();
     const isDupe = lowerCounts[key] > 1;
     const overLen = tag.length > 20;
+    const isSuggested = suggestedTagKeys.has(key);
     const chip = document.createElement('div');
-    chip.className = 'tag-chip' + (isDupe ? ' dupe' : '');
+    chip.className = 'tag-chip' + (isDupe ? ' dupe' : '') + (isSuggested ? ' suggested' : '');
     chip.innerHTML = `<span>${escapeHtml(tag)}</span><span class="len${overLen ? ' over' : ''}">${tag.length}</span><button class="copy-btn-pill" data-action="copy" data-i="${i}" title="Copy this tag">Copy</button><button data-action="remove" data-i="${i}" title="Remove">×</button>`;
     tagsList.appendChild(chip);
   });
@@ -1168,9 +1325,15 @@ document.getElementById('copyAllTagsBtn').addEventListener('click', () => {
 });
 
 document.getElementById('clearAllBtn').addEventListener('click', async () => {
-  if (!selectedType) return;
+  if (!selectedType) {
+    const statusEl = document.getElementById('bottomBarStatus');
+    statusEl.textContent = 'Pick a product type first';
+    setTimeout(() => statusEl.textContent = '', 2000);
+    return;
+  }
   pastedPool = [];
   referenceTagsArray = [];
+  suggestedTagKeys = new Set();
   renderPool();
   renderReferenceTags();
   seedTagsFromBakedIn();
@@ -1180,6 +1343,9 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
     await storageAPI.set('session:refTags:' + selectedType, JSON.stringify([]));
   } catch (e) {}
+  const statusEl = document.getElementById('bottomBarStatus');
+  statusEl.textContent = 'Cleared';
+  setTimeout(() => statusEl.textContent = '', 2000);
 });
 
 (async function initLastSession() {
