@@ -233,6 +233,13 @@
   .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
   .pill-text { outline: none; min-width: 20px; cursor: text; }
   .pill-text:focus { background: #fbf3e3; border-radius: 4px; padding: 0 2px; }
+  .slot-btns { display: flex; gap: 3px; }
+  .slot-btn {
+    width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border);
+    background: #fff; color: var(--mid-text); font-size: 10.5px; font-weight: 700;
+    cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .slot-btn:hover { border-color: var(--gold); background: var(--gold); color: var(--bg); }
   .pill .remove-btn {
     background: none; border: none; color: #9a877f; cursor: pointer; font-size: 13px; padding: 0 2px;
   }
@@ -305,6 +312,7 @@
       <p class="small">You can upload multiple, or paste more than one</p>
       <input type="file" id="fileInput" accept="image/*" multiple>
     </div>
+    <button class="btn secondary" id="pasteClipboardBtn" style="margin-top:10px;">Paste from Clipboard</button>
     <div class="thumbs" id="thumbs"></div>
 
     <label>Creative direction (optional)</label>
@@ -348,7 +356,7 @@
 
     <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
       <label class="first" style="margin-top:0;">Title builder</label>
-      <div class="hint">Paste keywords or a full title below, press Enter or hit Add. If you paste a full title, product and format wording (tumbler, wrap, PNG, digital download, etc) gets stripped automatically, leaving just the descriptive part as pills. Click a pill to add it to the end of the title above. Click a pill's text to edit it first.</div>
+      <div class="hint">Paste keywords or a full title below, press Enter or hit Add. If you paste a full title, product and format wording (tumbler, wrap, PNG, digital download, etc) gets stripped automatically, leaving just the descriptive part as pills. Your title above starts with numbered spots (①②③) matching your baked in template, click a pill's number to drop it at that exact spot, or just click the pill itself to add it to the end instead. Click a pill's text to edit it first. Leftover unfilled spots clean themselves up when you hit Copy.</div>
     </div>
 
     <label class="first" style="margin-top:10px;">Paste keywords or a full title</label>
@@ -645,6 +653,7 @@ async function restoreWorkSession(type) {
       updateLiveTitleCount(valueToUse);
     }
   } catch (e) {}
+  renderPool();
 
   try {
     const savedTags = await storageAPI.get('session:tags:' + type);
@@ -671,10 +680,35 @@ async function restoreWorkSession(type) {
   renderReferenceTags();
 }
 
+const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
+
+function getBakedSegments() {
+  return bakedPiecesValue.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+function getOpenSlotNumbers() {
+  const text = document.getElementById('liveTitlePreview').value;
+  const segments = getBakedSegments();
+  const open = [];
+  segments.forEach((seg, idx) => {
+    if (text.includes(slotMarker(idx + 1))) open.push(idx + 1);
+  });
+  return open;
+}
+
 function seedLiveTitle() {
   const preview = document.getElementById('liveTitlePreview');
-  preview.value = bakedPiecesValue.trim();
-  updateLiveTitleCount(preview.value);
+  const segments = getBakedSegments();
+  let value;
+  if (segments.length > 0) {
+    value = segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
+  } else {
+    value = bakedPiecesValue.trim();
+  }
+  preview.value = value;
+  updateLiveTitleCount(value);
+  renderPool();
 }
 
 let pastedPool = [];
@@ -710,6 +744,26 @@ function renderPool() {
     lenSpan.className = 'len';
     lenSpan.textContent = item.text.length;
 
+    const openSlots = getOpenSlotNumbers();
+    const slotBtns = document.createElement('span');
+    slotBtns.className = 'slot-btns';
+    openSlots.forEach(n => {
+      const sBtn = document.createElement('button');
+      sBtn.className = 'slot-btn';
+      sBtn.textContent = n;
+      sBtn.title = `Place at spot ${n}`;
+      sBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const preview = document.getElementById('liveTitlePreview');
+        const casedText = toTitleCase(item.text);
+        preview.value = preview.value.replace(slotMarker(n), `${casedText} ${slotMarker(n)}`);
+        updateLiveTitleCount(preview.value);
+        autosaveTitle(preview.value);
+        renderPool();
+      });
+      slotBtns.appendChild(sBtn);
+    });
+
     const copyBtn = document.createElement('button');
     copyBtn.className = 'copy-btn-pill';
     copyBtn.textContent = 'Copy';
@@ -740,6 +794,7 @@ function renderPool() {
 
     chip.appendChild(textSpan);
     chip.appendChild(lenSpan);
+    if (openSlots.length) chip.appendChild(slotBtns);
     chip.appendChild(copyBtn);
     chip.appendChild(removeBtn);
     listEl.appendChild(chip);
@@ -874,11 +929,24 @@ function updateLiveTitleCount(text) {
 document.getElementById('liveTitlePreview').addEventListener('input', (e) => {
   updateLiveTitleCount(e.target.value);
   autosaveTitle(e.target.value);
+  renderPool();
 });
 
 document.getElementById('copyLiveTitleBtn').addEventListener('click', () => {
+  const preview = document.getElementById('liveTitlePreview');
+  let cleaned = preview.value;
+  for (let n = 1; n <= 10; n++) {
+    cleaned = cleaned.split(slotMarker(n) + ' ').join('');
+    cleaned = cleaned.split(slotMarker(n)).join('');
+  }
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim();
+  cleaned = cleaned.replace(/^,\s*/, '').replace(/,\s*$/, '');
+  preview.value = cleaned;
+  updateLiveTitleCount(cleaned);
+  autosaveTitle(cleaned);
+  renderPool();
   const btn = document.getElementById('copyLiveTitleBtn');
-  copyToClipboard(window._liveTitle || '', btn, 'Copy this title');
+  copyToClipboard(cleaned, btn, 'Copy this title');
 });
 
 document.getElementById('resetLiveTitleBtn').addEventListener('click', () => {
@@ -900,6 +968,38 @@ document.addEventListener('paste', (e) => {
     }
   }
   if (files.length) handleFiles(files);
+});
+
+document.getElementById('pasteClipboardBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('pasteClipboardBtn');
+  const original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.read) {
+      btn.textContent = 'Use Ctrl+V instead';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    const clipboardItems = await navigator.clipboard.read();
+    const files = [];
+    for (const item of clipboardItems) {
+      const imgType = item.types.find(t => t.startsWith('image/'));
+      if (imgType) {
+        const blob = await item.getType(imgType);
+        files.push(new File([blob], 'pasted-image.png', { type: imgType }));
+      }
+    }
+    if (files.length) {
+      handleFiles(files);
+      btn.textContent = 'Pasted!';
+    } else {
+      btn.textContent = 'No image found on clipboard';
+    }
+    setTimeout(() => btn.textContent = original, 1800);
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Could not access clipboard';
+    setTimeout(() => btn.textContent = original, 1800);
+  }
 });
 
 function handleFiles(files) {
