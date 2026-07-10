@@ -759,6 +759,7 @@ function renderPool() {
         preview.value = preview.value.replace(slotMarker(n), `${casedText} ${slotMarker(n)}`);
         updateLiveTitleCount(preview.value);
         autosaveTitle(preview.value);
+        pastedPool.splice(i, 1);
         renderPool();
       });
       slotBtns.appendChild(sBtn);
@@ -772,6 +773,20 @@ function renderPool() {
       e.stopPropagation();
       copyToClipboard(item.text + ' ', copyBtn, 'Copy');
     });
+
+    const words = item.text.trim().split(/\s+/);
+    let splitBtn = null;
+    if (words.length > 1) {
+      splitBtn = document.createElement('button');
+      splitBtn.className = 'copy-btn-pill';
+      splitBtn.textContent = 'Split';
+      splitBtn.title = 'Split into separate word pills';
+      splitBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        words.forEach(w => pastedPool.push({ text: w }));
+        renderPool();
+      });
+    }
 
     const removeBtn = document.createElement('button');
     removeBtn.className = 'remove-btn';
@@ -790,11 +805,14 @@ function renderPool() {
       preview.value = current ? `${current} ${casedText}` : casedText;
       updateLiveTitleCount(preview.value);
       autosaveTitle(preview.value);
+      pastedPool.splice(i, 1);
+      renderPool();
     });
 
     chip.appendChild(textSpan);
     chip.appendChild(lenSpan);
     if (openSlots.length) chip.appendChild(slotBtns);
+    if (splitBtn) chip.appendChild(splitBtn);
     chip.appendChild(copyBtn);
     chip.appendChild(removeBtn);
     listEl.appendChild(chip);
