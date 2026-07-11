@@ -265,8 +265,8 @@
   .tag-meta .dupe-flag { color: var(--warn); font-weight: 600; display: none; }
   .tag-meta .dupe-flag.show { display: inline; }
 
-  .add-tag-row { display: flex; gap: 8px; margin-top: 10px; }
-  .add-tag-row input { flex: 1; }
+  .add-tag-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .add-tag-row input { flex: 1; min-width: 140px; }
 
   .copy-all-row { display: flex; gap: 10px; margin-top: 14px; }
 
@@ -368,6 +368,7 @@
     <div class="add-tag-row">
       <button class="btn small" id="addPoolBulkBtn">Add to pool</button>
       <input type="text" id="poolSingleInput" placeholder="Or type one keyword and press Enter">
+      <button class="btn secondary" id="pastePoolClipboardBtn">Paste from Clipboard</button>
     </div>
     <div class="status" id="poolStatus"></div>
 
@@ -387,6 +388,7 @@
     <div class="add-tag-row">
       <input type="text" id="addTagInput" placeholder="Add a tag and press Enter">
       <button class="btn small" id="addTagBtn">Add</button>
+      <button class="btn secondary" id="pasteTagsClipboardBtn">Paste from Clipboard</button>
     </div>
     <button class="btn secondary" id="copyAllTagsBtn" style="margin-top:12px;">Copy all tags</button>
 
@@ -401,6 +403,7 @@
     <div class="add-tag-row">
       <button class="btn small" id="addRefTagBulkBtn">Add</button>
       <input type="text" id="exampleTagsSingleInput" placeholder="Or type one and press Enter">
+      <button class="btn secondary" id="pasteRefTagsClipboardBtn">Paste from Clipboard</button>
     </div>
     <div class="tag-list" id="referenceTagsList" style="margin-top:12px;"></div>
     <button class="btn secondary" id="clearRefTagsBtn" style="margin-top:10px;">Clear reference tags</button>
@@ -468,7 +471,8 @@ typeRow.addEventListener('click', async (e) => {
 });
 
 const DEFAULT_BAKED_TAGS = {
-  'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler'
+  'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler',
+  'Shirt PNG': 'Digital Download, Sublimation Png, popular now, trendy shirt png, uv dtf'
 };
 
 async function loadBakedTags(type) {
@@ -502,11 +506,13 @@ async function loadBakedTags(type) {
 }
 
 const DEFAULT_BAKED = {
-  'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download'
+  'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download',
+  'Shirt PNG': 'PNG, Sublimation, Shirt Design Digital Download'
 };
 
 const OLD_DEFAULT_BAKED = {
-  'Tumbler Wrap PNG': 'Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download'
+  'Tumbler Wrap PNG': 'Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download',
+  'Shirt PNG': 'PNG, Sublimation, Trendy Shirt Design Digital Download'
 };
 
 async function loadBakedPieces(type) {
@@ -1029,6 +1035,47 @@ document.getElementById('pasteClipboardBtn').addEventListener('click', async () 
   }
 });
 
+async function pasteTextFromClipboard(btn, onText) {
+  const original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      btn.textContent = 'Use Ctrl+V instead';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) {
+      btn.textContent = 'Clipboard is empty';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    await onText(text);
+    btn.textContent = 'Pasted!';
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Could not access clipboard';
+  }
+  setTimeout(() => btn.textContent = original, 1800);
+}
+
+document.getElementById('pastePoolClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pastePoolClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => { await addToPastedPool(text, true); });
+});
+
+document.getElementById('pasteTagsClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteTagsClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => {
+    text.replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(t => tagsArray.push(t));
+    renderTags();
+  });
+});
+
+document.getElementById('pasteRefTagsClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteRefTagsClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => { addRefTags(text); });
+});
+
 function handleFiles(files) {
   Array.from(files).forEach(file => {
     if (!file.type.startsWith('image/')) return;
@@ -1130,7 +1177,7 @@ Rules for every prompt:
 
 Product type specific rules:
 Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt itself, describe the seamless edge to edge artwork only.
-Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Never write the words shirt or tee anywhere in the prompt body itself, describe the artwork only. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation."
+Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Never write the words shirt or tee anywhere in the prompt body itself, describe the artwork only. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation, designed to feel like an Etsy bestseller."
 Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
