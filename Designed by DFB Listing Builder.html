@@ -229,6 +229,7 @@
   .tag-chip.suggested { border-color: #7d9b8f; background: #eaf1ee; }
   .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
   .tag-chip.baked { background: #e8e2db; border-color: #b8a99c; color: #6b5d54; }
+  .tag-chip.pinned-word { border-color: var(--gold); background: #fbf3e3; }
   .tag-chip.baked .len { color: #8a7a6e; }
   .tag-chip.baked.dupe { border-color: var(--warn); background: #fdf1f0; }
   .tag-chip.baked.suggested { background: #dfe4de; border-color: #8a9a8f; }
@@ -662,6 +663,7 @@ async function restoreWorkSession(type) {
     const savedPool = await storageAPI.get('session:pool:' + type);
     pastedPool = (savedPool && savedPool.value) ? JSON.parse(savedPool.value) : [];
   } catch (e) { pastedPool = []; }
+  ensurePersistentPoolWords();
   renderPool();
 
   try {
@@ -736,6 +738,15 @@ function seedLiveTitle() {
 
 let pastedPool = [];
 
+const PERSISTENT_POOL_WORDS = ['Vintage', 'Retro', 'Trendy'];
+
+function ensurePersistentPoolWords() {
+  PERSISTENT_POOL_WORDS.forEach(w => {
+    const exists = pastedPool.some(item => item.text.trim().toLowerCase() === w.toLowerCase());
+    if (!exists) pastedPool.push({ text: w, pinned: true });
+  });
+}
+
 function renderPool() {
   const hadCommas = pastedPool.some(item => /[,\n，、]/.test(item.text));
   if (hadCommas) {
@@ -747,7 +758,7 @@ function renderPool() {
   listEl.innerHTML = '';
   pastedPool.forEach((item, i) => {
     const chip = document.createElement('div');
-    chip.className = 'tag-chip pill';
+    chip.className = 'tag-chip pill' + (item.pinned ? ' pinned-word' : '');
     chip.title = 'Click to add to the title';
 
     const textSpan = document.createElement('span');
@@ -782,7 +793,7 @@ function renderPool() {
         preview.value = preview.value.replace(slotMarker(n), `${casedText} ${slotMarker(n)}`);
         updateLiveTitleCount(preview.value);
         autosaveTitle(preview.value);
-        pastedPool.splice(i, 1);
+        if (!item.pinned) pastedPool.splice(i, 1);
         renderPool();
       });
       slotBtns.appendChild(sBtn);
@@ -828,7 +839,7 @@ function renderPool() {
       preview.value = current ? `${current} ${casedText}` : casedText;
       updateLiveTitleCount(preview.value);
       autosaveTitle(preview.value);
-      pastedPool.splice(i, 1);
+      if (!item.pinned) pastedPool.splice(i, 1);
       renderPool();
     });
 
@@ -945,6 +956,7 @@ document.getElementById('poolSingleInput').addEventListener('keydown', async (e)
 
 document.getElementById('clearPoolBtn').addEventListener('click', () => {
   pastedPool = [];
+  ensurePersistentPoolWords();
   renderPool();
 });
 
@@ -1524,6 +1536,7 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     return;
   }
   pastedPool = [];
+  ensurePersistentPoolWords();
   referenceTagsArray = [];
   suggestedTagKeys = new Set();
   renderPool();
@@ -1531,7 +1544,7 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   seedTagsFromBakedIn();
   seedLiveTitle();
   try {
-    await storageAPI.set('session:pool:' + selectedType, JSON.stringify([]));
+    await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
     await storageAPI.set('session:refTags:' + selectedType, JSON.stringify([]));
   } catch (e) {}
