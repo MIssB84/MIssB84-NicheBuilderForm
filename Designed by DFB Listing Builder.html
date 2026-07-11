@@ -228,6 +228,10 @@
   .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
   .tag-chip.suggested { border-color: #7d9b8f; background: #eaf1ee; }
   .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.baked { background: #e8e2db; border-color: #b8a99c; color: #6b5d54; }
+  .tag-chip.baked .len { color: #8a7a6e; }
+  .tag-chip.baked.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.baked.suggested { background: #dfe4de; border-color: #8a9a8f; }
   .tag-chip.chosen { background: var(--bg); color: var(--cream); border-color: var(--bg); }
 
   .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
@@ -939,8 +943,13 @@ function toTitleCase(str) {
 
 function updateLiveTitleCount(text) {
   const countEl = document.getElementById('liveTitleCount');
-  countEl.textContent = `${text.length} / 140 chars`;
-  countEl.style.color = text.length > 140 ? '#e88a83' : 'var(--gold)';
+  let markerOverhead = 0;
+  for (let n = 1; n <= 10; n++) {
+    if (text.includes(slotMarker(n))) markerOverhead += 2;
+  }
+  const maxAllowed = 140 + markerOverhead;
+  countEl.textContent = `${text.length} / ${maxAllowed} chars`;
+  countEl.style.color = text.length > maxAllowed ? '#e88a83' : 'var(--gold)';
   window._liveTitle = text;
 }
 
@@ -1117,11 +1126,12 @@ Rules for every prompt:
 - Use approximately 70% proven visual direction from the screenshot, 30% creative improvement from the direction/suggestions
 - Do not number or label prompts, no bullets, no introductions
 - Never use em dashes, use commas, colons, periods, or parentheses instead
+- Never use the product format name anywhere in the prompt, not just the opening line. Never write words like tumbler, wrap, cup, mug, shirt, tee, svg, or laser at any point in the prompt body. These prompts describe only the flat 2D artwork content itself (the subject, scene, colors, text, patterns), never the physical object it will end up printed on. If a format word appears anywhere in the prompt, an AI image generator is likely to render an actual product photo (a wrapped cup, a folded shirt) instead of standalone flat artwork, which defeats the purpose
 
 Product type specific rules:
-Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested.
-Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation."
-Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups.
+Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt itself, describe the seamless edge to edge artwork only.
+Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Never write the words shirt or tee anywhere in the prompt body itself, describe the artwork only. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation."
+Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"suggestions": "string or empty string", "prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
@@ -1390,14 +1400,18 @@ function renderTags() {
   });
   const hasDupes = Object.values(lowerCounts).some(c => c > 1);
 
+  const bakedSet = new Set(bakedTagsValue.split(',').map(s => s.trim().toLowerCase()).filter(Boolean));
+
   tagsList.innerHTML = '';
   tagsArray.forEach((tag, i) => {
     const key = tag.trim().toLowerCase();
     const isDupe = lowerCounts[key] > 1;
     const overLen = tag.length > 20;
     const isSuggested = suggestedTagKeys.has(key);
+    const isBaked = bakedSet.has(key);
     const chip = document.createElement('div');
-    chip.className = 'tag-chip' + (isDupe ? ' dupe' : '') + (isSuggested ? ' suggested' : '');
+    chip.className = 'tag-chip' + (isDupe ? ' dupe' : '') + (isSuggested ? ' suggested' : '') + (isBaked ? ' baked' : '');
+    chip.title = isBaked ? 'Baked in tag' : '';
     chip.innerHTML = `<span>${escapeHtml(tag)}</span><span class="len${overLen ? ' over' : ''}">${tag.length}</span><button class="copy-btn-pill" data-action="copy" data-i="${i}" title="Copy this tag">Copy</button><button data-action="remove" data-i="${i}" title="Remove">×</button>`;
     tagsList.appendChild(chip);
   });
