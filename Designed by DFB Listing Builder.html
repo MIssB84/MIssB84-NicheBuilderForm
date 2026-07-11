@@ -472,14 +472,24 @@ typeRow.addEventListener('click', async (e) => {
 
 const DEFAULT_BAKED_TAGS = {
   'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler',
-  'Shirt PNG': 'Digital Download, Sublimation Png, popular now, trendy shirt png, uv dtf'
+  'Shirt PNG': 'Digital Download, Sublimation Png, Png For Shirts, Tshirt Png Design, Sublimation Design, trendy shirt png'
+};
+
+const OLD_DEFAULT_BAKED_TAGS = {
+  'Shirt PNG': ['Digital Download, Sublimation Png, popular now, trendy shirt png, uv dtf']
 };
 
 async function loadBakedTags(type) {
   try {
     const result = await storageAPI.get('baked-tags:' + type);
     if (result && result.value) {
-      bakedTagsValue = result.value;
+      const staleList = OLD_DEFAULT_BAKED_TAGS[type] || [];
+      if (staleList.includes(result.value.trim()) && DEFAULT_BAKED_TAGS[type]) {
+        bakedTagsValue = DEFAULT_BAKED_TAGS[type];
+        try { await storageAPI.set('baked-tags:' + type, DEFAULT_BAKED_TAGS[type]); } catch (e) {}
+      } else {
+        bakedTagsValue = result.value;
+      }
     } else if (DEFAULT_BAKED_TAGS[type]) {
       bakedTagsValue = DEFAULT_BAKED_TAGS[type];
     } else {
@@ -507,19 +517,20 @@ async function loadBakedTags(type) {
 
 const DEFAULT_BAKED = {
   'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download',
-  'Shirt PNG': 'PNG, Sublimation, Shirt Design Digital Download'
+  'Shirt PNG': 'PNG, PNG, T Shirt Sublimation Design Digital Download'
 };
 
 const OLD_DEFAULT_BAKED = {
-  'Tumbler Wrap PNG': 'Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download',
-  'Shirt PNG': 'PNG, Sublimation, Trendy Shirt Design Digital Download'
+  'Tumbler Wrap PNG': ['Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download'],
+  'Shirt PNG': ['PNG, Sublimation, Trendy Shirt Design Digital Download', 'PNG, Sublimation, Shirt Design Digital Download']
 };
 
 async function loadBakedPieces(type) {
   try {
     const result = await storageAPI.get('baked-titles:' + type);
     if (result && result.value) {
-      if (OLD_DEFAULT_BAKED[type] && result.value.trim() === OLD_DEFAULT_BAKED[type]) {
+      const staleList = OLD_DEFAULT_BAKED[type] || [];
+      if (staleList.includes(result.value.trim())) {
         bakedPiecesValue = DEFAULT_BAKED[type];
         try { await storageAPI.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
       } else {
@@ -656,9 +667,11 @@ async function restoreWorkSession(type) {
   try {
     const savedTitle = await storageAPI.get('session:liveTitle:' + type);
     if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null && savedTitle.value !== '') {
-      const isStaleDefault = OLD_DEFAULT_BAKED[type] && savedTitle.value.trim() === OLD_DEFAULT_BAKED[type];
+      const staleList = OLD_DEFAULT_BAKED[type] || [];
+      const savedTrimmed = savedTitle.value.trim();
+      const isStaleDefault = staleList.includes(savedTrimmed) || staleList.some(s => buildMarkedTitle(s) === savedTrimmed);
       const preview = document.getElementById('liveTitlePreview');
-      const valueToUse = isStaleDefault ? bakedPiecesValue : savedTitle.value;
+      const valueToUse = isStaleDefault ? buildMarkedTitle(bakedPiecesValue) : savedTitle.value;
       preview.value = valueToUse;
       updateLiveTitleCount(valueToUse);
     }
@@ -707,15 +720,15 @@ function getOpenSlotNumbers() {
   return open;
 }
 
+function buildMarkedTitle(template) {
+  const segments = template.split(',').map(s => s.trim()).filter(Boolean);
+  if (segments.length === 0) return template.trim();
+  return segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
+}
+
 function seedLiveTitle() {
   const preview = document.getElementById('liveTitlePreview');
-  const segments = getBakedSegments();
-  let value;
-  if (segments.length > 0) {
-    value = segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
-  } else {
-    value = bakedPiecesValue.trim();
-  }
+  const value = buildMarkedTitle(bakedPiecesValue);
   preview.value = value;
   updateLiveTitleCount(value);
   renderPool();
