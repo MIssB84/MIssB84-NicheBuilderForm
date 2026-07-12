@@ -252,6 +252,23 @@ function applyNicheTitleCase(el) {
   try { el.selectionStart = el.selectionEnd = pos; } catch (e) {}
 }
 
+function salvagePartialJSON(text) {
+  const keyMatch = text.match(/"(\w+)"\s*:\s*\[/);
+  if (!keyMatch) return null;
+  const key = keyMatch[1];
+  const afterBracket = text.slice(keyMatch.index + keyMatch[0].length);
+  const items = [];
+  const strRegex = /"((?:[^"\\]|\\.)*)"/g;
+  let m;
+  while ((m = strRegex.exec(afterBracket)) !== null) {
+    try { items.push(JSON.parse('"' + m[1] + '"')); } catch (e) {}
+  }
+  if (items.length === 0) return null;
+  const result = {};
+  result[key] = items;
+  return result;
+}
+
 async function callClaude(systemPrompt, userContent, maxTokens) {
   const savedKey = localStorage.getItem('nicheclub_api_key');
   const headers = { "Content-Type": "application/json" };
@@ -279,8 +296,14 @@ async function callClaude(systemPrompt, userContent, maxTokens) {
     const fb = cleaned.indexOf('{'), lb = cleaned.lastIndexOf('}');
     if (fb !== -1 && lb !== -1 && lb > fb) {
       try { return JSON.parse(cleaned.slice(fb, lb + 1)); }
-      catch (e2) { throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150)); }
+      catch (e2) {
+        const salvaged = salvagePartialJSON(cleaned);
+        if (salvaged) return salvaged;
+        throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+      }
     }
+    const salvaged = salvagePartialJSON(cleaned);
+    if (salvaged) return salvaged;
     throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
   }
 }
@@ -359,6 +382,7 @@ function makeNicheState() {
     proTip: '',
     pool: [],
     tags: [],
+    suggestedTags: [],
     titles: ['', '', ''],
     promptNotes: '',
     creativeDirection: '',
@@ -1189,6 +1213,14 @@ function buildTitlesTagsSubcard(niche) {
   const suggestStatus = document.createElement('div'); suggestStatus.className = 'status'; sc.appendChild(suggestStatus);
   const suggestErr = document.createElement('div'); suggestErr.className = 'error'; sc.appendChild(suggestErr);
 
+  const suggestedLabel = document.createElement('label'); suggestedLabel.textContent = 'Suggested Tags';
+  suggestedLabel.style.display = 'none';
+  sc.appendChild(suggestedLabel);
+  const suggestedHint = document.createElement('div'); suggestedHint.className = 'hint'; suggestedHint.textContent = 'Click "Add" on any pill to move it up into your tags.';
+  suggestedHint.style.display = 'none';
+  sc.appendChild(suggestedHint);
+  const suggestedList = document.createElement('div'); suggestedList.className = 'tag-list'; sc.appendChild(suggestedList);
+
   function renderTags() {
     const hadCommas = niche.state.tags.some(t => /[,\n，、]/.test(t));
     if (hadCommas) { const flat = []; niche.state.tags.forEach(t => String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flat.push(p))); niche.state.tags = flat; }
@@ -1228,6 +1260,32 @@ function buildTitlesTagsSubcard(niche) {
     text.replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(t => niche.state.tags.push(t));
     renderTags();
   }));
+  function renderSuggestedTags() {
+    suggestedList.innerHTML = '';
+    const has = niche.state.suggestedTags.length > 0;
+    suggestedLabel.style.display = has ? 'block' : 'none';
+    suggestedHint.style.display = has ? 'block' : 'none';
+    niche.state.suggestedTags.forEach((tag, i) => {
+      const overLen = tag.length > 20;
+      const chip = document.createElement('div'); chip.className = 'tag-chip';
+      chip.innerHTML = `<span>${escapeHtml(tag)}</span><span class="len${overLen ? ' over' : ''}">${tag.length}</span>`;
+      const addBtn = document.createElement('button'); addBtn.className = 'copy-pill'; addBtn.textContent = 'Add';
+      addBtn.addEventListener('click', () => {
+        const key = tag.trim().toLowerCase();
+        const already = niche.state.tags.some(t => t.trim().toLowerCase() === key);
+        niche.state.suggestedTags.splice(i, 1);
+        if (!already) niche.state.tags.push(tag);
+        renderSuggestedTags();
+        renderTags();
+      });
+      const rm = document.createElement('button'); rm.className = 'rmv-btn'; rm.textContent = '×';
+      rm.addEventListener('click', () => { niche.state.suggestedTags.splice(i, 1); renderSuggestedTags(); autosaveNicheState(niche.num); });
+      chip.appendChild(addBtn); chip.appendChild(rm);
+      suggestedList.appendChild(chip);
+    });
+    autosaveNicheState(niche.num);
+  }
+
   suggestBtn.addEventListener('click', async () => {
     setErr(suggestErr, ''); suggestBtn.disabled = true; setStatus(suggestStatus, 'Finding more tags...');
     try {
@@ -1235,14 +1293,15 @@ function buildTitlesTagsSubcard(niche) {
       const userText = `Niche keyword: ${niche.name.trim() || 'not set'}\n\nTags already in use: ${niche.state.tags.join(', ') || 'none yet'}\n\nCurrent titles:\n${titlesText || 'none built yet'}\n\nHow To Add Value notes: ${niche.state.valueSections.map(s => s.heading + ': ' + s.text).join(' ') || 'none generated yet'}`;
       const result = await callClaude(SUGGEST_TAGS_SYSTEM, [{ type: 'text', text: userText }], 800);
       const flat = []; (result.tags || []).forEach(t => String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flat.push(p)));
-      const seen = new Set(niche.state.tags.map(t => t.toLowerCase()));
-      flat.forEach(t => { if (t.length > 20) return; const k = t.toLowerCase(); if (seen.has(k)) return; seen.add(k); niche.state.tags.push(t); });
-      renderTags();
+      const seen = new Set(niche.state.tags.concat(niche.state.suggestedTags).map(t => t.toLowerCase()));
+      flat.forEach(t => { if (t.length > 20) return; const k = t.toLowerCase(); if (seen.has(k)) return; seen.add(k); niche.state.suggestedTags.push(t); });
+      renderSuggestedTags();
     } catch (err) { console.error(err); setErr(suggestErr, 'Something went wrong: ' + (err.message || 'try again') + '.'); }
     finally { suggestBtn.disabled = false; setStatus(suggestStatus, ''); }
   });
 
   niche._renderTags = renderTags;
+  renderSuggestedTags();
 
   // initial paint
   [1, 2, 3].forEach(n => {
@@ -1372,12 +1431,15 @@ function buildPromptsSubcard(niche) {
         text: `Niche keyword: ${keyword}\nHow To Add Value notes: ${niche.state.valueSections.map(s => s.heading + ': ' + s.text).join(' ') || 'none generated yet'}\nFinal creative direction: ${dirTa.value.trim() || 'none given'}\nImportant notes to respect, avoid any flagged wording: ${notes || 'none'}`
       });
       const sys = niche.type === 'Wall Art' ? WALLART_PROMPTS_SYSTEM : OTHER_PROMPTS_SYSTEM;
-      const result = await callClaude(sys, userContent, 6000);
+      const result = await callClaude(sys, userContent, 8000);
       niche.state.prompts = (result.prompts || []).map(t => ({ text: t }));
       niche.state.selectedPromptIndex = niche.state.prompts.length ? 0 : -1;
       render();
       autosaveNicheState(niche.num);
       niche.state.promptHistory.unshift({ timestamp: Date.now(), prompts: niche.state.prompts.map(p => p.text) });
+      if (niche.state.prompts.length > 0 && niche.state.prompts.length < 5) {
+        setErr(errEl, `Only got ${niche.state.prompts.length} of 5, the response ran long and got cut off. These are usable, or hit Generate again for a fresh full set.`);
+      }
     } catch (err) { console.error(err); setErr(errEl, 'Something went wrong: ' + (err.message || 'try again') + '.'); }
     finally { genBtn.disabled = false; setStatus(statusEl, ''); }
   });
