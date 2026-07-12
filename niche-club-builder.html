@@ -354,8 +354,13 @@ weekDateInput.addEventListener('input', () => { updateWeekDateDisplay(); storage
 const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
 function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 
-const PRODUCT_TYPES = ['Wall Art', 'Other'];
-const DEFAULT_BAKED = { 'Wall Art': 'Home Decor, Poster Digital Download' };
+const PRODUCT_TYPES = ['Wall Art', 'PNG / Shirt Design', 'Frame TV Art', 'Tumbler Wrap', 'Other'];
+const DEFAULT_BAKED = {
+  'Wall Art': 'Home Decor, Poster Digital Download',
+  'PNG / Shirt Design': 'Sublimation Design, Clipart Digital Download',
+  'Frame TV Art': 'Smart Television Screensaver, Home Decor Digital Download',
+  'Tumbler Wrap': '20oz Skinny Tumbler Sublimation Design Digital Download'
+};
 const DEFAULT_BAKED_TAGS = { 'Wall Art': ['printable wall art', 'digital download', 'trendy home decor'] };
 const TITLE_CHAR_LIMIT = { 'Wall Art': 144 };
 const DEFAULT_TITLE_CHAR_LIMIT = 140;
@@ -412,12 +417,12 @@ const GEN_TOOLS = [
 
 const DEFAULT_NICHE_ORDER = [
   { num: '1', name: 'Printable Wall Art', type: 'Wall Art' },
-  { num: '2', name: 'PNG', type: 'Other' },
-  { num: '3', name: 'Frame TV Art', type: 'Other' },
+  { num: '2', name: 'PNG', type: 'PNG / Shirt Design' },
+  { num: '3', name: 'Frame TV Art', type: 'Frame TV Art' },
   { num: '4', name: 'Printable (Journal/Checklist/Planner)', type: 'Other' },
   { num: '5', name: 'Printable Wall Art', type: 'Wall Art' },
-  { num: '6', name: 'PNG', type: 'Other' },
-  { num: '7', name: 'Frame TV Art', type: 'Other' },
+  { num: '6', name: 'PNG', type: 'PNG / Shirt Design' },
+  { num: '7', name: 'Frame TV Art', type: 'Frame TV Art' },
   { num: 'Bonus', name: 'Tumbler/Digital Invitation/Journal/Coloring Pages/Checklist', isBonus: true, bonusOn: true, type: 'Other' }
 ];
 
@@ -459,6 +464,21 @@ function renderNicheList() {
       seedAllTitlesForNiche(niche);
     });
     row.appendChild(nameInput);
+
+    const typeSelect = document.createElement('select');
+    typeSelect.style.cssText = 'font-size:11.5px; padding:6px 8px; border-radius:14px; border:1px solid var(--border); background:#fff; color:var(--mid-text); flex-shrink:0;';
+    PRODUCT_TYPES.forEach(t => {
+      const opt = document.createElement('option'); opt.value = t; opt.textContent = t;
+      if (t === niche.type) opt.selected = true;
+      typeSelect.appendChild(opt);
+    });
+    typeSelect.addEventListener('change', () => {
+      niche.type = typeSelect.value;
+      autosaveNicheOrder();
+      seedAllTitlesForNiche(niche);
+      if (niche._renderPool) niche._renderPool();
+    });
+    row.appendChild(typeSelect);
 
     if (niche.isBonus) {
       const toggle = document.createElement('button');
@@ -929,7 +949,7 @@ const SUGGEST_TAGS_SYSTEM = `You are a production assistant suggesting a few add
 
 Inputs: niche keyword, tags already in use (do not repeat these), the current live titles, and How To Add Value notes if available.
 
-Suggest 3 to 5 new tags derived from the keyword, titles, and notes. Do not duplicate or rephrase any tag already in use. Each tag must be 20 characters or fewer including spaces, this is a hard limit, count the characters of each tag before responding and shorten any that go over. Never use em dashes.
+Suggest 3 to 5 new tags derived from the keyword, titles, and notes. Do not duplicate or rephrase any tag already in use. Each tag must be 20 characters or fewer including spaces, this is a hard limit, count the characters of each tag before responding and shorten any that go over. Never use em dashes. Never suggest "Samsung" or any other trademarked brand name, even if the niche is Frame TV related, use generic terms like smart tv or television instead.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"tags": ["new tag 1", "new tag 2"]}`;
@@ -1294,7 +1314,7 @@ function buildTitlesTagsSubcard(niche) {
       const result = await callClaude(SUGGEST_TAGS_SYSTEM, [{ type: 'text', text: userText }], 800);
       const flat = []; (result.tags || []).forEach(t => String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flat.push(p)));
       const seen = new Set(niche.state.tags.concat(niche.state.suggestedTags).map(t => t.toLowerCase()));
-      flat.forEach(t => { if (t.length > 20) return; const k = t.toLowerCase(); if (seen.has(k)) return; seen.add(k); niche.state.suggestedTags.push(t); });
+      flat.forEach(t => { if (t.length > 20) return; if (/samsung/i.test(t)) return; const k = t.toLowerCase(); if (seen.has(k)) return; seen.add(k); niche.state.suggestedTags.push(t); });
       renderSuggestedTags();
     } catch (err) { console.error(err); setErr(suggestErr, 'Something went wrong: ' + (err.message || 'try again') + '.'); }
     finally { suggestBtn.disabled = false; setStatus(suggestStatus, ''); }
@@ -1342,6 +1362,64 @@ Write exactly 5 image prompts. Rules:
 - Do not number or label prompts, no bullets, no introductions
 - Never use em dashes, use commas, colons, periods, or parentheses instead
 - Never write words describing the physical product format anywhere in the prompt body (no printable, wall art, poster, frame, canvas, print). Describe only the artwork content itself
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
+
+const FRAMETV_PROMPTS_SYSTEM = `You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs).
+
+You will be given up to 3 inspo screenshots, the niche keyword, How To Add Value notes if available, and final creative direction if given.
+
+Study the screenshot(s) in full detail: subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling.
+
+Write exactly 5 image prompts. Rules:
+- Each prompt is a rich descriptive paragraph
+- Focus on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling
+- Do not force a specific art medium. Do not rotate through watercolor, gouache, oil painting, impasto, or named art movements as a default habit. Only include an art medium if it naturally fits the inspiration or was specifically requested in the creative direction
+- Avoid product format language, generic filler, and prompt syntax
+- Use approximately 70% proven visual direction from the screenshots, 30% creative improvement from the How To Add Value notes and creative direction
+- Vary sentence structure and opening line across the 5 prompts, never open with the niche keyword or phrase
+- Do not number or label prompts, no bullets, no introductions
+- Never use em dashes, use commas, colons, periods, or parentheses instead
+- Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Describe only the artwork content itself
+- Never mention any TV or electronics brand name (no Samsung or similar), this is generic artwork only
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
+
+const PNG_PROMPTS_SYSTEM = `You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics.
+
+You will be given up to 3 inspo screenshots, the niche keyword, How To Add Value notes if available, and final creative direction if given.
+
+Study the screenshot(s) in full detail: subject, pose, expression, colors, composition, layout, texture, design elements, overall aesthetic.
+
+Write exactly 5 prompts. Rules:
+- Default style is a curated grouping or collage arrangement. Each design should include a strong main focal element, 3 to 5 supporting elements, cohesive theme, personality, interesting details, strong visual identity. The design should feel complete enough to sell on a shirt, think boutique apparel graphics, trendy Etsy shirts, giftable designs, statement graphics
+- Avoid one isolated object, basic clipart appearance, generic AI artwork, realistic scenes, landscapes
+- Use approximately 70% proven visual direction from the screenshots, 30% creative improvement from the How To Add Value notes and creative direction
+- Vary sentence structure and opening line across the 5 prompts, never open with the niche keyword or phrase
+- Do not number or label prompts, no bullets, no introductions
+- Never use em dashes, use commas, colons, periods, or parentheses instead
+- Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, clipart, digital download). Describe only the artwork content itself
+- Every prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation."
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
+
+const TUMBLER_PROMPTS_SYSTEM = `You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs.
+
+You will be given up to 3 inspo screenshots, the niche keyword, How To Add Value notes if available, and final creative direction if given.
+
+Study the screenshot(s) in full detail: subject, colors, composition, layout, texture, design elements, overall aesthetic.
+
+Write exactly 5 prompts. Rules:
+- Create full wrap artwork. Focus on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage. The entire canvas should feel intentionally designed
+- Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested
+- Use approximately 70% proven visual direction from the screenshots, 30% creative improvement from the How To Add Value notes and creative direction
+- Vary sentence structure and opening line across the 5 prompts, never open with the niche keyword or phrase
+- Do not number or label prompts, no bullets, no introductions
+- Never use em dashes, use commas, colons, periods, or parentheses instead
+- Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
@@ -1430,7 +1508,13 @@ function buildPromptsSubcard(niche) {
         type: 'text',
         text: `Niche keyword: ${keyword}\nHow To Add Value notes: ${niche.state.valueSections.map(s => s.heading + ': ' + s.text).join(' ') || 'none generated yet'}\nFinal creative direction: ${dirTa.value.trim() || 'none given'}\nImportant notes to respect, avoid any flagged wording: ${notes || 'none'}`
       });
-      const sys = niche.type === 'Wall Art' ? WALLART_PROMPTS_SYSTEM : OTHER_PROMPTS_SYSTEM;
+      const PROMPT_SYSTEM_BY_TYPE = {
+        'Wall Art': WALLART_PROMPTS_SYSTEM,
+        'Frame TV Art': FRAMETV_PROMPTS_SYSTEM,
+        'PNG / Shirt Design': PNG_PROMPTS_SYSTEM,
+        'Tumbler Wrap': TUMBLER_PROMPTS_SYSTEM
+      };
+      const sys = PROMPT_SYSTEM_BY_TYPE[niche.type] || OTHER_PROMPTS_SYSTEM;
       const result = await callClaude(sys, userContent, 8000);
       niche.state.prompts = (result.prompts || []).map(t => ({ text: t }));
       niche.state.selectedPromptIndex = niche.state.prompts.length ? 0 : -1;
