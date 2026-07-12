@@ -800,9 +800,11 @@ function buildValueSubcard(niche) {
 /* ================= TITLES & TAGS SUBCARD ================= */
 const REMIX_SYSTEM = `You are helping an Etsy seller create a reworded variation of an existing title, reusing the exact same descriptive keywords, just redistributed or reordered differently, matching how real sellers rotate the same keyword pool across several title variations.
 
-You will be given the niche keyword, the fixed baked in wording template, and an existing full title built from that template.
+You will be given the niche keyword, the fixed baked in wording template, the existing full title to remix from, and any other titles already in use for this niche that your result must be meaningfully different from.
 
 Extract the descriptive keywords the seller used in the existing title, excluding the niche keyword and any fixed baked in wording (things like Poster, Home Decor, Digital Download). Redistribute or reword those exact same keywords into a new natural sounding order, similar to how "Warm Terracotta Botanical Decor, Minimalist Boho Poster" could become "Minimalist Botanical Poster, Modern Boho Terracotta Decor" using the same words shuffled differently. Do not invent new descriptive keywords, do not drop any of the ones used. Keep the niche keyword exactly as given, unchanged, at the very start. Keep any fixed trailing wording (like Digital Download) exactly as given, unchanged, at the very end. Use Title Case.
+
+Your result must use a genuinely different word order and grouping than every other title already in use, listed below. Do not produce something that is the same or nearly the same as any of them, that defeats the purpose.
 
 Respond ONLY with valid JSON, no preamble, no markdown fences:
 {"remixedTitle": "the full new title text"}`;
@@ -821,7 +823,8 @@ async function remixTitleFrom1(niche, targetN, btn) {
   setStatus(els.remixStatus, 'Remixing...'); els.remixStatus.style.display = 'block';
   try {
     const template = `${getFixedPrefix(niche)}, ${buildMarkedBaked(niche.type)}`;
-    const userText = `Niche keyword (keep exactly at start): ${niche.name.trim()}\nBaked in fixed structure template: ${template}\nExisting title to remix: ${sourceText}`;
+    const otherTitles = [1, 2, 3].filter(n => n !== targetN).map(n => (niche.state.titles[n - 1] || '').trim()).filter(Boolean);
+    const userText = `Niche keyword (keep exactly at start): ${niche.name.trim()}\nBaked in fixed structure template: ${template}\nExisting title to remix: ${sourceText}\nOther titles already in use for this niche, your result must be genuinely different from these: ${otherTitles.length ? otherTitles.join(' | ') : 'none yet'}`;
     const result = await callClaude(REMIX_SYSTEM, [{ type: 'text', text: userText }], 1000);
     const newTitle = (result.remixedTitle || '').trim();
     if (newTitle) {
@@ -895,7 +898,7 @@ const SUGGEST_TAGS_SYSTEM = `You are a production assistant suggesting a few add
 
 Inputs: niche keyword, tags already in use (do not repeat these), the current live titles, and How To Add Value notes if available.
 
-Suggest 3 to 5 new tags derived from the keyword, titles, and notes. Do not duplicate or rephrase any tag already in use. Each tag must be 20 characters or fewer including spaces. Never use em dashes.
+Suggest 3 to 5 new tags derived from the keyword, titles, and notes. Do not duplicate or rephrase any tag already in use. Each tag must be 20 characters or fewer including spaces, this is a hard limit, count the characters of each tag before responding and shorten any that go over. Never use em dashes.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"tags": ["new tag 1", "new tag 2"]}`;
@@ -989,6 +992,26 @@ function buildTitlesTagsSubcard(niche) {
   poolDivider.innerHTML = '<label class="first" style="margin-top:0;">Keyword pool</label><div class="hint">Paste keywords or a full title, press Enter or hit Add. Click a pill number to place it, or click the pill to add to the end.</div>';
   sc.appendChild(poolDivider);
 
+  const multiPasteDivider = document.createElement('div');
+  multiPasteDivider.style.cssText = 'margin-bottom:10px;';
+  multiPasteDivider.innerHTML = '<label class="first" style="margin-top:0;">Paste titles from other listings</label><div class="hint">One box per listing title, each with its own paste button. Hit Add All once and every non-empty box gets stripped and merged into the pool in one click.</div>';
+  sc.appendChild(multiPasteDivider);
+
+  const TITLE_PASTE_LABELS = ['Title 1', 'Title 2', 'Title 3', 'Extra'];
+  const titlePasteInputs = [];
+  TITLE_PASTE_LABELS.forEach(label => {
+    const row = document.createElement('div'); row.className = 'add-row'; row.style.marginBottom = '6px';
+    const input = document.createElement('input'); input.type = 'text'; input.placeholder = label;
+    const pasteBtn = document.createElement('button'); pasteBtn.className = 'btn secondary'; pasteBtn.textContent = 'Paste from Clipboard';
+    pasteBtn.addEventListener('click', () => pasteTextClip(pasteBtn, async (text) => { input.value = text; }));
+    row.appendChild(input); row.appendChild(pasteBtn);
+    sc.appendChild(row);
+    titlePasteInputs.push(input);
+  });
+  const addAllBtn = document.createElement('button'); addAllBtn.className = 'btn secondary'; addAllBtn.textContent = 'Add All to Pool'; addAllBtn.style.marginTop = '4px';
+  sc.appendChild(addAllBtn);
+  const addAllStatus = document.createElement('div'); addAllStatus.className = 'status'; sc.appendChild(addAllStatus);
+
   const poolBulk = document.createElement('textarea'); poolBulk.rows = 2; poolBulk.placeholder = 'Paste keywords separated by commas, or a whole title';
   sc.appendChild(poolBulk);
   const poolRow = document.createElement('div'); poolRow.className = 'add-row';
@@ -1035,6 +1058,19 @@ function buildTitlesTagsSubcard(niche) {
       finally { setStatus(poolStatus, ''); }
     } else { pushSplitInto(niche.state.pool, trimmed); renderPool(); }
   }
+
+  addAllBtn.addEventListener('click', async () => {
+    const nonEmpty = titlePasteInputs.filter(inp => inp.value.trim());
+    if (nonEmpty.length === 0) return;
+    addAllBtn.disabled = true;
+    setStatus(addAllStatus, `Stripping ${nonEmpty.length} title${nonEmpty.length > 1 ? 's' : ''}...`);
+    for (const inp of nonEmpty) {
+      await addToPool(inp.value, true);
+      inp.value = '';
+    }
+    setStatus(addAllStatus, '');
+    addAllBtn.disabled = false;
+  });
 
   function renderPool() {
     const hadCommas = niche.state.pool.some(item => /[,\n，、]/.test(item.text));
@@ -1110,7 +1146,14 @@ function buildTitlesTagsSubcard(niche) {
       if (words.length > 1) words.forEach(w => expanded.push({ text: w }));
       else expanded.push(item);
     });
-    niche.state.pool = expanded;
+    const seen = new Set();
+    const deduped = expanded.filter(item => {
+      const key = item.text.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    niche.state.pool = deduped;
     renderPool();
   });
   poolPasteBtn.addEventListener('click', () => pasteTextClip(poolPasteBtn, async (text) => { await addToPool(text, true); }));
@@ -1183,7 +1226,7 @@ function buildTitlesTagsSubcard(niche) {
       const result = await callClaude(SUGGEST_TAGS_SYSTEM, [{ type: 'text', text: userText }], 800);
       const flat = []; (result.tags || []).forEach(t => String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flat.push(p)));
       const seen = new Set(niche.state.tags.map(t => t.toLowerCase()));
-      flat.forEach(t => { const k = t.toLowerCase(); if (seen.has(k)) return; seen.add(k); niche.state.tags.push(t); });
+      flat.forEach(t => { if (t.length > 20) return; const k = t.toLowerCase(); if (seen.has(k)) return; seen.add(k); niche.state.tags.push(t); });
       renderTags();
     } catch (err) { console.error(err); setErr(suggestErr, 'Something went wrong: ' + (err.message || 'try again') + '.'); }
     finally { suggestBtn.disabled = false; setStatus(suggestStatus, ''); }
