@@ -199,7 +199,18 @@ const storageAPI = {
     if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
       try { return await window.storage.set(key, value); } catch (e) { return null; }
     }
-    try { localStorage.setItem('nicheclub:' + key, value); return { key, value }; } catch (e) { return null; }
+    try { localStorage.setItem('nicheclub:' + key, value); return { key, value }; }
+    catch (e) {
+      const isQuota = e && (e.name === 'QuotaExceededError' || e.code === 22 || /quota/i.test(e.message || ''));
+      const el = document.getElementById('bottomBarStatus');
+      if (el) {
+        el.textContent = isQuota
+          ? 'Storage is full, this last change did not save. Clear a niche you no longer need to free up space.'
+          : 'Could not save that change, try again.';
+        setTimeout(() => { el.textContent = ''; }, 5000);
+      }
+      return null;
+    }
   }
 };
 
@@ -314,6 +325,32 @@ function bbStatus(msg, ms) {
   const el = document.getElementById('bottomBarStatus');
   el.textContent = msg;
   setTimeout(() => { el.textContent = ''; }, ms || 2000);
+}
+
+function compressImageToBase64(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality || 0.82);
+        resolve({ base64: dataUrl.split(',')[1], mediaType: 'image/jpeg' });
+      };
+      img.onerror = () => reject(new Error('Could not read image'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Could not read file'));
+    reader.readAsDataURL(file);
+  });
 }
 
 function checkApiKeyUI() {
@@ -728,17 +765,18 @@ function buildScreenshotsSubcard(niche) {
   return sc;
 }
 
-function handleShotFile(niche, i, file, render) {
+async function handleShotFile(niche, i, file, render) {
   if (!file || !file.type.startsWith('image/')) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const base64 = reader.result.split(',')[1];
+  try {
+    const { base64, mediaType } = await compressImageToBase64(file, 1100, 0.82);
     const keptUrl = niche.state.shots[i] ? niche.state.shots[i].url : '';
-    niche.state.shots[i] = { base64, mediaType: file.type, url: keptUrl || '' };
+    niche.state.shots[i] = { base64, mediaType, url: keptUrl || '' };
     render();
     autosaveNicheState(niche.num);
-  };
-  reader.readAsDataURL(file);
+  } catch (e) {
+    console.error(e);
+    bbStatus('Could not process that image, try a different file', 3000);
+  }
 }
 
 async function pasteShotClipboard(niche, i, btn, render) {
@@ -1576,11 +1614,19 @@ function buildGenImagesSubcard(niche) {
   sc._render = render;
   return sc;
 }
-function handleGenFile(niche, id, file, render) {
+async function handleGenFile(niche, id, file, render) {
   if (!file || !file.type.startsWith('image/')) return;
-  const reader = new FileReader();
-  reader.onload = () => { const base64 = reader.result.split(',')[1]; if (!niche.state.genImages[id]) niche.state.genImages[id] = {}; niche.state.genImages[id].base64 = base64; niche.state.genImages[id].mediaType = file.type; render(); autosaveNicheState(niche.num); };
-  reader.readAsDataURL(file);
+  try {
+    const { base64, mediaType } = await compressImageToBase64(file, 1100, 0.82);
+    if (!niche.state.genImages[id]) niche.state.genImages[id] = {};
+    niche.state.genImages[id].base64 = base64;
+    niche.state.genImages[id].mediaType = mediaType;
+    render();
+    autosaveNicheState(niche.num);
+  } catch (e) {
+    console.error(e);
+    bbStatus('Could not process that image, try a different file', 3000);
+  }
 }
 async function pasteGenClip(niche, id, btn, render) {
   const original = btn.textContent;
