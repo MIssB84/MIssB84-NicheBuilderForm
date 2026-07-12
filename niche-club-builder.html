@@ -503,6 +503,13 @@ const autosaveNicheState = debounce(async (num) => {
   try { await storageAPI.set('nichestate:' + num, JSON.stringify(niche.state)); } catch (e) {}
 }, 500);
 
+async function saveNicheStateImmediate(num) {
+  const niche = nicheOrder.find(x => x.num === num);
+  if (!niche) return;
+  markSaving();
+  try { await storageAPI.set('nichestate:' + num, JSON.stringify(niche.state)); markSaved(); } catch (e) {}
+}
+
 /* ================= TOP NICHE LIST ================= */
 function renderNicheList() {
   const container = document.getElementById('nicheListContainer');
@@ -777,7 +784,7 @@ function buildScreenshotsSubcard(niche) {
           const keptUrl = niche.state.shots[i] ? niche.state.shots[i].url : '';
           niche.state.shots[i] = keptUrl ? { url: keptUrl } : null;
           render();
-          autosaveNicheState(niche.num);
+          saveNicheStateImmediate(niche.num);
         });
         fields.appendChild(rm);
       }
@@ -798,7 +805,7 @@ async function handleShotFile(niche, i, file, render) {
     const keptUrl = niche.state.shots[i] ? niche.state.shots[i].url : '';
     niche.state.shots[i] = { base64, mediaType, url: keptUrl || '' };
     render();
-    autosaveNicheState(niche.num);
+    await saveNicheStateImmediate(niche.num);
   } catch (e) {
     console.error(e);
     bbStatus('Could not process that image, try a different file', 3000);
@@ -1080,13 +1087,20 @@ function buildTitlesTagsSubcard(niche) {
       autosaveNicheState(niche.num);
       niche._renderPool();
     });
-    copyBtn.addEventListener('click', () => {
+    copyBtn.addEventListener('click', async () => {
       let cleaned = ta.value;
       for (let m = 1; m <= 10; m++) { cleaned = cleaned.split(slotMarker(m) + ' ').join(''); cleaned = cleaned.split(slotMarker(m)).join(''); }
       cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim().replace(/^,\s*/, '').replace(/,\s*$/, '');
       ta.value = cleaned; niche.state.titles[n - 1] = cleaned;
       updateTitleCountFor(niche, n); autosaveNicheState(niche.num); niche._renderPool();
       copyToClipboard(cleaned, copyBtn, 'Copy Title ' + n);
+      if (n === 1 && cleaned.trim()) {
+        const original = copyBtn.textContent;
+        copyBtn.textContent = 'Remixing 2 & 3...';
+        if (niche._titleEls[2] && niche._titleEls[2].remixBtn) await remixTitleFrom1(niche, 2, niche._titleEls[2].remixBtn);
+        if (niche._titleEls[3] && niche._titleEls[3].remixBtn) await remixTitleFrom1(niche, 3, niche._titleEls[3].remixBtn);
+        copyBtn.textContent = original;
+      }
     });
     resetBtn.addEventListener('click', () => { seedAllTitlesForNiche(niche); });
   });
@@ -1192,6 +1206,7 @@ function buildTitlesTagsSubcard(niche) {
   function renderPool() {
     const hadCommas = niche.state.pool.some(item => /[,\n，、]/.test(item.text));
     if (hadCommas) { const flat = niche.state.pool.map(i => i.text).join(','); niche.state.pool = []; pushSplitInto(niche.state.pool, flat); }
+    niche.state.pool.sort((a, b) => a.text.toLowerCase().localeCompare(b.text.toLowerCase()));
     poolList.innerHTML = '';
     const openSlots = getOpenSlotsFor(niche, activeTitleNum);
     niche.state.pool.forEach((item, i) => {
@@ -1636,7 +1651,7 @@ function buildGenImagesSubcard(niche) {
       fields.appendChild(urlInput);
       if (data.base64) {
         const rm = document.createElement('button'); rm.className = 'btn secondary'; rm.textContent = 'Remove image'; rm.style.marginTop = '8px';
-        rm.addEventListener('click', () => { delete niche.state.genImages[tool.id].base64; delete niche.state.genImages[tool.id].mediaType; render(); autosaveNicheState(niche.num); });
+        rm.addEventListener('click', () => { delete niche.state.genImages[tool.id].base64; delete niche.state.genImages[tool.id].mediaType; render(); saveNicheStateImmediate(niche.num); });
         fields.appendChild(rm);
       }
       row.appendChild(fields); slot.appendChild(row); container.appendChild(slot);
@@ -1654,7 +1669,7 @@ async function handleGenFile(niche, id, file, render) {
     niche.state.genImages[id].base64 = base64;
     niche.state.genImages[id].mediaType = mediaType;
     render();
-    autosaveNicheState(niche.num);
+    await saveNicheStateImmediate(niche.num);
   } catch (e) {
     console.error(e);
     bbStatus('Could not process that image, try a different file', 3000);
