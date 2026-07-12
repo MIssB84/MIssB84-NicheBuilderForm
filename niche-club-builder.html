@@ -1022,6 +1022,8 @@ function buildTitlesTagsSubcard(niche) {
   const sc = document.createElement('div');
   sc.className = 'subcard';
   sc.innerHTML = '<h3>Titles &amp; Tags</h3><div class="hint">Three titles, one shared keyword pool. Pills stay after use so you can reuse the same word.</div>';
+  const poolWrap = document.createElement('div');
+  const titleWrap = document.createElement('div');
 
   // Title tabs
   const tabs = document.createElement('div'); tabs.className = 'title-tabs';
@@ -1041,7 +1043,7 @@ function buildTitlesTagsSubcard(niche) {
     tabEls[n] = tab;
     tabs.appendChild(tab);
   });
-  sc.appendChild(tabs);
+  titleWrap.appendChild(tabs);
 
   niche._titleEls = {};
   [1, 2, 3].forEach(n => {
@@ -1051,7 +1053,7 @@ function buildTitlesTagsSubcard(niche) {
     block.appendChild(ta);
     const count = document.createElement('div'); count.className = 'cnt'; count.textContent = '0 / 140 chars';
     block.appendChild(count);
-    sc.appendChild(block);
+    titleWrap.appendChild(block);
 
     const btnRow = document.createElement('div'); btnRow.className = 'add-row';
     const copyBtn = document.createElement('button'); copyBtn.className = 'btn secondary'; copyBtn.textContent = 'Copy Title ' + n;
@@ -1064,11 +1066,11 @@ function buildTitlesTagsSubcard(niche) {
       btnRow.appendChild(remixBtn);
     }
     if (n !== 1) btnRow.style.display = 'none';
-    sc.appendChild(btnRow);
+    titleWrap.appendChild(btnRow);
     const remixStatus = document.createElement('div'); remixStatus.className = 'status'; if (n !== 1) remixStatus.style.display = 'none';
-    sc.appendChild(remixStatus);
+    titleWrap.appendChild(remixStatus);
     const remixErr = document.createElement('div'); remixErr.className = 'error'; if (n !== 1) remixErr.style.display = 'none';
-    sc.appendChild(remixErr);
+    titleWrap.appendChild(remixErr);
 
     niche._titleEls[n] = { block, textarea: ta, count, btnRow, copyBtn, resetBtn, remixBtn, remixStatus, remixErr };
 
@@ -1105,12 +1107,12 @@ function buildTitlesTagsSubcard(niche) {
   const poolDivider = document.createElement('div');
   poolDivider.style.cssText = 'border-top:1px solid var(--border); margin:16px 0 4px; padding-top:12px;';
   poolDivider.innerHTML = '<label class="first" style="margin-top:0;">Keyword pool</label><div class="hint">Paste keywords or a full title, press Enter or hit Add. Click a pill number to place it, or click the pill to add to the end.</div>';
-  sc.appendChild(poolDivider);
+  poolWrap.appendChild(poolDivider);
 
   const multiPasteDivider = document.createElement('div');
   multiPasteDivider.style.cssText = 'margin-bottom:10px;';
   multiPasteDivider.innerHTML = '<label class="first" style="margin-top:0;">Paste titles from other listings</label><div class="hint">One box per listing title, each with its own paste button. Hit Add All once and every non-empty box gets stripped and merged into the pool in one click.</div>';
-  sc.appendChild(multiPasteDivider);
+  poolWrap.appendChild(multiPasteDivider);
 
   const TITLE_PASTE_LABELS = ['Title 1', 'Title 2', 'Title 3', 'Extra'];
   const titlePasteInputs = [];
@@ -1120,28 +1122,28 @@ function buildTitlesTagsSubcard(niche) {
     const pasteBtn = document.createElement('button'); pasteBtn.className = 'btn secondary'; pasteBtn.textContent = 'Paste from Clipboard';
     pasteBtn.addEventListener('click', () => pasteTextClip(pasteBtn, async (text) => { input.value = text; }));
     row.appendChild(input); row.appendChild(pasteBtn);
-    sc.appendChild(row);
+    poolWrap.appendChild(row);
     titlePasteInputs.push(input);
   });
   const addAllBtn = document.createElement('button'); addAllBtn.className = 'btn secondary'; addAllBtn.textContent = 'Add All to Pool'; addAllBtn.style.marginTop = '4px';
-  sc.appendChild(addAllBtn);
-  const addAllStatus = document.createElement('div'); addAllStatus.className = 'status'; sc.appendChild(addAllStatus);
+  poolWrap.appendChild(addAllBtn);
+  const addAllStatus = document.createElement('div'); addAllStatus.className = 'status'; poolWrap.appendChild(addAllStatus);
 
   const poolBulk = document.createElement('textarea'); poolBulk.rows = 2; poolBulk.placeholder = 'Paste keywords separated by commas, or a whole title';
-  sc.appendChild(poolBulk);
+  poolWrap.appendChild(poolBulk);
   const poolRow = document.createElement('div'); poolRow.className = 'add-row';
   const poolAddBtn = document.createElement('button'); poolAddBtn.className = 'btn small'; poolAddBtn.textContent = 'Add to pool';
   const poolSingle = document.createElement('input'); poolSingle.type = 'text'; poolSingle.placeholder = 'Or type one keyword and press Enter';
   const poolPasteBtn = document.createElement('button'); poolPasteBtn.className = 'btn secondary'; poolPasteBtn.textContent = 'Paste from Clipboard';
   poolRow.appendChild(poolAddBtn); poolRow.appendChild(poolSingle); poolRow.appendChild(poolPasteBtn);
-  sc.appendChild(poolRow);
-  const poolStatus = document.createElement('div'); poolStatus.className = 'status'; sc.appendChild(poolStatus);
-  const poolList = document.createElement('div'); poolList.className = 'tag-list'; sc.appendChild(poolList);
+  poolWrap.appendChild(poolRow);
+  const poolStatus = document.createElement('div'); poolStatus.className = 'status'; poolWrap.appendChild(poolStatus);
+  const poolList = document.createElement('div'); poolList.className = 'tag-list'; poolWrap.appendChild(poolList);
   const poolBtnRow = document.createElement('div'); poolBtnRow.className = 'add-row';
   const poolClearBtn = document.createElement('button'); poolClearBtn.className = 'btn secondary'; poolClearBtn.textContent = 'Clear pool';
   const poolSplitAllBtn = document.createElement('button'); poolSplitAllBtn.className = 'btn secondary'; poolSplitAllBtn.textContent = 'Split All';
   poolBtnRow.appendChild(poolClearBtn); poolBtnRow.appendChild(poolSplitAllBtn);
-  sc.appendChild(poolBtnRow);
+  poolWrap.appendChild(poolBtnRow);
 
   async function extractKeywords(text) {
     const result = await callClaude(WALLART_KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }], 1000);
@@ -1272,6 +1274,9 @@ function buildTitlesTagsSubcard(niche) {
     renderPool();
   });
   poolPasteBtn.addEventListener('click', () => pasteTextClip(poolPasteBtn, async (text) => { await addToPool(text, true); }));
+
+  sc.appendChild(poolWrap);
+  sc.appendChild(titleWrap);
 
   // Tags
   const tagsDivider = document.createElement('div');
