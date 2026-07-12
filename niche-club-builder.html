@@ -40,7 +40,13 @@
   .add-row input { flex:1; min-width:130px; }
 
   .bottom-bar { position:fixed; left:0; right:0; bottom:0; background:var(--bg); border-top:1px solid #4a3a34; padding:12px 22px; display:flex; align-items:center; justify-content:flex-end; gap:14px; z-index:50; }
-  .bottom-bar-status { color:var(--muted); font-size:12px; margin-right:auto; }
+  .bottom-bar-status { color:var(--muted); font-size:12px; margin-right:8px; }
+  .save-banner {
+    font-size:11.5px; font-weight:700; letter-spacing:0.03em; padding:6px 14px; border-radius:20px;
+    margin-right:auto; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s ease;
+  }
+  .save-banner.saved { background:rgba(122,158,126,0.18); color:#9cc4a0; border:1px solid rgba(122,158,126,0.4); }
+  .save-banner.saving { background:rgba(201,169,110,0.18); color:var(--gold); border:1px solid rgba(201,169,110,0.4); }
   .bottom-bar .btn.bb { background:transparent; color:var(--cream); border:1.5px solid var(--gold); }
   .bottom-bar .btn.bb:hover { background:var(--gold); color:var(--bg); }
 
@@ -102,9 +108,10 @@
   .value-item .del:hover { color:var(--warn); }
   .value-item.protip { background:#fbf3e3; border-color:var(--gold); }
 
-  .prompt-item { background:#fff; border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:8px; position:relative; font-size:12.5px; line-height:1.5; }
+  .prompt-item { background:#fff; border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:8px; font-size:12.5px; line-height:1.5; }
   .prompt-item.selected { border-color:var(--done); background:#f2f7f2; }
-  .prompt-item .prow { display:flex; gap:6px; position:absolute; top:8px; right:8px; }
+  .prompt-item .ptext { margin-bottom:10px; }
+  .prompt-item .prow { display:flex; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:8px; }
 
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; padding:30px 16px; overflow-y:auto; }
   .modal-overlay.show { display:block; }
@@ -170,7 +177,9 @@
 </div>
 
 <div class="bottom-bar">
+  <span class="save-banner saved" id="saveBanner">All changes saved ✓</span>
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
+  <button class="btn bottom-bar-btn" id="saveNowBtn">Save Now</button>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -216,7 +225,24 @@ const storageAPI = {
 
 function debounce(fn, delay) {
   let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+  return (...args) => {
+    markSaving();
+    clearTimeout(t);
+    t = setTimeout(async () => { await fn(...args); markSaved(); }, delay);
+  };
+}
+
+function markSaving() {
+  const el = document.getElementById('saveBanner');
+  if (!el) return;
+  el.textContent = 'Saving...';
+  el.className = 'save-banner saving';
+}
+function markSaved() {
+  const el = document.getElementById('saveBanner');
+  if (!el) return;
+  el.textContent = 'All changes saved ✓';
+  el.className = 'save-banner saved';
 }
 
 function escapeHtml(str) {
@@ -660,17 +686,17 @@ function buildBasicsSubcard(niche) {
   row2.appendChild(c3); row2.appendChild(c4);
   sc.appendChild(row2);
 
+  const salesLbl = document.createElement('label'); salesLbl.className = 'first'; salesLbl.style.fontSize = '10.5px'; salesLbl.textContent = 'Approx. Sales';
+  sc.appendChild(salesLbl);
+  const salesInput = document.createElement('input'); salesInput.type = 'text'; salesInput.placeholder = 'e.g. 173'; salesInput.value = b.noteSales || '';
+  sc.appendChild(salesInput);
+
   const bsRow = document.createElement('div'); bsRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:12px;';
   const bsCheck = document.createElement('input'); bsCheck.type = 'checkbox'; bsCheck.checked = !!b.noteBestseller;
   bsCheck.style.cssText = 'width:15px;height:15px;accent-color:var(--rose);cursor:pointer;';
   const bsLbl = document.createElement('label'); bsLbl.style.cssText = 'margin:0;font-size:10.5px;'; bsLbl.textContent = 'Bestseller?';
   bsRow.appendChild(bsCheck); bsRow.appendChild(bsLbl);
   sc.appendChild(bsRow);
-
-  const salesLbl = document.createElement('label'); salesLbl.style.fontSize = '10.5px'; salesLbl.textContent = 'Approx. Sales';
-  sc.appendChild(salesLbl);
-  const salesInput = document.createElement('input'); salesInput.type = 'text'; salesInput.placeholder = 'e.g. 173'; salesInput.value = b.noteSales || '';
-  sc.appendChild(salesInput);
 
   const preview = document.createElement('div');
   preview.style.cssText = 'margin-top:12px; font-size:12px; color:#c4b0a8;';
@@ -1512,7 +1538,8 @@ function buildPromptsSubcard(niche) {
     niche.state.prompts.forEach((p, i) => {
       const item = document.createElement('div');
       item.className = 'prompt-item' + (niche.state.selectedPromptIndex === i ? ' selected' : '');
-      item.textContent = p.text;
+      const textDiv = document.createElement('div'); textDiv.className = 'ptext'; textDiv.textContent = p.text;
+      item.appendChild(textDiv);
       const prow = document.createElement('div'); prow.className = 'prow';
       const useBtn = document.createElement('button'); useBtn.className = 'btn secondary'; useBtn.style.fontSize = '10px';
       useBtn.textContent = niche.state.selectedPromptIndex === i ? 'Using this' : 'Use this one';
@@ -1725,6 +1752,20 @@ function clearOneNiche(niche) {
 
 document.getElementById('collapseAllBtn').addEventListener('click', () => { nicheOrder.forEach(n => setNicheCollapsed(n, true)); });
 document.getElementById('expandAllBtn').addEventListener('click', () => { nicheOrder.forEach(n => setNicheCollapsed(n, false)); });
+
+document.getElementById('saveNowBtn').addEventListener('click', async () => {
+  markSaving();
+  try {
+    await storageAPI.set('weekDate', weekDateInput.value);
+    await storageAPI.set('nicheOrder', JSON.stringify(nicheOrder.map(n => ({ num:n.num, name:n.name, type:n.type, isBonus:n.isBonus, bonusOn:n.bonusOn, complete:n.complete }))));
+    for (const n of nicheOrder) await storageAPI.set('nichestate:' + n.num, JSON.stringify(n.state));
+    markSaved();
+    bbStatus('Everything saved', 2000);
+  } catch (e) {
+    console.error(e);
+    bbStatus('Something went wrong saving, try again', 3000);
+  }
+});
 
 document.getElementById('clearAllNichesBtn').addEventListener('click', async () => {
   if (!confirm('Clear everything for the whole week? This cannot be undone.')) return;
