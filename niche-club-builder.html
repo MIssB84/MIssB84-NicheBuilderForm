@@ -178,8 +178,10 @@
 
 <div class="bottom-bar">
   <span class="save-banner saved" id="saveBanner">All changes saved ✓</span>
+  <span id="storageUsageText" style="font-size:11px; color:#9a877f; margin-right:12px;"></span>
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
   <button class="btn bottom-bar-btn" id="saveNowBtn">Save Now</button>
+  <button class="btn bottom-bar-btn" id="wipeStorageBtn" style="border-color:var(--warn); color:var(--warn);">Wipe All Local Data</button>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -240,9 +242,11 @@ function markSaving() {
 }
 function markSaved() {
   const el = document.getElementById('saveBanner');
-  if (!el) return;
-  el.textContent = 'All changes saved ✓';
-  el.className = 'save-banner saved';
+  if (el) {
+    el.textContent = 'All changes saved ✓';
+    el.className = 'save-banner saved';
+  }
+  updateStorageUsageDisplay();
 }
 
 function escapeHtml(str) {
@@ -1787,6 +1791,20 @@ document.getElementById('saveNowBtn').addEventListener('click', async () => {
   }
 });
 
+document.getElementById('wipeStorageBtn').addEventListener('click', () => {
+  const kb = getStorageUsageKB();
+  if (!confirm(`This wipes every bit of saved data for this tool in this browser (all niches, everything, roughly ${kb === null ? 'an unknown amount of' : kb + ' KB'}), including anything not currently loaded on screen. This cannot be undone. Continue?`)) return;
+  try {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('nicheclub:')) keysToRemove.push(key);
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+  } catch (e) {}
+  location.reload();
+});
+
 document.getElementById('clearAllNichesBtn').addEventListener('click', async () => {
   if (!confirm('Clear everything for the whole week? This cannot be undone.')) return;
   nicheOrder = JSON.parse(JSON.stringify(DEFAULT_NICHE_ORDER));
@@ -2015,7 +2033,42 @@ document.getElementById('copyAllHtmlBtn').addEventListener('click', () => {
 });
 
 /* ================= INIT / RESTORE ================= */
+function cleanupOrphanedStorage() {
+  try {
+    const isNativeStorage = typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+    if (isNativeStorage) return;
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('nicheclub:session:')) keysToRemove.push(key);
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
+    if (keysToRemove.length > 0) console.log('Cleaned up', keysToRemove.length, 'orphaned storage keys');
+  } catch (e) {}
+}
+
+function getStorageUsageKB() {
+  try {
+    let total = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('nicheclub:')) total += (key.length + (localStorage.getItem(key) || '').length);
+    }
+    return Math.round(total / 1024);
+  } catch (e) { return null; }
+}
+
+function updateStorageUsageDisplay() {
+  const el = document.getElementById('storageUsageText');
+  if (!el) return;
+  const kb = getStorageUsageKB();
+  if (kb === null) { el.textContent = ''; return; }
+  el.textContent = `Using about ${kb} KB of browser storage`;
+  el.style.color = kb > 4000 ? 'var(--warn)' : '#9a877f';
+}
+
 (async function init() {
+  cleanupOrphanedStorage();
   try {
     const savedDate = await storageAPI.get('weekDate');
     if (savedDate && savedDate.value) { weekDateInput.value = savedDate.value; updateWeekDateDisplay(); }
@@ -2042,6 +2095,7 @@ document.getElementById('copyAllHtmlBtn').addEventListener('click', () => {
 
   renderNicheList();
   renderAllNicheSections();
+  updateStorageUsageDisplay();
 })();
 </script>
 </body>
