@@ -347,13 +347,7 @@ function buildMarkedBaked(type) {
   return segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
 }
 function getFixedPrefix(niche) {
-  const kw = niche.name.trim();
-  if (niche.type === 'Wall Art') {
-    if (!kw) return 'Printable Wall Art';
-    if (/printable wall art\s*$/i.test(kw)) return kw;
-    return `${kw} Printable Wall Art`;
-  }
-  return kw;
+  return niche.name.trim();
 }
 
 function makeNicheState() {
@@ -1005,8 +999,11 @@ function buildTitlesTagsSubcard(niche) {
   sc.appendChild(poolRow);
   const poolStatus = document.createElement('div'); poolStatus.className = 'status'; sc.appendChild(poolStatus);
   const poolList = document.createElement('div'); poolList.className = 'tag-list'; sc.appendChild(poolList);
-  const poolClearBtn = document.createElement('button'); poolClearBtn.className = 'btn secondary'; poolClearBtn.textContent = 'Clear pool'; poolClearBtn.style.marginTop = '10px';
-  sc.appendChild(poolClearBtn);
+  const poolBtnRow = document.createElement('div'); poolBtnRow.className = 'add-row';
+  const poolClearBtn = document.createElement('button'); poolClearBtn.className = 'btn secondary'; poolClearBtn.textContent = 'Clear pool';
+  const poolSplitAllBtn = document.createElement('button'); poolSplitAllBtn.className = 'btn secondary'; poolSplitAllBtn.textContent = 'Split All';
+  poolBtnRow.appendChild(poolClearBtn); poolBtnRow.appendChild(poolSplitAllBtn);
+  sc.appendChild(poolBtnRow);
 
   async function extractKeywords(text) {
     const result = await callClaude(WALLART_KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }], 1000);
@@ -1106,6 +1103,16 @@ function buildTitlesTagsSubcard(niche) {
   poolBulk.addEventListener('keydown', async (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!poolBulk.value.trim()) return; await addToPool(poolBulk.value, true); poolBulk.value = ''; } });
   poolSingle.addEventListener('keydown', async (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!poolSingle.value.trim()) return; await addToPool(poolSingle.value, false); poolSingle.value = ''; } });
   poolClearBtn.addEventListener('click', () => { niche.state.pool = []; renderPool(); });
+  poolSplitAllBtn.addEventListener('click', () => {
+    const expanded = [];
+    niche.state.pool.forEach(item => {
+      const words = item.text.trim().split(/\s+/);
+      if (words.length > 1) words.forEach(w => expanded.push({ text: w }));
+      else expanded.push(item);
+    });
+    niche.state.pool = expanded;
+    renderPool();
+  });
   poolPasteBtn.addEventListener('click', () => pasteTextClip(poolPasteBtn, async (text) => { await addToPool(text, true); }));
 
   // Tags
