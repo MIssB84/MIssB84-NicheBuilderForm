@@ -58,7 +58,7 @@
   .niche-section-header .collapse-icon.open { transform:rotate(90deg); }
   .niche-section-header .sect-title { font-family:'Playfair Display',serif; color:var(--cream); font-size:16px; flex:1; }
   .niche-section-header .sect-badge { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); background:rgba(222,161,147,0.15); border:1px solid rgba(222,161,147,0.4); padding:3px 10px; border-radius:14px; flex-shrink:0; }
-  .niche-section-body { padding:18px 20px; display:none; }
+  .niche-section-body { padding:18px 20px; display:none; color:var(--mid-text); }
   .niche-section-body.open { display:block; }
   .niche-section-footer { padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:10px; flex-wrap:wrap; background:#fff; }
 
@@ -332,7 +332,7 @@ const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩
 function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 
 const PRODUCT_TYPES = ['Wall Art', 'Other'];
-const DEFAULT_BAKED = { 'Wall Art': 'Poster, Home Decor Digital Download' };
+const DEFAULT_BAKED = { 'Wall Art': 'Home Decor, Poster Digital Download' };
 const TITLE_CHAR_LIMIT = { 'Wall Art': 144 };
 const DEFAULT_TITLE_CHAR_LIMIT = 140;
 
@@ -348,7 +348,11 @@ function buildMarkedBaked(type) {
 }
 function getFixedPrefix(niche) {
   const kw = niche.name.trim();
-  if (niche.type === 'Wall Art') return kw ? `${kw} Printable Wall Art` : 'Printable Wall Art';
+  if (niche.type === 'Wall Art') {
+    if (!kw) return 'Printable Wall Art';
+    if (/printable wall art\s*$/i.test(kw)) return kw;
+    return `${kw} Printable Wall Art`;
+  }
   return kw;
 }
 
@@ -800,6 +804,48 @@ function buildValueSubcard(niche) {
 }
 
 /* ================= TITLES & TAGS SUBCARD ================= */
+const REMIX_SYSTEM = `You are helping an Etsy seller create a reworded variation of an existing title, reusing the exact same descriptive keywords, just redistributed or reordered differently, matching how real sellers rotate the same keyword pool across several title variations.
+
+You will be given the niche keyword, the fixed baked in wording template, and an existing full title built from that template.
+
+Extract the descriptive keywords the seller used in the existing title, excluding the niche keyword and any fixed baked in wording (things like Poster, Home Decor, Digital Download). Redistribute or reword those exact same keywords into a new natural sounding order, similar to how "Warm Terracotta Botanical Decor, Minimalist Boho Poster" could become "Minimalist Botanical Poster, Modern Boho Terracotta Decor" using the same words shuffled differently. Do not invent new descriptive keywords, do not drop any of the ones used. Keep the niche keyword exactly as given, unchanged, at the very start. Keep any fixed trailing wording (like Digital Download) exactly as given, unchanged, at the very end. Use Title Case.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"remixedTitle": "the full new title text"}`;
+
+async function remixTitleFrom1(niche, targetN, btn) {
+  const els = niche._titleEls[targetN];
+  setErr(els.remixErr, '');
+  els.remixErr.style.display = 'none'; els.remixErr.classList.remove('show');
+  const sourceText = (niche.state.titles[0] || '').trim();
+  if (!sourceText) {
+    setErr(els.remixErr, 'Build Title 1 first, then remix from it.');
+    els.remixErr.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  setStatus(els.remixStatus, 'Remixing...'); els.remixStatus.style.display = 'block';
+  try {
+    const template = `${getFixedPrefix(niche)}, ${buildMarkedBaked(niche.type)}`;
+    const userText = `Niche keyword (keep exactly at start): ${niche.name.trim()}\nBaked in fixed structure template: ${template}\nExisting title to remix: ${sourceText}`;
+    const result = await callClaude(REMIX_SYSTEM, [{ type: 'text', text: userText }], 1000);
+    const newTitle = (result.remixedTitle || '').trim();
+    if (newTitle) {
+      els.textarea.value = newTitle;
+      niche.state.titles[targetN - 1] = newTitle;
+      updateTitleCountFor(niche, targetN);
+      autosaveNicheState(niche.num);
+    }
+  } catch (err) {
+    console.error(err);
+    setErr(els.remixErr, 'Something went wrong: ' + (err.message || 'try again') + '.');
+    els.remixErr.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    setStatus(els.remixStatus, ''); els.remixStatus.style.display = 'none';
+  }
+}
+
 function seedAllTitlesForNiche(niche) {
   if (!niche._titleEls) return;
   [1, 2, 3].forEach(n => {
@@ -899,10 +945,20 @@ function buildTitlesTagsSubcard(niche) {
     const copyBtn = document.createElement('button'); copyBtn.className = 'btn secondary'; copyBtn.textContent = 'Copy Title ' + n;
     const resetBtn = document.createElement('button'); resetBtn.className = 'btn secondary'; resetBtn.textContent = 'Reset Title ' + n;
     btnRow.appendChild(copyBtn); btnRow.appendChild(resetBtn);
+    let remixBtn = null;
+    if (n !== 1) {
+      remixBtn = document.createElement('button'); remixBtn.className = 'btn secondary'; remixBtn.textContent = 'Remix from Title 1';
+      remixBtn.addEventListener('click', () => remixTitleFrom1(niche, n, remixBtn));
+      btnRow.appendChild(remixBtn);
+    }
     if (n !== 1) btnRow.style.display = 'none';
     sc.appendChild(btnRow);
+    const remixStatus = document.createElement('div'); remixStatus.className = 'status'; if (n !== 1) remixStatus.style.display = 'none';
+    sc.appendChild(remixStatus);
+    const remixErr = document.createElement('div'); remixErr.className = 'error'; if (n !== 1) remixErr.style.display = 'none';
+    sc.appendChild(remixErr);
 
-    niche._titleEls[n] = { block, textarea: ta, count, btnRow, copyBtn, resetBtn };
+    niche._titleEls[n] = { block, textarea: ta, count, btnRow, copyBtn, resetBtn, remixBtn, remixStatus, remixErr };
 
     ta.addEventListener('input', () => {
       niche.state.titles[n - 1] = ta.value;
@@ -924,7 +980,12 @@ function buildTitlesTagsSubcard(niche) {
   // Update btnRow visibility with tabs (patch tab click to also toggle btnRows)
   Object.keys(tabEls).forEach(k => {
     tabEls[k].addEventListener('click', () => {
-      [1, 2, 3].forEach(n => { niche._titleEls[n].btnRow.style.display = (n == k) ? 'flex' : 'none'; });
+      [1, 2, 3].forEach(n => {
+        const isActive = (n == k);
+        niche._titleEls[n].btnRow.style.display = isActive ? 'flex' : 'none';
+        niche._titleEls[n].remixStatus.style.display = isActive && niche._titleEls[n].remixStatus.classList.contains('show') ? 'block' : 'none';
+        niche._titleEls[n].remixErr.style.display = isActive && niche._titleEls[n].remixErr.classList.contains('show') ? 'block' : 'none';
+      });
     });
   });
 
