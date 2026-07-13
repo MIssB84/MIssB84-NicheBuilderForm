@@ -276,7 +276,13 @@
     </div>
     <div class="row2">
       <div class="field"><label>Badge Text</label><input type="text" id="plr_badge" value="PLR Resource Template"></div>
-      <div class="field"><label>Title</label><input type="text" id="plr_title" placeholder="PLR: Student Daily Planner"></div>
+      <div class="field"><label>Title</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="plr_title" placeholder="Student Daily Planner" style="flex:1;">
+          <button class="btn btn-ghost btn-sm" onclick="copyPLRTitle()" style="white-space:nowrap;">Copy Title</button>
+        </div>
+        <div class="hint">Copies as "PLR: [title]"</div>
+      </div>
     </div>
     <div class="field"><label>Subtitle</label><input type="text" id="plr_subtitle" value="A done-for-you Canva template you can customize, rebrand, and turn into a polished digital product for your shop."></div>
     <div class="field"><label>Canva Template Link</label><input type="url" id="plr_link" placeholder="https://canva.link/..."></div>
@@ -852,6 +858,13 @@ function copyMMTitle(){
     var temp = document.createElement('textarea'); temp.value=text; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); flashCopied('mm_finaltitle');
   });
 }
+function copyPLRTitle(){
+  var el = document.getElementById('plr_title');
+  var text = 'PLR: ' + el.value;
+  navigator.clipboard.writeText(text).then(function(){ flashCopied('plr_title'); }).catch(function(){
+    var temp = document.createElement('textarea'); temp.value=text; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); flashCopied('plr_title');
+  });
+}
 function mmGenerateHTML(){
   var body = document.getElementById('mm_body').value;
   var title = document.getElementById('mm_finaltitle').value || 'Motivational Monday';
@@ -982,7 +995,7 @@ function plrGenerateHTML(){
     '<div style="max-width:880px;margin:0 auto;">'+
     '<div style="background:#2a1f1c;border-radius:18px 18px 0 0;padding:2.4rem 2rem;text-align:center;">'+
     '<div style="display:inline-block;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,.1);border:1px solid rgba(222,161,147,.35);padding:7px 18px;border-radius:999px;margin-bottom:1rem;">'+escapeHtml(badge)+'</div>'+
-    '<h1 style="font-family:Playfair Display,Georgia,serif;font-size:2.7rem;line-height:1.1;color:#f5eddf;margin:0 0 .5rem;">'+escapeHtml(title)+'</h1>'+
+    '<h1 style="font-family:Playfair Display,Georgia,serif;font-size:2.7rem;line-height:1.1;color:#f5eddf;margin:0 0 .5rem;">PLR: '+escapeHtml(title)+'</h1>'+
     '<p style="font-size:18px;color:#c4b0a8;line-height:1.6;max-width:650px;margin:0 auto;">'+escapeHtml(subtitle)+'</p></div>'+
     '<div style="background:#fff;border:1px solid #ead9d5;border-top:none;border-radius:0 0 18px 18px;padding:2rem;box-shadow:0 12px 36px rgba(42,31,28,.06);">'+
     '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.6rem;text-align:center;margin-bottom:1.5rem;">'+
