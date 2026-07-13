@@ -167,9 +167,10 @@
 
   <div class="card">
     <button class="btn" id="generateAllBtn" style="width:100%; text-align:center; justify-content:center;">Generate Complete Weekly HTML</button>
+    <div class="error" id="generateAllErr" style="text-align:center; margin-top:8px;"></div>
     <div class="out-block" id="outBlock">
       <div class="add-row" style="margin-top:14px;">
-        <button class="btn secondary" id="copyAllHtmlBtn">Copy HTML</button>
+        <button class="btn" id="copyAllHtmlBtn" style="background:var(--rose); color:#fff; font-size:14px; padding:13px 26px; width:100%; text-align:center; justify-content:center;">📋 Copy HTML</button>
       </div>
       <div id="outPreview" style="margin-top:12px; border:1px solid var(--border); border-radius:10px; overflow:hidden;"></div>
     </div>
@@ -181,6 +182,7 @@
   <span id="storageUsageText" style="font-size:11px; color:#9a877f; margin-right:12px;"></span>
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
   <button class="btn bottom-bar-btn" id="saveNowBtn">Save Now</button>
+  <button class="btn bottom-bar-btn" id="clearAllNichesBtnBottom" style="border-color:var(--warn); color:var(--warn);">Clear All, Reset Entire Week</button>
   <button class="btn bottom-bar-btn" id="wipeStorageBtn" style="border-color:var(--warn); color:var(--warn);">Wipe All Local Data</button>
 </div>
 
@@ -507,9 +509,9 @@ function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 const PRODUCT_TYPES = ['Wall Art', 'PNG / Shirt Design', 'Frame TV Art', 'Tumbler Wrap', 'Other'];
 const DEFAULT_BAKED = {
   'Wall Art': 'Home Decor, Poster Digital Download',
-  'PNG / Shirt Design': 'Sublimation Design, Clipart Digital Download',
+  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic, Trendy Clipart Digital Download',
   'Frame TV Art': 'Smart Television Screensaver, Home Decor Digital Download',
-  'Tumbler Wrap': '20oz Skinny Tumbler Sublimation Design Digital Download'
+  'Tumbler Wrap': 'PNG, 20oz Skinny Tumbler Sublimation Design Digital Download'
 };
 const DEFAULT_BAKED_TAGS = { 'Wall Art': ['printable wall art', 'digital download', 'trendy home decor'] };
 const TITLE_CHAR_LIMIT = { 'Wall Art': 144 };
@@ -693,7 +695,8 @@ function buildListingNoteTextFor(niche) {
 
   const verbless = [];
   if (age) { const a = parseFloat(age); verbless.push(age + (a === 1 ? ' month old' : ' months old')); }
-  if (carts) { const c = parseFloat(carts); verbless.push((!isNaN(c) && c < 20 ? 'in ' : 'in over ') + carts + ' carts'); }
+  if (b.noteCarts20Plus) { verbless.push('in over 20 carts'); }
+  else if (carts) { const c = parseFloat(carts); verbless.push((!isNaN(c) && c < 20 ? 'in ' : 'in over ') + carts + ' carts'); }
 
   const verbed = [];
   if (buyers) { const bn = parseFloat(buyers); verbed.push(buyers + ' ' + (bn === 1 ? 'person' : 'people') + ' purchased it in the last 24 hours'); }
@@ -795,8 +798,14 @@ function buildBasicsSubcard(niche) {
   const row2 = document.createElement('div'); row2.style.cssText = 'display:flex;gap:10px;';
   const c3 = document.createElement('div'); c3.style.flex = '1';
   const c3l = document.createElement('label'); c3l.style.fontSize = '10.5px'; c3l.textContent = 'Carts'; c3.appendChild(c3l);
-  const c3i = document.createElement('input'); c3i.type = 'text'; c3i.placeholder = 'e.g. 20'; c3i.value = b.noteCarts || '';
+  const c3i = document.createElement('input'); c3i.type = 'text'; c3i.placeholder = 'e.g. 12'; c3i.value = b.noteCarts || '';
   c3.appendChild(c3i);
+  const c3check = document.createElement('div'); c3check.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:6px;';
+  const c3checkbox = document.createElement('input'); c3checkbox.type = 'checkbox'; c3checkbox.checked = !!b.noteCarts20Plus;
+  c3checkbox.style.cssText = 'width:14px;height:14px;accent-color:var(--rose);cursor:pointer;';
+  const c3checkLbl = document.createElement('label'); c3checkLbl.style.cssText = 'margin:0;font-size:10px;font-weight:400;'; c3checkLbl.textContent = 'Etsy shows 20+';
+  c3check.appendChild(c3checkbox); c3check.appendChild(c3checkLbl);
+  c3.appendChild(c3check);
   const c4 = document.createElement('div'); c4.style.flex = '1';
   const c4l = document.createElement('label'); c4l.style.fontSize = '10.5px'; c4l.textContent = 'Bought Last 24 Hrs'; c4.appendChild(c4l);
   const c4i = document.createElement('input'); c4i.type = 'text'; c4i.placeholder = 'e.g. 5'; c4i.value = b.noteBuyers || '';
@@ -831,6 +840,7 @@ function buildBasicsSubcard(niche) {
   c1i.addEventListener('input', () => { b.noteListing = c1i.value; refreshPreview(); autosaveNicheState(niche.num); });
   c2i.addEventListener('input', () => { b.noteAge = c2i.value; refreshPreview(); autosaveNicheState(niche.num); });
   c3i.addEventListener('input', () => { b.noteCarts = c3i.value; refreshPreview(); autosaveNicheState(niche.num); });
+  c3checkbox.addEventListener('change', () => { b.noteCarts20Plus = c3checkbox.checked; refreshPreview(); autosaveNicheState(niche.num); });
   c4i.addEventListener('input', () => { b.noteBuyers = c4i.value; refreshPreview(); autosaveNicheState(niche.num); });
   salesInput.addEventListener('input', () => { b.noteSales = salesInput.value; refreshPreview(); autosaveNicheState(niche.num); });
   bsCheck.addEventListener('change', () => { b.noteBestseller = bsCheck.checked; refreshPreview(); autosaveNicheState(niche.num); });
@@ -906,7 +916,6 @@ Write a "How To Add Value" breakdown for members. Rules:
 - Focus on visual differentiation only, no pricing, no SEO talk
 - Do not criticize the original designs
 - Beginner friendly, help members build a better design eye
-- Include exactly one section specifically about mockup styling
 - Also write one separate closing Pro Tip, one final piece of advice
 - Never use em dashes, use commas, colons, periods, or parentheses instead
 
@@ -979,6 +988,15 @@ function buildValueSubcard(niche) {
 }
 
 /* ================= TITLES & TAGS SUBCARD ================= */
+function enforceDigitalDownloadAtEnd(title) {
+  if (!title) return title;
+  const marker = /digital download/i;
+  if (!marker.test(title)) return title;
+  if (/digital download\s*$/i.test(title.trim())) return title;
+  const stripped = title.replace(/,?\s*digital download\s*/i, ' ').replace(/\s+/g, ' ').trim().replace(/,\s*$/, '');
+  return stripped + ', Digital Download';
+}
+
 const REMIX_SYSTEM = `You are helping an Etsy seller create a reworded variation of an existing title, reusing the exact same descriptive keywords, just redistributed or reordered differently, matching how real sellers rotate the same keyword pool across several title variations.
 
 You will be given the niche keyword, the fixed baked in wording template, the existing full title to remix from, and any other titles already in use for this niche that your result must be meaningfully different from.
@@ -1007,7 +1025,8 @@ async function remixTitleFrom1(niche, targetN, btn) {
     const otherTitles = [1, 2, 3].filter(n => n !== targetN).map(n => (niche.state.titles[n - 1] || '').trim()).filter(Boolean);
     const userText = `Niche keyword (keep exactly at start): ${niche.name.trim()}\nBaked in fixed structure template: ${template}\nExisting title to remix: ${sourceText}\nOther titles already in use for this niche, your result must be genuinely different from these: ${otherTitles.length ? otherTitles.join(' | ') : 'none yet'}`;
     const result = await callClaude(REMIX_SYSTEM, [{ type: 'text', text: userText }], 1000);
-    const newTitle = (result.remixedTitle || '').trim();
+    let newTitle = (result.remixedTitle || '').trim();
+    newTitle = enforceDigitalDownloadAtEnd(newTitle);
     if (newTitle) {
       els.textarea.value = newTitle;
       niche.state.titles[targetN - 1] = newTitle;
@@ -1042,8 +1061,14 @@ function updateTitleCountFor(niche, n) {
   for (let i = 1; i <= 10; i++) { if (text.includes(slotMarker(i))) overhead += 2; }
   const base = TITLE_CHAR_LIMIT[niche.type] || DEFAULT_TITLE_CHAR_LIMIT;
   const max = base + overhead;
+  const over = text.length > max;
   niche._titleEls[n].count.textContent = `${text.length} / ${max} chars`;
-  niche._titleEls[n].count.style.color = text.length > max ? '#e88a83' : 'var(--gold)';
+  niche._titleEls[n].count.style.color = over ? '#e88a83' : 'var(--gold)';
+  if (niche._tabEls && niche._tabEls[n]) {
+    const baseLabel = 'Title ' + n;
+    niche._tabEls[n].textContent = over ? baseLabel + ' ⚠' : baseLabel;
+    niche._tabEls[n].style.color = over ? 'var(--warn)' : '';
+  }
 }
 
 function getOpenSlotsFor(niche, n) {
@@ -1054,9 +1079,13 @@ function getOpenSlotsFor(niche, n) {
   return open;
 }
 
+function stripParenthetical(text) {
+  return text.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function pushSplitInto(pool, text) {
-  const normalized = text.replace(/[，、]/g, ',');
-  normalized.split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => pool.push({ text: p }));
+  const normalized = stripParenthetical(text).replace(/[，、]/g, ',');
+  normalized.split(/[,\n|]/).map(s => s.trim()).filter(Boolean).forEach(p => pool.push({ text: p }));
 }
 
 const WALLART_KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
@@ -1068,9 +1097,9 @@ Respond ONLY with valid JSON, no preamble, no markdown fences:
 
 const WALLART_STRIP_SYSTEM = `You are helping an Etsy seller pull just the descriptive part out of a full title they pasted from a listing.
 
-The pasted text has comma separated segments. Each segment mixes a descriptive phrase with generic product or format wording tacked onto the end or start, such as printable, wall art, poster, decor, home decor, digital download.
+The pasted text has comma separated segments. Each segment mixes a descriptive phrase with generic product or format wording tacked onto the end or start, such as printable, wall art, poster, decor, home decor, digital download, png, sublimation, clipart, tumbler, wrap.
 
-For every segment, strip off the generic product or format wording and return only the descriptive lead phrase. Keep the descriptive phrase exactly as cased in the original. Return one phrase per segment, in the same order, even if a segment turns out to be entirely generic with nothing descriptive left (return an empty string for that segment). Do not merge segments together.
+For every segment, strip off the generic product or format wording and return only the descriptive lead phrase. Keep the descriptive phrase exactly as cased in the original. Return one phrase per segment, in the same order, even if a segment turns out to be entirely generic with nothing descriptive left (return an empty string for that segment). Do not merge segments together. Never include stray punctuation, pipe characters, or parentheses in a returned phrase.
 
 Respond ONLY with valid JSON, no preamble, no markdown fences:
 {"phrases": ["phrase 1", "phrase 2", "phrase 3"]}`;
@@ -1109,6 +1138,7 @@ function buildTitlesTagsSubcard(niche) {
     tabEls[n] = tab;
     tabs.appendChild(tab);
   });
+  niche._tabEls = tabEls;
   titleWrap.appendChild(tabs);
 
   niche._titleEls = {};
@@ -1202,13 +1232,10 @@ function buildTitlesTagsSubcard(niche) {
   poolWrap.appendChild(addAllBtn);
   const addAllStatus = document.createElement('div'); addAllStatus.className = 'status'; poolWrap.appendChild(addAllStatus);
 
-  const poolBulk = document.createElement('textarea'); poolBulk.rows = 2; poolBulk.placeholder = 'Paste keywords separated by commas, or a whole title';
-  poolWrap.appendChild(poolBulk);
   const poolRow = document.createElement('div'); poolRow.className = 'add-row';
-  const poolAddBtn = document.createElement('button'); poolAddBtn.className = 'btn small'; poolAddBtn.textContent = 'Add to pool';
-  const poolSingle = document.createElement('input'); poolSingle.type = 'text'; poolSingle.placeholder = 'Or type one keyword and press Enter';
+  const poolSingle = document.createElement('input'); poolSingle.type = 'text'; poolSingle.placeholder = 'Type one keyword and press Enter';
   const poolPasteBtn = document.createElement('button'); poolPasteBtn.className = 'btn secondary'; poolPasteBtn.textContent = 'Paste from Clipboard';
-  poolRow.appendChild(poolAddBtn); poolRow.appendChild(poolSingle); poolRow.appendChild(poolPasteBtn);
+  poolRow.appendChild(poolSingle); poolRow.appendChild(poolPasteBtn);
   poolWrap.appendChild(poolRow);
   const poolStatus = document.createElement('div'); poolStatus.className = 'status'; poolWrap.appendChild(poolStatus);
   const poolList = document.createElement('div'); poolList.className = 'tag-list'; poolWrap.appendChild(poolList);
@@ -1228,8 +1255,8 @@ function buildTitlesTagsSubcard(niche) {
   }
 
   async function addToPool(text, allowExtraction) {
-    const trimmed = text.trim();
-    const hasDelim = /[,\n，、]/.test(trimmed);
+    const trimmed = stripParenthetical(text.trim());
+    const hasDelim = /[,\n，、|]/.test(trimmed);
     if (hasDelim && allowExtraction) {
       setStatus(poolStatus, 'Stripping product wording...');
       try {
@@ -1326,8 +1353,6 @@ function buildTitlesTagsSubcard(niche) {
   }
   niche._renderPool = renderPool;
 
-  poolAddBtn.addEventListener('click', async () => { if (!poolBulk.value.trim()) return; await addToPool(poolBulk.value, true); poolBulk.value = ''; });
-  poolBulk.addEventListener('keydown', async (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!poolBulk.value.trim()) return; await addToPool(poolBulk.value, true); poolBulk.value = ''; } });
   poolSingle.addEventListener('keydown', async (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!poolSingle.value.trim()) return; await addToPool(poolSingle.value, false); poolSingle.value = ''; } });
   poolClearBtn.addEventListener('click', () => { niche.state.pool = []; renderPool(); });
   poolSplitAllBtn.addEventListener('click', () => {
@@ -1441,9 +1466,11 @@ function buildTitlesTagsSubcard(niche) {
         renderSuggestedTags();
         renderTags();
       });
+      const cp = document.createElement('button'); cp.className = 'copy-pill'; cp.textContent = 'Copy';
+      cp.addEventListener('click', () => copyToClipboard(tag, cp, 'Copy'));
       const rm = document.createElement('button'); rm.className = 'rmv-btn'; rm.textContent = '×';
       rm.addEventListener('click', () => { niche.state.suggestedTags.splice(i, 1); renderSuggestedTags(); autosaveNicheState(niche.num); });
-      chip.appendChild(addBtn); chip.appendChild(rm);
+      chip.appendChild(addBtn); chip.appendChild(cp); chip.appendChild(rm);
       suggestedList.appendChild(chip);
     });
     autosaveNicheState(niche.num);
@@ -1594,6 +1621,7 @@ function buildPromptsSubcard(niche) {
   sc.appendChild(dirHint);
   const dirTa = document.createElement('textarea'); dirTa.rows = 2; dirTa.value = niche.state.creativeDirection || '';
   dirTa.addEventListener('input', () => { niche.state.creativeDirection = dirTa.value; autosaveNicheState(niche.num); });
+  dirTa.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); genBtn.click(); } });
   sc.appendChild(dirTa);
 
   const notesLbl = document.createElement('label'); notesLbl.textContent = 'Important Notes (optional)';
@@ -1608,11 +1636,14 @@ function buildPromptsSubcard(niche) {
   sc.appendChild(genBtn);
   const statusEl = document.createElement('div'); statusEl.className = 'status'; sc.appendChild(statusEl);
   const errEl = document.createElement('div'); errEl.className = 'error'; sc.appendChild(errEl);
+  const copyAllBtnTop = document.createElement('button'); copyAllBtnTop.className = 'btn secondary'; copyAllBtnTop.textContent = 'Copy all prompts'; copyAllBtnTop.style.marginTop = '10px'; copyAllBtnTop.style.display = 'none';
+  sc.appendChild(copyAllBtnTop);
   const listDiv = document.createElement('div'); listDiv.style.marginTop = '10px'; sc.appendChild(listDiv);
   const copyAllBtn = document.createElement('button'); copyAllBtn.className = 'btn secondary'; copyAllBtn.textContent = 'Copy all prompts'; copyAllBtn.style.marginTop = '10px';
   sc.appendChild(copyAllBtn);
 
   function render() {
+    copyAllBtnTop.style.display = niche.state.prompts.length ? 'inline-flex' : 'none';
     listDiv.innerHTML = '';
     niche.state.prompts.forEach((p, i) => {
       const item = document.createElement('div');
@@ -1622,7 +1653,7 @@ function buildPromptsSubcard(niche) {
       const prow = document.createElement('div'); prow.className = 'prow';
       const useBtn = document.createElement('button'); useBtn.className = 'btn secondary'; useBtn.style.fontSize = '10px';
       useBtn.textContent = niche.state.selectedPromptIndex === i ? 'Using this' : 'Use this one';
-      useBtn.addEventListener('click', () => { niche.state.selectedPromptIndex = i; render(); autosaveNicheState(niche.num); });
+      useBtn.addEventListener('click', () => { niche.state.selectedPromptIndex = i; copyToClipboard(p.text, useBtn, 'Use this one'); render(); autosaveNicheState(niche.num); });
       const cp = document.createElement('button'); cp.className = 'copy-pill'; cp.textContent = 'Copy';
       cp.addEventListener('click', () => copyToClipboard(p.text, cp, 'Copy'));
       const rm = document.createElement('button'); rm.className = 'rmv-btn'; rm.textContent = '×';
@@ -1673,6 +1704,7 @@ function buildPromptsSubcard(niche) {
   });
 
   copyAllBtn.addEventListener('click', () => copyToClipboard(niche.state.prompts.map(p => p.text).join('\n\n\n'), copyAllBtn, 'Copy all prompts'));
+  copyAllBtnTop.addEventListener('click', () => copyToClipboard(niche.state.prompts.map(p => p.text).join('\n\n\n'), copyAllBtnTop, 'Copy all prompts'));
 
   sc._render = render;
   return sc;
@@ -1693,11 +1725,14 @@ function buildGenImagesSubcard(niche) {
       const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = tool.name;
       slot.appendChild(nameDiv);
 
+      const urlRow = document.createElement('div'); urlRow.className = 'add-row';
       const urlInput = document.createElement('input');
       urlInput.type = 'text';
       urlInput.placeholder = 'Paste hosted image URL';
       urlInput.value = data.url || '';
-      slot.appendChild(urlInput);
+      const urlPasteBtn = document.createElement('button'); urlPasteBtn.className = 'btn secondary'; urlPasteBtn.textContent = 'Paste from Clipboard';
+      urlRow.appendChild(urlInput); urlRow.appendChild(urlPasteBtn);
+      slot.appendChild(urlRow);
 
       const errMsg = document.createElement('div'); errMsg.className = 'error'; errMsg.style.marginTop = '6px';
       slot.appendChild(errMsg);
@@ -1719,6 +1754,12 @@ function buildGenImagesSubcard(niche) {
         refreshThumb();
         autosaveNicheState(niche.num);
       });
+      urlPasteBtn.addEventListener('click', () => pasteTextClip(urlPasteBtn, async (text) => {
+        urlInput.value = text.trim();
+        niche.state.genImages[tool.id] = { url: urlInput.value };
+        refreshThumb();
+        autosaveNicheState(niche.num);
+      }));
 
       refreshThumb();
       container.appendChild(slot);
@@ -1772,9 +1813,13 @@ function buildNicheSection(niche) {
     updateNicheSectionTitle(niche);
     renderNicheList();
     autosaveNicheOrder();
+    if (niche.complete) setNicheCollapsed(niche, true);
   });
   const clearBtn = document.createElement('button'); clearBtn.className = 'btn secondary danger'; clearBtn.textContent = 'Clear This Niche';
-  clearBtn.addEventListener('click', () => clearOneNiche(niche));
+  clearBtn.addEventListener('click', () => {
+    if (!confirm(`Clear all saved work for ${niche.isBonus ? 'Bonus' : 'Niche ' + niche.num}? This cannot be undone.`)) return;
+    clearOneNiche(niche);
+  });
   footer.appendChild(previewBtn); footer.appendChild(completeBtn); footer.appendChild(clearBtn);
   section.appendChild(footer);
 
@@ -1842,6 +1887,10 @@ document.getElementById('wipeStorageBtn').addEventListener('click', async () => 
   location.reload();
 });
 
+document.getElementById('clearAllNichesBtnBottom').addEventListener('click', () => {
+  document.getElementById('clearAllNichesBtn').click();
+});
+
 document.getElementById('clearAllNichesBtn').addEventListener('click', async () => {
   if (!confirm('Clear everything for the whole week? This cannot be undone.')) return;
   nicheOrder = JSON.parse(JSON.stringify(DEFAULT_NICHE_ORDER));
@@ -1872,23 +1921,23 @@ var S = {
   blockHead:'background:#2a1f1c;padding:0.65rem 1.2rem;',
   blockLbl:'font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dea193;font-family:Jost,sans-serif;margin:0;',
   blockBody:'padding:1.1rem 1.3rem;',
-  noteBox:'background:rgba(222,161,147,0.1);border:1px solid rgba(222,161,147,0.35);border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
-  tipBox:'background:#fdf7f2;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;',
+  noteBox:'background:rgba(222,161,147,0.1);border:1px solid rgba(222,161,147,0.35);border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;text-align:left;',
+  tipBox:'background:#fdf7f2;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin-bottom:0.75rem;font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;text-align:left;',
   titleItem:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid #ead9d5;',
   titleItemLast:'display:flex;align-items:flex-start;justify-content:space-between;gap:10px;',
   titleDot:'width:20px;height:20px;border-radius:50%;background:#2a1f1c;border:2px solid #dea193;flex-shrink:0;margin-top:3px;',
-  titleText:'font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;flex:1;',
+  titleText:'font-size:17px;color:#5a4a45;line-height:1.8;font-family:Jost,sans-serif;flex:1;text-align:left;',
   tagsWrap:'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;',
   tag:'background:#2a1f1c;color:#f5eddf;font-size:14px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid rgba(222,161,147,0.3);font-family:Jost,sans-serif;',
   promptBox:'background:#2a1f1c;border-radius:8px;padding:1.1rem 1.3rem;border-left:3px solid #dea193;',
-  promptText:'font-size:17px;color:#f5eddf;line-height:1.9;font-style:italic;font-family:Jost,sans-serif;margin:0 0 0.75rem;',
+  promptText:'font-size:17px;color:#f5eddf;line-height:1.9;font-style:italic;font-family:Jost,sans-serif;margin:0 0 0.75rem;text-align:left;',
   promptCopyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid rgba(222,161,147,0.5);padding:5px 14px;border-radius:20px;cursor:pointer;',
   copyBtn:'font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:transparent;color:#dea193;border:1px solid #dea193;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;',
   copyAll:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#dea193;color:#fff;border:none;padding:8px 20px;border-radius:20px;cursor:pointer;',
   listingsSec:'background:#2a1f1c;padding:1.2rem 1.5rem 1.5rem;',
   listingsLbl:'font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin-bottom:0.8rem;font-family:Jost,sans-serif;',
   listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
-  listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:8px;',
+  listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;display:block;border-radius:8px;background:#ead9d5;',
   listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;',
   backTop:'text-align:center;padding:1.5rem 0 0.5rem;',
   backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;',
@@ -2052,6 +2101,14 @@ document.getElementById('modalCloseBtn').addEventListener('click', () => {
 });
 
 document.getElementById('generateAllBtn').addEventListener('click', () => {
+  const errEl = document.getElementById('generateAllErr');
+  if (!weekDateInput.value) {
+    setErr(errEl, 'Set the Week Date up top before generating, so you never forget it.');
+    weekDateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    weekDateInput.focus();
+    return;
+  }
+  setErr(errEl, '');
   const parts = [DCP_SCRIPT, buildIntroHTMLExport()];
   nicheOrder.forEach(niche => {
     if (niche.isBonus && !niche.bonusOn) return;
