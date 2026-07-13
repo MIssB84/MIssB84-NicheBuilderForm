@@ -868,11 +868,14 @@ function buildScreenshotsSubcard(niche) {
       const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = label + ' Image URL';
       slot.appendChild(nameDiv);
 
+      const urlRow = document.createElement('div'); urlRow.className = 'add-row';
       const urlInput = document.createElement('input');
       urlInput.type = 'text';
       urlInput.placeholder = 'https://i.etsystatic.com/...';
       urlInput.value = data.url || '';
-      slot.appendChild(urlInput);
+      const urlPasteBtn = document.createElement('button'); urlPasteBtn.className = 'btn secondary'; urlPasteBtn.textContent = 'Paste from Clipboard';
+      urlRow.appendChild(urlInput); urlRow.appendChild(urlPasteBtn);
+      slot.appendChild(urlRow);
 
       const errMsg = document.createElement('div');
       errMsg.className = 'error';
@@ -896,6 +899,12 @@ function buildScreenshotsSubcard(niche) {
         refreshThumb();
         autosaveNicheState(niche.num);
       });
+      urlPasteBtn.addEventListener('click', () => pasteTextClip(urlPasteBtn, async (text) => {
+        urlInput.value = text.trim();
+        niche.state.shots[i] = { url: urlInput.value };
+        refreshThumb();
+        autosaveNicheState(niche.num);
+      }));
 
       refreshThumb();
       listDiv.appendChild(slot);
