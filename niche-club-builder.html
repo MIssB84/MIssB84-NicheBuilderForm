@@ -330,6 +330,14 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 function esc(s) { return escapeHtml(s || ''); }
+function escAttr(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function copyToClipboard(text, btn, originalLabel) {
   const done = (label) => { btn.textContent = label; setTimeout(() => { btn.textContent = originalLabel; }, 1200); };
@@ -1917,7 +1925,7 @@ function buildNicheHTMLExport(niche) {
       + '<div style="'+S.titleDot+'"></div>'
       + '<p style="'+S.titleText+'">'+esc(t)+'</p>'
       + '</div>'
-      + '<button style="'+S.copyBtn+'" data-copy="'+esc(t)+'" onclick="dCp(this)">Copy</button>'
+      + '<button style="'+S.copyBtn+'" data-copy="'+escAttr(t)+'" onclick="dCp(this)">Copy</button>'
       + '</div>';
   });
 
@@ -1966,11 +1974,11 @@ function buildNicheHTMLExport(niche) {
   if (note) html += '<div id="'+anchorId+'-notes" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>'+backLink;
   if (tipsHtml) html += '<div id="'+anchorId+'-tips" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>'+backLink;
   if (titlesHtml) html += '<div id="'+anchorId+'-titles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>'+backLink;
-  if (tagsHtml) html += '<div id="'+anchorId+'-tags" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+esc(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>'+backLink;
+  if (tagsHtml) html += '<div id="'+anchorId+'-tags" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+escAttr(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>'+backLink;
 
   if (selectedPrompt) {
     html += '<div id="'+anchorId+'-prompt" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">AI Image Prompt</p></div><div style="'+S.blockBody+'">';
-    html += '<div style="'+S.promptBox+'"><p style="'+S.promptText+'">'+esc(selectedPrompt)+'</p><button style="'+S.promptCopyBtn+'" data-copy="'+esc(selectedPrompt)+'" onclick="dCp(this)">Copy Prompt</button></div></div></div>'+backLink;
+    html += '<div style="'+S.promptBox+'"><p style="'+S.promptText+'">'+esc(selectedPrompt)+'</p><button style="'+S.promptCopyBtn+'" data-copy="'+escAttr(selectedPrompt)+'" onclick="dCp(this)">Copy Prompt</button></div></div></div>'+backLink;
   }
 
   if (notesArr.length) {
