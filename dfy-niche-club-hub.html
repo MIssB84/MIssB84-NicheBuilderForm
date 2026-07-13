@@ -101,6 +101,14 @@
   <div class="panel active" id="panel-mm">
     <h2>Motivational Monday</h2>
     <p class="sub">Generates a warm, practical MM post for Etsy sellers. Image is fixed and always included.</p>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewMM()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="mm_preview_wrap" style="display:none;">
+      <iframe id="mm_preview_iframe"></iframe>
+    </div>
+
     <div class="field">
       <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
         <input type="checkbox" id="mm_hastopic" onchange="mmToggleTopic()" style="width:auto;"> I have a topic in mind
@@ -112,6 +120,14 @@
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="mmGenerateDraft()">Generate Draft (AI)<span id="mm_gen_status"></span></button>
+    </div>
+
+    <div class="field" id="mm_concepts_wrap" style="display:none;">
+      <label>Pick a Concept (scan, then generate the full post)</label>
+      <div id="mm_concepts_picker"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="mmGenerateFromConcept()">Generate Full Post From This Concept</button>
+      </div>
     </div>
 
     <div class="field">
@@ -126,8 +142,16 @@
       <label>Final Title</label>
       <div style="display:flex;gap:8px;">
         <input type="text" id="mm_finaltitle" placeholder="Nobody Felt Ready the First Time Either" style="flex:1;">
-        <button class="btn btn-ghost btn-sm" onclick="copyField('mm_finaltitle')" style="white-space:nowrap;">Copy Title</button>
+        <button class="btn btn-ghost btn-sm" onclick="copyMMTitle()" style="white-space:nowrap;">Copy Title</button>
       </div>
+      <div class="hint">Copies as "Motivational Monday: [title]"</div>
+    </div>
+    <div class="field">
+      <label>Feedback for AI (optional — then regenerate)</label>
+      <textarea id="mm_feedback" rows="2" placeholder="e.g. don't tell members to change their tags or titles, make it punchier..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="mmRegenerateWithFeedback()">Regenerate With Feedback</button>
     </div>
 
     <div class="btn-row">
@@ -149,6 +173,14 @@
   <div class="panel" id="panel-tip">
     <h2>Weekly Tip</h2>
     <p class="sub">Plug-and-play weekly tip generator — plain text, markdown-bold, and HTML with copy/generate buttons.</p>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewTip()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="tip_preview_wrap" style="display:none;">
+      <iframe id="tip_preview_iframe"></iframe>
+    </div>
+
     <div class="field">
       <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
         <input type="checkbox" id="tip_hastopic" onchange="tipToggleTopic()" style="width:auto;"> I have a topic in mind
@@ -160,6 +192,14 @@
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="tipGenerateDraft()">Generate Draft (AI)<span id="tip_gen_status"></span></button>
+    </div>
+
+    <div class="field" id="tip_concepts_wrap" style="display:none;">
+      <label>Pick a Concept (scan, then generate the full post)</label>
+      <div id="tip_concepts_picker"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="tipGenerateFromConcept()">Generate Full Post From This Concept</button>
+      </div>
     </div>
 
     <div class="field">
@@ -197,6 +237,13 @@
       <label>Footer Note</label>
       <input type="text" id="tip_footer" value="Use this tip as one simple action step for your shop this week.">
     </div>
+    <div class="field">
+      <label>Feedback for AI (optional — then regenerate)</label>
+      <textarea id="tip_feedback" rows="2" placeholder="e.g. don't tell members to change their tags or titles..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="tipRegenerateWithFeedback()">Regenerate With Feedback</button>
+    </div>
 
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="tipGenerateHTML()">Generate HTML</button>
@@ -217,6 +264,12 @@
   <div class="panel" id="panel-plr">
     <h2>PLR Resource Template</h2>
     <p class="sub">Straightforward template — fill in the fields, generate HTML.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewPlr()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="plr_preview_wrap" style="display:none;">
+      <iframe id="plr_preview_iframe"></iframe>
+    </div>
     <div class="row2">
       <div class="field"><label>Badge Text</label><input type="text" id="plr_badge" value="PLR Resource Template"></div>
       <div class="field"><label>Title</label><input type="text" id="plr_title" placeholder="PLR: Student Daily Planner"></div>
@@ -258,11 +311,11 @@ Write your own listing description and use your own mockups</textarea>
     <h2>Niche Club Directory</h2>
     <p class="sub">Add each week's drop below. Weeks are saved permanently until you clear all data. Generate HTML rebuilds the full searchable directory.</p>
     <div class="card-block" style="background:#fff;">
-      <label style="display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--midtext);margin-bottom:.4rem;">Import Your Existing Directory HTML <span class="badge">One-Time Setup</span></label>
-      <p class="small-note" style="margin-top:0;">Paste the full HTML of your existing directory export below. This reads every week and niche already in it and adds them to your saved list — duplicate week dates are skipped automatically, so it's safe to paste the same export more than once.</p>
-      <textarea id="dir_import_input" rows="5" placeholder="Paste your existing directory HTML here..."></textarea>
+      <label style="display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--midtext);margin-bottom:.4rem;">Bulk Paste This Week's Niches</label>
+      <p class="small-note" style="margin-top:0;">Paste this week's niche list below, one per line. It fills in the rows below with a best-guess product type for each — double check them, then save the week as usual.</p>
+      <textarea id="dir_bulk_input" rows="5" placeholder="Vintage Halloween Geese Printable Wall Art&#10;Wait For Me I Have Little Legs PNG&#10;Maximalist Floral Frame TV Art"></textarea>
       <div class="btn-row">
-        <button class="btn btn-primary btn-sm" onclick="dirImportHTML()">Import Weeks From This HTML</button>
+        <button class="btn btn-primary btn-sm" onclick="dirLoadBulkPaste()">Load Into Rows Below</button>
       </div>
     </div>
     <hr class="divider">
@@ -291,6 +344,12 @@ Write your own listing description and use your own mockups</textarea>
   <div class="panel" id="panel-announce">
     <h2>Announcements &amp; FYIs</h2>
     <p class="sub">Expandable cards for weekly updates.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewAnn()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="ann_preview_wrap" style="display:none;">
+      <iframe id="ann_preview_iframe"></iframe>
+    </div>
     <div class="field"><label>Week Of</label><input type="date" id="ann_weekdate"></div>
     <div id="ann_cards"></div>
     <div class="btn-row">
@@ -308,6 +367,12 @@ Write your own listing description and use your own mockups</textarea>
   <div class="panel" id="panel-livecall">
     <h2>Monthly Live Call</h2>
     <p class="sub">Countdown timer, call details, and calendar links.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewLc()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="lc_preview_wrap" style="display:none;">
+      <iframe id="lc_preview_iframe"></iframe>
+    </div>
     <div class="row3">
       <div class="field"><label>Call Date</label><input type="date" id="lc_date"></div>
       <div class="field"><label>Start Time</label><input type="time" id="lc_start" value="09:15"></div>
@@ -346,6 +411,12 @@ Write your own listing description and use your own mockups</textarea>
   <div class="panel" id="panel-recap">
     <h2>Live Call Recap</h2>
     <p class="sub">Paste raw Google Meet notes — AI turns them into a scannable recap, grouped by topic.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewRecap()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="recap_preview_wrap" style="display:none;">
+      <iframe id="recap_preview_iframe"></iframe>
+    </div>
     <div class="row2">
       <div class="field"><label>Month / Year</label><input type="month" id="recap_month"></div>
       <div class="field"><label>YouTube Embed URL</label><input type="url" id="recap_video" placeholder="https://www.youtube.com/embed/..."></div>
@@ -373,6 +444,12 @@ Write your own listing description and use your own mockups</textarea>
   <div class="panel" id="panel-adhoc">
     <h2>Ad Hoc Post</h2>
     <p class="sub">Freeform one-off post — video or image header, title, body, optional buttons.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewAdhoc()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="adhoc_preview_wrap" style="display:none;">
+      <iframe id="adhoc_preview_iframe"></iframe>
+    </div>
     <div class="row2">
       <div class="field"><label>Media Type</label>
         <select id="adhoc_mediatype"><option value="video">Video</option><option value="image">Image</option><option value="none">None</option></select>
@@ -386,7 +463,10 @@ Write your own listing description and use your own mockups</textarea>
       </div>
     </div>
     <div class="field"><label>Body (blank line = new paragraph, **word** = bold)</label>
-      <textarea id="adhoc_body" rows="8"></textarea>
+      <textarea id="adhoc_body" rows="8" placeholder="Write clean, or just brain-dump messy notes here and click Clean Up With AI below..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-sm" onclick="adhocCleanUp()">✨ Clean Up With AI (Brain Dump → Post)<span id="adhoc_gen_status"></span></button>
     </div>
     <div id="adhoc_buttons"></div>
     <div class="btn-row">
@@ -404,6 +484,12 @@ Write your own listing description and use your own mockups</textarea>
   <div class="panel" id="panel-keyword">
     <h2>Monthly Keyword Report</h2>
     <p class="sub">eRank data table — searchable, sortable, with market movement tags.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewKw()">👁 Preview</button>
+    </div>
+    <div class="preview-frame" id="kw_preview_wrap" style="display:none;">
+      <iframe id="kw_preview_iframe"></iframe>
+    </div>
     <div class="row2">
       <div class="field"><label>Month / Year</label><input type="month" id="kw_month"></div>
       <div class="field"><label>Group Photo URL</label><input type="url" id="kw_photo" placeholder="https://..."></div>
@@ -523,6 +609,25 @@ function copyOutput(id){
     flashCopied(id);
   });
 }
+function showPreview(tool){
+  var outputEl = document.getElementById(tool+'_output');
+  var output = outputEl ? outputEl.value : '';
+  if(!output.trim()){ alert('Nothing to preview yet — fill in the fields first.'); return; }
+  var wrap = document.getElementById(tool+'_preview_wrap');
+  var iframe = document.getElementById(tool+'_preview_iframe');
+  var wrapped = '<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>body{margin:0;padding:20px;background:#f0e8df;}</style></head><body>'+output+'</body></html>';
+  iframe.srcdoc = wrapped;
+  wrap.style.display = 'block';
+  if(wrap.scrollIntoView) wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function previewMM(){ mmGenerateHTML(); showPreview('mm'); }
+function previewTip(){ tipGenerateHTML(); showPreview('tip'); }
+function previewPlr(){ plrGenerateHTML(); showPreview('plr'); }
+function previewAnn(){ annGenerateHTML(); showPreview('ann'); }
+function previewLc(){ lcGenerateHTML(); showPreview('lc'); }
+function previewRecap(){ recapGenerateHTML(); showPreview('recap'); }
+function previewAdhoc(){ adhocGenerateHTML(); showPreview('adhoc'); }
+function previewKw(){ kwGenerateHTML(); showPreview('kw'); }
 function flashCopied(id){
   var el = document.getElementById(id);
   var orig = el.style.borderColor;
@@ -579,8 +684,8 @@ function parseTitlesBlock(titlesRaw){
 
 /* ============ CORE: AUTOSAVE PER TOOL ============ */
 var TOOL_FIELDS = {
-  mm: ['mm_hastopic','mm_topic','mm_body','mm_finaltitle','mm_plaintext','mm_output'],
-  tip: ['tip_hastopic','tip_topic','tip_body','tip_finaltitle','tip_eyebrow','tip_link','tip_linktext','tip_footer','tip_plaintext','tip_output'],
+  mm: ['mm_hastopic','mm_topic','mm_body','mm_finaltitle','mm_plaintext','mm_output','mm_feedback'],
+  tip: ['tip_hastopic','tip_topic','tip_body','tip_finaltitle','tip_eyebrow','tip_link','tip_linktext','tip_footer','tip_plaintext','tip_output','tip_feedback'],
   plr: ['plr_badge','plr_title','plr_subtitle','plr_link','plr_steps','plr_whatisit','plr_checklist','plr_reminder','plr_output'],
   ann: ['ann_weekdate','ann_output'],
   lc: ['lc_date','lc_start','lc_end','lc_tz','lc_platform','lc_expect','lc_islive','lc_meetlink','lc_formlink','lc_nextdate','lc_output'],
@@ -625,8 +730,18 @@ function clearTool(tool){
     }
   });
   localStorage.removeItem('dfyhub_draft_'+tool);
-  if(tool==='mm'){ mmToggleTopic(); document.getElementById('mm_titles_picker').innerHTML='Generate a draft to see title options here.'; }
-  if(tool==='tip'){ tipToggleTopic(); document.getElementById('tip_titles_picker').innerHTML='Generate a draft to see title options here.'; }
+  if(tool==='mm'){
+    mmToggleTopic();
+    document.getElementById('mm_titles_picker').innerHTML='Generate a draft to see title options here.';
+    document.getElementById('mm_concepts_wrap').style.display='none';
+    document.getElementById('mm_concepts_picker').innerHTML='';
+  }
+  if(tool==='tip'){
+    tipToggleTopic();
+    document.getElementById('tip_titles_picker').innerHTML='Generate a draft to see title options here.';
+    document.getElementById('tip_concepts_wrap').style.display='none';
+    document.getElementById('tip_concepts_picker').innerHTML='';
+  }
   if(tool==='ann'){ document.getElementById('ann_cards').innerHTML=''; annAddCard(); }
   if(tool==='adhoc'){ document.getElementById('adhoc_buttons').innerHTML=''; }
   if(tool==='kw'){
@@ -635,6 +750,8 @@ function clearTool(tool){
     kwSaveRows();
   }
   if(tool==='lc'){ lcToggleLive(); }
+  var previewWrap = document.getElementById(tool+'_preview_wrap');
+  if(previewWrap) previewWrap.style.display='none';
 }
 
 /* ============ MM TAB LOGIC ============ */
@@ -642,18 +759,59 @@ function mmToggleTopic(){
   document.getElementById('mm_topicfield').style.display = document.getElementById('mm_hastopic').checked ? 'block':'none';
 }
 var MM_IMAGE_URL = "https://d1yei2z3i6k35z.cloudfront.net/10270628/695a7e36e4a11_DFYCourseImages1.png";
-var MM_SYSTEM = "You write Motivational Monday posts for Etsy sellers and digital product entrepreneurs. Warm, practical, conversational, no cliches. 2-5 short paragraphs. No em dashes. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the post body, use **word** for anything that should be bolded]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var NO_TAG_TITLE_ADVICE_RULE = "NEVER advise Etsy sellers to change, tweak, edit, or update their existing/live product titles or tags to try to improve SEO or ranking. Changing live listing titles/tags resets their search ranking history, so this advice is harmful and must never be given, even indirectly or as one option among others.";
+var NO_EMDASH_RULE = "NEVER use an em dash (—) anywhere in the output. Use a period, comma, or separate sentence instead.";
+var MM_SYSTEM = "You write Motivational Monday posts for Etsy sellers and digital product entrepreneurs. Warm, practical, conversational, no cliches. 2-5 short paragraphs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the post body, use **word** for anything that should be bolded]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var MM_CONCEPT_SYSTEM = "You brainstorm fresh Motivational Monday post concepts for Etsy sellers and digital product entrepreneurs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full post.";
+function stripEmDash(s){ return (s||'').replace(/\s*—\s*/g, ', ').replace(/,\s*,/g, ','); }
+function renderConceptPicker(containerId, concepts){
+  var container = document.getElementById(containerId);
+  if(!concepts || !concepts.length){ container.innerHTML = '<span class="small-note">No concepts yet.</span>'; return; }
+  var name = containerId+'_radio';
+  container.innerHTML = concepts.map(function(c, i){
+    var checked = (i===0) ? ' checked' : '';
+    return '<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--lightbg);cursor:pointer;font-weight:400;text-transform:none;font-size:14px;color:var(--dark);">'+
+      '<input type="radio" name="'+name+'" class="concept-pick-radio" data-concept="'+escapeAttr(c)+'" style="width:auto;margin-top:3px;"'+checked+'>'+
+      '<span>'+escapeHtml(c)+'</span></label>';
+  }).join('');
+}
+function getSelectedConcept(containerId){
+  var checked = document.querySelector('#'+containerId+' input:checked');
+  return checked ? checked.dataset.concept : '';
+}
 async function mmGenerateDraft(){
   var status = document.getElementById('mm_gen_status');
+  var hasTopic = document.getElementById('mm_hastopic').checked;
+  if(hasTopic){
+    document.getElementById('mm_concepts_wrap').style.display='none';
+    var topic = document.getElementById('mm_topic').value;
+    await mmGenerateFullPostFor('Write a Motivational Monday post about this topic: '+topic, status);
+  } else {
+    status.className='status-msg'; status.textContent=' getting concepts...';
+    try{
+      var result = await callClaude(MM_CONCEPT_SYSTEM, 'Give me 5 fresh Motivational Monday concept ideas.', 300);
+      var concepts = result.split('\n').map(function(l){return l.replace(/^[-*\d.\s]+/,'').trim();}).filter(Boolean).slice(0,5);
+      renderConceptPicker('mm_concepts_picker', concepts);
+      document.getElementById('mm_concepts_wrap').style.display='block';
+      status.textContent=' pick a concept below ✓';
+    }catch(e){
+      status.className='status-err'; status.textContent=' error: '+e.message;
+    }
+  }
+}
+async function mmGenerateFromConcept(){
+  var concept = getSelectedConcept('mm_concepts_picker');
+  if(!concept){ alert('Pick a concept first.'); return; }
+  var status = document.getElementById('mm_gen_status');
+  await mmGenerateFullPostFor('Write a Motivational Monday post based on this concept: '+concept, status);
+}
+async function mmGenerateFullPostFor(userMsg, status){
   status.className='status-msg'; status.textContent=' generating...';
   try{
-    var hasTopic = document.getElementById('mm_hastopic').checked;
-    var topic = document.getElementById('mm_topic').value;
-    var userMsg = hasTopic ? ('Write a Motivational Monday post about this topic: '+topic) : 'Pick a fresh, relevant topic and write a Motivational Monday post.';
     var result = await callClaude(MM_SYSTEM, userMsg, 1200);
     var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
     var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
-    document.getElementById('mm_body').value = bodyMatch ? bodyMatch[1].trim() : result.trim();
+    document.getElementById('mm_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
     var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
     renderTitlePicker('mm_titles_picker', 'mm_finaltitle', 'mm', parsed.titles, parsed.favIdx);
     status.textContent=' done ✓';
@@ -661,6 +819,34 @@ async function mmGenerateDraft(){
   }catch(e){
     status.className='status-err'; status.textContent=' error: '+e.message;
   }
+}
+async function mmRegenerateWithFeedback(){
+  var feedback = document.getElementById('mm_feedback').value;
+  if(!feedback.trim()){ alert('Add feedback first.'); return; }
+  var status = document.getElementById('mm_gen_status');
+  status.className='status-msg'; status.textContent=' revising...';
+  try{
+    var currentBody = document.getElementById('mm_body').value;
+    var userMsg = "Here is the current draft:\n\n"+currentBody+"\n\nPlease revise it based on this feedback: "+feedback+"\n\nOutput ONLY in this format:\n\nBODY:\n[revised post]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number]";
+    var result = await callClaude(MM_SYSTEM, userMsg, 1200);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
+    var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
+    document.getElementById('mm_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
+    renderTitlePicker('mm_titles_picker', 'mm_finaltitle', 'mm', parsed.titles, parsed.favIdx);
+    document.getElementById('mm_feedback').value='';
+    status.textContent=' revised ✓';
+    saveDraft('mm');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+function copyMMTitle(){
+  var el = document.getElementById('mm_finaltitle');
+  var text = 'Motivational Monday: ' + el.value;
+  navigator.clipboard.writeText(text).then(function(){ flashCopied('mm_finaltitle'); }).catch(function(){
+    var temp = document.createElement('textarea'); temp.value=text; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); flashCopied('mm_finaltitle');
+  });
 }
 function mmGenerateHTML(){
   var body = document.getElementById('mm_body').value;
@@ -685,21 +871,65 @@ function mmGenerateHTML(){
 function tipToggleTopic(){
   document.getElementById('tip_topicfield').style.display = document.getElementById('tip_hastopic').checked ? 'block':'none';
 }
-var TIP_SYSTEM = "You write weekly tips for Etsy sellers and digital product creators. Practical, conversational, no fluff. 2-4 short paragraphs, one clear takeaway, bold used sparingly on the most important lines. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the tip body, use **word** for bold]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var TIP_SYSTEM = "You write weekly tips for Etsy sellers and digital product creators. Practical, conversational, no fluff. 2-4 short paragraphs, one clear takeaway, bold used sparingly on the most important lines. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the tip body, use **word** for bold]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var TIP_CONCEPT_SYSTEM = "You brainstorm fresh weekly tip concepts for Etsy sellers and digital product creators. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full tip.";
 async function tipGenerateDraft(){
   var status = document.getElementById('tip_gen_status');
+  var hasTopic = document.getElementById('tip_hastopic').checked;
+  if(hasTopic){
+    document.getElementById('tip_concepts_wrap').style.display='none';
+    var topic = document.getElementById('tip_topic').value;
+    await tipGenerateFullPostFor('Write a weekly tip about this topic: '+topic, status);
+  } else {
+    status.className='status-msg'; status.textContent=' getting concepts...';
+    try{
+      var result = await callClaude(TIP_CONCEPT_SYSTEM, 'Give me 5 fresh weekly tip concept ideas.', 300);
+      var concepts = result.split('\n').map(function(l){return l.replace(/^[-*\d.\s]+/,'').trim();}).filter(Boolean).slice(0,5);
+      renderConceptPicker('tip_concepts_picker', concepts);
+      document.getElementById('tip_concepts_wrap').style.display='block';
+      status.textContent=' pick a concept below ✓';
+    }catch(e){
+      status.className='status-err'; status.textContent=' error: '+e.message;
+    }
+  }
+}
+async function tipGenerateFromConcept(){
+  var concept = getSelectedConcept('tip_concepts_picker');
+  if(!concept){ alert('Pick a concept first.'); return; }
+  var status = document.getElementById('tip_gen_status');
+  await tipGenerateFullPostFor('Write a weekly tip based on this concept: '+concept, status);
+}
+async function tipGenerateFullPostFor(userMsg, status){
   status.className='status-msg'; status.textContent=' generating...';
   try{
-    var hasTopic = document.getElementById('tip_hastopic').checked;
-    var topic = document.getElementById('tip_topic').value;
-    var userMsg = hasTopic ? ('Write a weekly tip about this topic: '+topic) : 'Pick a fresh, relevant topic and write a weekly tip.';
     var result = await callClaude(TIP_SYSTEM, userMsg, 1000);
     var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
     var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
-    document.getElementById('tip_body').value = bodyMatch ? bodyMatch[1].trim() : result.trim();
+    document.getElementById('tip_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
     var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
     renderTitlePicker('tip_titles_picker', 'tip_finaltitle', 'tip', parsed.titles, parsed.favIdx);
     status.textContent=' done ✓';
+    saveDraft('tip');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+async function tipRegenerateWithFeedback(){
+  var feedback = document.getElementById('tip_feedback').value;
+  if(!feedback.trim()){ alert('Add feedback first.'); return; }
+  var status = document.getElementById('tip_gen_status');
+  status.className='status-msg'; status.textContent=' revising...';
+  try{
+    var currentBody = document.getElementById('tip_body').value;
+    var userMsg = "Here is the current draft:\n\n"+currentBody+"\n\nPlease revise it based on this feedback: "+feedback+"\n\nOutput ONLY in this format:\n\nBODY:\n[revised tip]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number]";
+    var result = await callClaude(TIP_SYSTEM, userMsg, 1000);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
+    var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
+    document.getElementById('tip_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
+    renderTitlePicker('tip_titles_picker', 'tip_finaltitle', 'tip', parsed.titles, parsed.favIdx);
+    document.getElementById('tip_feedback').value='';
+    status.textContent=' revised ✓';
     saveDraft('tip');
   }catch(e){
     status.className='status-err'; status.textContent=' error: '+e.message;
@@ -783,6 +1013,32 @@ function dirNicheRowHtml(name, type){
 }
 function dirAddNicheRow(){
   document.getElementById('dir_niche_rows').insertAdjacentHTML('beforeend', dirNicheRowHtml('',''));
+}
+function dirGuessType(name){
+  var n = name.toLowerCase();
+  if(n.indexOf('tumbler wrap png') > -1) return 'Tumbler Wrap PNG';
+  if(n.indexOf('tumbler wrap') > -1) return 'Tumbler Wrap';
+  if(n.indexOf('frame tv') > -1) return 'Frame TV Art';
+  if(n.indexOf('printable wall art') > -1) return 'Printable Wall Art';
+  if(n.indexOf('invitation') > -1 || n.indexOf('invite') > -1) return 'Invitation';
+  if(n.indexOf('checklist') > -1) return 'Checklist';
+  if(n.indexOf('planner') > -1) return 'Planner';
+  if(n.indexOf('journal') > -1) return 'Journal';
+  if(n.indexOf('template') > -1) return 'Template';
+  if(n.indexOf('pod') > -1 || n.indexOf('tshirt') > -1 || n.indexOf('t-shirt') > -1 || n.indexOf(' shirt') > -1 || n.indexOf('hoodie') > -1 || n.indexOf('sweatshirt') > -1) return 'POD';
+  if(n.indexOf('png') > -1) return 'PNG';
+  if(n.indexOf('printable') > -1) return 'Printable';
+  return 'Other';
+}
+function dirLoadBulkPaste(){
+  var raw = document.getElementById('dir_bulk_input').value;
+  var lines = raw.split('\n').map(function(l){ return l.replace(/^(niche\s*\d+\s*[:.\-]?\s*)/i,'').trim(); }).filter(Boolean);
+  if(!lines.length){ alert("Paste this week's niches first."); return; }
+  document.getElementById('dir_niche_rows').innerHTML='';
+  lines.forEach(function(name){
+    document.getElementById('dir_niche_rows').insertAdjacentHTML('beforeend', dirNicheRowHtml(name, dirGuessType(name)));
+  });
+  document.getElementById('dir_bulk_input').value='';
 }
 var DIR_SEED_DATA = [{"date":"July 13, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10441671","niches":[{"name":"Vintage Halloween Geese Printable Wall Art","type":"Printable Wall Art"},{"name":"Wait For Me I Have Little Legs PNG","type":"PNG"},{"name":"Maximalist Floral Frame Tv Art","type":"Frame TV Art"},{"name":"Rhinestone Strawberry Coquette Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Golden Retriever In Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"First Of All Jesus Thinks Im A Delight PNG","type":"PNG"},{"name":"Cat Stained Glass Frame TV Art","type":"Frame TV Art"}]},{"date":"July 6, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10368989","niches":[{"name":"Booked And Busy Cat Printable Wall Art","type":"Printable Wall Art"},{"name":"Striped Halloween Bats Shirt PNG","type":"PNG"},{"name":"Coastal Fall Frame TV Art","type":"Frame TV Art"},{"name":"Gothic Mermaid Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Sunset Window Shadow Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Fruit Market PNG","type":"PNG"},{"name":"Dopamine Frame TV Art","type":"Frame TV Art"}]},{"date":"June 29, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10328446","niches":[{"name":"Minimalist Vinyl Record Printable Wall Art","type":"Printable Wall Art"},{"name":"Booked And Caffeinated PNG","type":"PNG"},{"name":"Mushroom Frame TV Art","type":"Frame TV Art"},{"name":"Cowhide Turquoise Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Whimsical Nursery Mouse Printable Wall Art","type":"Printable Wall Art"},{"name":"Unicorn Academy Digital Birthday Invitation","type":"Invitation"},{"name":"Toile Frame TV Art","type":"Frame TV Art"}]},{"date":"June 22, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10272207","niches":[{"name":"Black Woman Floral Portrait Modern Printable Wall Art","type":"Printable Wall Art"},{"name":"Mentally Somewhere Expensive PNG","type":"PNG"},{"name":"Antique Dark Green Frame TV Art","type":"Frame TV Art"},{"name":"Black Gothic Hearts Bookish Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Retro Mustard Yellow Printable Wall Art","type":"Printable Wall Art"},{"name":"Cuff Em PNG","type":"PNG"},{"name":"Golden Countryside Landscape Frame TV Art","type":"Frame TV Art"}]},{"date":"June 15, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10153103","niches":[{"name":"Tulips In A Checkered Vase Printable Wall Art","type":"Printable Wall Art"},{"name":"Off To Regulate Emotions PNG","type":"PNG"},{"name":"Lake Life Frame Tv Art","type":"Frame TV Art"},{"name":"Afro Strawberry Baby Shower Invitation","type":"Invitation"},{"name":"Dancing Frogs Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Floral Stethoscope PNG","type":"PNG"},{"name":"Fly Fishing Frame TV Art","type":"Frame TV Art"},{"name":"Bonus: Inflated Chicken Tumbler Wrap PNG","type":"Tumbler Wrap PNG"}]},{"date":"June 8, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10147357","niches":[{"name":"Disco Ball Head Printable Wall Art","type":"Printable Wall Art"},{"name":"Gotta Go Vibes Are Off PNG","type":"PNG"},{"name":"Badly Drawn Horse Frame TV Art","type":"Frame TV Art"},{"name":"Trash Truck Show Birthday Invitation","type":"Invitation"},{"name":"Frog in the Shower Printable Wall Art","type":"Printable Wall Art"},{"name":"Thats Bananas PNG","type":"PNG"},{"name":"Black Ink Flowers Frame Tv Art","type":"Frame TV Art"}]},{"date":"June 1, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10052625","niches":[{"name":"Cat Eating Ramen Printable Wall Art","type":"Printable Wall Art"},{"name":"Boho Floral Sun PNG","type":"PNG"},{"name":"Forest Stream Frame TV Art","type":"Frame TV Art"},{"name":"Working Mom Cleaning Schedule","type":"Printable"},{"name":"Orange Poppy Folk Printable Wall Art","type":"Printable Wall Art"},{"name":"Downward Spiral PNG","type":"PNG"},{"name":"Rodeo Frame TV Art","type":"Frame TV Art"},{"name":"Bonus Opal and Gold Tumbler Wrap PNG","type":"Tumbler Wrap PNG"}]},{"date":"May 25, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9993355","niches":[{"name":"Funny Goose Bathroom Printable Wall Art","type":"Printable Wall Art"},{"name":"There is Sunshine in My Soul PNG","type":"PNG"},{"name":"Colorful Butterfly Frame TV Art","type":"Frame TV Art"},{"name":"Home Health Caregiver Activity Report","type":"Printable"},{"name":"Vintage Black Cat Smoking Printable Wall Art","type":"Printable Wall Art"},{"name":"Gentle Parenting Dropout PNG","type":"PNG"},{"name":"Fourth of July Frame TV Art","type":"Frame TV Art"}]},{"date":"May 18, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9926718","niches":[{"name":"Smoking Raccoon Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Flying Mallard Duck PNG","type":"PNG"},{"name":"Vintage Horse Landscape Frame TV Art","type":"Frame TV Art"},{"name":"Taco About A Baby Shower Invite","type":"Invitation"},{"name":"Rustic Floral Toilet Paper Printable Wall Art","type":"Printable Wall Art"},{"name":"Baseball Moms Club Doodle PNG","type":"PNG"},{"name":"Retro Television Photo Frame TV Art","type":"Frame TV Art"}]},{"date":"May 11, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9921182","niches":[{"name":"Pigeon Reading Printable Wall Art","type":"Printable Wall Art"},{"name":"Funny Cowboy Goat PNG","type":"PNG"},{"name":"First Birthday Frame TV Art","type":"Frame TV Art"},{"name":"Lawnmower Birthday Invitation","type":"Invitation"},{"name":"Towels in Laundry Basket Printable Wall Art","type":"Printable Wall Art"},{"name":"Watercolor Highland Cow Tumbler PNG","type":"Tumbler Wrap"},{"name":"Cherry Blossom Landscape Frame TV Art","type":"Frame TV Art"}]},{"date":"May 4, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9823662","niches":[{"name":"Afrocentric Vinyl Records Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Bass Fish PNG","type":"PNG"},{"name":"Paris Blossom Frame TV Art","type":"Frame TV Art"},{"name":"Citrus Orange Bridal Brunch Invitation","type":"Invitation"},{"name":"Minimalist Japanese Koi Fish Printable Wall Art","type":"Printable Wall Art"},{"name":"Hot Mess Highland Cow PNG","type":"PNG"},{"name":"Moody Waves Frame TV Art","type":"Frame TV Art"}]},{"date":"April 27, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9756565","niches":[{"name":"Romantic Cafe Window Printable Wall Art","type":"Printable Wall Art"},{"name":"Spoiled Leopard PNG","type":"PNG"},{"name":"Chickens Frame TV Art","type":"Frame TV Art"},{"name":"Activity Sheets on God's Love Printable","type":"Printable"},{"name":"Retro Bubblegum Doll Printable Wall Art","type":"Printable Wall Art"},{"name":"Trendy Western American PNG","type":"PNG"},{"name":"Airplane Frame TV Art","type":"Frame TV Art"}]},{"date":"April 20, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9676060","niches":[{"name":"Woman on Couch with Martini Printable Wall Art","type":"Printable Wall Art"},{"name":"Wild and Feral Raccoon PNG","type":"PNG"},{"name":"Bluebonnet Frame TV Art","type":"Frame TV Art"},{"name":"Fun Facts Wedding Printable","type":"Printable"},{"name":"Japanese Frog in a Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Alligator PNG","type":"PNG"},{"name":"Stained Glass Mountain Frame TV Art","type":"Frame TV Art"}]},{"date":"April 13, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9676060","niches":[{"name":"Axolotl Printable Wall Art","type":"Printable Wall Art"},{"name":"Pink Crab PNG","type":"PNG"},{"name":"Golden Countryside Frame TV Art","type":"Frame TV Art"},{"name":"Quinceanera Checklist","type":"Checklist"},{"name":"Colorful Mountain Floral Printable Wall Art","type":"Printable Wall Art"},{"name":"Cherry America Coquette PNG","type":"PNG"},{"name":"Vintage Golf Course Frame TV Art","type":"Frame TV Art"}]},{"date":"April 6, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9568810","niches":[{"name":"Abstract Landscape Grandmillennial Printable Wall Art","type":"Printable Wall Art"},{"name":"Patchwork Strawberry PNG","type":"PNG"},{"name":"Earthy Neutral Landscape Frame TV Art","type":"Frame TV Art"},{"name":"Restaurant Cleaning Checklist Printable","type":"Printable"},{"name":"Aerial Surfers Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Fish PNG","type":"PNG"},{"name":"Tulip Cottage Frame TV Art","type":"Frame TV Art"}]},{"date":"March 30, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9503300","niches":[{"name":"Moody Pink Peonies Printable Wall Art","type":"Printable Wall Art"},{"name":"Margarita Weather PNG","type":"PNG"},{"name":"Abstract Marsh Frame TV Art","type":"Frame TV Art"},{"name":"A Little Pearl Is On The Way Baby Shower Invitation","type":"Invitation"},{"name":"Tiger Pizza Printable Wall Art","type":"Printable Wall Art"},{"name":"Whimsical Coquette Goose PNG","type":"PNG"},{"name":"Ducks by a Pond Frame TV Art","type":"Frame TV Art"}]},{"date":"March 23, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9455842","niches":[{"name":"Coastal White Sailboat Printable Wall Art","type":"Printable Wall Art"},{"name":"Salty Moms Beach Club PNG","type":"PNG"},{"name":"Antique French Forest Frame TV Art","type":"Frame TV Art"},{"name":"Lash Tech Client Record Digital Planner","type":"Planner"},{"name":"Waterlily Cat Printable Wall Art","type":"Printable Wall Art"},{"name":"Inflated Rhinestone Cherry Bow Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Vintage Lake Ducks Frame TV Art","type":"Frame TV Art"}]},{"date":"March 16, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9380211","niches":[{"name":"Cottagecore Robin with Blossoms Printable Wall Art","type":"Printable Wall Art"},{"name":"Camo Dripping Baseball PNG","type":"PNG"},{"name":"Navy Blue Flowers Frame TV Art","type":"Frame TV Art"},{"name":"Princess Tea Party Digital Birthday Invitation","type":"Invitation"},{"name":"Western Horseshoe Printable Wall Art","type":"Printable Wall Art"},{"name":"Western Leopard Wildcard PNG","type":"PNG"},{"name":"Rustic Mason Jar Frame TV Art","type":"Frame TV Art"}]},{"date":"March 9, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9317918","niches":[{"name":"Funky Western Cowgirl Printable Wall Art","type":"Printable Wall Art"},{"name":"Bleacher Creature PNG","type":"PNG"},{"name":"Cottage Rose Garden Frame TV Art","type":"Frame TV Art"},{"name":"Impulse Control Worksheets for Kids","type":"Template"},{"name":"Modern Colorful Feminine Printable Wall Art","type":"Printable Wall Art"},{"name":"Literally Born to Dilly Dally PNG","type":"PNG"},{"name":"Spring Tulips Oil Painting Frame TV Art","type":"Frame TV Art"}]},{"date":"March 2, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9231867","niches":[{"name":"Vintage Pink Ballerina Printable Wall Art","type":"Printable Wall Art"},{"name":"Hit the Dang Ball PNG","type":"PNG"},{"name":"Jesus in a Flower Field Frame TV Art","type":"Frame TV Art"},{"name":"Threenager Digital Birthday Invitation","type":"Invitation"},{"name":"Country Geese Hydrangeas Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Coquette Iced Coffee PNG","type":"PNG"},{"name":"Dogs with Sunglasses Frame TV Art","type":"Frame TV Art"}]},{"date":"February 23, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9155773","niches":[{"name":"Pink Coastal Seascape Printable Wall Art","type":"Printable Wall Art"},{"name":"Faux Cross Stitch Floral PNG","type":"PNG"},{"name":"Lemons and Daisies Frame TV Art","type":"Frame TV Art"},{"name":"Weight Loss Injection Tracker Printable","type":"Printable"},{"name":"Modern Cactus Flowers Printable Wall Art","type":"Printable Wall Art"},{"name":"Bunnies are Overrated Stay Feral PNG","type":"PNG"},{"name":"Olive Branches Frame TV Art","type":"Frame TV Art"}]},{"date":"February 16, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9055199","niches":[{"name":"Abstract Whimsical Cat Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Howdy Easter PNG","type":"PNG"},{"name":"Italian Lemon Tree Frame TV Art","type":"Frame TV Art"},{"name":"Rumination Worksheet","type":"Template"},{"name":"Minimalist Woman Reading Book Printable Wall Art","type":"Printable Wall Art"},{"name":"Leopard Print Star PNG","type":"PNG"},{"name":"Hot Air Balloon Frame TV Art","type":"Frame TV Art"}]},{"date":"February 9, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8920888","niches":[{"name":"Vintage Pink Butterfly Printable Wall Art","type":"Printable Wall Art"},{"name":"Easter Faux Patchwork PNG","type":"PNG"},{"name":"Stained Glass Frame TV Art","type":"Frame TV Art"},{"name":"Ancient Greece Coloring Pages","type":"Other"},{"name":"Sleepy Leopard Printable Wall Art","type":"Printable Wall Art"},{"name":"Vintage Floral Dragonfly PNG","type":"PNG"},{"name":"Abstract Spring Oil Painting Frame TV Art","type":"Frame TV Art"},{"name":"Bonus Niche: Leopard Cherry Tumbler Wrap","type":"Tumbler Wrap"}]},{"date":"February 2, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8920888","niches":[{"name":"Come As You Are Printable Wall Art","type":"Printable Wall Art"},{"name":"Vintage Hen in Nest PNG","type":"PNG"},{"name":"Eight is Great Birthday Invitation","type":"Invitation"},{"name":"Flowers on Trendy Vase Frame TV Art","type":"Frame TV Art"},{"name":"Raccoon Shamrock PNG","type":"PNG"},{"name":"These Are the Good Old Days Printable Wall Art","type":"Printable Wall Art"},{"name":"Parts of the Brain Worksheet","type":"Template"},{"name":"Bonus Niche: Vintage Cloud Frame TV Art","type":"Frame TV Art"}]},{"date":"January 26, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8846625","niches":[{"name":"Woman Reading Newspaper Printable Wall Art","type":"Printable Wall Art"},{"name":"Western Longhorn Bull PNG","type":"PNG"},{"name":"Wildflower is on Her Way Baby Shower Digital Invitation","type":"Invitation"},{"name":"Swan Frame TV Art","type":"Frame TV Art"},{"name":"Coffee Addict Highland Cow PNG","type":"PNG"},{"name":"Halftone Cowgirl Printable Wall Art","type":"Printable Wall Art"},{"name":"Hospice Admission Checklist","type":"Checklist"}]},{"date":"January 19, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8781495","niches":[{"name":"Florence Printable Wall Art","type":"Printable Wall Art"},{"name":"Slow Mornings Club PNG","type":"PNG"},{"name":"That's Amore Bridal Shower Digital Invitation","type":"Invitation"},{"name":"Mexican Frame TV Art","type":"Frame TV Art"},{"name":"Dogtrovert PNG","type":"PNG"},{"name":"Extra Dirty Martini Printable Wall Art","type":"Printable Wall Art"},{"name":"Weekly Daycare Menu","type":"Printable"}]},{"date":"January 12, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8717485","niches":[{"name":"So Glad You're Here Printable Wall Art","type":"Printable Wall Art"},{"name":"Floral Watercolor Coquette Bow Shirt PNG","type":"PNG"},{"name":"Golf Theme Gender Reveal Digital Invitation","type":"Invitation"},{"name":"Swimmer Frame TV Art","type":"Frame TV Art"},{"name":"Valentine Raccoon Shirt PNG","type":"PNG"},{"name":"Vintage White Tulips Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Affirmation Cards for Teens","type":"Printable"}]},{"date":"January 5, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8662055","niches":[{"name":"Retro Skateboarding Bear Printable Wall Art","type":"Printable Wall Art"},{"name":"Life is Better With My Dogs PNG","type":"PNG"},{"name":"Sage Green 60th Birthday Invitation","type":"Invitation"},{"name":"Turquoise Frame TV Art","type":"Frame TV Art"},{"name":"Chiropractic Shirt PNG","type":"PNG"},{"name":"Pastel Coquette Coastal Printable Wall Art","type":"Printable Wall Art"},{"name":"Wedding Planner Emergency Kit Checklist","type":"Checklist"}]},{"date":"December 29, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8635992","niches":[{"name":"Black Woman Holding Elegant Glass Printable Wall Art","type":"Printable Wall Art"},{"name":"Some Things are Better Left Alone PNG","type":"PNG"},{"name":"LPN Pinning Ceremony Invitation","type":"Invitation"},{"name":"Coquette Bow Frame TV Art","type":"Frame TV Art"},{"name":"Humble But I'm Still That Girl PNG","type":"PNG"},{"name":"Tomato Printable Wall Art","type":"Printable Wall Art"},{"name":"90th Birthday Party Activities Printable","type":"Printable"}]},{"date":"December 22, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8598730","niches":[{"name":"What's the Best That Could Happen Printable Wall Art","type":"Printable Wall Art"},{"name":"Valentine's Day Leopard Coquette Bow PNG","type":"PNG"},{"name":"Sock Hop Digital Invitation","type":"Invitation"},{"name":"Southwestern Frame TV Art","type":"Frame TV Art"},{"name":"Sorry for What My Face Said PNG","type":"PNG"},{"name":"Cozy Stack of Books Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Homeschool Portfolio","type":"Printable"}]},{"date":"December 15, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8504045","niches":[{"name":"Vintage Cowboy Golf Printable Wall Art","type":"Printable Wall Art"},{"name":"I Could be Meaner PNG","type":"PNG"},{"name":"Skincare Birthday Invitation","type":"Invitation"},{"name":"Greece Frame TV Art","type":"Frame TV Art"},{"name":"Soccer Ball Pink Bow PNG","type":"PNG"},{"name":"Funny Duck Wine Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Backpack Checklist","type":"Printable"}]},{"date":"December 8, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8480394","niches":[{"name":"Pink Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"Adulting is a Scam PNG","type":"PNG"},{"name":"Pink and Purple Butterfly Baby Shower Digital Invitation","type":"Invitation"},{"name":"Alpine Meadow Frame TV Art","type":"Frame TV Art"},{"name":"Make Heaven Crowded PNG","type":"PNG"},{"name":"Pink Disco Strawberries Printable Wall Art","type":"Printable Wall Art"},{"name":"Intrusive Thoughts Worksheet for Kids","type":"Template"}]},{"date":"December 1, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8418984","niches":[{"name":"Aurora Borealis Printable Wall Art","type":"Printable Wall Art"},{"name":"XOXO Knit PNG","type":"PNG"},{"name":"Cafe Bebe Digital Invitation","type":"Invitation"},{"name":"Bride Frame TV Art","type":"Frame TV Art"},{"name":"Reading is My Favorite Sport PNG","type":"PNG"},{"name":"Skeleton Lovers Printable Wall Art","type":"Printable Wall Art"},{"name":"Looking for Models Flyer","type":"Template"}]},{"date":"November 24, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8333606","niches":[{"name":"Dusty Blue and Sage Wall Art Printable Wall Art","type":"Printable Wall Art"},{"name":"Axolotl Birthday Shirt PNG","type":"PNG"},{"name":"Her Royal Threeness Princess Birthday Invitation","type":"Invitation"},{"name":"Highland Cow Frame TV Art","type":"Frame TV Art"},{"name":"Dominican Republic T-Shirt Sublimation PNG","type":"PNG"},{"name":"Flowering in Garden Printable Wall Art","type":"Printable Wall Art"},{"name":"Bar Inventory Checklist","type":"Checklist"}]},{"date":"November 17, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8142033","niches":[{"name":"Boho Olive Printable Wall Art","type":"Printable Wall Art"},{"name":"Hands Ripping a Shirt PNG","type":"PNG"},{"name":"Military Send Off Digital Invitation","type":"Invitation"},{"name":"Paris Cafe Frame TV Art","type":"Frame TV Art"},{"name":"I Require Snacks Shirt PNG","type":"PNG"},{"name":"Abstract Terracotta Flower Printable Wall Art","type":"Printable Wall Art"},{"name":"Days of the Week Printable Worksheet","type":"Printable"}]},{"date":"November 10, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8142033","niches":[{"name":"Bison Printable Wall Art","type":"Printable Wall Art"},{"name":"Mom Dad Est 2026 PNG","type":"PNG"},{"name":"Hunting Fishing Baby Shower Invitation","type":"Invitation"},{"name":"Burgundy Floral TV Art","type":"Frame TV Art"},{"name":"Having a Meltdown Shirt PNG","type":"PNG"},{"name":"Navy Old Money Printable Wall Art","type":"Printable Wall Art"},{"name":"Salon Cleaning Checklist","type":"Checklist"}]},{"date":"November 3, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8130811","niches":[{"name":"Floral Crown Leopard Wall Art","type":"Printable Wall Art"},{"name":"Psalm 23 T-Shirt PNG","type":"PNG"},{"name":"Burgundy Rose Gold 70th Birthday Invitation","type":"Invitation"},{"name":"Strawberries Frame TV Art","type":"Frame TV Art"},{"name":"Feeling Lucky Gambling T-Shirt PNG","type":"PNG"},{"name":"Palm Springs Travel Printable Wall Art","type":"Printable Wall Art"},{"name":"Anger Management Worksheet for Adults","type":"Template"}]},{"date":"October 27, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8027677","niches":[{"name":"Romantic Coffee Shop Printable Art","type":"Printable Wall Art"},{"name":"Proud Army Wife Shirt PNG","type":"PNG"},{"name":"Pink Bow Sleepover Birthday Invitation","type":"Invitation"},{"name":"Fig Frame TV Art","type":"Frame TV Art"},{"name":"All Booked for Christmas Shirt PNG","type":"PNG"},{"name":"Leopard Skateboard Wall Art","type":"Printable Wall Art"},{"name":"Nail Business Coupon Card","type":"Other"},{"name":"Bonus Niche: Aquarium Frame TV Art","type":"Frame TV Art"}]},{"date":"October 20, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7959964","niches":[{"name":"Teal Pink and Yellow Printable Wall Art","type":"Printable Wall Art"},{"name":"Postal Worker Tshirt PNG Design","type":"PNG"},{"name":"Cowboy Dinosaur Birthday Invitation","type":"Invitation"},{"name":"Tennis Frame TV Art","type":"Frame TV Art"},{"name":"Sunflower Cow T-Shirt PNG","type":"PNG"},{"name":"Woman at the Well Modern Christian Printable Wall Art","type":"Printable Wall Art"},{"name":"Pink Row and Ribbons Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Bonus Niche: Home Health Nurse Planner","type":"Planner"}]},{"date":"October 13, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7897041","niches":[{"name":"Ranunculus Printable Wall Art","type":"Printable Wall Art"},{"name":"Treat Dealer Shirt PNG","type":"PNG"},{"name":"Mob Wife Birthday Invitation","type":"Invitation"},{"name":"Hunting Frame TV Art","type":"Frame TV Art"},{"name":"Bowling Tshirt PNG","type":"PNG"},{"name":"Bluebird Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable and Editable Hospital Bag Checklist","type":"Printable"}]},{"date":"October 6, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7870813","niches":[{"name":"Whale Shark Printable Wall Art","type":"Printable Wall Art"},{"name":"Car Show T-shirt PNG","type":"PNG"},{"name":"Large Sunflower Printable Wall Art","type":"Printable Wall Art"},{"name":"Monarch Butterfly Baby Shower Invitation","type":"Invitation"},{"name":"He Left the 99 Shirt PNG","type":"PNG"},{"name":"Auto Detailing Checklist","type":"Checklist"},{"name":"Banana Leaves Frame TV Art","type":"Frame TV Art"},{"name":"Bonus Niche: Kawaii Kitty Tumbler Wrap PNG","type":"Tumbler Wrap PNG"}]},{"date":"September 29, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7959964","niches":[{"name":"Vintage Golf Printable Wall Art","type":"Printable Wall Art"},{"name":"Trophy Husband Shirt PNG","type":"PNG"},{"name":"Pelican Printable Wall Art","type":"Printable Wall Art"},{"name":"Time Two Take Off Invitation","type":"Invitation"},{"name":"Floral Highland Cow Santa PNG","type":"PNG"},{"name":"Christian Teacher Printable Planner","type":"Printable"},{"name":"Goose Frame TV Art","type":"Frame TV Art"}]},{"date":"September 22, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7707775","niches":[{"name":"Autumn Fig Printable Wall Art","type":"Printable Wall Art"},{"name":"All Booked for Fall PNG","type":"PNG"},{"name":"Green Marble Printable Wall Art","type":"Printable Wall Art"},{"name":"Pink Disco Bow Ball Digital Invitation","type":"Invitation"},{"name":"Cozy Christmas Goose PNG","type":"PNG"},{"name":"Burnt Orange Frame TV Art","type":"Frame TV Art"},{"name":"Homeschool Student Checklist","type":"Checklist"},{"name":"Bonus Niche: Heron Frame TV Art","type":"Frame TV Art"}]},{"date":"September 15, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7638699","niches":[{"name":"Animals Reading Books Printable Wall Art","type":"Printable Wall Art"},{"name":"Out Here Ballin Santa PNG","type":"PNG"},{"name":"Preppy Cheetah Printable Wall Art","type":"Printable Wall Art"},{"name":"Denim Jacket Birthday Invitation","type":"Invitation"},{"name":"Girls Gone Mild Shirt PNG","type":"PNG"},{"name":"Real Estate Transaction Printable Checklist","type":"Printable"},{"name":"Olive Green Leaf Printable Wall Art","type":"Printable Wall Art"}]},{"date":"September 8, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7602516","niches":[{"name":"Pink and Sage Cat Wall Art","type":"Printable Wall Art"},{"name":"Cool Moms Love Jesus PNG","type":"PNG"},{"name":"Spaghetti Dinner Invitation","type":"Invitation"},{"name":"Bonjour Madame Wall Art","type":"Printable Wall Art"},{"name":"My Husband's Problem Snarky Humor PNG","type":"PNG"},{"name":"Fall Apple Cider Printable Wall Art","type":"Printable Wall Art"},{"name":"Teacher Digital Planner 2025-2026 Google Sheets","type":"Planner"},{"name":"Bonus Niche: Golf Frame TV Art","type":"Frame TV Art"}]},{"date":"September 1, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7529410","niches":[{"name":"Shark in the Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"German Shepherd Ghost PNG","type":"PNG"},{"name":"Bad Witches Only Invitation","type":"Invitation"},{"name":"Nantucket Frame TV Art","type":"Frame TV Art"},{"name":"Book Lovers Fall Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Developmental Milestone Checklist","type":"Checklist"},{"name":"Castlecore Printable Wall Art","type":"Printable Wall Art"}]},{"date":"August 25, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7437806","niches":[{"name":"Light Pink And Gold Printable Wall Art","type":"Printable Wall Art"},{"name":"Lion Blowing Bubble PNG","type":"PNG"},{"name":"Whale Frame TV Art","type":"Frame TV Art"},{"name":"21st Birthday Champagne Bottle Invitation","type":"Invitation"},{"name":"Fall Sweater Weather Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Cheetah Print Girls Night Flyer","type":"Template"},{"name":"Mexican Flowers Tshirt PNG","type":"PNG"},{"name":"Bonus Niche: Coquette Halloween Ghost Printable Wall Art","type":"Printable Wall Art"}]},{"date":"August 18, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7327354","niches":[{"name":"Family Medical History Checklist","type":"Checklist"},{"name":"Victorian Disco Printable Art","type":"Printable Wall Art"},{"name":"Coquette Bow Donut Shirt PNG","type":"PNG"},{"name":"Elder Emo Birthday Invite","type":"Invitation"},{"name":"Pink Camo Hunting Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Its A Good Day To Read A Book Wall Art","type":"Printable Wall Art"},{"name":"Just A Girl Who Loves Fall Shirt Sublimation PNG","type":"PNG"},{"name":"Bonus POD Niche: We Can Do Hard Things T Shirt","type":"POD"}]},{"date":"August 11, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7297304","niches":[{"name":"Pelican Printable Wall Art","type":"Printable Wall Art"},{"name":"Let's Get Rowdy Bachelorette PNG","type":"PNG"},{"name":"How Old Were They Canva Template","type":"Template"},{"name":"Manatee Nursery Wall Art","type":"Printable Wall Art"},{"name":"I Teach The Cutest Bees PNG","type":"PNG"},{"name":"Weekly Daycare Lunch Menu","type":"Printable"},{"name":"Leopard Print Sunflower Cow 20oz Sublimation Tumbler Design","type":"Tumbler Wrap"}]},{"date":"August 4, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7263838","niches":[{"name":"Aerial Beach View Printable Wall Art","type":"Printable Wall Art"},{"name":"Margaritas and Matrimony Shirt PNG","type":"PNG"},{"name":"Aperol Spritz Dinner Party Invitation Template","type":"Invitation"},{"name":"Green Marble Printable Wall Art","type":"Printable Wall Art"},{"name":"Travel Agent Shirt PNG","type":"PNG"},{"name":"Trauma Bond Worksheets","type":"Template"},{"name":"Police Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Bonus POD Niche: Better Late than Ugly Tshirt","type":"POD"}]},{"date":"July 28, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7229789","niches":[{"name":"Love On The Lake Bachelorette Party Digital Invite","type":"Invitation"},{"name":"Vintage Nest Printable Wall Art","type":"Printable Wall Art"},{"name":"Seashore Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Barbershop Printable Wall Art","type":"Printable Wall Art"},{"name":"Quincea\u00f1era Checklist","type":"Checklist"},{"name":"80s Theme Shirt PNG","type":"PNG"},{"name":"Put It On My Dads Tab PNG","type":"PNG"},{"name":"Bonus POD Niche: I Dont Know I Just Work Here Shirt","type":"POD"}]},{"date":"July 21, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7189295","niches":[{"name":"Graffiti Printable Wall Art","type":"Printable Wall Art"},{"name":"Firefly Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Rustic Western 40th Birthday Invitation","type":"Invitation"},{"name":"Chic Doberman Wall Art","type":"Printable Wall Art"},{"name":"Audiobook Shirt PNG","type":"PNG"},{"name":"Sprinkled With Love Ice Cream Baby Shower Invitation","type":"Invitation"},{"name":"We Be Trippin PNG","type":"PNG"},{"name":"Bonus POD Niche: Everything Hurts And I'm Tired Shirt","type":"POD"}]},{"date":"July 14, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7171040","niches":[{"name":"How Lucky Are We Printable Wall Art","type":"Printable Wall Art"},{"name":"Thrifting Tumbler PNG","type":"Tumbler Wrap"},{"name":"Retro Cowboy Baby Shower Invite","type":"Invitation"},{"name":"Tranquilo Wall Art","type":"Printable Wall Art"},{"name":"Lets Go Bananas T-Shirt PNG","type":"PNG"},{"name":"Pink Floral and Bow Oil Painting Wall Art","type":"Printable Wall Art"},{"name":"Limoncello Tshirt PNG","type":"PNG"}]},{"date":"July 7, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7171041","niches":[{"name":"Bear Playing Sports Nursery Wall Art","type":"Printable Wall Art"},{"name":"Hunting Dog Cooler PNG","type":"PNG"},{"name":"One Cute Chick Birthday Invitation","type":"Invitation"},{"name":"Minimalistic Magnolia Wall Art","type":"Printable Wall Art"},{"name":"Puerto Rico Vacation Shirt PNG","type":"PNG"},{"name":"Minimalistic Fruits Printable Wall Art","type":"Printable Wall Art"},{"name":"Boo Ghost Goose PNG","type":"PNG"},{"name":"Bonus Evergreen Niche: Moody Wall Art","type":"Printable Wall Art"}]},{"date":"June 30, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7180433","niches":[{"name":"Cat Loaf PNG","type":"PNG"},{"name":"Halloween Pregnancy Announcement Canva Template","type":"Template"},{"name":"Boho Unicorn Printable Wall Art","type":"Printable Wall Art"},{"name":"Rubber Duck Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Espresso Martini Wall Art Cheetah Print","type":"Printable Wall Art"},{"name":"Teacher Digital Planner 2025-2026 Google Sheets","type":"Planner"},{"name":"Vintage Airplane Nursery Wall Art","type":"Printable Wall Art"},{"name":"Bonus Evergreen Niche: Homebody Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Sips About to Go Down Tshirt","type":"POD"}]},{"date":"June 23, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7185714","niches":[{"name":"Cowboy Boots and Sunflowers Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Surfboard and Dogs Wall Art","type":"Printable Wall Art"},{"name":"Spooky and Feral Raccoon PNG","type":"PNG"},{"name":"Daily Niche - Speed Limit Birthday Invitation","type":"Invitation"},{"name":"Its So Good To Be Home Wall Art","type":"Printable Wall Art"},{"name":"At Least My Trauma Made Me Funny PNG","type":"PNG"},{"name":"New Location Flyer Canva Editable Template","type":"Template"},{"name":"Bonus Evergreen Niche: Coquette Nurse PNG","type":"PNG"},{"name":"Bonus POD Niche: Sorry About My Husband Shirt","type":"POD"}]},{"date":"June 16, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7205923","niches":[{"name":"Light Pink Cheetah Wall Art","type":"Printable Wall Art"},{"name":"Manatee Shirt PNG","type":"PNG"},{"name":"Who Has The Groom Canva Template","type":"Template"},{"name":"Antique Books and Roses Printable Wall Art","type":"Printable Wall Art"},{"name":"Tombstone Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Four Ever Spooky Invitation Template","type":"Invitation"},{"name":"Coastal Grandma Printable Wall Art","type":"Printable Wall Art"}]},{"date":"June 9, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7206388","niches":[{"name":"This Grandma Prays Shirt PNG","type":"PNG"},{"name":"Labradoodle and Flowers Printable Wall Art","type":"Printable Wall Art"},{"name":"Love My Pet Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Boots And Brunch Thank You Card","type":"Other"},{"name":"Every Dog Needs A Baby Wall Art","type":"Printable Wall Art"},{"name":"Feral Mom T-Shirt PNG","type":"PNG"},{"name":"Italian Summer Dinner Party Template","type":"Template"},{"name":"Bonus POD Niche: I Yell Because I Care Baseball Shirt","type":"POD"}]},{"date":"June 2, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7206975","niches":[{"name":"Disco Bow Printable Wall Art","type":"Printable Wall Art"},{"name":"Birthday Dinner Menu Template","type":"Template"},{"name":"Whatever Floats Your Boat PNG","type":"PNG"},{"name":"Boston Terrier Printable Wall Art","type":"Printable Wall Art"},{"name":"Let's Roll Girls PNG","type":"PNG"},{"name":"Preppy Chicago Wall Art","type":"Printable Wall Art"},{"name":"Rookie Trading Card Template","type":"Template"}]},{"date":"May 26, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7222258","niches":[{"name":"Venezuela Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Niche 2 Vintage Stamp State PNG","type":"PNG"},{"name":"Back to School Giveaway Flyers","type":"Template"},{"name":"Watercolor Lemon Printable Wall Art","type":"Printable Wall Art"},{"name":"Memorial Birthday Flyer Editable Canva Template","type":"Template"},{"name":"Lets Do This Field Day Thing PNG","type":"PNG"},{"name":"I See London I See France Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Everything Is Going to Be OK TShirt","type":"POD"}]},{"date":"May 19, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7252626","niches":[{"name":"Carnation Printable Wall Art","type":"Printable Wall Art"},{"name":"Four Ever Sweet PNG","type":"PNG"},{"name":"Travel Itinerary Canva Template","type":"Template"},{"name":"Mountain Biking Printable Wall Art","type":"Printable Wall Art"},{"name":"Jesus Saves I Spend PNG","type":"PNG"},{"name":"Middle School Survival Kit","type":"Printable"},{"name":"Abstract Flamingo Printable Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: School Bus Tote Bag","type":"POD"}]},{"date":"May 12, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7255506","niches":[{"name":"Wild And Three Birthday PNG","type":"PNG"},{"name":"Shout Out Template","type":"Template"},{"name":"Cowgirl In Bathtub Wall Art","type":"Printable Wall Art"},{"name":"Feral but Free Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Baseball Drip Birthday Invite","type":"Invitation"},{"name":"Meet Me At The Lake Wall Art","type":"Printable Wall Art"},{"name":"Principal Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Bonus POD Niche: I Survived My Wife Nursing School Tshirt","type":"POD"}]},{"date":"May 5, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7270161","niches":[{"name":"Pancake Printable Wall Art","type":"Printable Wall Art"},{"name":"Digital Prayer Journal For Men","type":"Journal"},{"name":"Teach Love Inspire Boho PNG","type":"PNG"},{"name":"Black Lab Cowgirl Wall Art","type":"Printable Wall Art"},{"name":"Stock The Bar Invitation Template","type":"Invitation"},{"name":"Perimenopause PNG","type":"PNG"},{"name":"Pool Floats Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Summer Reading 2025 Shirt","type":"POD"}]},{"date":"April 28, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7273803","niches":[{"name":"Bioluminescent Printable Wall Art","type":"Printable Wall Art"},{"name":"Hospital Activity Book For Kids","type":"Printable"},{"name":"Arizona Tshirt PNG","type":"PNG"},{"name":"Pink Lotus Printable Wall Art","type":"Printable Wall Art"},{"name":"Heifer 4th of July PNG","type":"PNG"},{"name":"Lobster Printable Wall Art","type":"Printable Wall Art"},{"name":"Hot Mess Express Tumbler PNG","type":"Tumbler Wrap"},{"name":"Bonus POD Niche: Funny Raccoon Rodeo Shirt","type":"POD"}]},{"date":"April 21, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7277249","niches":[{"name":"Whatever Life Throws At You Funny PNG","type":"PNG"},{"name":"Fitness Instructor Planner","type":"Planner"},{"name":"Hot Pink And Orange Graduation Invitation","type":"Invitation"},{"name":"Lemon Drop Martini Wall Art","type":"Printable Wall Art"},{"name":"Just A Girl Who Loves To Dance Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Girl Reading A Magazine Wall Art","type":"Printable Wall Art"},{"name":"Wedding Photographer Social Media Kit","type":"Other"},{"name":"Bonus POD Niche: Ballpark Auntie Shirt","type":"POD"}]},{"date":"April 14, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7286037","niches":[{"name":"Lofi Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Custom Wedding Checklist","type":"Printable"},{"name":"Pink Disco Ball Leopard Wall Art","type":"Printable Wall Art"},{"name":"Coming Soon Social Media Flyer Templates","type":"Template"},{"name":"Feral Girl Summer Raccoon PNG","type":"PNG"},{"name":"Who Am I Digital Journal","type":"Journal"},{"name":"Silliest Goose Around Wall Art","type":"Printable Wall Art"}]},{"date":"April 7, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7286682","niches":[{"name":"Book Shop Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Kids Cruise Journal","type":"Printable"},{"name":"Cowgirl In Martini Glass PNG","type":"PNG"},{"name":"Manifest Your Love Journal","type":"Journal"},{"name":"Country Club Baby Shower Invitation","type":"Invitation"},{"name":"Shih Tzu Dog Printable Wall Art","type":"Printable Wall Art"},{"name":"Vision Board Template For Teens","type":"Template"}]},{"date":"March 31, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7312156","niches":[{"name":"Drippy Baseball With Glove PNG","type":"PNG"},{"name":"Babysitter Binder","type":"Other"},{"name":"Goldendoodle Golf Nursery Wall Art","type":"Printable Wall Art"},{"name":"Meatball Birthday Invite","type":"Invitation"},{"name":"Cowgirl Coloring Sheet","type":"Printable"},{"name":"Kitesurfing Printable Wall Art","type":"Printable Wall Art"},{"name":"Coquette Bows Thank You Card Template","type":"Template"}]},{"date":"March 24, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7312616","niches":[{"name":"Weight Loss Tracker 50 Lbs","type":"Template"},{"name":"Grown With Love Baby Shower Games","type":"Printable"},{"name":"Wash Your Paws Printable Wall Art","type":"Printable Wall Art"},{"name":"Editable Wedding Signature Drinks Menu Sign","type":"Template"},{"name":"Happy Retirement Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Kitchen Conversion Chart Wall Art","type":"Printable Wall Art"},{"name":"Who Knows The Birthday Girl Best Editable Template","type":"Template"},{"name":"Bonus POD Niche: Cute Kawaii Strawberry Cat Tshirt","type":"POD"}]},{"date":"March 17, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7318561","niches":[{"name":"Birth Plan Template","type":"Template"},{"name":"Anxiety Journal","type":"Journal"},{"name":"This is a High Class Joint Wall Art","type":"Printable Wall Art"},{"name":"Here Comes the Son Sublimation","type":"PNG"},{"name":"Social Media Template","type":"Template"},{"name":"Printable Homeschool Transcript","type":"Printable"},{"name":"Sage Green Wall Art Bow and Boots","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Soccer Mom Tarot Card Shirt","type":"POD"}]},{"date":"March 10, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7321895","niches":[{"name":"Peace Out Single Digits Birthday Invitation","type":"Invitation"},{"name":"Flock of Birds Wall Art","type":"Printable Wall Art"},{"name":"Self Care Checklist","type":"Checklist"},{"name":"Duck Towel Wall Art","type":"Printable Wall Art"},{"name":"Girl Coloring Pages","type":"Printable"},{"name":"IVF PNG","type":"PNG"},{"name":"Sterile and Feral PNG","type":"PNG"}]},{"date":"March 3, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7322271","niches":[{"name":"Boho Desert Highland Cow Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Head to Toe Checklist","type":"Checklist"},{"name":"2025 Digital Planner Dark Theme","type":"Planner"},{"name":"Real Estate Listing Performance Template","type":"Template"},{"name":"Tiger In the Tub Wall Art","type":"Printable Wall Art"},{"name":"Girls Trip Cheaper Than Therapy 2025 PNG SVG","type":"PNG"},{"name":"What's for Dinner Wall Art","type":"Printable Wall Art"}]}];
 function dirGetWeeks(){
@@ -1054,7 +1310,7 @@ function lcGenerateHTML(){
 }
 
 /* ============ RECAP TAB LOGIC ============ */
-var RECAP_SYSTEM = "You turn raw Google Meet summary notes from a monthly live call into a clean, scannable recap for members who could not attend. Format rules: bold section headers based on topics discussed (these vary), 4-6 bullet points per section, each a complete standalone actionable takeaway in plain direct language, no vague or fluffy language, no member names ever, no intro fluff, no closing summary, logical flow grouping related topics together. Tone: warm but direct, written for busy Etsy sellers who want to scan fast. Output ONLY in this exact plain format (no extra commentary, no markdown symbols besides what's shown):\n\n## Section Header One\n- bullet\n- bullet\n- bullet\n\n## Section Header Two\n- bullet\n- bullet";
+var RECAP_SYSTEM = "You turn raw Google Meet summary notes from a monthly live call into a clean, scannable recap for members who could not attend. Format rules: bold section headers based on topics discussed (these vary), 4-6 bullet points per section, each a complete standalone actionable takeaway in plain direct language, no vague or fluffy language, no member names ever, no intro fluff, no closing summary, logical flow grouping related topics together. Tone: warm but direct, written for busy Etsy sellers who want to scan fast. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact plain format (no extra commentary, no markdown symbols besides what's shown):\n\n## Section Header One\n- bullet\n- bullet\n- bullet\n\n## Section Header Two\n- bullet\n- bullet";
 async function recapGenerateDraft(){
   var status = document.getElementById('recap_gen_status');
   status.className='status-msg'; status.textContent=' generating...';
@@ -1062,7 +1318,7 @@ async function recapGenerateDraft(){
     var notes = document.getElementById('recap_notes').value;
     if(!notes.trim()){ alert('Paste the raw meeting notes first.'); status.textContent=''; return; }
     var result = await callClaude(RECAP_SYSTEM, "Here are the raw meeting notes:\n\n"+notes, 2000);
-    document.getElementById('recap_body').value = result.trim();
+    document.getElementById('recap_body').value = stripEmDash(result.trim());
     status.textContent=' done ✓';
     saveDraft('recap');
   }catch(e){
@@ -1120,6 +1376,21 @@ function recapGenerateHTML(){
 }
 
 /* ============ AD HOC TAB LOGIC ============ */
+var ADHOC_SYSTEM = "You clean up messy notes or brain dumps into a clear, readable post for Etsy sellers and digital product creators. Keep the person's original meaning and information exactly as given, just organize it into clean short paragraphs, fix grammar and flow, add **bold** to the most important lines sparingly. No cliches, no added information, no assumptions beyond what's given, no HTML tags, no headers, just plain paragraphs separated by a blank line. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY the cleaned-up post text with no extra commentary.";
+async function adhocCleanUp(){
+  var status = document.getElementById('adhoc_gen_status');
+  var raw = document.getElementById('adhoc_body').value;
+  if(!raw.trim()){ alert('Add your notes first.'); return; }
+  status.className='status-msg'; status.textContent=' cleaning up...';
+  try{
+    var result = await callClaude(ADHOC_SYSTEM, "Clean up these messy notes into a readable post:\n\n"+raw, 1200);
+    document.getElementById('adhoc_body').value = stripEmDash(result.trim());
+    status.textContent=' done ✓';
+    saveDraft('adhoc');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
 function adhocButtonHtml(){
   return '<div class="card-block" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:.8rem 1rem;">'+
     '<input type="text" class="adhoc-btn-text" placeholder="Button text">'+
@@ -1168,7 +1439,7 @@ var KW_STANDARD_KEYWORDS = [
   "Tumbler Wrap","Digital Paper","Frame TV Art","Digital Journal","Tshirt PNG","Shirt PNG",
   "Digital Invitation","Tumbler Wrap PNG","Sublimation PNG","40 Oz Tumbler Wrap",
   "40oz Tumbler Wrap","20oz Tumbler Wrap","20 Oz Tumbler Wrap"
-];
+].sort(function(a,b){ return a.localeCompare(b); });
 function kwRowHtml(name){
   return '<div class="card-block" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr;gap:10px;padding:.8rem 1rem;">'+
     '<input type="text" class="kw-name" placeholder="Keyword" value="'+escapeAttr(name||'')+'">'+
