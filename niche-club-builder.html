@@ -605,12 +605,14 @@ function renderNicheList() {
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
     nameInput.value = niche.name;
+    niche._topNameInputEl = nameInput;
     nameInput.addEventListener('input', () => {
       applyNicheTitleCase(nameInput);
       niche.name = nameInput.value;
       autosaveNicheOrder();
       updateNicheSectionTitle(niche);
       seedAllTitlesForNiche(niche);
+      if (niche._keywordInputEl) niche._keywordInputEl.value = niche.name;
     });
     row.appendChild(nameInput);
 
@@ -711,6 +713,28 @@ function buildBasicsSubcard(niche) {
   sc.className = 'subcard';
   sc.innerHTML = '<h3>Basics</h3>';
   const b = niche.state.basics;
+
+  const kwLbl = document.createElement('label');
+  kwLbl.className = 'first';
+  kwLbl.textContent = 'Keyword';
+  sc.appendChild(kwLbl);
+  const kwHint = document.createElement('div');
+  kwHint.className = 'hint';
+  kwHint.textContent = 'Editable right here, stays in sync with the niche name up in the top menu.';
+  sc.appendChild(kwHint);
+  const kwInput = document.createElement('input');
+  kwInput.type = 'text';
+  kwInput.value = niche.name;
+  kwInput.addEventListener('input', () => {
+    applyNicheTitleCase(kwInput);
+    niche.name = kwInput.value;
+    autosaveNicheOrder();
+    updateNicheSectionTitle(niche);
+    seedAllTitlesForNiche(niche);
+    if (niche._topNameInputEl) niche._topNameInputEl.value = niche.name;
+  });
+  sc.appendChild(kwInput);
+  niche._keywordInputEl = kwInput;
 
   function field(labelText, key, placeholder, type) {
     const lbl = document.createElement('label');
@@ -813,7 +837,7 @@ const SHOT_LABELS = ['Screenshot 1', 'Screenshot 2', 'Screenshot 3'];
 function buildScreenshotsSubcard(niche) {
   const sc = document.createElement('div');
   sc.className = 'subcard';
-  sc.innerHTML = '<h3>Screenshots</h3><div class="hint">Three dedicated spots. Paste from clipboard, upload, or Ctrl+V into any independently. Add the listing URL if you have it.</div>';
+  sc.innerHTML = '<h3>Screenshots</h3><div class="hint">Right click each listing image on Etsy, click "Copy Image Address," and paste that URL below. The thumbnail shows automatically, and the AI reads it straight from the URL, no upload needed.</div>';
   const listDiv = document.createElement('div');
   sc.appendChild(listDiv);
 
@@ -823,97 +847,45 @@ function buildScreenshotsSubcard(niche) {
       const data = niche.state.shots[i] || {};
       const slot = document.createElement('div');
       slot.className = 'shot-slot';
-      const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = label;
+      const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = label + ' Image URL';
       slot.appendChild(nameDiv);
-      const row = document.createElement('div'); row.className = 'thumb-row';
 
-      if (data.base64) {
-        const img = document.createElement('img'); img.src = `data:${data.mediaType};base64,${data.base64}`;
-        row.appendChild(img);
-      } else {
-        const empty = document.createElement('div'); empty.className = 'empty-thumb'; empty.textContent = 'No image';
-        row.appendChild(empty);
+      const urlInput = document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.placeholder = 'https://i.etsystatic.com/...';
+      urlInput.value = data.url || '';
+      slot.appendChild(urlInput);
+
+      const errMsg = document.createElement('div');
+      errMsg.className = 'error';
+      errMsg.style.marginTop = '6px';
+      slot.appendChild(errMsg);
+
+      const thumb = document.createElement('img');
+      thumb.style.cssText = 'width:120px; height:120px; object-fit:cover; border-radius:8px; border:1px solid var(--border); margin-top:8px; display:none;';
+      slot.appendChild(thumb);
+
+      function refreshThumb() {
+        const url = urlInput.value.trim();
+        if (!url) { thumb.style.display = 'none'; setErr(errMsg, ''); return; }
+        thumb.onload = () => { thumb.style.display = 'block'; setErr(errMsg, ''); };
+        thumb.onerror = () => { thumb.style.display = 'none'; setErr(errMsg, 'Image not found, check URL'); };
+        thumb.src = url;
       }
 
-      const fields = document.createElement('div'); fields.className = 'slot-fields';
-      const btnRow = document.createElement('div'); btnRow.className = 'add-row'; btnRow.style.marginTop = '0';
-
-      const uploadBtn = document.createElement('button'); uploadBtn.className = 'btn small'; uploadBtn.textContent = data.base64 ? 'Replace' : 'Upload';
-      const fileEl = document.createElement('input'); fileEl.type = 'file'; fileEl.accept = 'image/*'; fileEl.style.display = 'none';
-      fileEl.addEventListener('change', (e) => handleShotFile(niche, i, e.target.files[0], render));
-      uploadBtn.addEventListener('click', () => fileEl.click());
-
-      const pasteBtn = document.createElement('button'); pasteBtn.className = 'btn secondary'; pasteBtn.textContent = 'Paste from Clipboard';
-      pasteBtn.addEventListener('click', () => pasteShotClipboard(niche, i, pasteBtn, render));
-
-      btnRow.appendChild(uploadBtn); btnRow.appendChild(pasteBtn);
-      fields.appendChild(btnRow); fields.appendChild(fileEl);
-
-      const urlInput = document.createElement('input'); urlInput.type = 'text'; urlInput.placeholder = 'Listing URL (optional)'; urlInput.value = data.url || '';
       urlInput.addEventListener('input', () => {
-        if (!niche.state.shots[i]) niche.state.shots[i] = {};
-        niche.state.shots[i].url = urlInput.value;
+        niche.state.shots[i] = { url: urlInput.value };
+        refreshThumb();
         autosaveNicheState(niche.num);
       });
-      fields.appendChild(urlInput);
 
-      if (data.base64) {
-        const rm = document.createElement('button'); rm.className = 'btn secondary'; rm.textContent = 'Remove image'; rm.style.marginTop = '8px';
-        rm.addEventListener('click', () => {
-          const keptUrl = niche.state.shots[i] ? niche.state.shots[i].url : '';
-          niche.state.shots[i] = keptUrl ? { url: keptUrl } : null;
-          render();
-          saveNicheStateImmediate(niche.num);
-        });
-        fields.appendChild(rm);
-      }
-      row.appendChild(fields);
-      slot.appendChild(row);
+      refreshThumb();
       listDiv.appendChild(slot);
     });
   }
   render();
   sc._render = render;
   return sc;
-}
-
-async function handleShotFile(niche, i, file, render) {
-  if (!file || !file.type.startsWith('image/')) return;
-  try {
-    const { base64, mediaType } = await compressImageToBase64(file, 1100, 0.82);
-    const keptUrl = niche.state.shots[i] ? niche.state.shots[i].url : '';
-    niche.state.shots[i] = { base64, mediaType, url: keptUrl || '' };
-    render();
-    await saveNicheStateImmediate(niche.num);
-  } catch (e) {
-    console.error(e);
-    bbStatus('Could not process that image, try a different file', 3000);
-  }
-}
-
-async function pasteShotClipboard(niche, i, btn, render) {
-  const original = btn.textContent;
-  try {
-    if (!navigator.clipboard || !navigator.clipboard.read) {
-      btn.textContent = 'Use Ctrl+V instead'; setTimeout(() => btn.textContent = original, 1800); return;
-    }
-    const items = await navigator.clipboard.read();
-    let found = false;
-    for (const item of items) {
-      const imgType = item.types.find(t => t.startsWith('image/'));
-      if (imgType) {
-        const blob = await item.getType(imgType);
-        handleShotFile(niche, i, new File([blob], 'pasted.png', { type: imgType }), render);
-        found = true; break;
-      }
-    }
-    btn.textContent = found ? 'Pasted!' : 'No image found on clipboard';
-    setTimeout(() => btn.textContent = original, 1800);
-  } catch (err) {
-    console.error(err);
-    btn.textContent = 'Could not access clipboard';
-    setTimeout(() => btn.textContent = original, 1800);
-  }
 }
 
 /* ================= HOW TO ADD VALUE SUBCARD ================= */
@@ -967,16 +939,16 @@ function buildValueSubcard(niche) {
 
   genBtn.addEventListener('click', async () => {
     setErr(errEl, '');
-    if (!niche.state.shots.some(s => s && s.base64)) {
-      setErr(errEl, 'Upload or paste at least one screenshot first.');
+    if (!niche.state.shots.some(s => s && s.url && s.url.trim())) {
+      setErr(errEl, 'Add at least one listing image URL first.');
       return;
     }
     genBtn.disabled = true;
     setStatus(statusEl, 'Analyzing screenshots...');
     try {
       const userContent = [];
-      niche.state.shots.filter(s => s && s.base64).forEach(shot => {
-        userContent.push({ type: 'image', source: { type: 'base64', media_type: shot.mediaType, data: shot.base64 } });
+      niche.state.shots.filter(s => s && s.url && s.url.trim()).forEach(shot => {
+        userContent.push({ type: 'image', source: { type: 'url', url: shot.url.trim() } });
       });
       const urlNote = niche.state.shots.map((s, i) => (s && s.url) ? `Listing ${i + 1} URL: ${s.url}` : '').filter(Boolean).join('\n');
       userContent.push({ type: 'text', text: `Niche keyword: ${niche.name.trim() || 'not set yet'}\n${urlNote}` });
@@ -1661,11 +1633,11 @@ function buildPromptsSubcard(niche) {
 
   genBtn.addEventListener('click', async () => {
     setErr(errEl, '');
-    if (!niche.state.shots.some(s => s && s.base64)) { setErr(errEl, 'Upload or paste at least one screenshot first.'); return; }
+    if (!niche.state.shots.some(s => s && s.url && s.url.trim())) { setErr(errEl, 'Add at least one listing image URL first.'); return; }
     genBtn.disabled = true; setStatus(statusEl, 'Writing prompts...');
     try {
       const userContent = [];
-      niche.state.shots.filter(s => s && s.base64).forEach(shot => userContent.push({ type: 'image', source: { type: 'base64', media_type: shot.mediaType, data: shot.base64 } }));
+      niche.state.shots.filter(s => s && s.url && s.url.trim()).forEach(shot => userContent.push({ type: 'image', source: { type: 'url', url: shot.url.trim() } }));
       const notes = notesTa.value.trim();
       const keyword = niche.name.trim() || 'not set';
       userContent.push({
@@ -1702,7 +1674,7 @@ function buildPromptsSubcard(niche) {
 function buildGenImagesSubcard(niche) {
   const sc = document.createElement('div');
   sc.className = 'subcard';
-  sc.innerHTML = '<h3>Generator Result Images</h3><div class="hint">Paste a screenshot straight in, no hosting needed. A URL field works too.</div>';
+  sc.innerHTML = '<h3>Generator Result Images</h3><div class="hint">Upload each image to your Systeme.io media library (or wherever you host), then paste that URL below. The thumbnail shows automatically.</div>';
   const container = document.createElement('div'); sc.appendChild(container);
 
   function render() {
@@ -1712,61 +1684,41 @@ function buildGenImagesSubcard(niche) {
       const slot = document.createElement('div'); slot.className = 'gen-slot';
       const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.textContent = tool.name;
       slot.appendChild(nameDiv);
-      const row = document.createElement('div'); row.className = 'thumb-row';
-      if (data.base64) { const img = document.createElement('img'); img.src = `data:${data.mediaType};base64,${data.base64}`; row.appendChild(img); }
-      else { const empty = document.createElement('div'); empty.className = 'empty-thumb'; empty.textContent = 'No image'; row.appendChild(empty); }
-      const fields = document.createElement('div'); fields.className = 'slot-fields';
-      const btnRow = document.createElement('div'); btnRow.className = 'add-row'; btnRow.style.marginTop = '0';
-      const uploadBtn = document.createElement('button'); uploadBtn.className = 'btn small'; uploadBtn.textContent = data.base64 ? 'Replace' : 'Upload';
-      const fileEl = document.createElement('input'); fileEl.type = 'file'; fileEl.accept = 'image/*'; fileEl.style.display = 'none';
-      fileEl.addEventListener('change', (e) => handleGenFile(niche, tool.id, e.target.files[0], render));
-      uploadBtn.addEventListener('click', () => fileEl.click());
-      const pasteBtn = document.createElement('button'); pasteBtn.className = 'btn secondary'; pasteBtn.textContent = 'Paste from Clipboard';
-      pasteBtn.addEventListener('click', () => pasteGenClip(niche, tool.id, pasteBtn, render));
-      btnRow.appendChild(uploadBtn); btnRow.appendChild(pasteBtn);
-      fields.appendChild(btnRow); fields.appendChild(fileEl);
-      const urlInput = document.createElement('input'); urlInput.type = 'text'; urlInput.placeholder = 'Or paste image URL'; urlInput.value = data.url || '';
-      urlInput.addEventListener('input', () => { if (!niche.state.genImages[tool.id]) niche.state.genImages[tool.id] = {}; niche.state.genImages[tool.id].url = urlInput.value; autosaveNicheState(niche.num); });
-      fields.appendChild(urlInput);
-      if (data.base64) {
-        const rm = document.createElement('button'); rm.className = 'btn secondary'; rm.textContent = 'Remove image'; rm.style.marginTop = '8px';
-        rm.addEventListener('click', () => { delete niche.state.genImages[tool.id].base64; delete niche.state.genImages[tool.id].mediaType; render(); saveNicheStateImmediate(niche.num); });
-        fields.appendChild(rm);
+
+      const urlInput = document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.placeholder = 'Paste hosted image URL';
+      urlInput.value = data.url || '';
+      slot.appendChild(urlInput);
+
+      const errMsg = document.createElement('div'); errMsg.className = 'error'; errMsg.style.marginTop = '6px';
+      slot.appendChild(errMsg);
+
+      const thumb = document.createElement('img');
+      thumb.style.cssText = 'width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid var(--border); margin-top:8px; display:none;';
+      slot.appendChild(thumb);
+
+      function refreshThumb() {
+        const url = urlInput.value.trim();
+        if (!url) { thumb.style.display = 'none'; setErr(errMsg, ''); return; }
+        thumb.onload = () => { thumb.style.display = 'block'; setErr(errMsg, ''); };
+        thumb.onerror = () => { thumb.style.display = 'none'; setErr(errMsg, 'Image not found, check URL'); };
+        thumb.src = url;
       }
-      row.appendChild(fields); slot.appendChild(row); container.appendChild(slot);
+
+      urlInput.addEventListener('input', () => {
+        niche.state.genImages[tool.id] = { url: urlInput.value };
+        refreshThumb();
+        autosaveNicheState(niche.num);
+      });
+
+      refreshThumb();
+      container.appendChild(slot);
     });
   }
   render();
   sc._render = render;
   return sc;
-}
-async function handleGenFile(niche, id, file, render) {
-  if (!file || !file.type.startsWith('image/')) return;
-  try {
-    const { base64, mediaType } = await compressImageToBase64(file, 1100, 0.82);
-    if (!niche.state.genImages[id]) niche.state.genImages[id] = {};
-    niche.state.genImages[id].base64 = base64;
-    niche.state.genImages[id].mediaType = mediaType;
-    render();
-    await saveNicheStateImmediate(niche.num);
-  } catch (e) {
-    console.error(e);
-    bbStatus('Could not process that image, try a different file', 3000);
-  }
-}
-async function pasteGenClip(niche, id, btn, render) {
-  const original = btn.textContent;
-  try {
-    if (!navigator.clipboard || !navigator.clipboard.read) { btn.textContent = 'Use Ctrl+V instead'; setTimeout(() => btn.textContent = original, 1800); return; }
-    const items = await navigator.clipboard.read();
-    let found = false;
-    for (const item of items) {
-      const imgType = item.types.find(t => t.startsWith('image/'));
-      if (imgType) { const blob = await item.getType(imgType); handleGenFile(niche, id, new File([blob], 'pasted.png', { type: imgType }), render); found = true; break; }
-    }
-    btn.textContent = found ? 'Pasted!' : 'No image found on clipboard';
-    setTimeout(() => btn.textContent = original, 1800);
-  } catch (err) { console.error(err); btn.textContent = 'Could not access clipboard'; setTimeout(() => btn.textContent = original, 1800); }
 }
 
 /* ================= NICHE SECTION SHELL + FOOTER ================= */
@@ -1938,9 +1890,7 @@ var S = {
 var DCP_SCRIPT = '<scr'+'ipt>function dCp(b){var t=document.createElement("textarea");t.value=b.getAttribute("data-copy");t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();try{document.execCommand("copy");var o=b.textContent;b.textContent="Copied!";setTimeout(function(){b.textContent=o;},2000);}catch(e){}document.body.removeChild(t);}<\/scr'+'ipt>';
 
 function nicheImageDataUrl(shot) {
-  if (shot && shot.base64) return `data:${shot.mediaType};base64,${shot.base64}`;
-  if (shot && shot.url) return shot.url;
-  return '';
+  return (shot && shot.url) ? shot.url : '';
 }
 
 function buildNicheHTMLExport(niche) {
@@ -1996,7 +1946,7 @@ function buildNicheHTMLExport(niche) {
   if (price) statsHtml += '<div style="'+S.stat+'"><p style="'+S.statLbl+'">Price Range</p><p style="'+S.statVal+'">'+esc(price)+'</p></div>';
   if (statsHtml) html += '<div style="'+S.statsGrid+'">'+statsHtml+'</div>';
 
-  const hasImg = GEN_TOOLS.some(g => { const gi = niche.state.genImages[g.id]; return gi && (gi.base64 || gi.url); });
+  const hasImg = GEN_TOOLS.some(g => { const gi = niche.state.genImages[g.id]; return gi && gi.url; });
   const jumpItems = [];
   if (note) jumpItems.push({ id: anchorId+'-notes', label: 'Listing Notes' });
   if (tipsHtml) jumpItems.push({ id: anchorId+'-tips', label: 'How to Add Value' });
