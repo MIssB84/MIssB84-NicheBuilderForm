@@ -196,28 +196,103 @@
 
 <script>
 /* ================= CORE HELPERS ================= */
+/* ---------- IndexedDB layer (huge capacity vs localStorage's tiny cap) ---------- */
+const IDB_NAME = 'nicheclub_db';
+const IDB_STORE = 'kv';
+let idbPromise = null;
+
+function openIDB() {
+  if (idbPromise) return idbPromise;
+  idbPromise = new Promise((resolve, reject) => {
+    if (!('indexedDB' in window)) { reject(new Error('IndexedDB not available')); return; }
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return idbPromise;
+}
+
+async function idbGet(key) {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = () => resolve(req.result !== undefined ? req.result : null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbSet(key, value) {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(value, key);
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function idbGetAllKeys() {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).getAllKeys();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbClearAll() {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).clear();
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+// One-time migration: pull any existing localStorage data over to IndexedDB, then clean it up
+async function migrateLocalStorageToIDB() {
+  try {
+    const already = await idbGet('__migrated');
+    if (already) return;
+    const keysToMove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('nicheclub:') && !key.startsWith('nicheclub:session:')) keysToMove.push(key);
+    }
+    for (const fullKey of keysToMove) {
+      const shortKey = fullKey.replace('nicheclub:', '');
+      const value = localStorage.getItem(fullKey);
+      if (value !== null) await idbSet(shortKey, value);
+      localStorage.removeItem(fullKey);
+    }
+    await idbSet('__migrated', 'true');
+    if (keysToMove.length > 0) console.log('Migrated', keysToMove.length, 'keys from localStorage to IndexedDB');
+  } catch (e) { console.error('Migration failed', e); }
+}
+
 const storageAPI = {
   async get(key) {
     if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function') {
       try { return await window.storage.get(key); } catch (e) { return null; }
     }
     try {
-      const val = localStorage.getItem('nicheclub:' + key);
-      return val !== null ? { key, value: val } : null;
+      const value = await idbGet(key);
+      return value !== null ? { key, value } : null;
     } catch (e) { return null; }
   },
   async set(key, value) {
     if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
       try { return await window.storage.set(key, value); } catch (e) { return null; }
     }
-    try { localStorage.setItem('nicheclub:' + key, value); return { key, value }; }
+    try { await idbSet(key, value); return { key, value }; }
     catch (e) {
-      const isQuota = e && (e.name === 'QuotaExceededError' || e.code === 22 || /quota/i.test(e.message || ''));
       const el = document.getElementById('bottomBarStatus');
       if (el) {
-        el.textContent = isQuota
-          ? 'Storage is full, this last change did not save. Clear a niche you no longer need to free up space.'
-          : 'Could not save that change, try again.';
+        el.textContent = 'Could not save that change, try again.';
         setTimeout(() => { el.textContent = ''; }, 5000);
       }
       return null;
@@ -1791,9 +1866,10 @@ document.getElementById('saveNowBtn').addEventListener('click', async () => {
   }
 });
 
-document.getElementById('wipeStorageBtn').addEventListener('click', () => {
-  const kb = getStorageUsageKB();
-  if (!confirm(`This wipes every bit of saved data for this tool in this browser (all niches, everything, roughly ${kb === null ? 'an unknown amount of' : kb + ' KB'}), including anything not currently loaded on screen. This cannot be undone. Continue?`)) return;
+document.getElementById('wipeStorageBtn').addEventListener('click', async () => {
+  const info = await getStorageUsageInfo();
+  const usedText = info ? (info.usedMB < 1 ? Math.round(info.usedMB * 1024) + ' KB' : info.usedMB.toFixed(1) + ' MB') : 'an unknown amount of';
+  if (!confirm(`This wipes every bit of saved data for this tool in this browser (all niches, everything, roughly ${usedText}), including anything not currently loaded on screen. This cannot be undone. Continue?`)) return;
   try {
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -1802,6 +1878,7 @@ document.getElementById('wipeStorageBtn').addEventListener('click', () => {
     }
     keysToRemove.forEach(k => localStorage.removeItem(k));
   } catch (e) {}
+  try { await idbClearAll(); } catch (e) {}
   location.reload();
 });
 
@@ -2047,27 +2124,32 @@ function cleanupOrphanedStorage() {
   } catch (e) {}
 }
 
-function getStorageUsageKB() {
+async function getStorageUsageInfo() {
   try {
-    let total = 0;
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('nicheclub:')) total += (key.length + (localStorage.getItem(key) || '').length);
+    if (navigator.storage && navigator.storage.estimate) {
+      const est = await navigator.storage.estimate();
+      const usedMB = (est.usage || 0) / (1024 * 1024);
+      const quotaMB = (est.quota || 0) / (1024 * 1024);
+      return { usedMB, quotaMB };
     }
-    return Math.round(total / 1024);
-  } catch (e) { return null; }
+  } catch (e) {}
+  return null;
 }
 
-function updateStorageUsageDisplay() {
+async function updateStorageUsageDisplay() {
   const el = document.getElementById('storageUsageText');
   if (!el) return;
-  const kb = getStorageUsageKB();
-  if (kb === null) { el.textContent = ''; return; }
-  el.textContent = `Using about ${kb} KB of browser storage`;
-  el.style.color = kb > 4000 ? 'var(--warn)' : '#9a877f';
+  const info = await getStorageUsageInfo();
+  if (!info) { el.textContent = ''; return; }
+  const usedText = info.usedMB < 1 ? Math.round(info.usedMB * 1024) + ' KB' : info.usedMB.toFixed(1) + ' MB';
+  const quotaText = info.quotaMB > 1024 ? (info.quotaMB / 1024).toFixed(1) + ' GB' : Math.round(info.quotaMB) + ' MB';
+  el.textContent = `Using ${usedText} of ${quotaText} available`;
+  const pctUsed = info.quotaMB > 0 ? (info.usedMB / info.quotaMB) * 100 : 0;
+  el.style.color = pctUsed > 80 ? 'var(--warn)' : '#9a877f';
 }
 
 (async function init() {
+  await migrateLocalStorageToIDB();
   cleanupOrphanedStorage();
   try {
     const savedDate = await storageAPI.get('weekDate');
