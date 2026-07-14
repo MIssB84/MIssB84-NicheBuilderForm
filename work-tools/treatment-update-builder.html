@@ -209,7 +209,7 @@
       <input type="text" id="greeting" placeholder="e.g. Good afternoon,">
     </div>
 
-    <div class="card">
+    <div class="card" id="dolCard">
       <label>Date of Loss</label>
       <input type="date" id="reqDOLSingle">
     </div>
@@ -432,6 +432,7 @@
     const method = document.querySelector('input[name="sendMethod"]:checked').value;
     document.getElementById('greetingCard').style.display = (method === 'email') ? 'block' : 'none';
     document.getElementById('claimantNamesSection').style.display = (method === 'email') ? 'block' : 'none';
+    document.getElementById('dolCard').style.display = (method === 'email') ? 'block' : 'none';
   }
 
   function addRequestClaimant() {
@@ -513,7 +514,7 @@
 
     lines.push('Please provide a treatment update for the following claimant(s):');
 
-    if (dol) {
+    if (method === 'email' && dol) {
       lines.push('');
       lines.push('DOL: ' + dol);
     }
