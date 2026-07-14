@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Treatment & Injury Update Builder</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fdf7f2;
+    margin: 0;
+    padding: 24px;
+    color: #2a1f1c;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; margin-bottom: 4px; color: #2a1f1c; }
+  .sub { color: #5a4a45; font-size: 13px; margin-bottom: 20px; }
+  .card {
+    background: #fff;
+    border: 1px solid #ead9d5;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .card + .card { margin-top: 0; }
+  .required-mark { color: #b33; }
+  label {
+    display: block;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #2a1f1c;
+  }
+  input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ead9d5;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2a1f1c;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  .radio-row, .check-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .radio-row label, .check-row label {
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0;
+    cursor: pointer;
+  }
+  .bullet-add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .bullet-add-row input { flex: 1; }
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    padding: 8px 14px;
+    font-weight: bold;
+  }
+  .btn-add { background: #dea193; color: #2a1f1c; }
+  .bullet-list { list-style: disc; margin: 0 0 6px 20px; padding: 0; }
+  .bullet-list li { margin-bottom: 4px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .bullet-list li .remove { color: #b33; cursor: pointer; font-size: 12px; font-weight: bold; }
+  .stack > div { margin-bottom: 14px; }
+  .stack > div:last-child { margin-bottom: 0; }
+  .generate-btn {
+    background: #dea193;
+    color: #2a1f1c;
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    margin-top: 6px;
+  }
+  .output-box {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 120px;
+    color: #2a1f1c;
+  }
+  .copy-btn { background: #2a1f1c; color: #f5eddf; margin-top: 10px; }
+  .followup-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .followup-row label.inline { font-weight: normal; display: flex; align-items: center; gap: 8px; margin-bottom: 0; }
+  .followup-row input[type="number"] { width: 70px; }
+  .error-msg { color: #b33; font-size: 13px; margin-top: 8px; display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Treatment & Injury Update Builder</h1>
+  <div class="sub">Fill in what applies. Anything left blank won't show in the output.</div>
+
+  <div class="card">
+    <label>Contact Result <span class="required-mark">*required</span></label>
+    <div class="radio-row">
+      <label><input type="radio" name="contactResult" value="Spoke with"> Spoke with</label>
+      <label><input type="radio" name="contactResult" value="Left message for"> Left message for</label>
+      <label><input type="radio" name="contactResult" value="Left voicemail for"> Left voicemail for</label>
+    </div>
+    <label>Name <span class="required-mark">*required</span></label>
+    <input type="text" id="contactName" placeholder="Name of person">
+  </div>
+
+  <div class="card">
+    <label>Injuries</label>
+    <div class="bullet-add-row">
+      <input type="text" id="injuriesInput" placeholder="Type an injury item, then Add">
+      <button class="btn-add" onclick="addBullet('injuries')">Add</button>
+    </div>
+    <ul class="bullet-list" id="injuriesList"></ul>
+  </div>
+
+  <div class="card">
+    <label>Treatment</label>
+    <div class="bullet-add-row">
+      <input type="text" id="treatmentInput" placeholder="Type a treatment item, then Add">
+      <button class="btn-add" onclick="addBullet('treatment')">Add</button>
+    </div>
+    <ul class="bullet-list" id="treatmentList"></ul>
+  </div>
+
+  <div class="card">
+    <label>Health Insurance</label>
+    <div class="check-row">
+      <label><input type="checkbox" id="medicare"> Medicare</label>
+      <label><input type="checkbox" id="medicaid"> Medicaid</label>
+    </div>
+    <input type="text" id="healthInsOther" placeholder="Other insurance (optional)">
+  </div>
+
+  <div class="card">
+    <label>ISO Needed</label>
+    <div class="check-row">
+      <label><input type="checkbox" class="isoCheck" value="SSN"> SSN</label>
+      <label><input type="checkbox" class="isoCheck" value="DOB"> DOB</label>
+      <label><input type="checkbox" class="isoCheck" value="Gender"> Gender</label>
+      <label><input type="checkbox" class="isoCheck" value="Address"> Address</label>
+    </div>
+  </div>
+
+  <div class="card stack">
+    <div>
+      <label>PD/MOI</label>
+      <input type="text" id="pdmoi">
+    </div>
+    <div>
+      <label>FYI/Notes</label>
+      <input type="text" id="fyiNotes" placeholder="Shows on output">
+    </div>
+  </div>
+
+  <div class="card">
+    <label>Notes (for you only, not on output)</label>
+    <textarea id="rawNotes" placeholder="Quick raw notes, clean up later"></textarea>
+  </div>
+
+  <div class="card">
+    <label>Follow Up</label>
+    <div class="followup-row">
+      <label class="inline"><input type="checkbox" id="followupToggle" checked> Include follow up line</label>
+      <span>in</span>
+      <input type="number" id="followupDays" value="60" min="1">
+      <span>days</span>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generateOutput()">Generate Update</button>
+  <div class="error-msg" id="errorMsg">Please select a contact result and enter a name before generating.</div>
+
+  <div class="card" style="margin-top:16px;">
+    <label>Output</label>
+    <div class="output-box" id="output">Fill out the form and click Generate.</div>
+    <button class="copy-btn" onclick="copyOutput()">Copy to Clipboard</button>
+  </div>
+</div>
+
+<script>
+  const bullets = { treatment: [], injuries: [] };
+  const specialWords = { pm: 'Pain Management', er: 'ER', ems: 'EMS' };
+
+  function smartCase(str) {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .filter(w => w.length)
+      .map(w => specialWords[w] ? specialWords[w] : w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+
+  function addBullet(type) {
+    const input = document.getElementById(type + 'Input');
+    const val = input.value.trim();
+    if (!val) return;
+    bullets[type].push(smartCase(val));
+    input.value = '';
+    renderBullets(type);
+    input.focus();
+  }
+
+  function removeBullet(type, idx) {
+    bullets[type].splice(idx, 1);
+    renderBullets(type);
+  }
+
+  function renderBullets(type) {
+    const list = document.getElementById(type + 'List');
+    list.innerHTML = '';
+    bullets[type].forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${item}</span><span class="remove" onclick="removeBullet('${type}',${idx})">remove</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  ['treatment', 'injuries'].forEach(type => {
+    document.getElementById(type + 'Input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addBullet(type); }
+    });
+  });
+
+  function generateOutput() {
+    const contactResultEl = document.querySelector('input[name="contactResult"]:checked');
+    const contactResult = contactResultEl ? contactResultEl.value : '';
+    const contactNameRaw = document.getElementById('contactName').value.trim();
+    const contactName = contactNameRaw ? smartCase(contactNameRaw) : '';
+
+    const errorMsg = document.getElementById('errorMsg');
+    if (!contactResult || !contactName) {
+      errorMsg.style.display = 'block';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    const pdmoi = document.getElementById('pdmoi').value.trim();
+    const fyiNotes = document.getElementById('fyiNotes').value.trim();
+    const followup = document.getElementById('followupToggle').checked;
+    const followupDays = document.getElementById('followupDays').value || '60';
+
+    const isoItems = Array.from(document.querySelectorAll('.isoCheck:checked')).map(c => c.value);
+
+    const healthInsItems = [];
+    if (document.getElementById('medicare').checked) healthInsItems.push('Medicare');
+    if (document.getElementById('medicaid').checked) healthInsItems.push('Medicaid');
+    const healthInsOther = document.getElementById('healthInsOther').value.trim();
+    if (healthInsOther) healthInsItems.push(smartCase(healthInsOther));
+
+    let lines = [];
+
+    lines.push('Called to obtain treatment and injury update; and ask if the atty has any info they can provide now, so we may work toward possible early resolution.');
+
+    lines.push('');
+    lines.push(`${contactResult} ${contactName}.`);
+
+    if (bullets.injuries.length) {
+      lines.push('');
+      lines.push('Injuries:');
+      bullets.injuries.forEach(b => lines.push('- ' + b));
+    }
+
+    if (bullets.treatment.length) {
+      lines.push('');
+      lines.push('Treatment:');
+      bullets.treatment.forEach(b => lines.push('- ' + b));
+    }
+
+    if (healthInsItems.length) {
+      lines.push('');
+      lines.push('Health Insurance: ' + healthInsItems.join(', '));
+    }
+
+    if (isoItems.length) {
+      lines.push('');
+      lines.push('ISO Needed: ' + isoItems.join(', '));
+    }
+
+    if (pdmoi) { lines.push(''); lines.push('PD/MOI: ' + pdmoi); }
+    if (fyiNotes) { lines.push(''); lines.push('FYI/Notes: ' + fyiNotes); }
+
+    if (followup) {
+      lines.push('');
+      lines.push(`Will follow up in ${followupDays} days.`);
+    }
+
+    document.getElementById('output').innerText = lines.join('\n');
+  }
+
+  function copyOutput() {
+    const text = document.getElementById('output').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      const orig = btn.innerText;
+      btn.innerText = 'Copied!';
+      setTimeout(() => btn.innerText = orig, 1200);
+    });
+  }
+</script>
+</body>
+</html>
