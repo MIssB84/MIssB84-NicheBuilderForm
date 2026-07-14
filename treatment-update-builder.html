@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Treatment & Injury Update Builder</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fdf7f2;
+    margin: 0;
+    padding: 24px;
+    color: #2a1f1c;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; margin-bottom: 4px; color: #2a1f1c; }
+  .sub { color: #5a4a45; font-size: 13px; margin-bottom: 20px; }
+
+  .tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #dea193;
+    background: #fff;
+    color: #2a1f1c;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  .tab-btn.active { background: #dea193; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .card {
+    background: #fff;
+    border: 1px solid #ead9d5;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .required-mark { color: #b33; font-weight: normal; }
+  label {
+    display: block;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #2a1f1c;
+  }
+  input[type="text"], input[type="number"], input[type="date"], textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ead9d5;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2a1f1c;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  .radio-row, .check-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .radio-row label, .check-row label {
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0;
+    cursor: pointer;
+  }
+  .bullet-add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .bullet-add-row input { flex: 1; }
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    padding: 8px 14px;
+    font-weight: bold;
+  }
+  .btn-add { background: #dea193; color: #2a1f1c; }
+  .btn-add-claimant { background: #2a1f1c; color: #f5eddf; width: 100%; padding: 10px; margin-top: 4px; }
+  .bullet-list { list-style: disc; margin: 0 0 6px 20px; padding: 0; }
+  .bullet-list li { margin-bottom: 4px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .bullet-list li .remove { color: #b33; cursor: pointer; font-size: 12px; font-weight: bold; }
+  .stack > div { margin-bottom: 14px; }
+  .stack > div:last-child { margin-bottom: 0; }
+  .generate-btn {
+    background: #dea193;
+    color: #2a1f1c;
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    margin-top: 6px;
+  }
+  .output-box {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 120px;
+    color: #2a1f1c;
+  }
+  .copy-btn { background: #2a1f1c; color: #f5eddf; margin-top: 10px; }
+  .followup-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .followup-row label.inline { font-weight: normal; display: flex; align-items: center; gap: 8px; margin-bottom: 0; }
+  .followup-row input[type="number"] { width: 70px; }
+  .error-msg { color: #b33; font-size: 13px; margin-top: 8px; display: none; }
+  .claimant-card { border: 1px solid #dea193; position: relative; }
+  .claimant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .claimant-header label { margin-bottom: 0; }
+  .remove-claimant { color: #b33; cursor: pointer; font-size: 12px; font-weight: bold; }
+  .claimant-card > label { margin-top: 14px; }
+  .claimant-card > label:first-of-type { margin-top: 0; }
+  .section-title { font-size: 16px; font-weight: bold; margin: 4px 0 8px 0; }
+
+  .req-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
+  .req-row .num { font-weight: bold; font-size: 14px; padding-bottom: 9px; min-width: 18px; }
+  .req-row .field { flex: 1; }
+  .req-row .field.small { flex: 0 0 160px; }
+  .req-row .remove-row { color: #b33; cursor: pointer; font-size: 12px; padding-bottom: 9px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Treatment & Injury Update Builder</h1>
+  <div class="sub">Fill in what applies. Anything left blank won't show in the output.</div>
+
+  <div class="tab-row">
+    <button class="tab-btn active" id="tabBtnCall" onclick="switchTab('call')">Call Update</button>
+    <button class="tab-btn" id="tabBtnRequest" onclick="switchTab('request')">Email / Fax Request</button>
+  </div>
+
+  <!-- ============ TAB 1: CALL UPDATE ============ -->
+  <div class="tab-content active" id="tab-call">
+
+    <div class="card">
+      <label>Contact Result <span class="required-mark">*required</span></label>
+      <div class="radio-row">
+        <label><input type="radio" name="contactResult" value="Spoke with"> Spoke with</label>
+        <label><input type="radio" name="contactResult" value="Left message with"> Left message with</label>
+        <label><input type="radio" name="contactResult" value="Left voicemail for"> Left voicemail for</label>
+      </div>
+      <label>Name <span class="required-mark">*required</span></label>
+      <input type="text" id="contactName" placeholder="Name of person">
+    </div>
+
+    <div class="section-title">Claimants</div>
+    <div id="claimantsContainer"></div>
+    <button class="btn-add-claimant" onclick="addClaimant()">+ Add Claimant</button>
+
+    <div class="card stack" style="margin-top:16px;">
+      <div>
+        <label>PD/MOI</label>
+        <input type="text" id="pdmoi">
+      </div>
+      <div>
+        <label>FYI/Notes</label>
+        <input type="text" id="fyiNotes" placeholder="Shows on output">
+      </div>
+    </div>
+
+    <div class="card">
+      <label>Notes (for you only, not on output)</label>
+      <textarea id="rawNotes" placeholder="Quick raw notes, clean up later"></textarea>
+    </div>
+
+    <div class="card">
+      <label>Follow Up</label>
+      <div class="followup-row">
+        <label class="inline"><input type="checkbox" id="followupToggle" checked> Include follow up line</label>
+        <span>in</span>
+        <input type="number" id="followupDays" value="60" min="1">
+        <span>days</span>
+      </div>
+    </div>
+
+    <button class="generate-btn" onclick="generateOutput()">Generate Update</button>
+    <div class="error-msg" id="errorMsg">Please select a contact result and enter a name before generating.</div>
+
+    <div class="card" style="margin-top:16px;">
+      <label>Output</label>
+      <div class="output-box" id="output">Fill out the form and click Generate.</div>
+      <button class="copy-btn" onclick="copyText('output')">Copy to Clipboard</button>
+    </div>
+
+  </div>
+
+  <!-- ============ TAB 2: EMAIL / FAX REQUEST ============ -->
+  <div class="tab-content" id="tab-request">
+
+    <div class="card">
+      <label>Send Method</label>
+      <div class="radio-row">
+        <label><input type="radio" name="sendMethod" value="email" checked onchange="toggleSendMethod()"> Email</label>
+        <label><input type="radio" name="sendMethod" value="fax" onchange="toggleSendMethod()"> Fax</label>
+      </div>
+    </div>
+
+    <div class="card" id="greetingCard">
+      <label>Greeting (optional)</label>
+      <div class="radio-row">
+        <label><input type="radio" name="greetingChoice" value="Good morning,"> Good morning,</label>
+        <label><input type="radio" name="greetingChoice" value="Good afternoon,"> Good afternoon,</label>
+        <label><input type="radio" name="greetingChoice" value=""> None</label>
+      </div>
+    </div>
+
+    <div class="card" id="dolCard">
+      <label>Date of Loss</label>
+      <input type="date" id="reqDOLSingle">
+    </div>
+
+    <div id="claimantNamesSection">
+      <div class="section-title">Claimants</div>
+      <div id="requestClaimantsContainer"></div>
+      <button class="btn-add-claimant" onclick="addRequestClaimant()">+ Add Claimant</button>
+    </div>
+
+    <div class="section-title" style="margin-top:16px;">Questions</div>
+    <div class="card">
+      <div id="fixedQuestionsList" style="font-size:14px; line-height:1.6;">
+        1. Are your client(s) still treating?<br>
+        2. What are their current injuries?<br>
+        3. With whom are they treating?<br>
+        4. Are there any referrals, or are any anticipated?<br>
+        5. An estimate of their bills, if available?
+      </div>
+      <div id="extraQuestionsContainer" style="margin-top:10px;"></div>
+      <button class="btn-add-claimant" onclick="addExtraQuestion()">+ Add Question</button>
+    </div>
+
+    <button class="generate-btn" style="margin-top:16px;" onclick="generateRequestOutput()">Generate Request</button>
+
+    <div class="card" style="margin-top:16px;">
+      <label>Output</label>
+      <div class="output-box" id="requestOutput">Fill out the claimants and click Generate.</div>
+      <button class="copy-btn" onclick="copyText('requestOutput')">Copy to Clipboard</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const specialWords = { pm: 'Pain Management', er: 'ER', ems: 'EMS' };
+
+  function smartCase(str) {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .filter(w => w.length)
+      .map(w => specialWords[w] ? specialWords[w] : w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+
+  function switchTab(tab) {
+    document.getElementById('tab-call').classList.toggle('active', tab === 'call');
+    document.getElementById('tab-request').classList.toggle('active', tab === 'request');
+    document.getElementById('tabBtnCall').classList.toggle('active', tab === 'call');
+    document.getElementById('tabBtnRequest').classList.toggle('active', tab === 'request');
+  }
+
+  /* ---------------- TAB 1: CALL UPDATE ---------------- */
+
+  const claimants = {};
+  let claimantCounter = 0;
+
+  function addClaimant() {
+    claimantCounter++;
+    const id = 'claimant' + claimantCounter;
+    claimants[id] = { injuries: [], treatment: [] };
+
+    const div = document.createElement('div');
+    div.className = 'card claimant-card';
+    div.id = id;
+    div.innerHTML = `
+      <div class="claimant-header">
+        <label>Claimant Name</label>
+        <span class="remove-claimant" onclick="removeClaimant('${id}')">remove claimant</span>
+      </div>
+      <input type="text" class="claimantName" placeholder="Claimant name">
+
+      <label>Injuries</label>
+      <div class="bullet-add-row">
+        <input type="text" class="bulletInput" data-type="injuries" placeholder="Type an injury, then Add">
+        <button class="btn-add" onclick="addClaimantBullet('${id}','injuries')">Add</button>
+      </div>
+      <ul class="bullet-list bulletList" data-type="injuries"></ul>
+
+      <label>Treatment</label>
+      <div class="bullet-add-row">
+        <input type="text" class="bulletInput" data-type="treatment" placeholder="Type a treatment item, then Add">
+        <button class="btn-add" onclick="addClaimantBullet('${id}','treatment')">Add</button>
+      </div>
+      <ul class="bullet-list bulletList" data-type="treatment"></ul>
+
+      <label>ISO Needed</label>
+      <div class="check-row">
+        <label><input type="checkbox" class="isoCheck" value="SSN"> SSN</label>
+        <label><input type="checkbox" class="isoCheck" value="DOB"> DOB</label>
+        <label><input type="checkbox" class="isoCheck" value="Gender"> Gender</label>
+        <label><input type="checkbox" class="isoCheck" value="Address"> Address</label>
+      </div>
+
+      <label>Health Insurance</label>
+      <div class="check-row">
+        <label><input type="checkbox" class="medicareCheck"> Medicare</label>
+        <label><input type="checkbox" class="medicaidCheck"> Medicaid</label>
+      </div>
+      <input type="text" class="healthInsOther" placeholder="Other insurance (optional)">
+    `;
+    document.getElementById('claimantsContainer').appendChild(div);
+
+    div.querySelectorAll('.bulletInput').forEach(inp => {
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); addClaimantBullet(id, inp.dataset.type); }
+      });
+    });
+  }
+
+  function removeClaimant(id) {
+    delete claimants[id];
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function addClaimantBullet(id, type) {
+    const div = document.getElementById(id);
+    const input = div.querySelector(`.bulletInput[data-type="${type}"]`);
+    const val = input.value.trim();
+    if (!val) return;
+    claimants[id][type].push(smartCase(val));
+    input.value = '';
+    renderClaimantBullets(id, type);
+    input.focus();
+  }
+
+  function removeClaimantBullet(id, type, idx) {
+    claimants[id][type].splice(idx, 1);
+    renderClaimantBullets(id, type);
+  }
+
+  function renderClaimantBullets(id, type) {
+    const div = document.getElementById(id);
+    const list = div.querySelector(`.bulletList[data-type="${type}"]`);
+    list.innerHTML = '';
+    claimants[id][type].forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${item}</span><span class="remove" onclick="removeClaimantBullet('${id}','${type}',${idx})">remove</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  addClaimant(); // start with one claimant block by default
+
+  function generateOutput() {
+    const contactResultEl = document.querySelector('input[name="contactResult"]:checked');
+    const contactResult = contactResultEl ? contactResultEl.value : '';
+    const contactNameRaw = document.getElementById('contactName').value.trim();
+    const contactName = contactNameRaw ? smartCase(contactNameRaw) : '';
+
+    const errorMsg = document.getElementById('errorMsg');
+    if (!contactResult || !contactName) {
+      errorMsg.style.display = 'block';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    const pdmoi = document.getElementById('pdmoi').value.trim();
+    const fyiNotes = document.getElementById('fyiNotes').value.trim();
+    const followup = document.getElementById('followupToggle').checked;
+    const followupDays = document.getElementById('followupDays').value || '60';
+
+    let lines = [];
+
+    lines.push('Called to obtain treatment and injury update; and ask if the atty has any info they can provide now, so we may work toward possible early resolution.');
+    lines.push('');
+    lines.push(`${contactResult} ${contactName}.`);
+
+    Object.keys(claimants).forEach(id => {
+      const div = document.getElementById(id);
+      if (!div) return;
+      const nameRaw = div.querySelector('.claimantName').value.trim();
+      const name = nameRaw ? smartCase(nameRaw) : 'Claimant';
+      const injuries = claimants[id].injuries;
+      const treatment = claimants[id].treatment;
+      const isoItems = Array.from(div.querySelectorAll('.isoCheck:checked')).map(c => c.value);
+      const healthInsItems = [];
+      if (div.querySelector('.medicareCheck').checked) healthInsItems.push('Medicare');
+      if (div.querySelector('.medicaidCheck').checked) healthInsItems.push('Medicaid');
+      const otherIns = div.querySelector('.healthInsOther').value.trim();
+      if (otherIns) healthInsItems.push(smartCase(otherIns));
+
+      const hasContent = injuries.length || treatment.length || isoItems.length || healthInsItems.length;
+      if (!hasContent) return;
+
+      lines.push('');
+      lines.push(`${name}:`);
+
+      if (injuries.length) {
+        lines.push('Injuries:');
+        injuries.forEach(b => lines.push('- ' + b));
+      }
+      if (treatment.length) {
+        lines.push('Treatment:');
+        treatment.forEach(b => lines.push('- ' + b));
+      }
+      if (healthInsItems.length) lines.push('Health Insurance: ' + healthInsItems.join(', '));
+      if (isoItems.length) lines.push('ISO Needed: ' + isoItems.join(', '));
+    });
+
+    if (pdmoi) { lines.push(''); lines.push('PD/MOI: ' + pdmoi); }
+    if (fyiNotes) { lines.push(''); lines.push('FYI/Notes: ' + fyiNotes); }
+
+    if (followup) {
+      lines.push('');
+      lines.push(`Will follow up in ${followupDays} days.`);
+    }
+
+    document.getElementById('output').innerText = lines.join('\n');
+  }
+
+  /* ---------------- TAB 2: EMAIL / FAX REQUEST ---------------- */
+
+  let requestClaimantCounter = 0;
+
+  function toggleSendMethod() {
+    const method = document.querySelector('input[name="sendMethod"]:checked').value;
+    document.getElementById('greetingCard').style.display = (method === 'email') ? 'block' : 'none';
+    document.getElementById('claimantNamesSection').style.display = (method === 'email') ? 'block' : 'none';
+    document.getElementById('dolCard').style.display = (method === 'email') ? 'block' : 'none';
+  }
+
+  function addRequestClaimant() {
+    requestClaimantCounter++;
+    const num = requestClaimantCounter;
+    const row = document.createElement('div');
+    row.className = 'req-row';
+    row.id = 'reqRow' + num;
+    row.innerHTML = `
+      <div class="num">${num}.</div>
+      <div class="field">
+        <label>Claimant Name</label>
+        <input type="text" class="reqName">
+      </div>
+      <div class="remove-row" onclick="removeRequestClaimant('reqRow${num}')">remove</div>
+    `;
+    document.getElementById('requestClaimantsContainer').appendChild(row);
+  }
+
+  function removeRequestClaimant(rowId) {
+    const el = document.getElementById(rowId);
+    if (el) el.remove();
+    renumberRequestRows();
+  }
+
+  function renumberRequestRows() {
+    const rows = document.querySelectorAll('#requestClaimantsContainer .req-row');
+    rows.forEach((row, idx) => {
+      row.querySelector('.num').innerText = (idx + 1) + '.';
+    });
+  }
+
+  for (let i = 0; i < 5; i++) addRequestClaimant(); // start with 5 claimant rows
+
+  let extraQuestionCounter = 0;
+
+  function addExtraQuestion() {
+    extraQuestionCounter++;
+    const id = 'extraQ' + extraQuestionCounter;
+    const row = document.createElement('div');
+    row.className = 'req-row';
+    row.id = id;
+    row.innerHTML = `
+      <div class="num">${5 + document.querySelectorAll('#extraQuestionsContainer .req-row').length + 1}.</div>
+      <div class="field">
+        <input type="text" class="extraQuestionInput" placeholder="Type additional question">
+      </div>
+      <div class="remove-row" onclick="removeExtraQuestion('${id}')">remove</div>
+    `;
+    document.getElementById('extraQuestionsContainer').appendChild(row);
+  }
+
+  function removeExtraQuestion(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+    const rows = document.querySelectorAll('#extraQuestionsContainer .req-row');
+    rows.forEach((row, idx) => {
+      row.querySelector('.num').innerText = (6 + idx) + '.';
+    });
+  }
+
+  function formatDOL(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${m}/${d}/${y}`;
+  }
+
+  function generateRequestOutput() {
+    const method = document.querySelector('input[name="sendMethod"]:checked').value;
+    const greetingEl = document.querySelector('input[name="greetingChoice"]:checked');
+    const greeting = greetingEl ? greetingEl.value : '';
+    const dol = formatDOL(document.getElementById('reqDOLSingle').value);
+
+    let lines = [];
+
+    if (method === 'email' && greeting) {
+      lines.push(greeting);
+      lines.push('');
+    }
+
+    lines.push('TREATMENT & INJURY STATUS UPDATE');
+
+    if (method === 'email') {
+      const rows = document.querySelectorAll('#requestClaimantsContainer .req-row');
+      const names = Array.from(rows)
+        .map(row => row.querySelector('.reqName').value.trim())
+        .filter(v => v)
+        .map(v => smartCase(v));
+      lines.push('Client(s): ' + (names.length ? names.join(', ') : ''));
+      if (dol) lines.push('Date of Loss: ' + dol);
+    }
+
+    lines.push('');
+    lines.push('Please provide a treatment update for the following claimant(s):');
+    lines.push('');
+    lines.push('Specifically, please advise:');
+    lines.push('1. Are your client(s) still treating?');
+    lines.push('2. What are their current injuries?');
+    lines.push('3. With whom are they treating?');
+    lines.push('4. Are there any referrals, or are any anticipated?');
+    lines.push('5. An estimate of their bills, if available?');
+
+    const extraQs = Array.from(document.querySelectorAll('.extraQuestionInput'))
+      .map(inp => inp.value.trim())
+      .filter(v => v);
+    extraQs.forEach((q, idx) => {
+      lines.push(`${6 + idx}. ${q}`);
+    });
+
+    if (method === 'email') {
+      lines.push('');
+      lines.push('Thank you.');
+    }
+
+    document.getElementById('requestOutput').innerText = lines.join('\n');
+  }
+
+  /* ---------------- SHARED: COPY ---------------- */
+
+  async function copyText(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    const crlfText = text.replace(/\n/g, '\r\n');
+    const htmlText = '<div>' + text.split('\n').join('<br>') + '</div>';
+
+    try {
+      const item = new ClipboardItem({
+        'text/plain': new Blob([crlfText], { type: 'text/plain' }),
+        'text/html': new Blob([htmlText], { type: 'text/html' })
+      });
+      await navigator.clipboard.write([item]);
+    } catch (e) {
+      await navigator.clipboard.writeText(crlfText);
+    }
+
+    const btn = event.target;
+    const orig = btn.innerText;
+    btn.innerText = 'Copied!';
+    setTimeout(() => btn.innerText = orig, 1200);
+  }
+</script>
+</body>
+</html>
