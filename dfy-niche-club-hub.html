@@ -114,6 +114,7 @@
 
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewMM()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('mm')">Clear</button>
     </div>
     <div class="preview-frame" id="mm_preview_wrap" style="display:none;">
       <iframe id="mm_preview_iframe"></iframe>
@@ -167,7 +168,6 @@
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="mmGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('mm_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('mm')">Clear</button>
     </div>
     <div class="output-wrap">
       <label>Plain Text Version (paste into builder, ** = bold)</label>
@@ -186,6 +186,7 @@
 
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewTip()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('tip')">Clear</button>
     </div>
     <div class="preview-frame" id="tip_preview_wrap" style="display:none;">
       <iframe id="tip_preview_iframe"></iframe>
@@ -258,7 +259,6 @@
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="tipGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('tip_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('tip')">Clear</button>
     </div>
     <div class="output-wrap">
       <label>Plain Text Version</label>
@@ -280,6 +280,7 @@
     </div>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewPlr()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('plr')">Clear</button>
     </div>
     <div class="preview-frame" id="plr_preview_wrap" style="display:none;">
       <iframe id="plr_preview_iframe"></iframe>
@@ -321,7 +322,6 @@ Write your own listing description and use your own mockups</textarea>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="plrGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('plr_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('plr')">Clear</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="plr_output" rows="10"></textarea></div>
   </div>
@@ -366,6 +366,7 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">Expandable cards for weekly updates.</p>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewAnn()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('ann')">Clear</button>
     </div>
     <div class="preview-frame" id="ann_preview_wrap" style="display:none;">
       <iframe id="ann_preview_iframe"></iframe>
@@ -378,7 +379,6 @@ Write your own listing description and use your own mockups</textarea>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="annGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('ann_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('ann')">Clear</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="ann_output" rows="10"></textarea></div>
   </div>
@@ -389,6 +389,7 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">Countdown timer, call details, and calendar links.</p>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewLc()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('lc')">Clear</button>
     </div>
     <div class="preview-frame" id="lc_preview_wrap" style="display:none;">
       <iframe id="lc_preview_iframe"></iframe>
@@ -422,7 +423,6 @@ Write your own listing description and use your own mockups</textarea>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="lcGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('lc_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('lc')">Clear</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="lc_output" rows="10"></textarea></div>
   </div>
@@ -433,6 +433,7 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">Paste raw Google Meet notes — AI turns them into a scannable recap, grouped by topic.</p>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewRecap()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('recap')">Clear</button>
     </div>
     <div class="preview-frame" id="recap_preview_wrap" style="display:none;">
       <iframe id="recap_preview_iframe"></iframe>
@@ -455,7 +456,6 @@ Write your own listing description and use your own mockups</textarea>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="recapGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('recap_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('recap')">Clear</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="recap_output" rows="10"></textarea></div>
   </div>
@@ -466,6 +466,7 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">Freeform one-off post — video or image header, title, body, optional buttons.</p>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewAdhoc()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('adhoc')">Clear</button>
     </div>
     <div class="preview-frame" id="adhoc_preview_wrap" style="display:none;">
       <iframe id="adhoc_preview_iframe"></iframe>
@@ -495,7 +496,6 @@ Write your own listing description and use your own mockups</textarea>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="adhocGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('adhoc_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('adhoc')">Clear</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="adhoc_output" rows="10"></textarea></div>
   </div>
@@ -506,6 +506,7 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">eRank data table — searchable, sortable, with market movement tags.</p>
     <div class="btn-row">
       <button class="btn btn-ghost" onclick="previewKw()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('kw')">Clear</button>
     </div>
     <div class="preview-frame" id="kw_preview_wrap" style="display:none;">
       <iframe id="kw_preview_iframe"></iframe>
@@ -522,7 +523,6 @@ Write your own listing description and use your own mockups</textarea>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="kwGenerateHTML()">Generate HTML</button>
       <button class="btn btn-ghost" onclick="copyOutput('kw_output')">Copy HTML</button>
-      <button class="btn btn-danger" onclick="clearTool('kw')">Clear</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="kw_output" rows="10"></textarea></div>
   </div>
