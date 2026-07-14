@@ -713,6 +713,11 @@ function renderNicheList() {
       autosaveNicheOrder();
       seedAllTitlesForNiche(niche);
       if (niche._renderPool) niche._renderPool();
+      setNicheCollapsed(niche, false);
+      const label = niche.isBonus ? 'Bonus' : 'Niche ' + niche.num;
+      bbStatus(`${label} title rebuilt for ${niche.type}`, 2500);
+      const section = document.getElementById('section-' + niche.num);
+      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
     row.appendChild(typeSelect);
 
