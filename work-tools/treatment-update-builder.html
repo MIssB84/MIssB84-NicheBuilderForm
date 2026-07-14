@@ -237,6 +237,16 @@
       <button class="btn-add-claimant" onclick="addExtraQuestion()">+ Add Question</button>
     </div>
 
+    <div class="card" style="margin-top:16px;">
+      <label>Follow Up</label>
+      <div class="followup-row">
+        <label class="inline"><input type="checkbox" id="reqFollowupToggle" checked> Include follow up line</label>
+        <span>in</span>
+        <input type="number" id="reqFollowupDays" value="60" min="1">
+        <span>days</span>
+      </div>
+    </div>
+
     <button class="generate-btn" style="margin-top:16px;" onclick="generateRequestOutput()">Generate Request</button>
 
     <div class="card" style="margin-top:16px;">
@@ -549,6 +559,14 @@
     if (method === 'email') {
       lines.push('');
       lines.push('Thank you.');
+    }
+
+    const reqFollowup = document.getElementById('reqFollowupToggle').checked;
+    const reqFollowupDays = document.getElementById('reqFollowupDays').value || '60';
+    if (reqFollowup) {
+      lines.push('');
+      lines.push('---');
+      lines.push(`Will follow up in ${reqFollowupDays} days.`);
     }
 
     document.getElementById('requestOutput').innerText = lines.join('\n');
