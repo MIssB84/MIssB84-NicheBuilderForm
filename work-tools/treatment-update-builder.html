@@ -235,6 +235,7 @@
   .task-input.load-light { background: #ead9d5; color: #2a1f1c; }
   .task-input.load-medium { background: #dea193; color: #fff; }
   .task-input.load-heavy { background: #a8443a; color: #fff; }
+  .task-input.load-zero { background: #f5eddf; color: #8a6f68; border: 1px solid #c9a96e; }
   .holiday-toggle {
     font-size: 12px;
     text-align: center;
@@ -944,7 +945,8 @@
       const weekend = isWeekendDay(year, month, day);
       const weekendOpen = weekend && !!data.weekendUnblocked[day];
       const isBlocked = weekend ? !weekendOpen : !!data.holidays[day];
-      const count = data.tasks[day] || 0;
+      const hasEntry = Object.prototype.hasOwnProperty.call(data.tasks, day);
+      const count = hasEntry ? data.tasks[day] : 0;
 
       if (isBlocked) {
         blockedCount++;
@@ -974,11 +976,11 @@
           <div class="holiday-toggle" onclick="toggleHoliday(${day})">Unblock</div>
         `;
       } else {
-        const badgeClass = count > 0 ? loadClass(count) : '';
+        const badgeClass = hasEntry ? (count > 0 ? loadClass(count) : 'load-zero') : '';
         cell.innerHTML = `
           <div class="day-num">${day}</div>
           ${weekClearBtn}
-          <input type="number" class="task-input ${badgeClass}" min="0" value="${count || ''}" placeholder="0" onchange="updateTaskCount(${day}, this.value)">
+          <input type="number" class="task-input ${badgeClass}" min="0" value="${hasEntry ? count : ''}" placeholder="0" onchange="updateTaskCount(${day}, this.value)">
           <div class="holiday-toggle" onclick="toggleHoliday(${day})">Block Day</div>
         `;
       }
@@ -996,11 +998,16 @@
     const year = parseInt(document.getElementById('yearSelect').value);
     const month = parseInt(document.getElementById('monthSelect').value);
     const data = loadMonthData(year, month);
-    const num = parseInt(value);
-    if (!num || num <= 0) {
+    const trimmed = String(value).trim();
+    if (trimmed === '') {
       delete data.tasks[day];
     } else {
-      data.tasks[day] = num;
+      const num = parseInt(trimmed);
+      if (isNaN(num) || num < 0) {
+        delete data.tasks[day];
+      } else {
+        data.tasks[day] = num;
+      }
     }
     saveMonthData(year, month, data);
     renderCalendar();
