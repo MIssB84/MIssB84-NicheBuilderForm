@@ -11,7 +11,7 @@
   }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--cream); font-family:'Jost',sans-serif; padding:32px 4vw 90px; }
-  .wrap { max-width: 1400px; margin: 0 auto; }
+  .wrap { max-width: 1700px; margin: 0 auto; }
   h1 { font-family:'Playfair Display',serif; font-size:30px; color:var(--gold); margin:0 0 4px; }
   .subhead { color:var(--muted); font-size:14px; margin-bottom:24px; }
   .card { background:var(--light-bg); border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:18px; color:var(--mid-text); }
@@ -569,13 +569,13 @@ function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 
 const PRODUCT_TYPES = ['Wall Art', 'PNG / Shirt Design', 'Frame TV Art', 'Tumbler Wrap', 'Other'];
 const DEFAULT_BAKED = {
-  'Wall Art': 'Home Decor, Poster Digital Download',
-  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic, Trendy Clipart Digital Download',
-  'Frame TV Art': 'Smart Television Screensaver, Home Decor Digital Download',
-  'Tumbler Wrap': 'PNG, 20oz Skinny Tumbler Sublimation Design Digital Download'
+  'Wall Art': 'Home Decor, Poster',
+  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic, Trendy Clipart',
+  'Frame TV Art': 'Smart Television Screensaver, Home Decor',
+  'Tumbler Wrap': 'PNG, 20oz Skinny Tumbler Sublimation Design'
 };
 const DEFAULT_BAKED_TAGS = { 'Wall Art': ['printable wall art', 'digital download', 'trendy home decor'] };
-const TITLE_CHAR_LIMIT = { 'Wall Art': 144 };
+const TITLE_CHAR_LIMIT = { 'Wall Art': 140 };
 const DEFAULT_TITLE_CHAR_LIMIT = 140;
 
 function getBakedSegments(type) {
@@ -585,8 +585,9 @@ function getBakedSegments(type) {
 }
 function buildMarkedBaked(type) {
   const segments = getBakedSegments(type);
-  if (segments.length === 0) return '';
-  return segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
+  const marked = segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
+  if (!segments.length) return type === 'Other' ? '' : 'Digital Download';
+  return marked + ', Digital Download';
 }
 function getFixedPrefix(niche) {
   return niche.name.trim();
@@ -604,6 +605,7 @@ function makeNicheState() {
     titles: ['', '', ''],
     promptNotes: '',
     creativeDirection: '',
+    inspoImageUrl: '',
     prompts: [], // {text}
     selectedPromptIndex: -1,
     promptHistory: [],
@@ -1137,14 +1139,22 @@ function seedAllTitlesForNiche(niche) {
   if (niche._renderPool) niche._renderPool();
 }
 
+function cleanTitleText(rawText) {
+  let cleaned = rawText;
+  for (let m = 1; m <= 10; m++) { cleaned = cleaned.split(slotMarker(m) + ' ').join(''); cleaned = cleaned.split(slotMarker(m)).join(''); }
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim().replace(/^,\s*/, '').replace(/,\s*$/, '');
+  return cleaned;
+}
+
 function updateTitleCountFor(niche, n) {
-  const text = niche._titleEls[n].textarea.value;
-  let overhead = 0;
-  for (let i = 1; i <= 10; i++) { if (text.includes(slotMarker(i))) overhead += 2; }
-  const base = TITLE_CHAR_LIMIT[niche.type] || DEFAULT_TITLE_CHAR_LIMIT;
-  const max = base + overhead;
-  const over = text.length > max;
-  niche._titleEls[n].count.textContent = `${text.length} / ${max} chars`;
+  const rawText = niche._titleEls[n].textarea.value;
+  const finalLength = cleanTitleText(rawText).length;
+  const max = TITLE_CHAR_LIMIT[niche.type] || DEFAULT_TITLE_CHAR_LIMIT;
+  const over = finalLength > max;
+  const hasOpenMarkers = /[①②③④⑤⑥⑦⑧⑨⑩]/.test(rawText);
+  niche._titleEls[n].count.textContent = hasOpenMarkers
+    ? `${finalLength} / ${max} chars once filled in`
+    : `${finalLength} / ${max} chars`;
   niche._titleEls[n].count.style.color = over ? '#e88a83' : 'var(--gold)';
   if (niche._tabEls && niche._tabEls[n]) {
     const baseLabel = 'Title ' + n;
@@ -1259,9 +1269,7 @@ function buildTitlesTagsSubcard(niche) {
       niche._renderPool();
     });
     copyBtn.addEventListener('click', async () => {
-      let cleaned = ta.value;
-      for (let m = 1; m <= 10; m++) { cleaned = cleaned.split(slotMarker(m) + ' ').join(''); cleaned = cleaned.split(slotMarker(m)).join(''); }
-      cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim().replace(/^,\s*/, '').replace(/,\s*$/, '');
+      const cleaned = cleanTitleText(ta.value);
       ta.value = cleaned; niche.state.titles[n - 1] = cleaned;
       updateTitleCountFor(niche, n); autosaveNicheState(niche.num); niche._renderPool();
       copyToClipboard(cleaned, copyBtn, 'Copy Title ' + n);
@@ -1706,6 +1714,41 @@ function buildPromptsSubcard(niche) {
   dirTa.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); genBtn.click(); } });
   sc.appendChild(dirTa);
 
+  const inspoLbl = document.createElement('label'); inspoLbl.textContent = 'Extra inspo image URL (optional)';
+  sc.appendChild(inspoLbl);
+  const inspoHint = document.createElement('div'); inspoHint.className = 'hint'; inspoHint.textContent = 'Another reference image beyond your 3 listing screenshots, the AI reads it the same way.';
+  sc.appendChild(inspoHint);
+  const inspoRow = document.createElement('div'); inspoRow.className = 'add-row';
+  const inspoInput = document.createElement('input'); inspoInput.type = 'text'; inspoInput.placeholder = 'https://...';
+  inspoInput.value = niche.state.inspoImageUrl || '';
+  const inspoPasteBtn = document.createElement('button'); inspoPasteBtn.className = 'btn secondary'; inspoPasteBtn.textContent = 'Paste from Clipboard';
+  inspoRow.appendChild(inspoInput); inspoRow.appendChild(inspoPasteBtn);
+  sc.appendChild(inspoRow);
+  const inspoErr = document.createElement('div'); inspoErr.className = 'error'; inspoErr.style.marginTop = '6px'; sc.appendChild(inspoErr);
+  const inspoThumb = document.createElement('img');
+  inspoThumb.style.cssText = 'width:100px; height:100px; object-fit:cover; border-radius:8px; border:1px solid var(--border); margin-top:8px; display:none;';
+  sc.appendChild(inspoThumb);
+
+  function refreshInspoThumb() {
+    const url = inspoInput.value.trim();
+    if (!url) { inspoThumb.style.display = 'none'; setErr(inspoErr, ''); return; }
+    inspoThumb.onload = () => { inspoThumb.style.display = 'block'; setErr(inspoErr, ''); };
+    inspoThumb.onerror = () => { inspoThumb.style.display = 'none'; setErr(inspoErr, 'Image not found, check URL'); };
+    inspoThumb.src = url;
+  }
+  inspoInput.addEventListener('input', () => {
+    niche.state.inspoImageUrl = inspoInput.value;
+    refreshInspoThumb();
+    autosaveNicheState(niche.num);
+  });
+  inspoPasteBtn.addEventListener('click', () => pasteTextClip(inspoPasteBtn, async (text) => {
+    inspoInput.value = text.trim();
+    niche.state.inspoImageUrl = inspoInput.value;
+    refreshInspoThumb();
+    autosaveNicheState(niche.num);
+  }));
+  refreshInspoThumb();
+
   const notesLbl = document.createElement('label'); notesLbl.textContent = 'Important Notes (optional)';
   sc.appendChild(notesLbl);
   const notesHint = document.createElement('div'); notesHint.className = 'hint'; notesHint.textContent = 'One per line, e.g. Do not use "Silly Goose," it\'s trademarked.';
@@ -1759,6 +1802,7 @@ function buildPromptsSubcard(niche) {
     try {
       const userContent = [];
       niche.state.shots.filter(s => s && s.url && s.url.trim()).forEach(shot => userContent.push({ type: 'image', source: { type: 'url', url: shot.url.trim() } }));
+      if (inspoInput.value.trim()) userContent.push({ type: 'image', source: { type: 'url', url: inspoInput.value.trim() } });
       const notes = notesTa.value.trim();
       const keyword = niche.name.trim() || 'not set';
       userContent.push({
