@@ -206,7 +206,11 @@
 
     <div class="card" id="greetingCard">
       <label>Greeting (optional)</label>
-      <input type="text" id="greeting" placeholder="e.g. Good afternoon,">
+      <div class="radio-row">
+        <label><input type="radio" name="greetingChoice" value="Good morning,"> Good morning,</label>
+        <label><input type="radio" name="greetingChoice" value="Good afternoon,"> Good afternoon,</label>
+        <label><input type="radio" name="greetingChoice" value=""> None</label>
+      </div>
     </div>
 
     <div class="card" id="dolCard">
@@ -502,7 +506,8 @@
 
   function generateRequestOutput() {
     const method = document.querySelector('input[name="sendMethod"]:checked').value;
-    const greeting = document.getElementById('greeting').value.trim();
+    const greetingEl = document.querySelector('input[name="greetingChoice"]:checked');
+    const greeting = greetingEl ? greetingEl.value : '';
     const dol = formatDOL(document.getElementById('reqDOLSingle').value);
 
     let lines = [];
@@ -512,29 +517,20 @@
       lines.push('');
     }
 
-    lines.push('Please provide a treatment update for the following claimant(s):');
-
-    if (method === 'email' && dol) {
-      lines.push('');
-      lines.push('DOL: ' + dol);
-    }
+    lines.push('TREATMENT & INJURY STATUS UPDATE');
 
     if (method === 'email') {
       const rows = document.querySelectorAll('#requestClaimantsContainer .req-row');
-      let anyClaimant = false;
-      let nameLines = [];
-      rows.forEach((row, idx) => {
-        const name = row.querySelector('.reqName').value.trim();
-        if (!name) return;
-        anyClaimant = true;
-        nameLines.push(`${idx + 1}. ${smartCase(name)}`);
-      });
-      if (anyClaimant) {
-        lines.push('');
-        lines.push(...nameLines);
-      }
+      const names = Array.from(rows)
+        .map(row => row.querySelector('.reqName').value.trim())
+        .filter(v => v)
+        .map(v => smartCase(v));
+      lines.push('Client(s): ' + (names.length ? names.join(', ') : ''));
+      if (dol) lines.push('Date of Loss: ' + dol);
     }
 
+    lines.push('');
+    lines.push('Please provide a treatment update for the following claimant(s):');
     lines.push('');
     lines.push('Specifically, please advise:');
     lines.push('1. Are your client(s) still treating?');
@@ -563,7 +559,7 @@
   async function copyText(elementId) {
     const text = document.getElementById(elementId).innerText;
     const crlfText = text.replace(/\n/g, '\r\n');
-    const htmlText = text.split('\n').map(l => l === '' ? '<br>' : l).join('<br>');
+    const htmlText = '<div>' + text.split('\n').join('<br>') + '</div>';
 
     try {
       const item = new ClipboardItem({
