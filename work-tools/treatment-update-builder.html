@@ -526,6 +526,9 @@
         <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
         <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
         <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
       </div>
 
       <div class="section-title" id="section-coverage">Coverage</div>
@@ -597,6 +600,14 @@
 
       <div class="tab-top-bar" style="margin-top:8px;">
         <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+      <div class="section-nav" style="position:static; margin-top:0;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
       </div>
 
       <div class="section-title" id="section-liability" style="margin-top:24px;">Liability</div>
@@ -680,6 +691,14 @@
       <div class="tab-top-bar" style="margin-top:8px;">
         <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
       </div>
+      <div class="section-nav" style="position:static; margin-top:0;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
+      </div>
 
       <div class="section-title" id="section-gtv" style="margin-top:24px;">Projected GTV</div>
       <div class="card">
@@ -739,6 +758,14 @@
       <div class="tab-top-bar" style="margin-top:8px;">
         <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
       </div>
+      <div class="section-nav" style="position:static; margin-top:0;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
+      </div>
 
       <div class="section-title" style="margin-top:24px;">Reserving Analysis</div>
       <div class="card">
@@ -760,6 +787,231 @@
 
       <div class="tab-top-bar" style="margin-top:8px;">
         <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+      <div class="section-nav" style="position:static; margin-top:0;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
+      </div>
+
+      <div class="section-title" id="section-ifr" style="margin-top:24px;">Initial File Review</div>
+      <div class="card">
+
+        <label>Coverage</label>
+        <div class="radio-row">
+          <label><input type="radio" name="ifrCoverage" value="Cleared"> Cleared</label>
+          <label><input type="radio" name="ifrCoverage" value="Pending"> Pending</label>
+        </div>
+
+        <label style="margin-top:14px;">Liability</label>
+        <div class="radio-row">
+          <label><input type="radio" name="ifrLiability" value="Finalized"> Finalized</label>
+          <label><input type="radio" name="ifrLiability" value="TBD"> TBD</label>
+        </div>
+
+        <label style="margin-top:14px;">Prop 213</label>
+        <div class="radio-row">
+          <label><input type="radio" name="ifrProp213" value="n/a"> N/A</label>
+          <label><input type="radio" name="ifrProp213" value="Ruled Out"> Ruled Out</label>
+          <label><input type="radio" name="ifrProp213" value="Pending"> Pending</label>
+        </div>
+
+        <label style="margin-top:14px;">ISO — Check What's Missing</label>
+        <div class="check-row">
+          <label><input type="checkbox" id="ifrISODOB" onchange="toggleIFRISOAll(false)"> DOB</label>
+          <label><input type="checkbox" id="ifrISOSSN" onchange="toggleIFRISOAll(false)"> SSN</label>
+          <label><input type="checkbox" id="ifrISOAddress" onchange="toggleIFRISOAll(false)"> Address</label>
+        </div>
+        <label style="font-weight:normal; display:flex; align-items:center; gap:8px; margin-top:6px;">
+          <input type="checkbox" id="ifrISOAllReceived" onchange="toggleIFRISOAll(true)"> I have everything — all 5 data points received
+        </label>
+
+        <label style="margin-top:14px;">Medicare/Medicaid</label>
+        <div class="radio-row">
+          <label><input type="radio" name="ifrMedicare" value="YES"> YES</label>
+          <label><input type="radio" name="ifrMedicare" value="TBD"> TBD</label>
+        </div>
+
+        <label style="font-weight:normal; display:flex; align-items:center; gap:8px; margin-top:16px;">
+          <input type="checkbox" id="ifrSegmentation"> Segmentation Proper? (Yes)
+        </label>
+
+        <label style="margin-top:14px;">Alerts</label>
+        <div class="radio-row">
+          <label><input type="radio" name="ifrAlerts" value="n/a" onchange="toggleIFRAlertsDetail()"> N/A</label>
+          <label><input type="radio" name="ifrAlerts" value="Yes" onchange="toggleIFRAlertsDetail()"> Yes</label>
+        </div>
+        <input type="text" id="ifrAlertsDetail" placeholder="Type alert details" style="display:none; margin-top:8px;">
+
+        <label style="margin-top:14px;">Notes/FYI</label>
+        <div class="bullet-add-row">
+          <input type="text" id="ifrNotesInput" placeholder="Type a note, then Add">
+          <button class="btn-add" onclick="addIFRNoteBullet()">Add</button>
+        </div>
+        <ul class="bullet-list" id="ifrNotesList"></ul>
+
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateIFROutput()">Generate Initial File Review</button>
+        <button class="reset-btn" onclick="resetIFRSection()">Reset</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>Output</label>
+        <div class="output-box" id="ifrOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('ifrOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+      <div class="section-nav" style="position:static; margin-top:0;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
+      </div>
+
+      <div class="section-title" id="section-ack" style="margin-top:24px;">Acknowledgment Letter</div>
+      <div class="card">
+
+        <label>Claimant Name(s) <span class="required-mark">*required</span></label>
+        <input type="text" id="ackClaimantNames" placeholder="e.g. John Smith and Jane Doe">
+
+        <label style="margin-top:16px;">Check All That Apply</label>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackLiabInvestigation" style="margin-top:3px;">
+            <span>Please be advised that liability is currently under investigation.</span>
+          </label>
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackCovLiabInvestigation" style="margin-top:3px;">
+            <span>Please be advised that both COVERAGE and LIABILITY are currently under investigation.</span>
+          </label>
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackLiabAccepted" style="margin-top:3px;">
+            <span>Please be advised that liability has been accepted.</span>
+          </label>
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackNoAuthPolicyLimits" style="margin-top:3px;">
+            <span>At this time, I do not have authorization from my insured to release policy limits. Should that change, I will notify you in writing.</span>
+          </label>
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackPolicyLimitReceived" style="margin-top:3px;">
+            <span>Your request for policy limit disclosure is received, in progress, and will be provided to you once made available.</span>
+          </label>
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackNoStatementsTaken" style="margin-top:3px;">
+            <span>No statements have been taken with your client. I am requesting that your office allow a recorded statement or provide a signed written statement from your client(s) to assist in completing our liability investigation.</span>
+          </label>
+          <label style="font-weight:normal; display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" id="ackPreservation" style="margin-top:3px;" onchange="toggleAckPreservation()">
+            <span>Preservation of insured's vehicle</span>
+          </label>
+        </div>
+
+        <div id="ackPreservationField" style="display:none; margin-top:10px;">
+          <label>Insured's Vehicle (Year/Make/Model)</label>
+          <input type="text" id="ackVehicleDesc" placeholder="e.g. 2021 Honda Accord">
+        </div>
+
+        <label style="margin-top:16px;">Daily Rental Rate</label>
+        <div class="req-row" style="align-items:center;">
+          <span style="padding-bottom:0;">$</span>
+          <div class="field"><input type="text" id="ackRentalRate" placeholder="e.g. 45"></div>
+          <span style="padding-bottom:0;">per day</span>
+        </div>
+
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateAckOutput()">Generate Letter</button>
+        <button class="reset-btn" onclick="resetAckSection()">Reset</button>
+      </div>
+      <div class="error-msg" id="ackErrorMsg">Please enter claimant name(s) before generating.</div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>Output</label>
+        <div class="output-box" id="ackOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('ackOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+      <div class="section-nav" style="position:static; margin-top:0;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
+      </div>
+
+      <div class="section-title" id="section-ic" style="margin-top:24px;">Insured Contact</div>
+      <div class="card">
+
+        <label>Voice to Voice Required?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="icV2V" value="required" onchange="toggleICNoText()"> Required</label>
+          <label><input type="radio" name="icV2V" value="notRequired" onchange="toggleICNoText()"> Not Required</label>
+        </div>
+
+        <div id="icNoTextRow" style="display:none; margin-top:10px;">
+          <label style="font-weight:normal; display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="icNoText" onchange="toggleICGreeting()"> No Text — Send Email Instead
+          </label>
+        </div>
+
+        <div id="icGreetingRow" style="display:none; margin-top:10px;">
+          <label>Greeting</label>
+          <div class="radio-row">
+            <label><input type="radio" name="icGreeting" value="Good morning"> Good morning</label>
+            <label><input type="radio" name="icGreeting" value="Good afternoon"> Good afternoon</label>
+          </div>
+        </div>
+
+        <label style="margin-top:14px;">Insured Name</label>
+        <input type="text" id="icName" placeholder="e.g. John Smith">
+
+        <label style="margin-top:14px;">Date (of claim/loss)</label>
+        <input type="text" id="icDate" placeholder="e.g. July 2026">
+
+        <label style="margin-top:14px;">Claim Number</label>
+        <input type="text" id="icClaimNumber" placeholder="e.g. 0123456789">
+
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateICOutput()">Generate Message</button>
+        <button class="reset-btn" onclick="resetICSection()">Reset</button>
+      </div>
+      <div class="error-msg" id="icErrorMsg">Please select whether voice to voice is required before generating.</div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>Output</label>
+        <div class="output-box" id="icOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('icOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+
+      <div class="section-title" style="margin-top:24px;">Jump to Section</div>
+      <div class="section-nav" style="position:static;">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+        <button class="section-pill" onclick="jumpToSection('section-ifr')">Initial File Review</button>
+        <button class="section-pill" onclick="jumpToSection('section-ack')">Ack Letter</button>
+        <button class="section-pill" onclick="jumpToSection('section-ic')">Insured Contact</button>
       </div>
 
     </div>
@@ -1609,6 +1861,9 @@
       document.getElementById('coverageOutput').innerText = 'Fill out the form and click Generate.';
       resetLiabilitySectionSilent();
       resetGTVSectionSilent();
+      resetIFRSectionSilent();
+      resetAckSectionSilent();
+      resetICSectionSilent();
     });
   }
 
@@ -1626,6 +1881,320 @@
     document.getElementById('gtvLiabPending').checked = false;
     document.getElementById('reservingOutput').innerText = 'Fill out the form and click Generate.';
   }
+
+  /* ---------------- ACKNOWLEDGMENT LETTER ---------------- */
+
+  function toggleAckPreservation() {
+    const checked = document.getElementById('ackPreservation').checked;
+    document.getElementById('ackPreservationField').style.display = checked ? 'block' : 'none';
+  }
+
+  function generateAckOutput() {
+    const names = document.getElementById('ackClaimantNames').value.trim();
+    const errorMsg = document.getElementById('ackErrorMsg');
+    if (!names) {
+      errorMsg.style.display = 'block';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    let lines = [];
+
+    lines.push(`I am in receipt of your letter of representation pertaining to your client(s), ${names}. I will be handling the claim moving forward.`);
+
+    if (document.getElementById('ackLiabInvestigation').checked) {
+      lines.push('');
+      lines.push('Please be advised that liability is currently under investigation.');
+    }
+    if (document.getElementById('ackCovLiabInvestigation').checked) {
+      lines.push('');
+      lines.push('Please be advised that both COVERAGE and LIABILITY are currently under investigation.');
+    }
+    if (document.getElementById('ackLiabAccepted').checked) {
+      lines.push('');
+      lines.push('Please be advised that liability has been accepted.');
+    }
+    if (document.getElementById('ackNoAuthPolicyLimits').checked) {
+      lines.push('');
+      lines.push('At this time, I do not have authorization from my insured to release policy limits. Should that change, I will notify you in writing.');
+    }
+    if (document.getElementById('ackPolicyLimitReceived').checked) {
+      lines.push('');
+      lines.push('Your request for policy limit disclosure is received, in progress, and will be provided to you once made available.');
+    }
+    if (document.getElementById('ackNoStatementsTaken').checked) {
+      lines.push('');
+      lines.push('No statements have been taken with your client. I am requesting that your office allow a recorded statement or provide a signed written statement from your client(s) to assist in completing our liability investigation.');
+    }
+    if (document.getElementById('ackPreservation').checked) {
+      const vehicle = document.getElementById('ackVehicleDesc').value.trim();
+      lines.push('');
+      lines.push(`As for the status and preservation of our insured's vehicle, a ${vehicle}, involved in the subject accident:`);
+      lines.push('');
+      lines.push("We will work with you to schedule an inspection in the next 30 days. However, if we do not hear from you, we will assume you do no longer wish to inspect our insured's vehicle. If you are going to have the vehicle inspected at later date, I would appreciate the courtesy of advance notice of the same so that Allstate can have an expert or other witness participate if desired. Otherwise, we would expect such inspections to occur, if at all, in the course of formal routine discovery in the event of litigation.");
+    }
+
+    const rentalRate = document.getElementById('ackRentalRate').value.trim();
+
+    lines.push('');
+    lines.push('TREATMENT AND INJURY STATUS REQUEST:');
+    lines.push('');
+    lines.push('Please provide a treatment and injury status update regarding your client(s).');
+    lines.push('');
+    lines.push('Is/are your client(s) still treating?');
+    lines.push('What are their current injuries?');
+    lines.push('With whom are they treating?');
+    lines.push('Are there any referrals, or are any anticipated?');
+    lines.push('An estimate of their bills, if available?');
+    lines.push('');
+    lines.push('In the meantime, we ask that you review the guidelines below with your client in reference to car seats, property damage, rental and storage mitigation.');
+    lines.push('');
+    lines.push('CHILD CAR/BOOSTER SEAT:');
+    lines.push('');
+    lines.push('We will replace child seat/safety restraint systems in the vehicle at the time of loss on a reimbursement basis if they are:');
+    lines.push('');
+    lines.push('1. Physically damaged');
+    lines.push('2. Occupied during the accident');
+    lines.push('');
+    lines.push('If either of the above apply to your client(s), please provide photos of the restraint system(s) with the straps cut and/or a receipt from the purchase of the exact replacement of the existing restraint system(s) and/or the make and model of the particular restraint system(s).');
+    lines.push('');
+    lines.push('PROPERTY DAMAGE:');
+    lines.push('');
+    lines.push('Please be advised I am a Bodily Injury Adjuster. My role in auto is limited to setting methods of inspection and reviewing/handling rental or loss of use. Any questions, concerns, or updates regarding property damage should be directed to the assigned auto adjuster. Once your client completes the inspection, an auto adjuster will be assigned.');
+    lines.push('');
+    lines.push('Please also advise your client that they are always welcome to go through their own carrier to initiate the property damage process.');
+    lines.push('');
+    lines.push('Please visit myclaim.com in order to expedite any questions, set a method of inspection, request or view status, or obtain or view an estimate for the property damage portion of this claim. We ask that you communicate this information with your client if you are not assisting with property damage.');
+    lines.push('');
+    lines.push('RENTAL GUIDELINES:');
+    lines.push('');
+    lines.push(`-Should we have responsibility in the loss, Allstate will consider a daily vehicle rental reimbursement rate up to $${rentalRate} per day plus applicable taxes. Be advised that we do not consider gasoline, mileage or additional insurance charges for reimbursement.`);
+    lines.push('');
+    lines.push("-We will only consider rental charges for the actual amount of time required to repair your client's vehicle, as calculated based on the repair estimate. We cannot reimburse your client for delays caused by them, the repair shop or by their carrier's failure to authorize repairs.");
+    lines.push('');
+    lines.push("-Keep in mind that in the event your client's vehicle is drivable, we will only pay for rental charges that correspond to the number of days necessary to repair their vehicle. If parts are required to repair the vehicle, please make sure the repair facility has received all the required parts before the vehicle is dropped off at the repair facility.");
+    lines.push('');
+    lines.push('-Additionally, we ask that your client schedule repairs to begin on a Monday or Tuesday to avoid any unnecessary delays. In the case of a total loss, we will consider paying for a rental vehicle up to 2 day(s) after you receive a settlement offer.');
+    lines.push('');
+    lines.push('We do not provide direct billing rental for 3rd party claimants. Once you have your final rental invoice, please e-mail it to claims@claims.allstate.com with the Allstate claim number in the subject line or fax it to 866-447-4293. Once we have received your final rental invoice, we will review and issue payment accordingly.');
+    lines.push('');
+    lines.push('We ask that you communicate this information with your client if you are not assisting with property damage.');
+    lines.push('');
+    lines.push('STORAGE MITIGATION GUIDELINES:');
+    lines.push('');
+    lines.push("Regardless of liability, your client has a duty to mitigate their damages. As the owner of the vehicle they should make arrangements to move the vehicle from any storage facility or shop if it is incurring charges. Waiting for Allstate to conclude liability does not negate your client's responsibility for their vehicle. It is possible that we will not consider storage charges and fees in total if your client has not taken steps to mitigate the charges/damages within a few days from the date of loss.");
+    lines.push('');
+    lines.push('Please be sure to send all correspondence related to this claim to the address listed above and direct them to my attention.');
+    lines.push('');
+    lines.push('I look forward to working with you on your this claim.');
+
+    document.getElementById('ackOutput').innerText = lines.join('\n');
+  }
+
+  function resetAckSection() {
+    showConfirm('Clear the Acknowledgment Letter section? This cannot be undone.', () => {
+      resetAckSectionSilent();
+    });
+  }
+
+  function resetAckSectionSilent() {
+    document.getElementById('ackClaimantNames').value = '';
+    ['ackLiabInvestigation','ackCovLiabInvestigation','ackLiabAccepted','ackNoAuthPolicyLimits','ackPolicyLimitReceived','ackNoStatementsTaken','ackPreservation'].forEach(id => {
+      document.getElementById(id).checked = false;
+    });
+    document.getElementById('ackVehicleDesc').value = '';
+    document.getElementById('ackPreservationField').style.display = 'none';
+    document.getElementById('ackRentalRate').value = '';
+    document.getElementById('ackErrorMsg').style.display = 'none';
+    document.getElementById('ackOutput').innerText = 'Fill out the form and click Generate.';
+  }
+
+  /* ---------------- INITIAL FILE REVIEW ---------------- */
+
+  function toggleIFRISOAll(fromAllCheckbox) {
+    if (fromAllCheckbox) {
+      if (document.getElementById('ifrISOAllReceived').checked) {
+        document.getElementById('ifrISODOB').checked = false;
+        document.getElementById('ifrISOSSN').checked = false;
+        document.getElementById('ifrISOAddress').checked = false;
+      }
+    } else {
+      const anyChecked = document.getElementById('ifrISODOB').checked ||
+        document.getElementById('ifrISOSSN').checked ||
+        document.getElementById('ifrISOAddress').checked;
+      if (anyChecked) document.getElementById('ifrISOAllReceived').checked = false;
+    }
+  }
+
+  function toggleIFRAlertsDetail() {
+    const val = document.querySelector('input[name="ifrAlerts"]:checked')?.value;
+    document.getElementById('ifrAlertsDetail').style.display = (val === 'Yes') ? 'block' : 'none';
+  }
+
+  const ifrNotesBullets = [];
+
+  function addIFRNoteBullet() {
+    const input = document.getElementById('ifrNotesInput');
+    const val = input.value.trim();
+    if (!val) return;
+    ifrNotesBullets.push(val);
+    input.value = '';
+    renderIFRNoteBullets();
+    input.focus();
+  }
+
+  function removeIFRNoteBullet(idx) {
+    ifrNotesBullets.splice(idx, 1);
+    renderIFRNoteBullets();
+  }
+
+  function renderIFRNoteBullets() {
+    const list = document.getElementById('ifrNotesList');
+    list.innerHTML = '';
+    ifrNotesBullets.forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${item}</span><span class="remove" onclick="removeIFRNoteBullet(${idx})">remove</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('ifrNotesInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addIFRNoteBullet(); }
+  });
+
+  function generateIFROutput() {
+    let lines = [];
+    lines.push('Initial File Review');
+    lines.push('');
+
+    const coverage = getRadioValue('ifrCoverage');
+    if (coverage) lines.push('- Coverage - ' + coverage);
+
+    const liability = getRadioValue('ifrLiability');
+    if (liability) lines.push('- Liability - ' + liability);
+
+    const prop213 = getRadioValue('ifrProp213');
+    if (prop213) lines.push('- Prop 213 - ' + prop213);
+
+    if (document.getElementById('ifrISOAllReceived').checked) {
+      lines.push('- All 5 data points received');
+    } else {
+      if (document.getElementById('ifrISOSSN').checked) lines.push('- SSN - Pending');
+      if (document.getElementById('ifrISODOB').checked) lines.push('- DOB - Pending');
+      if (document.getElementById('ifrISOAddress').checked) lines.push('- Address - Pending');
+    }
+
+    const medicare = getRadioValue('ifrMedicare');
+    if (medicare) lines.push('- Medicare/Medicaid - ' + medicare);
+
+    if (document.getElementById('ifrSegmentation').checked) {
+      lines.push('- Segmentation Proper - Yes');
+    }
+
+    const alerts = getRadioValue('ifrAlerts');
+    if (alerts === 'Yes') {
+      const detail = document.getElementById('ifrAlertsDetail').value.trim();
+      lines.push('- Alerts - Yes' + (detail ? ': ' + detail : ''));
+    } else if (alerts === 'n/a') {
+      lines.push('- Alerts - N/A');
+    }
+
+    ifrNotesBullets.forEach(n => lines.push('- Notes/FYI: ' + n));
+
+    lines.push('');
+    lines.push('---');
+    lines.push('Follow up regularly until claim is resolved. Follow ups will be adjusted as claim progresses.');
+
+    document.getElementById('ifrOutput').innerText = lines.join('\n');
+  }
+
+  function resetIFRSection() {
+    showConfirm('Clear the Initial File Review section? This cannot be undone.', () => {
+      resetIFRSectionSilent();
+    });
+  }
+
+  function resetIFRSectionSilent() {
+    ['ifrCoverage','ifrLiability','ifrProp213','ifrMedicare','ifrAlerts'].forEach(name => {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
+    });
+    document.getElementById('ifrISODOB').checked = false;
+    document.getElementById('ifrISOSSN').checked = false;
+    document.getElementById('ifrISOAddress').checked = false;
+    document.getElementById('ifrISOAllReceived').checked = false;
+    document.getElementById('ifrSegmentation').checked = false;
+    document.getElementById('ifrAlertsDetail').value = '';
+    document.getElementById('ifrAlertsDetail').style.display = 'none';
+    ifrNotesBullets.length = 0;
+    renderIFRNoteBullets();
+    document.getElementById('ifrOutput').innerText = 'Fill out the form and click Generate.';
+  }
+
+  /* ---------------- INSURED CONTACT ---------------- */
+
+  function toggleICNoText() {
+    const v2v = document.querySelector('input[name="icV2V"]:checked')?.value;
+    document.getElementById('icNoTextRow').style.display = (v2v === 'required') ? 'block' : 'none';
+    if (v2v !== 'required') {
+      document.getElementById('icNoText').checked = false;
+      document.getElementById('icGreetingRow').style.display = 'none';
+    }
+  }
+
+  function toggleICGreeting() {
+    const noText = document.getElementById('icNoText').checked;
+    document.getElementById('icGreetingRow').style.display = noText ? 'block' : 'none';
+  }
+
+  function generateICOutput() {
+    const v2v = document.querySelector('input[name="icV2V"]:checked')?.value;
+    const errorMsg = document.getElementById('icErrorMsg');
+    if (!v2v) {
+      errorMsg.style.display = 'block';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    const name = document.getElementById('icName').value.trim();
+    const date = document.getElementById('icDate').value.trim();
+    const claimNum = document.getElementById('icClaimNumber').value.trim();
+    const noText = v2v === 'required' && document.getElementById('icNoText').checked;
+
+    let msg;
+    if (noText) {
+      const greeting = document.querySelector('input[name="icGreeting"]:checked')?.value || 'Good morning';
+      msg = `${greeting} ${name},\n\nI attempted to reach you by phone today to discuss your ${date} Allstate claim. Please call me at the phone number below, as the other party has retained counsel for bodily injury. When calling, please reference the claim number in the subject line.\n\nThank you,`;
+    } else if (v2v === 'notRequired') {
+      msg = `Hi ${name}. My name is Dania, and I am the handling Bodily Injury Adjuster on your ${date} Allstate claim (claim ${claimNum}). The other party has hired an attorney for bodily injury. We are currently pending the records and bills from the other party's attorney; which can take several months. As soon as I have an update, I will be in touch.\n\nTexting here is the best and fastest way to get in touch with me, but If preferred you can email me at claims@claims.allstate.com with your claim number as the subject line or call 480-977-4016 to reach me. Thank you.`;
+    } else {
+      msg = `Hi ${name}. My name is Dania, and I am the handling Bodily Injury Adjuster on your ${date} Allstate claim, as the other party has retained an attorney for bodily injuries. I will be reaching out shortly from phone number (480) 977-4016 to discuss the claim and give you an update as to the next steps.\n\nTexting here at this phone number is the best and fastest way to get in touch with me, but If preferred you can email me at claims@claims.allstate.com with your claim number as the subject line or call 480-977-4016 to reach me. Thank you.`;
+    }
+
+    document.getElementById('icOutput').innerText = msg;
+  }
+
+  function resetICSection() {
+    showConfirm('Clear the Insured Contact section? This cannot be undone.', () => {
+      resetICSectionSilent();
+    });
+  }
+
+  function resetICSectionSilent() {
+    document.querySelectorAll('input[name="icV2V"]').forEach(r => r.checked = false);
+    document.getElementById('icNoText').checked = false;
+    document.getElementById('icNoTextRow').style.display = 'none';
+    document.querySelectorAll('input[name="icGreeting"]').forEach(r => r.checked = false);
+    document.getElementById('icGreetingRow').style.display = 'none';
+    document.getElementById('icName').value = '';
+    document.getElementById('icDate').value = '';
+    document.getElementById('icClaimNumber').value = '';
+    document.getElementById('icErrorMsg').style.display = 'none';
+    document.getElementById('icOutput').innerText = 'Fill out the form and click Generate.';
+  }
+
+
+
+
 
   function getRadioValue(name) {
     const el = document.querySelector(`input[name="${name}"]:checked`);
