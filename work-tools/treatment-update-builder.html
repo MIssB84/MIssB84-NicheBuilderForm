@@ -650,7 +650,7 @@
         </div>
 
         <label style="margin-top:14px;">Supports (witness, video, etc.)</label>
-        <input type="text" id="liabSupports" value="n/a">
+        <input type="text" id="liabSupports" placeholder="e.g. n/a">
 
         <label style="margin-top:14px;">Witness Favors Who</label>
         <div class="radio-row">
@@ -2234,29 +2234,43 @@
 
   function generateLiabilityOutput() {
     let lines = [];
-    lines.push('Liability Analysis Summary:');
     if (liabSummaryBullets.length) {
+      lines.push('Liability Analysis Summary:');
       liabSummaryBullets.forEach(b => lines.push('- ' + b));
-    } else {
-      lines.push('-');
     }
-    lines.push('POI Favors Who: ' + getRadioValue('liabPOI'));
-    lines.push('ROW Favors Who: ' + getRadioValue('liabROW'));
-    lines.push('Control of Roadway Favors Who: ' + getRadioValue('liabControl'));
-    lines.push('Police Report/Citations Favor Who: ' + getRadioValue('liabPoliceReport'));
-    lines.push('Supports (witness, video, etc.): ' + document.getElementById('liabSupports').value.trim());
-    lines.push('Witness Favors Who: ' + getRadioValue('liabWitness'));
-    lines.push('Evasive action: ' + getRadioValue('liabEvasive'));
-    lines.push('');
-    lines.push('Liability:');
+
+    const poi = getRadioValue('liabPOI');
+    if (poi) lines.push('POI Favors Who: ' + poi);
+
+    const row = getRadioValue('liabROW');
+    if (row) lines.push('ROW Favors Who: ' + row);
+
+    const control = getRadioValue('liabControl');
+    if (control) lines.push('Control of Roadway Favors Who: ' + control);
+
+    const policeReport = getRadioValue('liabPoliceReport');
+    if (policeReport) lines.push('Police Report/Citations Favor Who: ' + policeReport);
+
+    const supports = document.getElementById('liabSupports').value.trim();
+    if (supports) lines.push('Supports (witness, video, etc.): ' + supports);
+
+    const witness = getRadioValue('liabWitness');
+    if (witness) lines.push('Witness Favors Who: ' + witness);
+
+    const evasive = getRadioValue('liabEvasive');
+    if (evasive) lines.push('Evasive action: ' + evasive);
 
     const insuredPct = document.getElementById('liabInsuredPct').value.trim();
     const claimantPct = document.getElementById('liabClaimantPct').value.trim();
-    lines.push('Insured liability: ' + (insuredPct ? insuredPct + '%' : ''));
-    lines.push('Claimant liability: ' + (claimantPct ? claimantPct + '%' : ''));
-
     const reason = document.getElementById('liabReason').value.trim();
-    lines.push('Reason: ' + reason);
+
+    if (insuredPct || claimantPct || reason) {
+      lines.push('');
+      lines.push('Liability:');
+      if (insuredPct) lines.push('Insured liability: ' + insuredPct + '%');
+      if (claimantPct) lines.push('Claimant liability: ' + claimantPct + '%');
+      if (reason) lines.push('Reason: ' + reason);
+    }
 
     document.getElementById('liabilityOutput').innerText = lines.join('\n');
   }
@@ -2277,7 +2291,7 @@
     ['liabPOI','liabROW','liabControl','liabPoliceReport','liabWitness','liabEvasive'].forEach(name => {
       document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
     });
-    document.getElementById('liabSupports').value = 'n/a';
+    document.getElementById('liabSupports').value = '';
     document.getElementById('liabInsuredPct').value = '';
     document.getElementById('liabClaimantPct').value = '';
     document.getElementById('liabReason').value = '';
