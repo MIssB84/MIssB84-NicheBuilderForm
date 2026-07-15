@@ -133,6 +133,27 @@
   .followup-row label.inline { font-weight: normal; display: flex; align-items: center; gap: 8px; margin-bottom: 0; }
   .followup-row input[type="number"] { width: 70px; }
   .error-msg { color: #b33; font-size: 13px; margin-top: 8px; display: none; }
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42,31,28,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .confirm-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .confirm-box p { margin: 0 0 18px 0; font-size: 14px; color: #2a1f1c; line-height: 1.4; }
+  .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+  .confirm-yes-btn { background: #b33; color: #fff; border: none; border-radius: 5px; padding: 10px 16px; font-size: 13px; font-weight: bold; cursor: pointer; }
+  .confirm-cancel-btn { background: #ead9d5; color: #2a1f1c; border: none; border-radius: 5px; padding: 10px 16px; font-size: 13px; font-weight: bold; cursor: pointer; }
   .claimant-card { border: 1px solid #dea193; position: relative; }
   .claimant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .claimant-header label { margin-bottom: 0; }
@@ -140,6 +161,28 @@
   .claimant-card > label { margin-top: 14px; }
   .claimant-card > label:first-of-type { margin-top: 0; }
   .section-title { font-size: 16px; font-weight: bold; margin: 4px 0 8px 0; }
+  .section-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    position: sticky;
+    top: 0;
+    background: #fdf7f2;
+    padding: 8px 0;
+    z-index: 5;
+  }
+  .section-pill {
+    background: #fff;
+    border: 1px solid #dea193;
+    color: #2a1f1c;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .section-pill:hover { background: #dea193; }
 
   .req-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
   .req-row .num { font-weight: bold; font-size: 14px; padding-bottom: 9px; min-width: 18px; }
@@ -286,13 +329,14 @@
   <div class="sub">Fill in what applies. Anything left blank won't show in the output.</div>
 
   <div class="tab-row">
-    <button class="tab-btn active" id="tabBtnCall" onclick="switchTab('call')">Call Update</button>
+    <button class="tab-btn active" id="tabBtnNewFiles" onclick="switchTab('newfiles')">New Files</button>
+    <button class="tab-btn" id="tabBtnCall" onclick="switchTab('call')">Call Update</button>
     <button class="tab-btn" id="tabBtnRequest" onclick="switchTab('request')">Email / Fax Request</button>
     <button class="tab-btn" id="tabBtnCalendar" onclick="switchTab('calendar')">Task Calendar</button>
   </div>
 
   <!-- ============ TAB 1: CALL UPDATE ============ -->
-  <div class="tab-content active" id="tab-call">
+  <div class="tab-content" id="tab-call">
 
     <div class="tab-top-bar">
       <button class="reset-btn-top" onclick="resetCallTab()">Reset Tab</button>
@@ -461,10 +505,299 @@
 
   </div>
 
+  <!-- ============ TAB 4: NEW FILES ============ -->
+  <div class="tab-content active" id="tab-newfiles">
+
+    <div class="tab-top-bar" id="newFilesTop">
+      <button class="reset-btn-top" onclick="resetNewFilesTab()">Reset Tab</button>
+    </div>
+
+    <div class="card">
+      <label>File Type</label>
+      <div class="radio-row">
+        <label><input type="radio" name="newFileType" value="new" checked onchange="toggleNewFileType()"> Brand New File</label>
+        <label><input type="radio" name="newFileType" value="transfer" onchange="toggleNewFileType()"> Transfer</label>
+      </div>
+    </div>
+
+    <div id="newFileSection">
+
+      <div class="section-nav" id="sectionNav">
+        <button class="section-pill" onclick="jumpToSection('section-coverage')">Coverage</button>
+        <button class="section-pill" onclick="jumpToSection('section-liability')">Liability</button>
+        <button class="section-pill" onclick="jumpToSection('section-gtv')">Projected GTV</button>
+      </div>
+
+      <div class="section-title" id="section-coverage">Coverage</div>
+      <div class="card">
+
+        <label>Driver</label>
+        <div class="radio-row">
+          <label><input type="radio" name="covDriver" value="Policyholder"> Policyholder</label>
+          <label><input type="radio" name="covDriver" value="Listed driver"> Listed driver</label>
+          <label><input type="radio" name="covDriver" value="Permissive driver"> Permissive driver</label>
+        </div>
+
+        <label>Purpose of Trip</label>
+        <div class="req-row" style="align-items:center;">
+          <div class="field">
+            <input type="text" id="covPurposeLeft" placeholder="Left...">
+          </div>
+          <div class="field">
+            <input type="text" id="covPurposeGoing" placeholder="Going to...">
+          </div>
+        </div>
+
+        <label style="margin-top:14px;">RFH</label>
+        <div class="radio-row">
+          <label><input type="radio" name="covRFH" value="Ruled Out" onchange="toggleRFHCustom()"> Ruled Out</label>
+          <label><input type="radio" name="covRFH" value="TBD" onchange="toggleRFHCustom()"> TBD</label>
+          <label><input type="radio" name="covRFH" value="custom" onchange="toggleRFHCustom()"> Custom</label>
+        </div>
+        <input type="text" id="covRFHCustom" placeholder="Type custom RFH response" style="display:none;">
+
+        <label style="margin-top:14px;">Tenure</label>
+        <div class="req-row" style="align-items:center;">
+          <input type="text" id="covTenureNum" placeholder="Number" style="max-width:100px;">
+          <div class="radio-row" style="margin-bottom:0;">
+            <label><input type="radio" name="covTenureUnit" value="Months"> Months</label>
+            <label><input type="radio" name="covTenureUnit" value="Years" checked> Years</label>
+          </div>
+        </div>
+
+        <label>Limits</label>
+        <input type="text" id="covLimits" placeholder="Type limits">
+
+        <label style="margin-top:14px;">PUP</label>
+        <div class="radio-row">
+          <label><input type="radio" name="covPUP" value="No PUP with Allstate" checked onchange="togglePUPCustom()"> No PUP with Allstate</label>
+          <label><input type="radio" name="covPUP" value="custom" onchange="togglePUPCustom()"> Has PUP</label>
+        </div>
+        <input type="text" id="covPUPCustom" placeholder="Type PUP limits" style="display:none;">
+
+        <label style="margin-top:14px;">Does insured driver have their own policy?</label>
+        <div class="radio-row">
+          <label><input type="radio" name="covOwnPolicy" value="TBD"> TBD</label>
+          <label><input type="radio" name="covOwnPolicy" value="Yes"> Yes</label>
+          <label><input type="radio" name="covOwnPolicy" value="No"> No</label>
+        </div>
+
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateCoverageOutput()">Generate Coverage</button>
+        <button class="reset-btn" onclick="resetNewFilesTab()">Reset</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>Output</label>
+        <div class="output-box" id="coverageOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('coverageOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+
+      <div class="section-title" id="section-liability" style="margin-top:24px;">Liability</div>
+      <div class="card">
+
+        <div class="btn-row" style="margin-bottom:14px;">
+          <button class="reset-btn" style="color:#2a1f1c; border-color:#2a1f1c;" onclick="markLiabilityPending()">Pending</button>
+        </div>
+
+        <label>Liability Analysis Summary</label>
+        <div class="bullet-add-row">
+          <input type="text" id="liabSummaryInput" placeholder="Type a summary point, then Add">
+          <button class="btn-add" onclick="addLiabSummaryBullet()">Add</button>
+        </div>
+        <ul class="bullet-list" id="liabSummaryList"></ul>
+
+        <label style="margin-top:14px;">POI Favors Who</label>
+        <div class="radio-row">
+          <label><input type="radio" name="liabPOI" value="Insured"> Insured</label>
+          <label><input type="radio" name="liabPOI" value="Claimant"> Claimant</label>
+        </div>
+
+        <label style="margin-top:14px;">ROW Favors Who</label>
+        <div class="radio-row">
+          <label><input type="radio" name="liabROW" value="Insured"> Insured</label>
+          <label><input type="radio" name="liabROW" value="Claimant"> Claimant</label>
+        </div>
+
+        <label style="margin-top:14px;">Control of Roadway Favors Who</label>
+        <div class="radio-row">
+          <label><input type="radio" name="liabControl" value="Insured"> Insured</label>
+          <label><input type="radio" name="liabControl" value="Claimant"> Claimant</label>
+        </div>
+
+        <label style="margin-top:14px;">Police Report/Citations Favor Who</label>
+        <div class="radio-row">
+          <label><input type="radio" name="liabPoliceReport" value="Insured"> Insured</label>
+          <label><input type="radio" name="liabPoliceReport" value="Claimant"> Claimant</label>
+          <label><input type="radio" name="liabPoliceReport" value="N/A"> N/A</label>
+        </div>
+
+        <label style="margin-top:14px;">Supports (witness, video, etc.)</label>
+        <input type="text" id="liabSupports" value="n/a">
+
+        <label style="margin-top:14px;">Witness Favors Who</label>
+        <div class="radio-row">
+          <label><input type="radio" name="liabWitness" value="Insured"> Insured</label>
+          <label><input type="radio" name="liabWitness" value="Claimant"> Claimant</label>
+          <label><input type="radio" name="liabWitness" value="N/A"> N/A</label>
+        </div>
+
+        <label style="margin-top:14px;">Evasive Action</label>
+        <div class="radio-row">
+          <label><input type="radio" name="liabEvasive" value="Insured"> Insured</label>
+          <label><input type="radio" name="liabEvasive" value="Claimant"> Claimant</label>
+          <label><input type="radio" name="liabEvasive" value="N/A"> N/A</label>
+        </div>
+
+        <label style="margin-top:14px;">Insured Liability %</label>
+        <input type="text" id="liabInsuredPct" placeholder="e.g. 50">
+
+        <label style="margin-top:14px;">Claimant Liability %</label>
+        <input type="text" id="liabClaimantPct" placeholder="e.g. 50">
+
+        <label style="margin-top:14px;">Reason</label>
+        <textarea id="liabReason" placeholder="Type reasoning"></textarea>
+
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateLiabilityOutput()">Generate Liability</button>
+        <button class="reset-btn" onclick="resetLiabilitySection()">Reset</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>Output</label>
+        <div class="output-box" id="liabilityOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('liabilityOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+
+      <div class="section-title" id="section-gtv" style="margin-top:24px;">Projected GTV</div>
+      <div class="card">
+
+        <label>Potential Treatment</label>
+        <input type="text" id="gtvTreatment" value="Ambulance, ER, chiro, PCP, PM, imaging, specialists">
+
+        <label style="margin-top:14px;">Estimated Specials</label>
+        <div class="req-row" style="align-items:center;">
+          <span style="padding-bottom:0;">$</span>
+          <div class="field"><input type="text" id="gtvSpecials" value="18k" oninput="recalcGTVTotal()"></div>
+        </div>
+
+        <label>Estimated Gens</label>
+        <div class="req-row" style="align-items:center;">
+          <span style="padding-bottom:0;">$</span>
+          <div class="field"><input type="text" id="gtvGens" value="10k" oninput="recalcGTVTotal()"></div>
+        </div>
+
+        <label>Wage Loss</label>
+        <div class="req-row" style="align-items:center;">
+          <span style="padding-bottom:0;">$</span>
+          <div class="field"><input type="text" id="gtvWage" value="2k" oninput="recalcGTVTotal()"></div>
+        </div>
+
+        <label style="margin-top:14px;">Additional Lines</label>
+        <div class="bullet-add-row">
+          <input type="text" id="gtvExtraInput" placeholder="Type another line, then Add">
+          <button class="btn-add" onclick="addGTVExtraLine()">Add</button>
+        </div>
+        <ul class="bullet-list" id="gtvExtraList"></ul>
+
+        <label style="margin-top:14px;">Estimated GTV for Soft-Tissue Injuries</label>
+        <div id="gtvDisplayRow" style="display:flex; align-items:center; gap:10px;">
+          <div>$<span id="gtvValueText">30k</span></div>
+          <span class="holiday-toggle" onclick="toggleGTVEdit()">Edit</span>
+        </div>
+        <div id="gtvEditRow" style="display:none; align-items:center; gap:10px;">
+          <span>$</span>
+          <input type="text" id="gtvValueInput" value="30k" style="max-width:120px;">
+          <button class="btn-add" onclick="saveGTVEdit()">Save</button>
+        </div>
+
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateGTVOutput()">Generate Projected GTV</button>
+        <button class="reset-btn" onclick="resetGTVSection()">Reset</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>GTV Output</label>
+        <div class="output-box" id="gtvOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('gtvOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+
+      <div class="section-title" style="margin-top:24px;">Reserving Analysis</div>
+      <div class="card">
+        <label class="inline" style="font-weight:normal; display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" id="gtvLiabPending" onchange="generateReservingOutput()"> Liability is pending
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="generate-btn" onclick="generateReservingOutput()">Generate Reserving Analysis</button>
+        <button class="reset-btn" onclick="resetReservingSection()">Reset</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <label>Reserving Analysis Output</label>
+        <div class="output-box" id="reservingOutput">Fill out the form and click Generate.</div>
+        <button class="copy-btn" onclick="copyText('reservingOutput')">Copy to Clipboard</button>
+      </div>
+
+      <div class="tab-top-bar" style="margin-top:8px;">
+        <span class="holiday-toggle" onclick="jumpToSection('newFilesTop')">^ Back to Top</span>
+      </div>
+
+    </div>
+
+    <div id="transferSection" style="display:none;">
+      <div class="card">
+        <div class="sub" style="margin-bottom:0;">Transfer fields haven't been built yet — let me know what you need and I'll add them here.</div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 <script>
   const specialWords = { pm: 'Pain Management', er: 'ER', ems: 'EMS' };
+
+  function showConfirm(message, onConfirm) {
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    overlay.innerHTML = `
+      <div class="confirm-box">
+        <p>${message}</p>
+        <div class="confirm-actions">
+          <button class="confirm-yes-btn">Yes, Clear</button>
+          <button class="confirm-cancel-btn">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('.confirm-yes-btn').onclick = () => {
+      document.body.removeChild(overlay);
+      onConfirm();
+    };
+    overlay.querySelector('.confirm-cancel-btn').onclick = () => {
+      document.body.removeChild(overlay);
+    };
+  }
 
   function smartCase(str) {
     return str
@@ -479,9 +812,11 @@
     document.getElementById('tab-call').classList.toggle('active', tab === 'call');
     document.getElementById('tab-request').classList.toggle('active', tab === 'request');
     document.getElementById('tab-calendar').classList.toggle('active', tab === 'calendar');
+    document.getElementById('tab-newfiles').classList.toggle('active', tab === 'newfiles');
     document.getElementById('tabBtnCall').classList.toggle('active', tab === 'call');
     document.getElementById('tabBtnRequest').classList.toggle('active', tab === 'request');
     document.getElementById('tabBtnCalendar').classList.toggle('active', tab === 'calendar');
+    document.getElementById('tabBtnNewFiles').classList.toggle('active', tab === 'newfiles');
     document.getElementById('wrap').classList.toggle('wide', tab === 'calendar');
     if (tab === 'calendar' && !calendarRendered) {
       initCalendarTab();
@@ -583,19 +918,20 @@
   addClaimant(); // start with one claimant block by default
 
   function resetCallTab() {
-    if (!confirm('Clear everything on this tab? This cannot be undone.')) return;
-    document.querySelectorAll('input[name="contactResult"]').forEach(r => r.checked = false);
-    document.getElementById('contactName').value = '';
-    document.getElementById('pdmoi').value = '';
-    document.getElementById('fyiNotes').value = '';
-    document.getElementById('rawNotes').value = '';
-    document.getElementById('followupToggle').checked = true;
-    document.getElementById('followupDays').value = 60;
-    document.getElementById('output').innerText = 'Fill out the form and click Generate.';
-    document.getElementById('errorMsg').style.display = 'none';
-    document.getElementById('claimantsContainer').innerHTML = '';
-    Object.keys(claimants).forEach(k => delete claimants[k]);
-    addClaimant();
+    showConfirm('Clear everything on this tab? This cannot be undone.', () => {
+      document.querySelectorAll('input[name="contactResult"]').forEach(r => r.checked = false);
+      document.getElementById('contactName').value = '';
+      document.getElementById('pdmoi').value = '';
+      document.getElementById('fyiNotes').value = '';
+      document.getElementById('rawNotes').value = '';
+      document.getElementById('followupToggle').checked = true;
+      document.getElementById('followupDays').value = 60;
+      document.getElementById('output').innerText = 'Fill out the form and click Generate.';
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('claimantsContainer').innerHTML = '';
+      Object.keys(claimants).forEach(k => delete claimants[k]);
+      addClaimant();
+    });
   }
 
   function generateOutput() {
@@ -709,18 +1045,19 @@
   for (let i = 0; i < 5; i++) addRequestClaimant(); // start with 5 claimant rows
 
   function resetRequestTab() {
-    if (!confirm('Clear everything on this tab? This cannot be undone.')) return;
-    document.querySelectorAll('input[name="sendMethod"]').forEach(r => r.checked = (r.value === 'email'));
-    document.querySelectorAll('input[name="greetingChoice"]').forEach(r => r.checked = false);
-    document.getElementById('reqDOLSingle').value = '';
-    document.getElementById('requestClaimantsContainer').innerHTML = '';
-    document.getElementById('extraQuestionsContainer').innerHTML = '';
-    document.getElementById('reqFollowupToggle').checked = true;
-    document.getElementById('reqFollowupDays').value = 60;
-    document.getElementById('requestOutput').innerText = 'Fill out the claimants and click Generate.';
-    requestClaimantCounter = 0;
-    for (let i = 0; i < 5; i++) addRequestClaimant();
-    toggleSendMethod();
+    showConfirm('Clear everything on this tab? This cannot be undone.', () => {
+      document.querySelectorAll('input[name="sendMethod"]').forEach(r => r.checked = (r.value === 'email'));
+      document.querySelectorAll('input[name="greetingChoice"]').forEach(r => r.checked = false);
+      document.getElementById('reqDOLSingle').value = '';
+      document.getElementById('requestClaimantsContainer').innerHTML = '';
+      document.getElementById('extraQuestionsContainer').innerHTML = '';
+      document.getElementById('reqFollowupToggle').checked = true;
+      document.getElementById('reqFollowupDays').value = 60;
+      document.getElementById('requestOutput').innerText = 'Fill out the claimants and click Generate.';
+      requestClaimantCounter = 0;
+      for (let i = 0; i < 5; i++) addRequestClaimant();
+      toggleSendMethod();
+    });
   }
 
   let extraQuestionCounter = 0;
@@ -1041,13 +1378,14 @@
     const year = parseInt(document.getElementById('yearSelect').value);
     const month = parseInt(document.getElementById('monthSelect').value);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    if (!confirm(`Clear task counts for the week of ${calMonthNames[month]} ${sundayDay}?`)) return;
-    const data = loadMonthData(year, month);
-    for (let d = sundayDay; d <= Math.min(sundayDay + 6, daysInMonth); d++) {
-      delete data.tasks[d];
-    }
-    saveMonthData(year, month, data);
-    renderCalendar();
+    showConfirm(`Clear task counts for the week of ${calMonthNames[month]} ${sundayDay}?`, () => {
+      const data = loadMonthData(year, month);
+      for (let d = sundayDay; d <= Math.min(sundayDay + 6, daysInMonth); d++) {
+        delete data.tasks[d];
+      }
+      saveMonthData(year, month, data);
+      renderCalendar();
+    });
   }
 
   function jumpToToday() {
@@ -1059,9 +1397,322 @@
   function resetCalendarMonth() {
     const year = parseInt(document.getElementById('yearSelect').value);
     const month = parseInt(document.getElementById('monthSelect').value);
-    if (!confirm(`Clear all task counts and blocked days for ${calMonthNames[month]} ${year}? This cannot be undone.`)) return;
-    saveMonthData(year, month, { tasks: {}, holidays: {}, weekendUnblocked: {} });
-    renderCalendar();
+    showConfirm(`Clear all task counts and blocked days for ${calMonthNames[month]} ${year}? This cannot be undone.`, () => {
+      saveMonthData(year, month, { tasks: {}, holidays: {}, weekendUnblocked: {} });
+      renderCalendar();
+    });
+  }
+
+  /* ---------------- TAB 4: NEW FILES ---------------- */
+
+  function toggleNewFileType() {
+    const type = document.querySelector('input[name="newFileType"]:checked').value;
+    document.getElementById('newFileSection').style.display = (type === 'new') ? 'block' : 'none';
+    document.getElementById('transferSection').style.display = (type === 'transfer') ? 'block' : 'none';
+  }
+
+  function jumpToSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function parseAmount(str) {
+    if (!str) return 0;
+    let s = str.trim().toLowerCase().replace(/[$,]/g, '');
+    let multiplier = 1;
+    if (s.endsWith('k')) { multiplier = 1000; s = s.slice(0, -1); }
+    else if (s.endsWith('m')) { multiplier = 1000000; s = s.slice(0, -1); }
+    const num = parseFloat(s);
+    return isNaN(num) ? 0 : num * multiplier;
+  }
+
+  function formatAmount(num) {
+    if (num >= 1000) {
+      const k = num / 1000;
+      return (k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)) + 'k';
+    }
+    return String(num);
+  }
+
+  function recalcGTVTotal() {
+    const specials = parseAmount(document.getElementById('gtvSpecials').value);
+    const gens = parseAmount(document.getElementById('gtvGens').value);
+    const wage = parseAmount(document.getElementById('gtvWage').value);
+    const total = specials + gens + wage;
+    document.getElementById('gtvValueText').innerText = formatAmount(total);
+  }
+
+  const gtvExtraLines = [];
+
+  function addGTVExtraLine() {
+    const input = document.getElementById('gtvExtraInput');
+    const val = input.value.trim();
+    if (!val) return;
+    gtvExtraLines.push(val);
+    input.value = '';
+    renderGTVExtraLines();
+    input.focus();
+  }
+
+  function removeGTVExtraLine(idx) {
+    gtvExtraLines.splice(idx, 1);
+    renderGTVExtraLines();
+  }
+
+  function renderGTVExtraLines() {
+    const list = document.getElementById('gtvExtraList');
+    list.innerHTML = '';
+    gtvExtraLines.forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${item}</span><span class="remove" onclick="removeGTVExtraLine(${idx})">remove</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('gtvExtraInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addGTVExtraLine(); }
+  });
+
+  function toggleGTVEdit() {
+    document.getElementById('gtvDisplayRow').style.display = 'none';
+    document.getElementById('gtvEditRow').style.display = 'flex';
+    document.getElementById('gtvValueInput').value = document.getElementById('gtvValueText').innerText;
+  }
+
+  function saveGTVEdit() {
+    const val = document.getElementById('gtvValueInput').value.trim() || '30k';
+    document.getElementById('gtvValueText').innerText = val;
+    document.getElementById('gtvDisplayRow').style.display = 'flex';
+    document.getElementById('gtvEditRow').style.display = 'none';
+  }
+
+  function generateGTVOutput() {
+    let lines = [];
+    lines.push('PROJECTED GTV');
+    lines.push('');
+    lines.push('Potential Treatment');
+    lines.push('- ' + document.getElementById('gtvTreatment').value.trim());
+    lines.push('- Estimated Specials: $' + document.getElementById('gtvSpecials').value.trim());
+    lines.push('- Estimated Gens: $' + document.getElementById('gtvGens').value.trim());
+    lines.push('- Wage loss: $' + document.getElementById('gtvWage').value.trim());
+    gtvExtraLines.forEach(l => lines.push('- ' + l));
+    lines.push('');
+    lines.push('Estimated GTV for soft-tissue injuries: $' + document.getElementById('gtvValueText').innerText);
+
+    document.getElementById('gtvOutput').innerText = lines.join('\n');
+  }
+
+  function resetGTVSection() {
+    showConfirm('Clear the Projected GTV section? This cannot be undone.', () => {
+      document.getElementById('gtvTreatment').value = 'Ambulance, ER, chiro, PCP, PM, imaging, specialists';
+      document.getElementById('gtvSpecials').value = '18k';
+      document.getElementById('gtvGens').value = '10k';
+      document.getElementById('gtvWage').value = '2k';
+      gtvExtraLines.length = 0;
+      renderGTVExtraLines();
+      recalcGTVTotal();
+      document.getElementById('gtvDisplayRow').style.display = 'flex';
+      document.getElementById('gtvEditRow').style.display = 'none';
+      document.getElementById('gtvOutput').innerText = 'Fill out the form and click Generate.';
+    });
+  }
+
+  function generateReservingOutput() {
+    const pending = document.getElementById('gtvLiabPending').checked;
+    const text = pending
+      ? 'Liability pending'
+      : 'Reserves updated due to length of time claim has been open, information to date, and on-going treatment. Will continue to update as treatment information becomes available.';
+    document.getElementById('reservingOutput').innerText = text;
+  }
+
+  function resetReservingSection() {
+    showConfirm('Clear the Reserving Analysis section? This cannot be undone.', () => {
+      document.getElementById('gtvLiabPending').checked = false;
+      document.getElementById('reservingOutput').innerText = 'Fill out the form and click Generate.';
+    });
+  }
+
+  function toggleRFHCustom() {
+    const val = document.querySelector('input[name="covRFH"]:checked')?.value;
+    document.getElementById('covRFHCustom').style.display = (val === 'custom') ? 'block' : 'none';
+  }
+
+  function togglePUPCustom() {
+    const val = document.querySelector('input[name="covPUP"]:checked')?.value;
+    document.getElementById('covPUPCustom').style.display = (val === 'custom') ? 'block' : 'none';
+  }
+
+  function generateCoverageOutput() {
+    let lines = [];
+
+    const driverEl = document.querySelector('input[name="covDriver"]:checked');
+    if (driverEl) lines.push(`Driver: ${driverEl.value} operating listed vehicle`);
+
+    const purposeLeft = document.getElementById('covPurposeLeft').value.trim();
+    const purposeGoing = document.getElementById('covPurposeGoing').value.trim();
+    const purposeParts = [];
+    if (purposeLeft) purposeParts.push(`Left ${purposeLeft}`);
+    if (purposeGoing) purposeParts.push(`Going to ${purposeGoing}`);
+    if (purposeParts.length) lines.push(`Purpose of trip: ${purposeParts.join(' - ')}`);
+
+    const rfhEl = document.querySelector('input[name="covRFH"]:checked');
+    if (rfhEl) {
+      if (rfhEl.value === 'custom') {
+        const custom = document.getElementById('covRFHCustom').value.trim();
+        if (custom) lines.push(`RFH: ${custom}`);
+      } else {
+        lines.push(`RFH: ${rfhEl.value}`);
+      }
+    }
+
+    const tenureNum = document.getElementById('covTenureNum').value.trim();
+    if (tenureNum) {
+      const tenureUnitEl = document.querySelector('input[name="covTenureUnit"]:checked');
+      const unit = tenureUnitEl ? tenureUnitEl.value : 'Years';
+      lines.push(`Tenure: ${tenureNum} ${unit}`);
+    }
+
+    const limits = document.getElementById('covLimits').value.trim();
+    if (limits) lines.push(`Limits: ${limits}`);
+
+    const pupEl = document.querySelector('input[name="covPUP"]:checked');
+    if (pupEl) {
+      if (pupEl.value === 'custom') {
+        const custom = document.getElementById('covPUPCustom').value.trim();
+        if (custom) lines.push(`PUP: ${custom}`);
+      } else {
+        lines.push(`PUP: ${pupEl.value}`);
+      }
+    }
+
+    const ownPolicyEl = document.querySelector('input[name="covOwnPolicy"]:checked');
+    if (ownPolicyEl) lines.push(`Does insured driver have their own policy?: ${ownPolicyEl.value}`);
+
+    document.getElementById('coverageOutput').innerText = lines.join('\n');
+  }
+
+  function resetNewFilesTab() {
+    showConfirm('Clear everything on this tab? This cannot be undone.', () => {
+      document.querySelectorAll('input[name="covDriver"]').forEach(r => r.checked = false);
+      document.getElementById('covPurposeLeft').value = '';
+      document.getElementById('covPurposeGoing').value = '';
+      document.querySelectorAll('input[name="covRFH"]').forEach(r => r.checked = false);
+      document.getElementById('covRFHCustom').value = '';
+      document.getElementById('covRFHCustom').style.display = 'none';
+      document.getElementById('covTenureNum').value = '';
+      document.querySelectorAll('input[name="covTenureUnit"]').forEach(r => r.checked = (r.value === 'Years'));
+      document.getElementById('covLimits').value = '';
+      document.querySelectorAll('input[name="covPUP"]').forEach(r => r.checked = (r.value === 'No PUP with Allstate'));
+      document.getElementById('covPUPCustom').value = '';
+      document.getElementById('covPUPCustom').style.display = 'none';
+      document.querySelectorAll('input[name="covOwnPolicy"]').forEach(r => r.checked = false);
+      document.getElementById('coverageOutput').innerText = 'Fill out the form and click Generate.';
+      resetLiabilitySectionSilent();
+      resetGTVSectionSilent();
+    });
+  }
+
+  function resetGTVSectionSilent() {
+    document.getElementById('gtvTreatment').value = 'Ambulance, ER, chiro, PCP, PM, imaging, specialists';
+    document.getElementById('gtvSpecials').value = '18k';
+    document.getElementById('gtvGens').value = '10k';
+    document.getElementById('gtvWage').value = '2k';
+    gtvExtraLines.length = 0;
+    renderGTVExtraLines();
+    recalcGTVTotal();
+    document.getElementById('gtvDisplayRow').style.display = 'flex';
+    document.getElementById('gtvEditRow').style.display = 'none';
+    document.getElementById('gtvOutput').innerText = 'Fill out the form and click Generate.';
+    document.getElementById('gtvLiabPending').checked = false;
+    document.getElementById('reservingOutput').innerText = 'Fill out the form and click Generate.';
+  }
+
+  function getRadioValue(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  const liabSummaryBullets = [];
+
+  function addLiabSummaryBullet() {
+    const input = document.getElementById('liabSummaryInput');
+    const val = input.value.trim();
+    if (!val) return;
+    liabSummaryBullets.push(val);
+    input.value = '';
+    renderLiabSummaryBullets();
+    input.focus();
+  }
+
+  function removeLiabSummaryBullet(idx) {
+    liabSummaryBullets.splice(idx, 1);
+    renderLiabSummaryBullets();
+  }
+
+  function renderLiabSummaryBullets() {
+    const list = document.getElementById('liabSummaryList');
+    list.innerHTML = '';
+    liabSummaryBullets.forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${item}</span><span class="remove" onclick="removeLiabSummaryBullet(${idx})">remove</span>`;
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('liabSummaryInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addLiabSummaryBullet(); }
+  });
+
+  function generateLiabilityOutput() {
+    let lines = [];
+    lines.push('Liability Analysis Summary:');
+    if (liabSummaryBullets.length) {
+      liabSummaryBullets.forEach(b => lines.push('- ' + b));
+    } else {
+      lines.push('-');
+    }
+    lines.push('POI Favors Who: ' + getRadioValue('liabPOI'));
+    lines.push('ROW Favors Who: ' + getRadioValue('liabROW'));
+    lines.push('Control of Roadway Favors Who: ' + getRadioValue('liabControl'));
+    lines.push('Police Report/Citations Favor Who: ' + getRadioValue('liabPoliceReport'));
+    lines.push('Supports (witness, video, etc.): ' + document.getElementById('liabSupports').value.trim());
+    lines.push('Witness Favors Who: ' + getRadioValue('liabWitness'));
+    lines.push('Evasive action: ' + getRadioValue('liabEvasive'));
+    lines.push('');
+    lines.push('Liability:');
+
+    const insuredPct = document.getElementById('liabInsuredPct').value.trim();
+    const claimantPct = document.getElementById('liabClaimantPct').value.trim();
+    lines.push('Insured liability: ' + (insuredPct ? insuredPct + '%' : ''));
+    lines.push('Claimant liability: ' + (claimantPct ? claimantPct + '%' : ''));
+
+    const reason = document.getElementById('liabReason').value.trim();
+    lines.push('Reason: ' + reason);
+
+    document.getElementById('liabilityOutput').innerText = lines.join('\n');
+  }
+
+  function markLiabilityPending() {
+    document.getElementById('liabilityOutput').innerText = 'Liability pending';
+  }
+
+  function resetLiabilitySection() {
+    showConfirm('Clear the Liability section? This cannot be undone.', () => {
+      resetLiabilitySectionSilent();
+    });
+  }
+
+  function resetLiabilitySectionSilent() {
+    liabSummaryBullets.length = 0;
+    renderLiabSummaryBullets();
+    ['liabPOI','liabROW','liabControl','liabPoliceReport','liabWitness','liabEvasive'].forEach(name => {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
+    });
+    document.getElementById('liabSupports').value = 'n/a';
+    document.getElementById('liabInsuredPct').value = '';
+    document.getElementById('liabClaimantPct').value = '';
+    document.getElementById('liabReason').value = '';
+    document.getElementById('liabilityOutput').innerText = 'Fill out the form and click Generate.';
   }
 </script>
 </body>
