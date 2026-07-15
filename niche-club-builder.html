@@ -39,7 +39,7 @@
   .add-row { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
   .add-row input { flex:1; min-width:130px; }
 
-  .bottom-bar { position:fixed; left:0; right:0; bottom:0; background:#3a2c27; border-top:2px solid var(--rose); padding:11px 20px; display:flex; align-items:center; justify-content:flex-end; gap:10px; z-index:50; }
+  .bottom-bar { position:fixed; left:0; right:0; bottom:0; background:#3a2c27; border-top:2px solid var(--rose); padding:11px 20px; display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap; z-index:50; }
   .bottom-bar-status { color:var(--muted); font-size:12px; margin-right:8px; }
   .save-banner {
     font-size:11.5px; font-weight:700; letter-spacing:0.03em; padding:6px 14px; border-radius:20px;
@@ -199,7 +199,11 @@
   <span class="save-banner saved" id="saveBanner">All changes saved ✓</span>
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
   <button class="pill-action" id="saveNowBtn">💾 Save Now</button>
+  <button class="pill-action" id="myLinkBtn">🔗 My Link</button>
+  <button class="pill-action" id="openAllBtn">🚀 Open All</button>
+  <button class="pill-action danger" id="clearCurrentNicheBtn">🗑 Clear Current Niche</button>
   <button class="pill-action danger" id="clearAllNichesBtnBottom">🗑 Clear All</button>
+  <a href="https://claude.ai/chat/a0fb5c8f-bab6-4407-861e-1fa2cf5bf17d" target="_blank" rel="noopener" id="convoLink" title="Continue this build in chat" style="color:#5a4a45; text-decoration:none; font-size:13px; opacity:0.5; margin-left:4px;">●</a>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
@@ -1952,7 +1956,35 @@ function buildNicheSection(niche) {
     if (!ok) return;
     clearOneNiche(niche);
   });
-  footer.appendChild(previewBtn); footer.appendChild(completeBtn); footer.appendChild(clearBtn);
+
+  const moveWrap = document.createElement('div'); moveWrap.style.cssText = 'display:flex; align-items:center; gap:6px;';
+  const moveSelect = document.createElement('select');
+  moveSelect.style.cssText = 'font-size:11.5px; padding:8px 8px; border-radius:14px; border:1.5px solid var(--border); background:#fff; color:var(--mid-text);';
+  const moveDefaultOpt = document.createElement('option'); moveDefaultOpt.value = ''; moveDefaultOpt.textContent = 'Move to...';
+  moveSelect.appendChild(moveDefaultOpt);
+  nicheOrder.forEach(other => {
+    if (other.num === niche.num) return;
+    const opt = document.createElement('option'); opt.value = other.num;
+    opt.textContent = (other.isBonus ? 'Bonus' : 'Niche ' + other.num) + (other.name ? ' (' + other.name.slice(0, 22) + ')' : '');
+    moveSelect.appendChild(opt);
+  });
+  const moveBtn = document.createElement('button'); moveBtn.className = 'btn secondary'; moveBtn.textContent = 'Move';
+  moveBtn.addEventListener('click', async () => {
+    const targetNum = moveSelect.value;
+    if (!targetNum) { bbStatus('Pick a niche to move this into first', 2000); return; }
+    const targetNiche = nicheOrder.find(x => x.num === targetNum);
+    if (!targetNiche) return;
+    const sourceLabel = niche.isBonus ? 'Bonus' : 'Niche ' + niche.num;
+    const targetLabel = targetNiche.isBonus ? 'Bonus' : 'Niche ' + targetNiche.num;
+    const targetHasWork = targetNiche.name.trim() && targetNiche.name !== (DEFAULT_NICHE_ORDER.find(d => d.num === targetNiche.num) || {}).name;
+    const warnExtra = targetHasWork ? ` ${targetLabel} already has work in it, this will overwrite it.` : '';
+    const ok = await customConfirm(`Move all of ${sourceLabel}'s work into ${targetLabel}?${warnExtra} ${sourceLabel} will reset back to empty afterward. This cannot be undone.`);
+    if (!ok) return;
+    moveNicheDataTo(niche, targetNiche);
+  });
+  moveWrap.appendChild(moveSelect); moveWrap.appendChild(moveBtn);
+
+  footer.appendChild(previewBtn); footer.appendChild(completeBtn); footer.appendChild(moveWrap); footer.appendChild(clearBtn);
   section.appendChild(footer);
 
   return section;
@@ -1986,8 +2018,88 @@ function clearOneNiche(niche) {
   bbStatus('Cleared ' + (niche.isBonus ? 'Bonus' : 'Niche ' + niche.num));
 }
 
+function moveNicheDataTo(sourceNiche, targetNiche) {
+  const sourceLabel = sourceNiche.isBonus ? 'Bonus' : 'Niche ' + sourceNiche.num;
+  const targetLabel = targetNiche.isBonus ? 'Bonus' : 'Niche ' + targetNiche.num;
+
+  targetNiche.name = sourceNiche.name;
+  targetNiche.type = sourceNiche.type;
+  targetNiche.complete = sourceNiche.complete;
+  targetNiche.state = sourceNiche.state;
+
+  const sourceDefaults = DEFAULT_NICHE_ORDER.find(d => d.num === sourceNiche.num) || {};
+  sourceNiche.name = sourceDefaults.name || '';
+  sourceNiche.type = sourceDefaults.type || 'Other';
+  sourceNiche.complete = false;
+  sourceNiche.state = makeNicheState();
+  seedDefaultTagsIfEmpty(sourceNiche);
+
+  autosaveNicheOrder();
+  autosaveNicheState(sourceNiche.num);
+  autosaveNicheState(targetNiche.num);
+
+  const container = document.getElementById('nicheSectionsContainer');
+  const oldSource = document.getElementById('section-' + sourceNiche.num);
+  const freshSource = buildNicheSection(sourceNiche);
+  container.replaceChild(freshSource, oldSource);
+  seedAllTitlesForNiche(sourceNiche);
+  setNicheCollapsed(sourceNiche, true);
+
+  const oldTarget = document.getElementById('section-' + targetNiche.num);
+  const freshTarget = buildNicheSection(targetNiche);
+  container.replaceChild(freshTarget, oldTarget);
+  setNicheCollapsed(targetNiche, false);
+
+  renderNicheList();
+  bbStatus(`Moved ${sourceLabel}'s work into ${targetLabel}`, 3000);
+}
+
 document.getElementById('collapseAllBtn').addEventListener('click', () => { nicheOrder.forEach(n => setNicheCollapsed(n, true)); });
 document.getElementById('expandAllBtn').addEventListener('click', () => { nicheOrder.forEach(n => setNicheCollapsed(n, false)); });
+
+const WORKFLOW_LINKS = [
+  'https://missb84.github.io/MIssB84-NicheBuilderForm/bestsellerfinderpersonal.html',
+  'https://insightfactory.app/etsy-trends/',
+  'https://mydesigns.io/app/dreamer',
+  'https://ideogram.ai/library/my-images',
+  'https://www.midjourney.com/imagine',
+  'https://www.kittl.com/?_gl=1*zii629*_gcl_aw*R0NMLjE3ODAxNjcyNzkuQ2owS0NRandsZXJRQmhETUFSSXNBQjE2SC1VWW9mdlplcS0xTklWRk9kd2Q1NFlDRVp2Q1EzbndlSmdxS0FXS2xrUHNxSmlYR0V2UDlCc2FBanJwRUFMd193Y0I.*_gcl_au*NTEyNTcwODU3LjE3Nzk0Njc1Mjc.*FPAU*NTEyNTcwODU3LjE3Nzk0Njc1Mjc.*_ga*NjA0MzQwMDU5LjE3NTU5MDMyNzc.*_ga_ZSS431RNV2*czE3ODMyNzg5ODIkbzE0OSRnMSR0MTc4MzI4NTgyNCRqNjAkbDAkaDIwNTM3OTYxNTc.*_fplc*bVpFdDh6aThMJTJCYjBuZnB5aWV2TUJJcGxGV0Y5SmJxYkN4TUxId0dNREl3dzRtNER2Tmp0TmczeHh2ZmwwblVCdXZOcUhaUlN3Q0E3cXFPenlhUDJYZm16SERTOVZWN1FjbllyQ1VaODFOTTgzNjlqJTJGeXJpRVB4U3hCNWVVQSUzRCUzRA..&loginFlag=t',
+  'https://www.canva.com/dream-lab?adj=eyJBIjoiUiIsIkIiOjAuNzV9',
+  'https://magica.com/app/nodes/nano_banana_pro?subModel=nano-banana-pro-text&category=image',
+  'https://magica.com/app/nodes/flux_2_max?subModel=flux-2-max-text&category=image',
+  'https://chatgpt.com/c/6a108712-5f38-83e8-812b-47c0a2ff0b17',
+  'https://www.canva.com/folder/FAHLwEtsMUM',
+  'https://systeme.io/dashboard/files'
+];
+
+const MY_LINK_URL = ''; // set this once you tell me which link "My Link" should be
+
+document.getElementById('myLinkBtn').addEventListener('click', () => {
+  if (!MY_LINK_URL) { bbStatus('My Link is not set yet, tell Claude which URL to use', 3000); return; }
+  window.open(MY_LINK_URL, '_blank', 'noopener');
+});
+
+document.getElementById('openAllBtn').addEventListener('click', () => {
+  WORKFLOW_LINKS.forEach(url => window.open(url, '_blank', 'noopener'));
+  bbStatus(`Opened ${WORKFLOW_LINKS.length} tabs`, 2500);
+});
+
+document.getElementById('clearCurrentNicheBtn').addEventListener('click', async () => {
+  const expanded = nicheOrder.filter(n => n.collapsed === false);
+  if (expanded.length === 0) {
+    bbStatus('Expand the niche you want to clear first', 2500);
+    return;
+  }
+  if (expanded.length > 1) {
+    bbStatus('More than one niche is expanded, collapse down to just one first', 3000);
+    return;
+  }
+  const niche = expanded[0];
+  const label = niche.isBonus ? 'Bonus' : 'Niche ' + niche.num;
+  const ok = await customConfirm(`Clear all saved work for ${label}? This cannot be undone.`);
+  if (!ok) return;
+  clearOneNiche(niche);
+});
 
 document.getElementById('saveNowBtn').addEventListener('click', async () => {
   markSaving();
