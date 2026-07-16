@@ -177,6 +177,27 @@
     color: white;
     border-color: var(--accent);
   }
+  .chip-pulled {
+    background: #fff3e0;
+    border-color: #e0a94a;
+    color: #b07830;
+    font-weight: 700;
+    position: relative;
+    padding-right: 18px;
+  }
+  .chip-pulled::after {
+    content: "⬇";
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+  }
+  .chip-pulled:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
 
   /* ── KIT LIST ── */
   .kit-item {
@@ -472,6 +493,10 @@
       <label>Number of Bags Pulled</label>
       <input type="number" id="pull-modal-bags" min="1" value="1" />
     </div>
+    <div class="field">
+      <label>Used For (optional)</label>
+      <input type="text" id="pull-modal-usedfor" placeholder="e.g. Ocean Sunset canvas" />
+    </div>
     <div style="display:flex;gap:10px;margin-top:4px;">
       <button class="btn btn-ghost" style="flex:1" onclick="closePullModal()">Cancel</button>
       <button class="btn btn-primary" style="flex:1" onclick="submitPull()">Log Pull</button>
@@ -592,9 +617,20 @@ function renderLibrary() {
 
   el.innerHTML = bulkBar + kits.map((kit) => {
     const globalNum = sorted.indexOf(kit) + 1;
-    const pullCount = data.pulls.filter(p => p.kitId === kit.id).length;
+    const kitPulls = data.pulls.filter(p => p.kitId === kit.id);
+    const pullCount = kitPulls.length;
+    const pulledDMCs = [...new Set(kitPulls.map(p => p.dmc))];
+    const pulledLabel = pulledDMCs.length > 3
+      ? `${pulledDMCs.slice(0, 3).join(', ')} +${pulledDMCs.length - 3} more`
+      : pulledDMCs.join(', ');
+    // Build a per-color tooltip like "310: Ocean Sunset canvas, Rainy Day tote"
+    const dmcTooltip = d => {
+      const usedFors = kitPulls.filter(p => p.dmc === d && p.usedFor).map(p => p.usedFor);
+      return usedFors.length ? `DMC ${d} — used for: ${usedFors.join(', ')}` : `DMC ${d} pulled`;
+    };
+    const pulledBadgeTitle = pulledDMCs.map(dmcTooltip).join(' | ');
     const pulledBadge = pullCount > 0
-      ? `<span class="badge" style="background:#fff3e0;color:#b07830;">⬇ ${pullCount} pull${pullCount > 1 ? 's' : ''}</span>`
+      ? `<span class="badge" style="background:#fff3e0;color:#b07830;white-space:nowrap;" title="${pulledBadgeTitle}">⬇ ${pulledLabel}</span>`
       : '';
     return `
     <div class="kit-item" id="kit-${kit.id}" style="${pullCount > 0 ? 'border-left: 3px solid var(--gold);' : ''}">
@@ -615,7 +651,10 @@ function renderLibrary() {
       </div>
       <div class="kit-expand" id="expand-${kit.id}">
         <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;">Tap a color to pre-fill the pull form</div>
-        <div class="chip-grid">${kit.dmc.map(d => `<span class="chip" style="cursor:pointer;" onclick="openPullModal(${kit.id},'${d}')" title="Log pull for DMC ${d}">${d}</span>`).join('')}</div>
+        <div class="chip-grid">${kit.dmc.map(d => {
+          const isPulled = pulledDMCs.includes(d);
+          return `<span class="chip${isPulled ? ' chip-pulled' : ''}" style="cursor:pointer;" onclick="openPullModal(${kit.id},'${d}')" title="${isPulled ? dmcTooltip(d) + ' — click to log another pull' : 'Log pull for DMC ' + d}">${d}</span>`;
+        }).join('')}</div>
         <div class="kit-actions">
           <button class="btn btn-primary" onclick="openPullFromLibrary(${kit.id})">Log a Pull</button>
           <button class="btn btn-danger" onclick="deleteKit(${kit.id})">Delete Kit</button>
@@ -785,6 +824,7 @@ function openPullModal(kitId, dmc) {
   document.getElementById('pull-modal-kit').textContent = kit?.name || '';
   document.getElementById('pull-modal-dmc').value = dmc || '';
   document.getElementById('pull-modal-bags').value = 1;
+  document.getElementById('pull-modal-usedfor').value = '';
   document.getElementById('pull-modal').style.display = 'flex';
 }
 
@@ -801,6 +841,7 @@ function submitPull() {
   const kitId = pullModalKit;
   const dmc = document.getElementById('pull-modal-dmc').value.trim();
   const bags = parseInt(document.getElementById('pull-modal-bags').value) || 1;
+  const usedFor = document.getElementById('pull-modal-usedfor').value.trim();
 
   if (!dmc) { toast('Enter a DMC number.'); return; }
 
@@ -811,6 +852,7 @@ function submitPull() {
     kitName: kit?.name || 'Unknown',
     dmc,
     bags,
+    usedFor,
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   };
 
@@ -818,7 +860,7 @@ function submitPull() {
   saveData(data);
   closePullModal();
   renderPulls();
-  toast(`✓ Logged: ${bags} bag${bags > 1 ? 's' : ''} of DMC ${dmc} from ${kit?.name}`);
+  toast(`✓ Logged: ${bags} bag${bags > 1 ? 's' : ''} of DMC ${dmc} from ${kit?.name}${usedFor ? ' for ' + usedFor : ''}`);
 }
 
 // ── RENDER PULLS ─────────────────────────────────────
@@ -833,6 +875,7 @@ function renderPulls() {
       <div class="pull-item-left">
         <div class="pull-dmc">DMC ${p.dmc}</div>
         <div class="pull-detail">${p.bags} bag${p.bags > 1 ? 's' : ''} from <strong>${p.kitName}</strong></div>
+        ${p.usedFor ? `<div class="pull-detail" style="color:var(--accent-dark);">➜ Used for: <strong>${p.usedFor}</strong></div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="pull-date">${p.date}</div>
