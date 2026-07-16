@@ -185,6 +185,71 @@
   }
   .section-pill:hover { background: #dea193; }
 
+  .rate-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #c9a96e;
+    border-radius: 20px;
+    padding: 5px 8px 5px 14px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #2a1f1c;
+  }
+  .rate-pill .rate-select { cursor: pointer; }
+  .rate-pill .rate-remove { color: #c4b0a8; cursor: pointer; font-weight: bold; font-size: 12px; padding: 2px 4px; }
+  .rate-pill .rate-remove:hover { color: #b33; }
+
+  .pinned-notes-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: #2a1f1c;
+    color: #f5eddf;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 900;
+  }
+  .pinned-notes-panel {
+    position: fixed;
+    top: 0;
+    right: -340px;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh;
+    background: #fff;
+    border-left: 2px solid #dea193;
+    box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+    z-index: 950;
+    transition: right 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .pinned-notes-panel.open { right: 0; }
+  .pinned-notes-header { display: flex; justify-content: space-between; align-items: center; }
+  .pinned-notes-header strong { font-size: 15px; color: #2a1f1c; }
+  .pinned-notes-close { cursor: pointer; font-size: 22px; color: #5a4a45; line-height: 1; }
+  .pinned-notes-close:hover { color: #b33; }
+  .pinned-notes-sub { font-size: 12px; color: #5a4a45; margin: 6px 0 12px 0; }
+  .pinned-notes-panel textarea {
+    flex: 1;
+    resize: none;
+    border: 1px solid #ead9d5;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2a1f1c;
+  }
+
   .req-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
   .req-row .num { font-weight: bold; font-size: 14px; padding-bottom: 9px; min-width: 18px; }
   .req-row .field { flex: 1; }
@@ -365,7 +430,7 @@
       </div>
       <div>
         <label>FYI/Notes</label>
-        <input type="text" id="fyiNotes" placeholder="Shows on output">
+        <textarea id="fyiNotes" placeholder="Shows on output" style="min-height:120px;"></textarea>
       </div>
     </div>
 
@@ -928,6 +993,11 @@
           <div class="field"><input type="text" id="ackRentalRate" placeholder="e.g. 45"></div>
           <span style="padding-bottom:0;">per day</span>
         </div>
+        <div id="rentalRatePresets" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;"></div>
+        <div class="bullet-add-row" style="margin-top:8px;">
+          <input type="text" id="rentalRatePresetInput" placeholder="Save a rate for quick reuse, e.g. 45">
+          <button class="btn-add" onclick="addRentalRatePreset()">Save Rate</button>
+        </div>
 
       </div>
 
@@ -1027,8 +1097,38 @@
 
 </div>
 
+<button class="pinned-notes-toggle" onclick="togglePinnedNotes()">📌 Notes</button>
+<div class="pinned-notes-panel" id="pinnedNotesPanel">
+  <div class="pinned-notes-header">
+    <strong>Pinned Notes</strong>
+    <span class="pinned-notes-close" onclick="togglePinnedNotes()">×</span>
+  </div>
+  <div class="pinned-notes-sub">Stays open across tabs. Saved automatically in this browser.</div>
+  <textarea id="pinnedNotesText" placeholder="Jot anything here in real time..." oninput="savePinnedNotes()"></textarea>
+</div>
+
 <script>
   const specialWords = { pm: 'Pain Management', er: 'ER', ems: 'EMS' };
+
+  function togglePinnedNotes() {
+    document.getElementById('pinnedNotesPanel').classList.toggle('open');
+  }
+
+  function savePinnedNotes() {
+    try {
+      localStorage.setItem('pinnedNotesScratchpad', document.getElementById('pinnedNotesText').value);
+    } catch (e) { /* ignore */ }
+  }
+
+  function loadPinnedNotes() {
+    try {
+      const val = localStorage.getItem('pinnedNotesScratchpad');
+      if (val) document.getElementById('pinnedNotesText').value = val;
+    } catch (e) { /* ignore */ }
+  }
+
+  loadPinnedNotes();
+
 
   function showConfirm(message, onConfirm) {
     const overlay = document.createElement('div');
@@ -1103,23 +1203,38 @@
         <button class="btn-add" onclick="addClaimantBullet('${id}','injuries')">Add</button>
       </div>
       <ul class="bullet-list bulletList" data-type="injuries"></ul>
+      <label style="font-weight:normal; display:flex; align-items:center; gap:8px; margin-top:2px;">
+        <input type="checkbox" class="injuriesRefused"> Refused
+      </label>
 
-      <label>Treatment</label>
+      <label style="margin-top:14px;">Treatment</label>
       <div class="bullet-add-row">
         <input type="text" class="bulletInput" data-type="treatment" placeholder="Type a treatment item, then Add">
         <button class="btn-add" onclick="addClaimantBullet('${id}','treatment')">Add</button>
       </div>
       <ul class="bullet-list bulletList" data-type="treatment"></ul>
+      <label style="font-weight:normal; display:flex; align-items:center; gap:8px; margin-top:2px;">
+        <input type="checkbox" class="treatmentRefused"> Refused
+      </label>
 
-      <label>ISO Needed</label>
+      <label style="margin-top:14px;">ISO Needed</label>
       <div class="check-row">
         <label><input type="checkbox" class="isoCheck" value="SSN"> SSN</label>
         <label><input type="checkbox" class="isoCheck" value="DOB"> DOB</label>
         <label><input type="checkbox" class="isoCheck" value="Gender"> Gender</label>
         <label><input type="checkbox" class="isoCheck" value="Address"> Address</label>
       </div>
+      <label style="font-weight:normal; display:flex; align-items:center; gap:8px; margin-top:6px;">
+        <input type="checkbox" class="isoRefusedToggle" onchange="toggleISORefusedRow(this)"> Refused
+      </label>
+      <div class="check-row isoRefusedRow" style="display:none; margin-top:4px;">
+        <label><input type="checkbox" class="isoRefusedCheck" value="SSN"> SSN</label>
+        <label><input type="checkbox" class="isoRefusedCheck" value="DOB"> DOB</label>
+        <label><input type="checkbox" class="isoRefusedCheck" value="Gender"> Gender</label>
+        <label><input type="checkbox" class="isoRefusedCheck" value="Address"> Address</label>
+      </div>
 
-      <label>Health Insurance</label>
+      <label style="margin-top:14px;">Health Insurance</label>
       <div class="check-row">
         <label><input type="checkbox" class="medicareCheck"> Medicare</label>
         <label><input type="checkbox" class="medicaidCheck"> Medicaid</label>
@@ -1139,6 +1254,12 @@
     delete claimants[id];
     const el = document.getElementById(id);
     if (el) el.remove();
+  }
+
+  function toggleISORefusedRow(checkbox) {
+    const card = checkbox.closest('.claimant-card');
+    const row = card.querySelector('.isoRefusedRow');
+    row.style.display = checkbox.checked ? 'flex' : 'none';
   }
 
   function addClaimantBullet(id, type) {
@@ -1211,6 +1332,8 @@
     lines.push('');
     lines.push(`${contactResult} ${contactName}.`);
 
+    const totalClaimants = Object.keys(claimants).length;
+
     Object.keys(claimants).forEach(id => {
       const div = document.getElementById(id);
       if (!div) return;
@@ -1218,29 +1341,42 @@
       const name = nameRaw ? smartCase(nameRaw) : 'Claimant';
       const injuries = claimants[id].injuries;
       const treatment = claimants[id].treatment;
+      const injuriesRefused = div.querySelector('.injuriesRefused').checked;
+      const treatmentRefused = div.querySelector('.treatmentRefused').checked;
       const isoItems = Array.from(div.querySelectorAll('.isoCheck:checked')).map(c => c.value);
+      const isoRefusedItems = div.querySelector('.isoRefusedToggle').checked
+        ? Array.from(div.querySelectorAll('.isoRefusedCheck:checked')).map(c => c.value)
+        : [];
       const healthInsItems = [];
       if (div.querySelector('.medicareCheck').checked) healthInsItems.push('Medicare');
       if (div.querySelector('.medicaidCheck').checked) healthInsItems.push('Medicaid');
       const otherIns = div.querySelector('.healthInsOther').value.trim();
       if (otherIns) healthInsItems.push(smartCase(otherIns));
 
-      const hasContent = injuries.length || treatment.length || isoItems.length || healthInsItems.length;
+      const hasContent = injuries.length || treatment.length || injuriesRefused || treatmentRefused ||
+        isoItems.length || isoRefusedItems.length || healthInsItems.length;
       if (!hasContent) return;
 
       lines.push('');
-      lines.push(`${name}:`);
+      if (totalClaimants > 1) lines.push(`${name}:`);
 
-      if (injuries.length) {
+      if (injuriesRefused) {
+        lines.push('Injuries - Refused');
+      } else if (injuries.length) {
         lines.push('Injuries:');
         injuries.forEach(b => lines.push('- ' + b));
       }
-      if (treatment.length) {
+
+      if (treatmentRefused) {
+        lines.push('Treatment - Refused');
+      } else if (treatment.length) {
         lines.push('Treatment:');
         treatment.forEach(b => lines.push('- ' + b));
       }
+
       if (healthInsItems.length) lines.push('Health Insurance: ' + healthInsItems.join(', '));
       if (isoItems.length) lines.push('ISO Needed: ' + isoItems.join(', '));
+      if (isoRefusedItems.length) lines.push('ISO Refused: ' + isoRefusedItems.join(', '));
     });
 
     if (pdmoi) { lines.push(''); lines.push('PD/MOI: ' + pdmoi); }
@@ -1890,6 +2026,61 @@
     document.getElementById('ackPreservationField').style.display = checked ? 'block' : 'none';
   }
 
+  function loadRentalRatePresets() {
+    try {
+      const raw = localStorage.getItem('rentalRatePresets');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveRentalRatePresets(presets) {
+    try {
+      localStorage.setItem('rentalRatePresets', JSON.stringify(presets));
+    } catch (e) { /* ignore */ }
+  }
+
+  function renderRentalRatePresets() {
+    const container = document.getElementById('rentalRatePresets');
+    const presets = loadRentalRatePresets();
+    container.innerHTML = '';
+    presets.forEach((rate, idx) => {
+      const pill = document.createElement('div');
+      pill.className = 'rate-pill';
+      pill.innerHTML = `<span class="rate-select" onclick="selectRentalRate('${rate}')">$${rate}</span><span class="rate-remove" onclick="removeRentalRatePreset(${idx})">×</span>`;
+      container.appendChild(pill);
+    });
+  }
+
+  function addRentalRatePreset() {
+    const input = document.getElementById('rentalRatePresetInput');
+    const val = input.value.trim().replace(/^\$/, '');
+    if (!val) return;
+    const presets = loadRentalRatePresets();
+    if (!presets.includes(val)) presets.push(val);
+    saveRentalRatePresets(presets);
+    input.value = '';
+    renderRentalRatePresets();
+  }
+
+  function removeRentalRatePreset(idx) {
+    const presets = loadRentalRatePresets();
+    presets.splice(idx, 1);
+    saveRentalRatePresets(presets);
+    renderRentalRatePresets();
+  }
+
+  function selectRentalRate(rate) {
+    document.getElementById('ackRentalRate').value = rate;
+  }
+
+  renderRentalRatePresets();
+
+  document.getElementById('rentalRatePresetInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addRentalRatePreset(); }
+  });
+
   function generateAckOutput() {
     const names = document.getElementById('ackClaimantNames').value.trim();
     const errorMsg = document.getElementById('ackErrorMsg');
@@ -2100,7 +2291,10 @@
       lines.push('- Alerts - N/A');
     }
 
-    ifrNotesBullets.forEach(n => lines.push('- Notes/FYI: ' + n));
+    if (ifrNotesBullets.length) {
+      lines.push('Notes/FYI:');
+      ifrNotesBullets.forEach(n => lines.push('- ' + n));
+    }
 
     lines.push('');
     lines.push('---');
