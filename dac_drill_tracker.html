@@ -357,6 +357,7 @@
     <div class="nav-tab active" onclick="showPage('library')">Kit Library</div>
     <div class="nav-tab" onclick="showPage('search')">Find a Color</div>
     <div class="nav-tab" onclick="showPage('pulls')">Pull Log</div>
+    <div class="nav-tab" onclick="showPage('picker')">🎲 Picker</div>
   </div>
 </nav>
 
@@ -399,6 +400,10 @@
           <option value="Round">Round</option>
           <option value="Square">Square</option>
         </select>
+      </div>
+      <div class="field" style="max-width:160px">
+        <label>Size (optional)</label>
+        <input type="text" id="add-kit-size" placeholder="e.g. 22 x 28 inch" />
       </div>
     </div>
     <div class="field">
@@ -481,6 +486,58 @@
   <div id="pull-list"></div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE 4 — PICKER
+══════════════════════════════════════════ -->
+<div class="page" id="page-picker">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#b5c8f0"></div>
+      <div class="gem" style="background:#f0d4a0"></div>
+      <div class="gem" style="background:#e8a0b8"></div>
+    </div>
+    <h2>What Should I <em>Work On?</em></h2>
+    <p>Filter by shape or size, then spin to pick your next project.</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="field" style="max-width:180px">
+        <label>Shape</label>
+        <select id="picker-shape">
+          <option value="">Any shape</option>
+          <option value="Round">Round</option>
+          <option value="Square">Square</option>
+        </select>
+      </div>
+      <div class="field" style="max-width:220px">
+        <label>Size</label>
+        <select id="picker-size">
+          <option value="">Any size</option>
+          <option value="small">Small (under 20 in)</option>
+          <option value="medium">Medium (20–30 in)</option>
+          <option value="large">Large (30 in+)</option>
+        </select>
+      </div>
+    </div>
+    <div id="picker-pool-count" style="font-size:0.8rem;color:var(--muted);margin-bottom:14px;"></div>
+    <button class="btn btn-primary btn-full" id="picker-spin-btn" onclick="spinPicker()">🎲 Spin</button>
+  </div>
+
+  <div id="picker-result-card" style="display:none;" class="card">
+    <div style="text-align:center;padding:8px 0;">
+      <div style="font-size:0.75rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;">Next Up</div>
+      <div id="picker-result-name" style="font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--accent-dark);margin-bottom:10px;min-height:2.2em;display:flex;align-items:center;justify-content:center;"></div>
+      <div id="picker-result-meta" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="spinPicker()">Spin Again</button>
+    </div>
+  </div>
+
+  <div id="picker-empty" style="display:none;" class="empty"><div class="empty-icon">🎲</div>No kits match those filters. Try widening your search.</div>
+</div>
+
 <!-- PULL MODAL -->
 <div id="pull-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
@@ -505,6 +562,39 @@
   </div>
 </div>
 
+<!-- EDIT KIT MODAL -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px;">Edit Kit</h3>
+    <div class="field">
+      <label>Kit Name</label>
+      <input type="text" id="edit-kit-name" />
+    </div>
+    <div class="row">
+      <div class="field" style="max-width:140px">
+        <label>Shape</label>
+        <select id="edit-kit-shape">
+          <option value="Unknown">Unknown</option>
+          <option value="Round">Round</option>
+          <option value="Square">Square</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Size</label>
+        <input type="text" id="edit-kit-size" placeholder="e.g. 22 x 28 inch" />
+      </div>
+    </div>
+    <div class="field">
+      <label>DMC Numbers — comma-separated</label>
+      <textarea id="edit-kit-dmc" placeholder="122, 129, 141, 152 ..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="submitEditKit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -514,29 +604,96 @@ const STORAGE_KEY = 'dac_tracker_v1';
 // One-time seed of kit names imported from the DAC app screenshots.
 // Shape and DMC colors are left blank/empty for Dania to fill in.
 const SEED_KITS = [
-  "A Sweet Picnic","Astronomy Witch","Makeup Routine",
-  "Aquamarine Fairy","Artist Room","Back to School","Back To Wonderland","Big Sis",
-  "Books Are Magic","Botanical Witch","Bring Me Back to the Stars","Burst of Color","Carousel",
-  "Catch You, Catch Me","Celestial Dragons","Christmas Candy Box","Christmas Candy Shop",
-  "Christmas Drink","Christmas Room","Christmas Witch","Chroma","Cinderella","Cleaning Day",
-  "Coloring Afternoon","Cottagecore Witch","Cozy Autumn","Cozy Kotatsu","Cozy Study Time",
-  "Daisy Drops","Day Dreaming","Deity of Dawn","Duchess Capella","Flower Crazy",
-  "Galactic Mermaid","Glass Mermaid","Goddess of Santorini","Goddess Ordering Takeout",
-  "Greek Princess","Hot Springs","I Love You Too Much","Inside Watery Eyes","Lady Moth",
-  "Love Lives Here","Lumina","Magic Arcades","Mars","Me Time","Mermaid Bedroom",
-  "Mermaid Princess","Mermaid Tea Time","Moon And Tides","Moon Catcher","Nature Fiddle",
-  "Night Out","Olivia's Room","Persephone of Spring","Pink Clouds","Rainy Day Mermaid",
-  "Rainy Summer Day","Rose Library","Royal Cuddle","Sea Queen","Shea Butterfly Babe",
-  "Sleeping Familiars","Sleeps With Butterflies","Somewhere Over The Rainbow","Spirits",
-  "Spring Fairy","Springtime Blossoms","Under the Stairs","Wanderlust","Warm Witch",
-  "Welcome to My Room!","Winston's Prize","Witch Bedroom","Witch Reading in Front of a Bookshelf",
-  "Witchcraft Room","Witchy Greenhouse",
-  "Cozy Christmas","Fairy Workspace","Flower Child","Imposter Duck","Magic Broth Ramen Shop",
-  "Mystery Kit #125 - Interior","Mystery Kit #127 - Interior","Witchy Greenhouse"
+  {name:"A Sweet Picnic", size:"22 x 28 inch"},
+  {name:"Astronomy Witch", size:"27.6 x 39 inch"},
+  {name:"Makeup Routine", size:"22 x 31 inch"},
+  {name:"Aquamarine Fairy", size:"22 x 31 inch"},
+  {name:"Artist Room", size:"17 x 21 inch"},
+  {name:"Back to School", size:"25 x 31 inch"},
+  {name:"Back To Wonderland", size:"22 x 26 inch"},
+  {name:"Big Sis", size:"22 x 28 inch"},
+  {name:"Books Are Magic", size:"22 x 31 inch"},
+  {name:"Botanical Witch", size:"22 x 31 inch"},
+  {name:"Bring Me Back to the Stars", size:"22 x 27 inch"},
+  {name:"Burst of Color", size:"22 x 27 inch"},
+  {name:"Carousel", size:"26.5 x 33.5 inch"},
+  {name:"Catch You, Catch Me", size:"23 x 33 inch"},
+  {name:"Celestial Dragons", size:"23 x 33 inch"},
+  {name:"Christmas Candy Box", size:"22 x 28 inch"},
+  {name:"Christmas Candy Shop", size:"22 x 31 inch"},
+  {name:"Christmas Drink", size:"20 x 28 inch"},
+  {name:"Christmas Room", size:"27.6 x 39 inch"},
+  {name:"Christmas Witch", size:"27 x 39 inch"},
+  {name:"Chroma", size:"18.5 x 28 inch"},
+  {name:"Cinderella", size:"13 x 17 inch"},
+  {name:"Cleaning Day", size:"36 x 27 inch"},
+  {name:"Coloring Afternoon", size:"23 x 31 inch"},
+  {name:"Cottagecore Witch", size:"27.6 x 38.2 inch"},
+  {name:"Cozy Autumn", size:"27 x 37 inch"},
+  {name:"Cozy Kotatsu", size:"25.6 x 32.7 inch"},
+  {name:"Cozy Study Time", size:"22 x 31 inch"},
+  {name:"Daisy Drops", size:"22 x 22 inch"},
+  {name:"Day Dreaming", size:"27 x 22 inch"},
+  {name:"Deity of Dawn", size:"23.6 x 33.5 inch"},
+  {name:"Duchess Capella", size:"25.6 x 31.9 inch"},
+  {name:"Flower Crazy", size:"22 x 29 inch"},
+  {name:"Galactic Mermaid", size:"22 x 29 inch"},
+  {name:"Glass Mermaid", size:"26 x 26 inch"},
+  {name:"Goddess of Santorini", size:"22 x 22 inch"},
+  {name:"Goddess Ordering Takeout", size:"25.6 x 33.5 inch"},
+  {name:"Greek Princess", size:"17 x 23 inch"},
+  {name:"Hot Springs", size:"20 x 28 inch"},
+  {name:"I Love You Too Much", size:"25.6 x 25.6 inch"},
+  {name:"Inside Watery Eyes", size:"22 x 27 inch"},
+  {name:"Lady Moth", size:"23 x 31 inch"},
+  {name:"Love Lives Here", size:"27.6 x 36.6 inch"},
+  {name:"Lumina", size:"22 x 33 inch"},
+  {name:"Magic Arcades", size:"22 x 31 inch"},
+  {name:"Mars", size:"25 x 38 inch"},
+  {name:"Me Time", size:"36 x 25 inch"},
+  {name:"Mermaid Bedroom", size:"22 x 28 inch"},
+  {name:"Mermaid Princess", size:"20 x 26 inch"},
+  {name:"Mermaid Tea Time", size:"28 x 35 inch"},
+  {name:"Moon And Tides", size:""},
+  {name:"Moon Catcher", size:"22 x 20 inch"},
+  {name:"Nature Fiddle", size:"25 x 36 inch"},
+  {name:"Night Out", size:"22 x 31 inch"},
+  {name:"Olivia's Room", size:"22 x 31 inch"},
+  {name:"Persephone of Spring", size:"23 x 30 inch"},
+  {name:"Pink Clouds", size:"25 x 25 inch"},
+  {name:"Rainy Day Mermaid", size:"20 x 25 inch"},
+  {name:"Rainy Summer Day", size:"27.6 x 39 inch"},
+  {name:"Rose Library", size:"38.6 x 27.6 inch"},
+  {name:"Royal Cuddle", size:"23.6 x 29.5 inch"},
+  {name:"Sea Queen", size:"20 x 25 inch"},
+  {name:"Shea Butterfly Babe", size:"16.5 x 21.5 inch"},
+  {name:"Sleeping Familiars", size:"20 x 26 inch"},
+  {name:"Sleeps With Butterflies", size:"22 x 28 inch"},
+  {name:"Somewhere Over The Rainbow", size:"22 x 31 inch"},
+  {name:"Spirits", size:"22 x 29 inch"},
+  {name:"Spring Fairy", size:"25 x 38 inch"},
+  {name:"Springtime Blossoms", size:"22 x 28 inch"},
+  {name:"Under the Stairs", size:"27 x 37 inch"},
+  {name:"Wanderlust", size:"22 x 28 inch"},
+  {name:"Warm Witch", size:"22 x 29 inch"},
+  {name:"Welcome to My Room!", size:"25.6 x 31.9 inch"},
+  {name:"Winston's Prize", size:"15.7 x 15.7 inch"},
+  {name:"Witch Bedroom", size:"17 x 24 inch"},
+  {name:"Witch Reading in Front of a Bookshelf", size:"25.6 x 33.9 inch"},
+  {name:"Witchcraft Room", size:"22 x 30 inch"},
+  {name:"Witchy Greenhouse", size:"27.6 x 39.8 inch"},
+  {name:"Cozy Christmas", size:"27.6 x 37 inch"},
+  {name:"Fairy Workspace", size:"25.6 x 36.2 inch"},
+  {name:"Flower Child", size:"27.6 x 28.7 inch"},
+  {name:"Imposter Duck", size:"23.6 x 33.1 inch"},
+  {name:"Magic Broth Ramen Shop", size:"22 x 31 inch"},
+  {name:"Mystery Kit #125 - Interior", size:"27.6 x 37 inch"},
+  {name:"Mystery Kit #127 - Interior", size:"25.6 x 36.2 inch"},
+  {name:"Witchy Greenhouse", size:"25.6 x 36.2 inch"}
 ];
 
 function buildSeedKits() {
-  return SEED_KITS.map((name, i) => ({ id: Date.now() + i, name, shape: 'Unknown', dmc: [] }));
+  return SEED_KITS.map((k, i) => ({ id: Date.now() + i, name: k.name, shape: 'Unknown', size: k.size || '', dmc: [] }));
 }
 
 function loadData() {
@@ -609,12 +766,14 @@ function showPage(id) {
   if (id === 'library') renderLibrary();
   if (id === 'search') { searchDMC(); }
   if (id === 'pulls') renderPulls();
+  if (id === 'picker') { populatePickerFilters(); }
 }
 
 // ── ADD KIT ──────────────────────────────────────────
 function addKit() {
   const name = document.getElementById('add-kit-name').value.trim();
   const shape = document.getElementById('add-kit-shape').value;
+  const size = document.getElementById('add-kit-size').value.trim();
   const rawDMC = document.getElementById('add-kit-dmc').value.trim();
 
   if (!name) { toast('Enter a kit name.'); return; }
@@ -623,12 +782,13 @@ function addKit() {
   const dmc = rawDMC.split(',').map(s => s.trim()).filter(Boolean);
   if (!dmc.length) { toast('No DMC numbers found.'); return; }
 
-  const kit = { id: Date.now(), name, shape: shape || 'Unknown', dmc };
+  const kit = { id: Date.now(), name, shape: shape || 'Unknown', size, dmc };
   data.kits.push(kit);
   saveData(data);
 
   document.getElementById('add-kit-name').value = '';
   document.getElementById('add-kit-shape').value = '';
+  document.getElementById('add-kit-size').value = '';
   document.getElementById('add-kit-dmc').value = '';
 
   renderLibrary();
@@ -697,6 +857,7 @@ function renderLibrary() {
           <div class="kit-meta">
             ${pulledBadge}
             <span class="badge badge-shape">${kit.shape}</span>
+            ${kit.size ? `<span class="badge" style="background:#eef2f7;color:#5a6b7d;">${kit.size}</span>` : ''}
             <span class="badge badge-count">${kit.dmc.length} colors</span>
             <span style="color:var(--muted);font-size:0.85rem">▾</span>
           </div>
@@ -710,6 +871,7 @@ function renderLibrary() {
         }).join('')}</div>
         <div class="kit-actions">
           <button class="btn btn-primary" onclick="openPullFromLibrary(${kit.id})">Log a Pull</button>
+          <button class="btn btn-ghost" onclick="openEditModal(${kit.id})">Edit Kit</button>
           <button class="btn btn-danger" onclick="deleteKit(${kit.id})">Delete Kit</button>
         </div>
       </div>
@@ -890,6 +1052,51 @@ function closePullModal() {
   pullModalKit = null;
 }
 
+// ── EDIT KIT MODAL ────────────────────────────────────
+let editKitId = null;
+
+function openEditModal(kitId) {
+  const kit = data.kits.find(k => k.id === kitId);
+  if (!kit) return;
+  editKitId = kitId;
+  document.getElementById('edit-kit-name').value = kit.name || '';
+  document.getElementById('edit-kit-shape').value = kit.shape || 'Unknown';
+  document.getElementById('edit-kit-size').value = kit.size || '';
+  document.getElementById('edit-kit-dmc').value = (kit.dmc || []).join(', ');
+  document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').style.display = 'none';
+  editKitId = null;
+}
+
+function submitEditKit() {
+  const kit = data.kits.find(k => k.id === editKitId);
+  if (!kit) return;
+
+  const name = document.getElementById('edit-kit-name').value.trim();
+  if (!name) { toast('Enter a kit name.'); return; }
+
+  const shape = document.getElementById('edit-kit-shape').value;
+  const size = document.getElementById('edit-kit-size').value.trim();
+  const rawDMC = document.getElementById('edit-kit-dmc').value.trim();
+  const dmc = rawDMC ? rawDMC.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  kit.name = name;
+  kit.shape = shape || 'Unknown';
+  kit.size = size;
+  kit.dmc = dmc;
+
+  // Keep pull history in sync with the kit's display name
+  data.pulls.forEach(p => { if (p.kitId === kit.id) p.kitName = name; });
+
+  saveData(data);
+  closeEditModal();
+  renderLibrary();
+  toast(`✓ ${name} updated`);
+}
+
 function submitPull() {
   const kitId = pullModalKit;
   const dmc = document.getElementById('pull-modal-dmc').value.trim();
@@ -945,7 +1152,82 @@ function deletePull(id) {
   toast('Entry removed.');
 }
 
-// ── DAC REQUESTS ─────────────────────────────────────
+// ── PICKER ────────────────────────────────────────────
+function getSizeCategory(sizeStr) {
+  if (!sizeStr) return null;
+  const nums = (sizeStr.match(/\d+(\.\d+)?/g) || []).map(Number);
+  if (!nums.length) return null;
+  const max = Math.max(...nums);
+  if (max < 20) return 'small';
+  if (max <= 30) return 'medium';
+  return 'large';
+}
+
+function getPickerPool() {
+  const shapeFilter = document.getElementById('picker-shape').value;
+  const sizeFilter = document.getElementById('picker-size').value;
+  return data.kits.filter(k => {
+    if (shapeFilter && k.shape !== shapeFilter) return false;
+    if (sizeFilter && getSizeCategory(k.size) !== sizeFilter) return false;
+    return true;
+  });
+}
+
+function populatePickerFilters() {
+  document.getElementById('picker-result-card').style.display = 'none';
+  document.getElementById('picker-empty').style.display = 'none';
+  updatePickerPoolCount();
+}
+
+function updatePickerPoolCount() {
+  const pool = getPickerPool();
+  const el = document.getElementById('picker-pool-count');
+  el.textContent = pool.length
+    ? `${pool.length} kit${pool.length > 1 ? 's' : ''} match${pool.length > 1 ? '' : 'es'} these filters`
+    : 'No kits match these filters yet';
+}
+
+document.getElementById('picker-shape')?.addEventListener('change', updatePickerPoolCount);
+document.getElementById('picker-size')?.addEventListener('change', updatePickerPoolCount);
+
+function spinPicker() {
+  const pool = getPickerPool();
+  const resultCard = document.getElementById('picker-result-card');
+  const emptyEl = document.getElementById('picker-empty');
+  const nameEl = document.getElementById('picker-result-name');
+  const metaEl = document.getElementById('picker-result-meta');
+  const btn = document.getElementById('picker-spin-btn');
+
+  if (!pool.length) {
+    resultCard.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  resultCard.style.display = 'block';
+  btn.disabled = true;
+
+  let ticks = 0;
+  const maxTicks = 14;
+  const spinInterval = setInterval(() => {
+    const flash = pool[Math.floor(Math.random() * pool.length)];
+    nameEl.textContent = flash.name;
+    ticks++;
+    if (ticks >= maxTicks) {
+      clearInterval(spinInterval);
+      const winner = pool[Math.floor(Math.random() * pool.length)];
+      nameEl.textContent = winner.name;
+      metaEl.innerHTML = [
+        winner.shape && winner.shape !== 'Unknown' ? `<span class="badge badge-shape">${winner.shape}</span>` : '',
+        winner.size ? `<span class="badge" style="background:#eef2f7;color:#5a6b7d;">${winner.size}</span>` : '',
+        `<span class="badge badge-count">${winner.dmc.length} colors</span>`
+      ].join('');
+      btn.disabled = false;
+    }
+  }, 90);
+}
+
+
 function addDACRequest() {
   const dmc = document.getElementById('dac-dmc').value.trim();
   const date = document.getElementById('dac-date').value;
