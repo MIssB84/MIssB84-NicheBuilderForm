@@ -553,6 +553,8 @@
 
 <div class="bottom-bar">
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
+  <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 30s</span>
+  <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
   <button class="btn bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
 </div>
 
@@ -703,6 +705,56 @@ const autosaveTags = debounce(async () => {
   if (!selectedType) return;
   try { await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray)); } catch (e) {}
 }, 600);
+
+const autosaveKeywords = debounce(async (val) => {
+  try { await storageAPI.set('session:designKeywords', val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+const autosaveDirection = debounce(async (val) => {
+  try { await storageAPI.set('session:creativeDirection', val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+document.getElementById('designKeywords').addEventListener('input', (e) => autosaveKeywords(e.target.value));
+document.getElementById('creativeDirection').addEventListener('input', (e) => autosaveDirection(e.target.value));
+
+function flashSavedIndicator() {
+  const el = document.getElementById('autosaveStatus');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = 'Saved ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+}
+
+async function saveAllNow() {
+  try {
+    if (selectedType) {
+      await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
+      await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+      await storageAPI.set('session:liveTitle:' + selectedType, document.getElementById('liveTitlePreview').value);
+    }
+    await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
+    await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
+    await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
+  } catch (e) {}
+  flashSavedIndicator();
+}
+
+document.getElementById('saveNowBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveNowBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  await saveAllNow();
+  btn.textContent = 'Saved!';
+  setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1200);
+});
+
+setInterval(() => { saveAllNow(); }, 30000);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') saveAllNow();
+});
 
 function seedTagsFromBakedIn() {
   tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
@@ -1741,6 +1793,13 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
         if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
       }
     }
+  } catch (e) {}
+
+  try {
+    const savedKeywords = await storageAPI.get('session:designKeywords');
+    if (savedKeywords && savedKeywords.value) document.getElementById('designKeywords').value = savedKeywords.value;
+    const savedDirection = await storageAPI.get('session:creativeDirection');
+    if (savedDirection && savedDirection.value) document.getElementById('creativeDirection').value = savedDirection.value;
   } catch (e) {}
 })();
 
