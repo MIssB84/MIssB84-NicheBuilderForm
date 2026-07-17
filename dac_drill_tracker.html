@@ -378,6 +378,7 @@
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-top:6px;">
         <span id="save-indicator" style="font-size:0.75rem;color:var(--accent2);font-weight:600;opacity:0;transition:opacity 0.3s;">✓ Saved</span>
+        <button class="btn btn-ghost" style="font-size:0.8rem;padding:8px 14px;" onclick="importStarterKits()">⬆ Import Starter Kits</button>
         <button class="btn btn-ghost" style="font-size:0.8rem;padding:8px 14px;" onclick="exportBackup()">⬇ Export Backup</button>
       </div>
     </div>
@@ -534,19 +535,39 @@ const SEED_KITS = [
   "Mystery Kit #125 - Interior","Mystery Kit #127 - Interior","Witchy Greenhouse"
 ];
 
+function buildSeedKits() {
+  return SEED_KITS.map((name, i) => ({ id: Date.now() + i, name, shape: 'Unknown', dmc: [] }));
+}
+
 function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Seed if there's no kit data yet, even if the record already exists
+      if (!parsed.kits || parsed.kits.length === 0) {
+        parsed.kits = buildSeedKits();
+        parsed.pulls = parsed.pulls || [];
+        parsed.dac = parsed.dac || [];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      }
+      return parsed;
+    }
     // First run — seed with the imported kit list
-    const seeded = {
-      kits: SEED_KITS.map((name, i) => ({ id: Date.now() + i, name, shape: 'Unknown', dmc: [] })),
-      pulls: [],
-      dac: []
-    };
+    const seeded = { kits: buildSeedKits(), pulls: [], dac: [] };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
     return seeded;
   } catch { return { kits: [], pulls: [], dac: [] }; }
+}
+
+function importStarterKits() {
+  if (data.kits.length > 0) {
+    if (!confirm('This will ADD ' + SEED_KITS.length + ' starter kits to your existing ' + data.kits.length + ' kits. Continue?')) return;
+  }
+  data.kits = data.kits.concat(buildSeedKits());
+  saveData(data);
+  renderLibrary();
+  toast('✓ Imported ' + SEED_KITS.length + ' starter kits!');
 }
 
 function saveData(data) {
