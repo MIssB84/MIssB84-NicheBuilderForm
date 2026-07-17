@@ -409,15 +409,16 @@
     <div class="add-tag-row" style="margin-top:10px;">
       <input type="text" id="imageUrlInput" placeholder="Or paste an image URL and press Enter">
       <button class="btn small" id="addImageUrlBtn">Add URL</button>
+      <button class="btn secondary" id="pasteImageUrlClipboardBtn">Paste URL from Clipboard</button>
     </div>
     <div class="thumbs" id="thumbs"></div>
 
     <label>Keywords or working title (optional)</label>
-    <div class="hint">Extra context for the AI, like a working title or a few keywords naming the subject, elements, or theme. Helps it read the screenshot more accurately.</div>
+    <div class="hint">Extra context for the AI, like a working title or a few keywords naming the subject, elements, or theme. Helps it read the screenshot more accurately, and it'll work some of these descriptive words into the prompts themselves. Press Enter to generate.</div>
     <textarea id="designKeywords" rows="2" placeholder="e.g. spooky cat witch coffee, Halloween cottagecore, hocus pocus themed"></textarea>
 
     <label>Creative direction (optional)</label>
-    <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating.</div>
+    <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating. Press Enter to generate.</div>
     <textarea id="creativeDirection" rows="2" placeholder="e.g. deeper color palette, add more stars, softer background"></textarea>
 
     <button class="btn" id="generatePromptsBtn">Generate 5 Prompts</button>
@@ -1241,6 +1242,11 @@ document.getElementById('imageUrlInput').addEventListener('keydown', (e) => {
   }
 });
 
+document.getElementById('pasteImageUrlClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteImageUrlClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => { addImageUrl(text); });
+});
+
 function setStatus(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
 function setError(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
 
@@ -1292,7 +1298,7 @@ const PROMPTS_SYSTEM = `You are a production assistant that writes AI image gene
 
 You will be given one or more inspo screenshots, a product type, optional keywords or a working title for extra context, and either creative direction or an instruction to auto suggest improvements.
 
-Study the screenshot(s) in full detail: exact subject, pose, expression, any text or wording shown, color palette and how colors are distributed, background elements and patterns, layout, and overall mood. Use the optional keywords or working title, if given, to better understand what the subject or theme is meant to be, especially if anything in the screenshot is ambiguous.
+Study the screenshot(s) in full detail: exact subject, pose, expression, any text or wording shown, color palette and how colors are distributed, background elements and patterns, layout, and overall mood. If keywords or a working title are given, treat them as important context: work several of the specific descriptive words or phrases from them naturally into the prompts themselves wherever they fit the visual, not just as background understanding. Use them to fill in or sharpen details the screenshot alone leaves ambiguous.
 
 If no creative direction is given, generate 2 to 3 quick one sentence design suggestions to elevate the design past the original, and use those as the creative direction for the prompts. Return these suggestions in the "suggestions" field. If creative direction was given, leave "suggestions" as an empty string.
 
@@ -1317,8 +1323,21 @@ Laser Wrap SVG: design concept only, no style or medium language since style is 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"suggestions": "string or empty string", "prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
 
-document.getElementById('generatePromptsBtn').addEventListener('click', async () => {
-  const statusEl = document.getElementById('promptsStatus');
+document.getElementById('designKeywords').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('generatePromptsBtn').click();
+  }
+});
+
+document.getElementById('creativeDirection').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('generatePromptsBtn').click();
+  }
+});
+
+document.getElementById('generatePromptsBtn').addEventListener('click', async () => {  const statusEl = document.getElementById('promptsStatus');
   const errorEl = document.getElementById('promptsError');
   const outputBlock = document.getElementById('promptsOutputBlock');
   setError(errorEl, '');
@@ -1344,7 +1363,7 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
     });
     userContent.push({
       type: 'text',
-      text: `Product type: ${selectedType}\nKeywords or working title: ${keywords ? keywords : 'none given'}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}`
+      text: `Product type: ${selectedType}\nKeywords or working title (weave several of these descriptive words naturally into the prompts): ${keywords ? keywords : 'none given'}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}`
     });
 
     const result = await callClaude(PROMPTS_SYSTEM, userContent);
