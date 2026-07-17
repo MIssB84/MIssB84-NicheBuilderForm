@@ -416,6 +416,7 @@
     <label>Keywords or working title (optional)</label>
     <div class="hint">Extra context for the AI, like a working title or a few keywords naming the subject, elements, or theme. Helps it read the screenshot more accurately, and it'll work some of these descriptive words into the prompts themselves. Press Enter to generate.</div>
     <textarea id="designKeywords" rows="2" placeholder="e.g. spooky cat witch coffee, Halloween cottagecore, hocus pocus themed"></textarea>
+    <button class="btn secondary" id="pasteKeywordsClipboardBtn" style="margin-top:8px;">Paste from Clipboard</button>
 
     <label>Creative direction (optional)</label>
     <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating. Press Enter to generate.</div>
@@ -1328,6 +1329,14 @@ document.getElementById('designKeywords').addEventListener('keydown', (e) => {
     e.preventDefault();
     document.getElementById('generatePromptsBtn').click();
   }
+});
+
+document.getElementById('pasteKeywordsClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteKeywordsClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => {
+    const box = document.getElementById('designKeywords');
+    box.value = box.value ? box.value + ', ' + text.trim() : text.trim();
+  });
 });
 
 document.getElementById('creativeDirection').addEventListener('keydown', (e) => {
