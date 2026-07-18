@@ -509,6 +509,23 @@
     <div class="status" id="titlesStatus"></div>
     <div class="error" id="titlesError"></div>
   </div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 3</span> Description</h2>
+    <div class="hint">Writes your listing description in your fixed format, a hook, a use case line with the catchy phrase from your title in quotes, then the download line. Pulls from your live title, tags, and image prompts already generated for this design.</div>
+
+    <button class="btn" id="generateDescriptionBtn">Generate Description</button>
+    <div class="status" id="descriptionStatus"></div>
+    <div class="error" id="descriptionError"></div>
+
+    <div class="output-block" id="descriptionOutputBlock" style="display:none; margin-top:14px;">
+      <textarea id="descriptionOutput" rows="5" style="width:100%; font-family:'Jost', sans-serif; font-size:14px; line-height:1.6; padding:12px; border-radius:8px; border:1px solid var(--border); resize:vertical; color:var(--bg);"></textarea>
+      <div class="copy-all-row">
+        <button class="btn secondary" id="copyDescriptionBtn">Copy Description</button>
+        <button class="btn secondary" id="regenerateDescriptionBtn">Regenerate</button>
+      </div>
+    </div>
+  </div>
   </div>
 
   <div class="tab-panel" id="calendarTab">
@@ -732,6 +749,7 @@ async function saveAllNow() {
       await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
       await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
       await storageAPI.set('session:liveTitle:' + selectedType, document.getElementById('liveTitlePreview').value);
+      await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
     }
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
     await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
@@ -798,6 +816,19 @@ async function restoreWorkSession(type) {
     return true;
   });
   renderTags();
+
+  try {
+    const savedDescription = await storageAPI.get('session:description:' + type);
+    const descBox = document.getElementById('descriptionOutput');
+    const descOutputBlock = document.getElementById('descriptionOutputBlock');
+    if (savedDescription && savedDescription.value) {
+      descBox.value = savedDescription.value;
+      descOutputBlock.style.display = 'block';
+    } else {
+      descBox.value = '';
+      descOutputBlock.style.display = 'none';
+    }
+  } catch (e) {}
 }
 
 const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
@@ -1651,6 +1682,80 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
   }
 });
 
+const DESCRIPTION_SYSTEM = `You are a production assistant that writes Etsy listing descriptions for a seller's own digital download shop, every single one in this exact 3 sentence structure, never more, never fewer sentences.
+
+Sentence 1, the hook: "Celebrate your love for [the theme or subject] with this [adjective] [adjective] design!" Adapt the wording naturally to fit the specific theme, always end this sentence with an exclamation point, keep it warm and inviting.
+
+Sentence 2, the use case: "Perfect for [the target audience for this theme], this [a style descriptor like retro, trendy, vintage, whatever actually fits] "[the catchy phrase or pun from the title, in quotation marks]" [the product type in plain words] is ideal for creating [2 to 3 specific real use cases that match the exact product type given]." If nothing in the title or keywords reads like a clear catchy phrase or pun, drop the quoted phrase entirely and just describe the design plainly in its place, keeping the rest of the sentence structure intact.
+
+Sentence 3, the closer, this exact line every time, word for word: "Download instantly and get creative!"
+
+Use cases in sentence 2 must match the actual product type given:
+- PNG: shirts, mugs, sublimation, DTF, tumblers
+- Tumbler Wrap or Glass Tumbler Wrap: 20oz skinny tumblers, glass cups, sublimation tumbler wraps
+- Laser Wrap: laser cutting, laser engraving, Glowforge projects
+
+Base the theme, subject, adjectives, audience, and catchy phrase entirely on the live title, tags, and design context given. Never use em dashes, use commas or periods instead. Keep the tone upbeat and casual, like a seller talking directly to a buyer, not corporate or stiff.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"description": "the full 3 sentence description as one string"}`;
+
+async function runDescriptionGeneration() {
+  const statusEl = document.getElementById('descriptionStatus');
+  const errorEl = document.getElementById('descriptionError');
+  const outputBlock = document.getElementById('descriptionOutputBlock');
+  setError(errorEl, '');
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+
+  const genBtn = document.getElementById('generateDescriptionBtn');
+  const regenBtn = document.getElementById('regenerateDescriptionBtn');
+  genBtn.disabled = true;
+  if (regenBtn) regenBtn.disabled = true;
+  setStatus(statusEl, 'Writing description...');
+
+  try {
+    const designContext = lastPromptsText.length
+      ? lastPromptsText.join('\n\n')
+      : 'No image prompts generated yet in this session.';
+
+    const userText = `Product type: ${selectedType}\n\nLive title: ${window._liveTitle || 'none built yet'}\n\nTags: ${tagsArray.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+
+    const result = await callClaude(DESCRIPTION_SYSTEM, [{ type: 'text', text: userText }]);
+    const descText = (result.description || '').trim();
+    document.getElementById('descriptionOutput').value = descText;
+    outputBlock.style.display = 'block';
+    autosaveDescription(descText);
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong writing the description: ' + (err.message || 'try again') + '.');
+  } finally {
+    genBtn.disabled = false;
+    if (regenBtn) regenBtn.disabled = false;
+    setStatus(statusEl, '');
+  }
+}
+
+document.getElementById('generateDescriptionBtn').addEventListener('click', runDescriptionGeneration);
+document.getElementById('regenerateDescriptionBtn').addEventListener('click', runDescriptionGeneration);
+
+document.getElementById('copyDescriptionBtn').addEventListener('click', () => {
+  const btn = document.getElementById('copyDescriptionBtn');
+  copyToClipboard(document.getElementById('descriptionOutput').value, btn, 'Copy Description');
+});
+
+document.getElementById('descriptionOutput').addEventListener('input', (e) => {
+  autosaveDescription(e.target.value);
+});
+
+const autosaveDescription = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:description:' + selectedType, val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+
+
 function renderTags() {
   const hadCommas = tagsArray.some(t => /[,\n，、]/.test(t));
   if (hadCommas) {
@@ -1768,9 +1873,12 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   renderPool();
   seedTagsFromBakedIn();
   seedLiveTitle();
+  document.getElementById('descriptionOutput').value = '';
+  document.getElementById('descriptionOutputBlock').style.display = 'none';
   try {
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+    await storageAPI.set('session:description:' + selectedType, '');
   } catch (e) {}
   const statusEl = document.getElementById('bottomBarStatus');
   statusEl.textContent = 'Cleared';
