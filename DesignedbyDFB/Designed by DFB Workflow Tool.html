@@ -7,24 +7,27 @@
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
 
   :root {
-    --bg: #2a1f1c;
-    --cream: #f5eddf;
-    --gold: #c9a96e;
-    --rose: #dea193;
-    --border: #ead9d5;
-    --light-bg: #fdf7f2;
+    --bg: #292320;
+    --cream: #faf7f3;
+    --sage: #b7879f;
+    --sage-dark: #966780;
+    --sage-tint: #f4eef3;
+    --rose: #b7879f;
+    --rose-tint: #f4eef3;
+    --border: #e7e0d9;
+    --light-bg: #ffffff;
     --mid-text: #5a4a45;
-    --muted: #c4b0a8;
+    --muted: #998f89;
     --warn: #b3453f;
-    --blush: #fbeeec;
+    --blush: #f0ece7;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--cream);
+    background: var(--cream);
+    color: var(--mid-text);
     font-family: 'Jost', sans-serif;
     padding: 32px 20px 90px;
   }
@@ -36,8 +39,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--bg);
-    border-top: 1px solid #4a3830;
+    background: var(--cream);
+    border-top: 1px solid var(--border);
     padding: 14px 24px;
     display: flex;
     align-items: center;
@@ -47,23 +50,23 @@
   }
 
   .bottom-bar-status {
-    color: var(--muted);
+    color: var(--mid-text);
     font-size: 12.5px;
     margin-right: auto;
   }
 
   .bottom-bar .btn.bottom-bar-btn {
     background: transparent;
-    color: var(--cream);
-    border: 1.5px solid var(--gold);
+    color: var(--bg);
+    border: 1.5px solid var(--sage);
   }
 
-  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--gold); color: var(--bg); }
+  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--sage); color: #fff; }
 
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: 30px;
-    color: var(--gold);
+    color: var(--bg);
     margin: 0 0 4px;
     letter-spacing: 0.3px;
   }
@@ -73,13 +76,13 @@
   .card {
     position: relative;
     overflow: hidden;
-    background: var(--blush);
+    background: var(--light-bg);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 24px;
     color: var(--mid-text);
-    box-shadow: 0 3px 16px rgba(42,31,28,0.07);
+    box-shadow: 0 3px 16px rgba(42,31,28,0.06);
   }
 
   .card::before {
@@ -104,8 +107,8 @@
 
   .step-tag {
     font-size: 11px;
-    background: var(--gold);
-    color: var(--bg);
+    background: var(--sage);
+    color: #fff;
     padding: 2px 8px;
     border-radius: 20px;
     font-weight: 600;
@@ -130,8 +133,8 @@
     text-align: center;
   }
 
-  .type-btn:hover { border-color: var(--gold); }
-  .type-btn.active { background: var(--bg); border-color: var(--bg); color: var(--gold); }
+  .type-btn:hover { border-color: var(--sage); }
+  .type-btn.active { background: var(--bg); border-color: var(--bg); color: var(--cream); }
 
   label { display: block; font-size: 13px; font-weight: 600; color: var(--bg); margin: 16px 0 6px; }
   label.first { margin-top: 0; }
@@ -150,7 +153,7 @@
     background: #fff;
   }
 
-  textarea:focus, input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  textarea:focus, input:focus { outline: 2px solid var(--sage); outline-offset: 1px; }
 
   .drop-zone {
     border: 2px dashed var(--border);
@@ -162,7 +165,7 @@
     transition: border-color 0.15s ease;
   }
 
-  .drop-zone:hover { border-color: var(--gold); }
+  .drop-zone:hover { border-color: var(--sage); }
   .drop-zone input { display: none; }
   .drop-zone p { margin: 0; font-size: 13px; color: #9a877f; }
   .drop-zone p.small { font-size: 11px; margin-top: 4px; }
@@ -188,12 +191,12 @@
 
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
-    background: var(--bg); color: var(--gold); border: none;
+    background: var(--sage); color: #fff; border: none;
     padding: 11px 22px; border-radius: 8px; font-family: 'Jost', sans-serif;
     font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 16px;
   }
 
-  .btn:hover { background: #3a2c27; }
+  .btn:hover { background: var(--sage-dark); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn.secondary {
@@ -201,10 +204,10 @@
     padding: 7px 14px; font-size: 12px; margin-top: 0;
   }
 
-  .btn.secondary:hover { border-color: var(--gold); background: var(--light-bg); }
+  .btn.secondary:hover { border-color: var(--sage); background: var(--sage-tint); }
   .btn.small { padding: 8px 14px; font-size: 12.5px; margin-top: 0; }
 
-  .status { font-size: 13px; color: var(--gold); margin-top: 10px; display: none; }
+  .status { font-size: 13px; color: var(--sage-dark); margin-top: 10px; display: none; }
   .status.show { display: block; }
 
   .error { font-size: 13px; color: var(--warn); margin-top: 10px; display: none; }
@@ -219,7 +222,7 @@
   }
   .prompt-item .copy-btn { align-self: flex-end; margin-top: 0; flex-shrink: 0; }
   .prompt-item.used { background: #ece5df; color: #a89a92; opacity: 0.7; }
-  .prompt-item.used .copy-btn { color: var(--gold); border-color: var(--gold); }
+  .prompt-item.used .copy-btn { color: var(--sage-dark); border-color: var(--sage); }
 
   .history-batch {
     background: #fff; border: 1px solid var(--border); border-radius: 10px;
@@ -248,27 +251,27 @@
   .tag-chip .len { color: #9a877f; font-size: 10px; }
   .tag-chip .len.over { color: var(--warn); font-weight: 700; }
   .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
-  .tag-chip.suggested { border-color: var(--rose); background: #fbeeeb; }
-  .tag-chip.suggested .len { color: #b9756a; }
+  .tag-chip.suggested { border-color: var(--rose); background: var(--rose-tint); }
+  .tag-chip.suggested .len { color: #96677f; }
   .tag-chip.suggested::before { content: '✦ '; color: var(--rose); font-size: 11px; }
   .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
   .tag-chip.baked { background: #e8e2db; border-color: #b8a99c; color: #6b5d54; }
-  .tag-chip.pinned-word { border-color: var(--gold); background: #fbf3e3; }
+  .tag-chip.pinned-word { border-color: var(--sage); background: var(--sage-tint); }
   .tag-chip.baked .len { color: #8a7a6e; }
   .tag-chip.baked.dupe { border-color: var(--warn); background: #fdf1f0; }
-  .tag-chip.baked.suggested { background: #f0dfd9; border-color: var(--rose); }
+  .tag-chip.baked.suggested { background: #eaded9; border-color: var(--rose); }
   .tag-chip.chosen { background: var(--bg); color: var(--cream); border-color: var(--bg); }
 
   .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
   .pill-text { outline: none; min-width: 20px; cursor: text; }
-  .pill-text:focus { background: #fbf3e3; border-radius: 4px; padding: 0 2px; }
+  .pill-text:focus { background: var(--sage-tint); border-radius: 4px; padding: 0 2px; }
   .slot-btns { display: flex; gap: 3px; }
   .slot-btn {
     width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border);
     background: #fff; color: var(--mid-text); font-size: 10.5px; font-weight: 700;
     cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center;
   }
-  .slot-btn:hover { border-color: var(--gold); background: var(--gold); color: var(--bg); }
+  .slot-btn:hover { border-color: var(--sage); background: var(--sage); color: #fff; }
   .pill .remove-btn {
     background: none; border: none; color: #9a877f; cursor: pointer; font-size: 13px; padding: 0 2px;
   }
@@ -277,7 +280,7 @@
     background: none; border: 1px solid var(--border); border-radius: 12px; color: var(--mid-text);
     cursor: pointer; font-size: 10.5px; padding: 2px 8px; font-family: 'Jost', sans-serif;
   }
-  .copy-btn-pill:hover { border-color: var(--gold); color: var(--bg); }
+  .copy-btn-pill:hover { border-color: var(--sage); color: var(--bg); }
   .tag-chip button {
     background: none; border: none; color: #9a877f; cursor: pointer;
     font-size: 13px; line-height: 1; padding: 2px;
@@ -309,7 +312,7 @@
     padding: 10px 2px 12px; cursor: pointer; border-bottom: 2px solid transparent;
     margin-bottom: -1px; transition: color 0.15s ease, border-color 0.15s ease;
   }
-  .tab-btn:hover { color: var(--cream); }
+  .tab-btn:hover { color: var(--bg); }
   .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
 
   .tab-panel { display: none; }
@@ -369,7 +372,7 @@
 </head>
 <body>
 <div class="wrap" id="pageWrap">
-  <h1>Designed by DFB Workflow Tool</h1>
+  <h1>Designed by DFB <span style="color:var(--rose);">Workflow Tool</span></h1>
   <div class="subhead">Screenshot to prompts, plus titles and tags built from your own baked in language and keywords.</div>
 
   <div class="tab-nav" id="tabNav">
@@ -442,10 +445,10 @@
   <div class="card">
     <h2><span class="step-tag">Step 2</span> Titles &amp; Tags</h2>
 
-    <div style="background:var(--bg); border-radius:10px; padding:16px;">
-      <div style="font-size:11px; letter-spacing:1px; color:var(--gold); font-weight:700;">LIVE TITLE</div>
-      <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--cream); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
-      <div id="liveTitleCount" style="font-size:13px; color:var(--gold); margin-top:10px; font-weight:700;">0 / 140 chars</div>
+    <div style="background:var(--sage-tint); border-left:4px solid var(--sage); border-radius:8px; padding:16px;">
+      <div style="font-size:11px; letter-spacing:1px; color:var(--sage-dark); font-weight:700;">LIVE TITLE</div>
+      <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--bg); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
+      <div id="liveTitleCount" style="font-size:13px; color:var(--sage-dark); margin-top:10px; font-weight:700;">0 / 140 chars</div>
     </div>
     <div class="hint" style="margin-top:6px;">Starts filled in with your baked in wording for this product type. Click directly into it to type, edit, or delete anything by hand.</div>
     <div class="copy-all-row">
@@ -1141,7 +1144,7 @@ function updateLiveTitleCount(text) {
   }
   const realLength = text.length - markerOverhead;
   countEl.textContent = `${realLength} / 140 chars`;
-  countEl.style.color = realLength > 140 ? '#e88a83' : 'var(--gold)';
+  countEl.style.color = realLength > 140 ? '#c94a3f' : 'var(--sage-dark)';
   window._liveTitle = text;
 }
 
@@ -1990,10 +1993,10 @@ document.getElementById('tabNav').addEventListener('click', async (e) => {
 /* ---------- Listing Calendar ---------- */
 
 const PRODUCT_TYPES = [
-  { name: 'Glass Tumbler Wrap', color: '#c9a96e' },
-  { name: 'Laser Wrap', color: '#dea193' },
-  { name: 'PNG', color: '#b98a9e' },
-  { name: 'Tumbler Wrap', color: '#8fa88f' }
+  { name: 'Glass Tumbler Wrap', color: '#b8a888' },
+  { name: 'Laser Wrap', color: '#8ea377' },
+  { name: 'PNG', color: '#b7879f' },
+  { name: 'Tumbler Wrap', color: '#6b5d54' }
 ];
 
 let calendarEntries = {};
