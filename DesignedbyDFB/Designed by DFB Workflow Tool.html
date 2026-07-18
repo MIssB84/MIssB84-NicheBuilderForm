@@ -7,7 +7,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
 
   :root {
-    --bg: #2a1f1c;
+    --bg: #4a3830;
     --cream: #f5eddf;
     --gold: #c9a96e;
     --rose: #dea193;
@@ -22,8 +22,8 @@
 
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--cream);
+    background: var(--cream);
+    color: var(--mid-text);
     font-family: 'Jost', sans-serif;
     padding: 32px 20px 90px;
   }
@@ -35,8 +35,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: var(--bg);
-    border-top: 1px solid #4a3a34;
+    background: var(--cream);
+    border-top: 1px solid var(--muted);
     padding: 14px 24px;
     display: flex;
     align-items: center;
@@ -46,14 +46,14 @@
   }
 
   .bottom-bar-status {
-    color: var(--muted);
+    color: var(--mid-text);
     font-size: 12.5px;
     margin-right: auto;
   }
 
   .bottom-bar .btn.bottom-bar-btn {
     background: transparent;
-    color: var(--cream);
+    color: var(--bg);
     border: 1.5px solid var(--gold);
   }
 
@@ -62,7 +62,7 @@
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: 30px;
-    color: var(--gold);
+    color: var(--bg);
     margin: 0 0 4px;
     letter-spacing: 0.3px;
   }
@@ -290,14 +290,14 @@
 
   .card { border-top: 3px solid var(--rose); }
 
-  .tab-nav { display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid #4a3a34; }
+  .tab-nav { display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--muted); }
   .tab-btn {
     background: transparent; border: none; color: var(--muted);
     font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14.5px;
     padding: 10px 2px 12px; cursor: pointer; border-bottom: 2px solid transparent;
     margin-bottom: -1px; transition: color 0.15s ease, border-color 0.15s ease;
   }
-  .tab-btn:hover { color: var(--cream); }
+  .tab-btn:hover { color: var(--bg); }
   .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
 
   .tab-panel { display: none; }
@@ -363,29 +363,10 @@
   <div class="tab-nav" id="tabNav">
     <button class="tab-btn active" data-tab="builderTab">Listing Builder</button>
     <button class="tab-btn" data-tab="calendarTab">Listing Calendar</button>
+    <button class="tab-btn" data-tab="apiKeyTab" style="margin-left:auto;">API Key</button>
   </div>
 
   <div class="tab-panel active" id="builderTab">
-  <div class="card" id="apiKeyCard">
-    <div id="apiKeyCompact" style="display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-      <span style="font-size:13px; color:var(--mid-text);">API key saved for this browser.</span>
-      <button class="btn secondary small" id="manageApiKeyBtn">Manage key</button>
-    </div>
-    <div id="apiKeyFull">
-      <h2><span class="step-tag">API Key</span></h2>
-      <div class="hint">Only needed if you're running this outside Claude.ai, like on GitHub Pages. Inside Claude.ai's own preview, skip this, it just works. Your key is stored only in this browser, never sent anywhere but Anthropic's API. You only need to enter it once, it'll stay saved and this section tucks itself away after that.</div>
-      <div id="apiKeyInputWrap" style="display:none; margin-top:10px;">
-        <div class="add-tag-row">
-          <input type="password" id="apiKeyInput" placeholder="Paste your Anthropic API key (sk-ant-...)">
-          <button class="btn small" id="saveApiKeyBtn">Save Key</button>
-        </div>
-      </div>
-      <div id="apiKeySavedMsg" style="display:none; margin-top:10px; font-size:13px; color:var(--mid-text);">
-        API key saved in this browser. <button class="btn secondary" id="changeApiKeyBtn" style="margin-left:8px;">Change key</button>
-      </div>
-    </div>
-  </div>
-
   <div class="card">
     <h2><span class="step-tag">Product Type</span></h2>
     <div class="type-row" id="typeRow">
@@ -562,6 +543,28 @@
       </div>
     </div>
   </div>
+
+  <div class="tab-panel" id="apiKeyTab">
+    <div class="card" id="apiKeyCard">
+      <div id="apiKeyCompact" style="display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <span style="font-size:13px; color:var(--mid-text);">API key saved for this browser.</span>
+        <button class="btn secondary small" id="manageApiKeyBtn">Manage key</button>
+      </div>
+      <div id="apiKeyFull">
+        <h2><span class="step-tag">API Key</span></h2>
+        <div class="hint">Only needed if you're running this outside Claude.ai, like on GitHub Pages. Inside Claude.ai's own preview, skip this, it just works. Your key is stored only in this browser, never sent anywhere but Anthropic's API. You only need to enter it once, it'll stay saved and this section tucks itself away after that.</div>
+        <div id="apiKeyInputWrap" style="display:none; margin-top:10px;">
+          <div class="add-tag-row">
+            <input type="password" id="apiKeyInput" placeholder="Paste your Anthropic API key (sk-ant-...)">
+            <button class="btn small" id="saveApiKeyBtn">Save Key</button>
+          </div>
+        </div>
+        <div id="apiKeySavedMsg" style="display:none; margin-top:10px; font-size:13px; color:var(--mid-text);">
+          API key saved in this browser. <button class="btn secondary" id="changeApiKeyBtn" style="margin-left:8px;">Change key</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="lightbox-overlay" id="lightboxOverlay">
@@ -572,6 +575,7 @@
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
   <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 30s</span>
   <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
+  <button class="btn secondary bottom-bar-btn" id="backToTopBtn">Back to Top</button>
   <button class="btn bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
 </div>
 
@@ -1858,6 +1862,10 @@ document.getElementById('addTagInput').addEventListener('keydown', (e) => {
 document.getElementById('copyAllTagsBtn').addEventListener('click', () => {
   const btn = document.getElementById('copyAllTagsBtn');
   copyToClipboard(tagsArray.join(', '), btn, 'Copy all tags');
+});
+
+document.getElementById('backToTopBtn').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 document.getElementById('clearAllBtn').addEventListener('click', async () => {
