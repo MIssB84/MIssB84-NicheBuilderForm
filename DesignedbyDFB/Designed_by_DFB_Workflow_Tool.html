@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Designed by DFB Workflow Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #292320;
+    --cream: #f5eddf;
+    --gold: #c9a96e;
+    --rose: var(--sage);
+    --border: #ead9d5;
+    --light-bg: #fdf7f2;
+    --mid-text: #5a4a45;
+    --muted: #998f89;
+    --muted-onbg: #c4b0a8;
+    --warn: #b3453f;
+    --blush: #fbeeec;
+    --page-bg: #000000;
+    --card-bg: #ffffff;
+    --mauve: #b7879f;
+    --mauve-dark: #966780;
+    --mauve-tint: #f4eef3;
+    --sage: #aec4b2;
+    --sage-dark: #8fac96;
+    --sage-tint: #eef3ef;
+    --badge-bg: #e7e0d9;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    padding: 32px 20px 90px;
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  .bottom-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    z-index: 50;
+    box-shadow: 0 -3px 16px rgba(42,31,28,0.06);
+  }
+
+  .bottom-bar-status {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-right: auto;
+  }
+
+  .bottom-bar .btn.bottom-bar-btn {
+    background: transparent;
+    color: var(--bg);
+    border: 1.5px solid var(--sage);
+  }
+
+  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--sage); color: var(--bg); }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--mauve);
+    margin: 0 0 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .subhead { color: var(--muted-onbg); font-size: 14px; margin-bottom: 28px; }
+
+  .card {
+    position: relative;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    color: var(--mid-text);
+    box-shadow: 0 3px 16px rgba(42,31,28,0.07);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--rose);
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--bg);
+    font-size: 19px;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-tag {
+    font-size: 11px;
+    background: var(--mauve);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .type-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+
+  .type-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--mid-text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+
+  .type-btn:hover { border-color: var(--mauve); }
+  .type-btn.active { background: var(--mauve); border-color: var(--mauve); color: #fff; }
+
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--bg); margin: 16px 0 6px; }
+  label.first { margin-top: 0; }
+
+  .hint { font-size: 12px; color: var(--muted); margin-top: -2px; margin-bottom: 6px; }
+
+  textarea, input[type="text"], input[type="password"] {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: var(--mid-text);
+    resize: vertical;
+    background: #fff;
+  }
+
+  textarea:focus, input:focus { outline: 2px solid var(--mauve); outline-offset: 1px; }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.15s ease;
+  }
+
+  .drop-zone:hover { border-color: var(--mauve); }
+  .drop-zone input { display: none; }
+  .drop-zone p { margin: 0; font-size: 13px; color: #9a877f; }
+  .drop-zone p.small { font-size: 11px; margin-top: 4px; }
+
+  .thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+  .thumb { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+
+  .lightbox-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(20,14,12,0.88);
+    z-index: 100; align-items: center; justify-content: center; padding: 30px; cursor: zoom-out;
+  }
+  .lightbox-overlay.show { display: flex; }
+  .lightbox-overlay img { max-width: 90vw; max-height: 90vh; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+
+  .thumb button {
+    position: absolute; top: 2px; right: 2px;
+    background: rgba(42,31,28,0.85); color: #fff; border: none;
+    border-radius: 50%; width: 18px; height: 18px; font-size: 11px;
+    line-height: 18px; cursor: pointer; padding: 0;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--mauve); color: #fff; border: none;
+    padding: 11px 22px; border-radius: 8px; font-family: 'Jost', sans-serif;
+    font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 16px;
+  }
+
+  .btn:hover { background: var(--mauve-dark); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn.secondary {
+    background: transparent; color: var(--bg); border: 1.5px solid var(--sage);
+    padding: 7px 14px; font-size: 12px; margin-top: 0;
+  }
+
+  .btn.secondary:hover { border-color: var(--sage-dark); background: var(--sage); color: var(--bg); }
+  .btn.small { padding: 8px 14px; font-size: 12.5px; margin-top: 0; }
+
+  .status { font-size: 13px; color: var(--mauve-dark); margin-top: 10px; display: none; }
+  .status.show { display: block; }
+
+  .error { font-size: 13px; color: var(--warn); margin-top: 10px; display: none; }
+  .error.show { display: block; }
+
+  .output-block { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+  .prompt-item {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin-bottom: 10px; font-size: 13.5px; line-height: 1.5;
+    display: flex; flex-direction: column-reverse; gap: 10px;
+  }
+  .prompt-item .copy-btn { align-self: flex-end; margin-top: 0; flex-shrink: 0; }
+  .prompt-item.used { background: #ece5df; color: #a89a92; opacity: 0.7; }
+  .prompt-item.used .copy-btn { color: var(--sage-dark); border-color: var(--sage); }
+
+  .palette-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px dashed var(--border); }
+  .palette-tag { font-size: 10px; letter-spacing: 0.5px; font-weight: 700; color: #9a877f; text-transform: uppercase; margin-right: 2px; }
+  .palette-swatch { display: flex; align-items: center; gap: 5px; }
+  .palette-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
+  .palette-hex { font-size: 11px; color: #6b5d54; font-family: monospace; }
+  .prompt-item.used .palette-row { opacity: 0.6; }
+  .anchor-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: var(--bg); background: var(--rose); border-radius: 4px; padding: 2px 7px; margin-bottom: 8px;
+  }
+
+  .history-batch {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  .history-batch-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; color: #9a877f; margin-bottom: 8px;
+  }
+
+  .title-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; gap: 10px;
+  }
+  .title-item .text { font-size: 13.5px; }
+  .title-item .count { font-size: 11px; color: #9a877f; white-space: nowrap; }
+  .title-item .count.over { color: var(--warn); font-weight: 700; }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  .tag-chip {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 20px;
+    padding: 5px 6px 5px 12px; font-size: 12.5px; display: flex; align-items: center; gap: 6px;
+  }
+  .tag-chip .len { color: #9a877f; font-size: 10px; }
+  .tag-chip .len.over { color: var(--warn); font-weight: 700; }
+  .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.suggested { border-color: var(--sage); background: var(--sage-tint); }
+  .tag-chip.suggested .len { color: var(--sage-dark); }
+  .tag-chip.suggested::before { content: '✦ '; color: var(--sage-dark); font-size: 11px; }
+  .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.baked { background: #e8e2db; border-color: #b8a99c; color: #6b5d54; }
+  .tag-chip.pinned-word { border-color: var(--mauve); background: var(--mauve-tint); }
+  .tag-chip.baked .len { color: #8a7a6e; }
+  .tag-chip.baked.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.baked.suggested { background: var(--sage-tint); border-color: var(--sage); }
+  .tag-chip.chosen { background: var(--mauve); color: #fff; border-color: var(--mauve); }
+
+  .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
+  .pill-text { outline: none; min-width: 20px; cursor: text; }
+  .pill-text:focus { background: #fbf3e3; border-radius: 4px; padding: 0 2px; }
+  .slot-btns { display: flex; gap: 3px; }
+  .slot-btn {
+    width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border);
+    background: #fff; color: var(--mid-text); font-size: 10.5px; font-weight: 700;
+    cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .slot-btn:hover { border-color: var(--sage); background: var(--sage); color: var(--bg); }
+  .pill .remove-btn {
+    background: none; border: none; color: #9a877f; cursor: pointer; font-size: 13px; padding: 0 2px;
+  }
+  .pill .remove-btn:hover { color: var(--warn); }
+  .copy-btn-pill {
+    background: none; border: 1px solid var(--border); border-radius: 12px; color: var(--mid-text);
+    cursor: pointer; font-size: 10.5px; padding: 2px 8px; font-family: 'Jost', sans-serif;
+  }
+  .copy-btn-pill:hover { border-color: var(--sage); color: var(--bg); }
+  .tag-chip button {
+    background: none; border: none; color: #9a877f; cursor: pointer;
+    font-size: 13px; line-height: 1; padding: 2px;
+  }
+  .tag-chip button:hover { color: var(--warn); }
+
+  .tag-meta { display: flex; gap: 16px; align-items: center; margin-top: 10px; font-size: 12.5px; }
+  .tag-meta .count-badge { font-weight: 600; }
+  .tag-meta .count-badge.over { color: var(--warn); }
+  .tag-meta .dupe-flag { color: var(--warn); font-weight: 600; display: none; }
+  .tag-meta .dupe-flag.show { display: inline; }
+
+  .add-tag-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .add-tag-row input { flex: 1; min-width: 140px; }
+
+  .copy-all-row { display: flex; gap: 10px; margin-top: 14px; }
+
+  .baked-tags-box, .baked-titles-box {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-top: 6px;
+  }
+
+  .divider-label { text-align: center; color: var(--muted-onbg); font-size: 12px; letter-spacing: 1px; margin: 30px 0 -6px; }
+
+  .tab-nav { display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid #3a332f; }
+  .tab-btn {
+    background: transparent; border: none; color: var(--muted-onbg);
+    font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14.5px;
+    padding: 10px 2px 12px; cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .tab-btn:hover { color: var(--mauve); }
+  .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .streak-row {
+    background: var(--rose); color: #fff; border-radius: 10px; padding: 10px 16px;
+    font-size: 13.5px; font-weight: 600; margin: 14px 0 20px; display: inline-block;
+  }
+
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
+  .cal-month-label { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--bg); font-weight: 700; }
+
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; font-size: 12px; color: var(--mid-text); }
+  .cal-legend-item { display: flex; align-items: center; gap: 6px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .wrap.wide { max-width: 1180px; }
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .cal-daylabel { text-align: center; font-size: 11px; color: var(--muted); font-weight: 600; padding-bottom: 4px; }
+  .cal-cell {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    min-height: 92px; padding: 8px; cursor: pointer; display: flex; flex-direction: column;
+    gap: 4px; transition: border-color 0.15s ease;
+  }
+  .cal-cell:hover { border-color: var(--rose); }
+  .cal-cell.empty { background: transparent; border: none; cursor: default; }
+  .cal-cell.today { border-color: var(--rose); border-width: 2px; }
+  .cal-cell .cal-date { font-size: 12.5px; font-weight: 600; color: var(--mid-text); }
+  .cal-cell .cal-count { font-size: 10.5px; color: #9a877f; }
+  .cal-cell .cal-types { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; }
+  .cal-type-label {
+    font-size: 10px; font-weight: 600; color: #fff; padding: 2px 6px; border-radius: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;
+  }
+
+  .count-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .count-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: #fff; color: var(--mid-text); font-family: 'Jost', sans-serif;
+    font-weight: 600; cursor: pointer; font-size: 13.5px;
+  }
+  .count-btn:hover { border-color: var(--rose); }
+  .count-btn.active { background: var(--rose); border-color: var(--rose); color: #fff; }
+
+  .type-multiselect { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .type-ms-chip {
+    padding: 9px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: 'Jost', sans-serif; color: var(--mid-text); display: flex;
+    align-items: center; gap: 7px; transition: all 0.15s ease;
+  }
+  .type-ms-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .type-ms-chip.active { color: #fff; border-color: transparent; }
+</style>
+</head>
+<body>
+<div class="wrap" id="pageWrap">
+  <h1>Designed by DFB Workflow Tool</h1>
+  <div class="subhead">Screenshot to prompts, plus titles and tags built from your own baked in language and keywords.</div>
+
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="builderTab">Listing Builder</button>
+    <button class="tab-btn" data-tab="calendarTab">Listing Calendar</button>
+    <button class="tab-btn" data-tab="apiKeyTab" style="margin-left:auto;">API Key</button>
+  </div>
+
+  <div class="tab-panel active" id="builderTab">
+  <div class="card">
+    <h2><span class="step-tag">Product Type</span></h2>
+    <div class="type-row" id="typeRow">
+      <button class="type-btn" data-type="Tumbler Wrap PNG">Tumbler Wrap PNG</button>
+      <button class="type-btn" data-type="Shirt PNG">Shirt PNG</button>
+      <button class="type-btn" data-type="Laser Wrap SVG">Laser Wrap SVG</button>
+    </div>
+    <div class="hint">Applies to both the prompt builder and the title and tag builder below.</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 1</span> Image Prompts</h2>
+
+    <label class="first">Inspo screenshot(s), up to 3</label>
+    <div class="drop-zone" id="dropZone">
+      <p>Click to upload, or paste a screenshot with Ctrl+V</p>
+      <p class="small">Up to 3 images total, click any thumbnail to view it bigger</p>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+    <button class="btn secondary" id="pasteClipboardBtn" style="margin-top:10px;">Paste from Clipboard</button>
+    <div class="add-tag-row" style="margin-top:10px;">
+      <input type="text" id="imageUrlInput" placeholder="Or paste an image URL and press Enter">
+      <button class="btn small" id="addImageUrlBtn">Add URL</button>
+      <button class="btn secondary" id="pasteImageUrlClipboardBtn">Paste URL from Clipboard</button>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+
+    <label>Keywords or working title (optional)</label>
+    <div class="hint">Extra context for the AI, like a working title or a few keywords naming the subject, elements, or theme. Helps it read the screenshot more accurately, and it'll work some of these descriptive words into the prompts themselves. Press Enter to generate.</div>
+    <textarea id="designKeywords" rows="2" placeholder="e.g. spooky cat witch coffee, Halloween cottagecore, hocus pocus themed"></textarea>
+    <button class="btn secondary" id="pasteKeywordsClipboardBtn" style="margin-top:8px;">Paste from Clipboard</button>
+
+    <label>Creative direction (optional)</label>
+    <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating. Press Enter to generate.</div>
+    <textarea id="creativeDirection" rows="2" placeholder="e.g. deeper color palette, add more stars, softer background"></textarea>
+
+    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:16px;">
+      <input type="checkbox" id="varyPaletteCheckbox" style="width:16px; height:16px; margin:0;">
+      <span>Give each prompt a different color palette</span>
+    </label>
+    <div class="hint" style="margin-top:2px;">Unchecked: every prompt matches the color palette from your reference image. Checked: prompt 1 still matches the reference, prompts 2 through 5 each get their own distinct palette.</div>
+
+    <button class="btn" id="generatePromptsBtn">Generate 5 Prompts</button>
+    <button class="btn secondary" id="viewHistoryBtn" style="display:none;">View Past Prompts (0)</button>
+    <div class="status" id="promptsStatus"></div>
+    <div class="error" id="promptsError"></div>
+
+    <div class="output-block" id="promptsOutputBlock" style="display:none;">
+      <div id="suggestionsNote" style="display:none; font-size:12.5px; color:var(--muted); margin-bottom:12px;"></div>
+      <div class="copy-all-row" style="margin-top:0; margin-bottom:14px;">
+        <button class="btn secondary" id="copyAllPromptsTopBtn">Copy all prompts</button>
+      </div>
+      <div id="promptsList"></div>
+      <div class="copy-all-row">
+        <button class="btn secondary" id="copyAllPromptsBtn">Copy all prompts</button>
+      </div>
+    </div>
+
+    <div id="historyPanel" style="display:none; margin-top:18px; border-top:1px solid var(--border); padding-top:16px;">
+      <label class="first" style="margin-top:0;">Past Prompts This Session</label>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="divider-label">— then —</div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags</h2>
+
+    <div style="background:var(--bg); border-radius:10px; padding:16px;">
+      <div style="font-size:11px; letter-spacing:1px; color:var(--mauve); font-weight:700;">LIVE TITLE</div>
+      <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--cream); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
+      <div id="liveTitleCount" style="font-size:13px; color:var(--mauve); margin-top:10px; font-weight:700;">0 / 140 chars</div>
+    </div>
+    <div class="hint" style="margin-top:6px;">Starts filled in with your baked in wording for this product type. Click directly into it to type, edit, or delete anything by hand.</div>
+    <div class="copy-all-row">
+      <button class="btn secondary" id="copyLiveTitleBtn">Copy this title</button>
+      <button class="btn secondary" id="resetLiveTitleBtn">Reset for next title</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Title builder</label>
+      <div class="hint">Paste keywords or a full title below, press Enter or hit Add. If you paste a full title, product and format wording (tumbler, wrap, PNG, digital download, etc) gets stripped automatically, leaving just the descriptive part as pills. Your title above starts with numbered spots (①②③) matching your baked in template, click a pill's number to drop it at that exact spot, or just click the pill itself to add it to the end instead. Click a pill's text to edit it first. Use Split on a pill to break it into individual word pills. Leftover unfilled spots clean themselves up when you hit Copy.</div>
+    </div>
+
+    <label class="first" style="margin-top:10px;">Paste keywords or a full title</label>
+    <textarea id="poolBulkInput" rows="3" placeholder="Paste keywords separated by commas, or paste a whole title with no commas at all, then press Enter or hit Add"></textarea>
+    <div class="add-tag-row">
+      <button class="btn small" id="addPoolBulkBtn">Add to pool</button>
+      <input type="text" id="poolSingleInput" placeholder="Or type one keyword and press Enter">
+      <button class="btn secondary" id="pastePoolClipboardBtn">Paste from Clipboard</button>
+    </div>
+    <div class="status" id="poolStatus"></div>
+
+    <div class="tag-list" id="keywordPoolList" style="margin-top:12px;"></div>
+    <div class="add-tag-row" style="margin-top:10px;">
+      <button class="btn secondary" id="splitAllPoolBtn">Split all into words</button>
+      <button class="btn secondary" id="clearPoolBtn">Clear pool</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Tags</label>
+      <div class="hint">Starts filled in with your baked in tags for this product type. Click × on any pill you don't want for this particular design, then add your own below.</div>
+    </div>
+
+    <div class="tag-meta">
+      <span class="count-badge" id="tagCountBadge">0/13 tags</span>
+      <span class="dupe-flag" id="tagDupeFlag">Duplicate tags found</span>
+    </div>
+    <div class="tag-list" id="tagsList"></div>
+    <div class="add-tag-row">
+      <input type="text" id="addTagInput" placeholder="Add a tag and press Enter">
+      <button class="btn small" id="addTagBtn">Add</button>
+      <button class="btn secondary" id="pasteTagsClipboardBtn">Paste from Clipboard</button>
+    </div>
+    <div class="add-tag-row" style="margin-top:12px;">
+      <button class="btn secondary" id="copyAllTagsBtn">Copy all tags</button>
+      <button class="btn secondary" id="splitAllTagsBtn">Split all into words</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Suggest more tags (optional)</label>
+      <div class="hint">Adds AI suggested tags on top of what's already there, based on your live title and image prompts. Won't remove or replace anything.</div>
+    </div>
+
+    <button class="btn" id="generateTitlesBtn" style="margin-top:20px;">Suggest More Tags</button>
+    <div class="status" id="titlesStatus"></div>
+    <div class="error" id="titlesError"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 3</span> Description</h2>
+    <div class="hint">Writes your listing description in your fixed format, a hook, a use case line with the catchy phrase from your title in quotes, then the download line. Pulls from your live title, tags, and image prompts already generated for this design.</div>
+
+    <button class="btn" id="generateDescriptionBtn">Generate Description</button>
+    <div class="status" id="descriptionStatus"></div>
+    <div class="error" id="descriptionError"></div>
+
+    <div class="output-block" id="descriptionOutputBlock" style="display:none; margin-top:14px;">
+      <textarea id="descriptionOutput" rows="5" style="width:100%; font-family:'Jost', sans-serif; font-size:14px; line-height:1.6; padding:12px; border-radius:8px; border:1px solid var(--border); resize:vertical; color:var(--bg);"></textarea>
+      <div class="copy-all-row">
+        <button class="btn secondary" id="copyDescriptionBtn">Copy Description</button>
+        <button class="btn secondary" id="regenerateDescriptionBtn">Regenerate</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="tab-panel" id="calendarTab">
+    <div class="card">
+      <h2><span class="step-tag">Consistency</span> Listing Calendar</h2>
+      <div class="hint">Log how many listings you added each day and which product types, so you can spot gaps and stay consistent.</div>
+
+      <div class="streak-row" id="streakRow"></div>
+
+      <div class="cal-header">
+        <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
+        <div class="cal-month-label" id="calMonthLabel"></div>
+        <button class="btn secondary small" id="calNextBtn">Next ›</button>
+      </div>
+
+      <div class="cal-legend" id="calLegend"></div>
+
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <div class="card" id="dayEditorCard" style="display:none;">
+      <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
+
+      <label class="first">How many listings did you add?</label>
+      <div class="count-row" id="countRow"></div>
+
+      <label>Product type(s) added</label>
+      <div class="type-multiselect" id="typeMultiselect"></div>
+
+      <div class="copy-all-row">
+        <button class="btn" id="saveDayBtn">Save Day</button>
+        <button class="btn secondary" id="deleteDayBtn">Delete Entry</button>
+        <button class="btn secondary" id="closeDayEditorBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="apiKeyTab">
+    <div class="card" id="apiKeyCard">
+      <div id="apiKeyCompact" style="display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <span style="font-size:13px; color:var(--mid-text);">API key saved for this browser.</span>
+        <button class="btn secondary small" id="manageApiKeyBtn">Manage key</button>
+      </div>
+      <div id="apiKeyFull">
+        <h2><span class="step-tag">API Key</span></h2>
+        <div class="hint">Only needed if you're running this outside Claude.ai, like on GitHub Pages. Inside Claude.ai's own preview, skip this, it just works. Your key is stored only in this browser, never sent anywhere but Anthropic's API. You only need to enter it once, it'll stay saved and this section tucks itself away after that.</div>
+        <div id="apiKeyInputWrap" style="display:none; margin-top:10px;">
+          <div class="add-tag-row">
+            <input type="password" id="apiKeyInput" placeholder="Paste your Anthropic API key (sk-ant-...)">
+            <button class="btn small" id="saveApiKeyBtn">Save Key</button>
+          </div>
+        </div>
+        <div id="apiKeySavedMsg" style="display:none; margin-top:10px; font-size:13px; color:var(--mid-text);">
+          API key saved in this browser. <button class="btn secondary" id="changeApiKeyBtn" style="margin-left:8px;">Change key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <img id="lightboxImg" src="" alt="Enlarged image">
+</div>
+
+<div class="bottom-bar">
+  <span class="bottom-bar-status" id="bottomBarStatus"></span>
+  <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 3s</span>
+  <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
+  <button class="btn secondary bottom-bar-btn" id="backToTopBtn">Back to Top</button>
+  <button class="btn bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
+</div>
+
+<script>
+const storageAPI = {
+  async get(key) {
+    if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function') {
+      try { return await window.storage.get(key); } catch (e) { return null; }
+    }
+    try {
+      const val = localStorage.getItem('shopbuilder:' + key);
+      return val !== null ? { key, value: val } : null;
+    } catch (e) { return null; }
+  },
+  async set(key, value) {
+    if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
+      try { return await window.storage.set(key, value); } catch (e) { return null; }
+    }
+    try {
+      localStorage.setItem('shopbuilder:' + key, value);
+      return { key, value };
+    } catch (e) { return null; }
+  }
+};
+
+let selectedType = null;
+let uploadedImages = [];
+let lastPromptsText = [];
+let lastPromptsPalettes = [];
+let promptHistory = [];
+
+function renderPaletteRow(palette) {
+  if (!palette || !palette.length) return '';
+  const swatches = palette.map(c => {
+    const hex = escapeHtml(c.hex || '');
+    const name = escapeHtml(c.name || '');
+    return `<span class="palette-swatch" title="${name}"><span class="palette-dot" style="background:${hex};"></span><span class="palette-hex">${hex}${name ? ' &middot; ' + name : ''}</span></span>`;
+  }).join('');
+  return `<div class="palette-row"><span class="palette-tag">Palette</span>${swatches}</div>`;
+}
+let suggestedTagKeys = new Set();
+let tagsArray = [];
+let bakedPiecesValue = '';
+let bakedTagsValue = '';
+
+const typeRow = document.getElementById('typeRow');
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const thumbs = document.getElementById('thumbs');
+
+typeRow.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.type-btn');
+  if (!btn) return;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedType = btn.dataset.type;
+  try { await storageAPI.set('session:productType', selectedType); } catch (e) {}
+  await loadBakedTags(selectedType);
+  await loadBakedPieces(selectedType);
+  await restoreWorkSession(selectedType);
+  if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
+  if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
+});
+
+const DEFAULT_BAKED_TAGS = {
+  'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler',
+  'Shirt PNG': 'Digital Download, Sublimation Png, Png For Shirts, Tshirt Png Design, Sublimation Design, trendy shirt png'
+};
+
+const OLD_DEFAULT_BAKED_TAGS = {
+  'Shirt PNG': ['Digital Download, Sublimation Png, popular now, trendy shirt png, uv dtf']
+};
+
+async function loadBakedTags(type) {
+  try {
+    const result = await storageAPI.get('baked-tags:' + type);
+    if (result && result.value) {
+      const staleList = OLD_DEFAULT_BAKED_TAGS[type] || [];
+      if (staleList.includes(result.value.trim()) && DEFAULT_BAKED_TAGS[type]) {
+        bakedTagsValue = DEFAULT_BAKED_TAGS[type];
+        try { await storageAPI.set('baked-tags:' + type, DEFAULT_BAKED_TAGS[type]); } catch (e) {}
+      } else {
+        bakedTagsValue = result.value;
+      }
+    } else if (DEFAULT_BAKED_TAGS[type]) {
+      bakedTagsValue = DEFAULT_BAKED_TAGS[type];
+    } else {
+      bakedTagsValue = '';
+    }
+  } catch (err) {
+    bakedTagsValue = DEFAULT_BAKED_TAGS[type] || '';
+  }
+
+  if (bakedTagsValue) {
+    const seen = new Set();
+    const deduped = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean).filter(t => {
+      const key = t.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    const cleaned = deduped.join(', ');
+    if (cleaned !== bakedTagsValue) {
+      bakedTagsValue = cleaned;
+      try { await storageAPI.set('baked-tags:' + type, cleaned); } catch (e) {}
+    }
+  }
+}
+
+const DEFAULT_BAKED = {
+  'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download',
+  'Shirt PNG': 'PNG, PNG, T Shirt Sublimation Design, Digital Download'
+};
+
+const OLD_DEFAULT_BAKED = {
+  'Tumbler Wrap PNG': ['Tumbler Wrap PNG, Seamless 20oz Skinny Tumbler Wrap Sublimation Design, Digital Download'],
+  'Shirt PNG': ['PNG, Sublimation, Trendy Shirt Design Digital Download', 'PNG, Sublimation, Shirt Design Digital Download', 'PNG, PNG, T Shirt Sublimation Design Digital Download']
+};
+
+async function loadBakedPieces(type) {
+  try {
+    const result = await storageAPI.get('baked-titles:' + type);
+    if (result && result.value) {
+      const staleList = OLD_DEFAULT_BAKED[type] || [];
+      if (staleList.includes(result.value.trim())) {
+        bakedPiecesValue = DEFAULT_BAKED[type];
+        try { await storageAPI.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
+      } else {
+        bakedPiecesValue = result.value;
+      }
+    } else if (DEFAULT_BAKED[type]) {
+      bakedPiecesValue = DEFAULT_BAKED[type];
+      try { await storageAPI.set('baked-titles:' + type, DEFAULT_BAKED[type]); } catch (e) {}
+    } else {
+      bakedPiecesValue = '';
+    }
+  } catch (err) {
+    bakedPiecesValue = DEFAULT_BAKED[type] || '';
+  }
+  seedLiveTitle();
+}
+
+function debounce(fn, delay) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+const autosavePool = debounce(async () => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool)); } catch (e) {}
+}, 600);
+
+const autosaveTitle = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:liveTitle:' + selectedType, val); } catch (e) {}
+}, 600);
+
+const autosaveTags = debounce(async () => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray)); } catch (e) {}
+}, 600);
+
+const autosaveKeywords = debounce(async (val) => {
+  try { await storageAPI.set('session:designKeywords', val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+const autosaveDirection = debounce(async (val) => {
+  try { await storageAPI.set('session:creativeDirection', val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+document.getElementById('designKeywords').addEventListener('input', (e) => autosaveKeywords(e.target.value));
+document.getElementById('creativeDirection').addEventListener('input', (e) => autosaveDirection(e.target.value));
+
+function flashSavedIndicator() {
+  const el = document.getElementById('autosaveStatus');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = 'Saved ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+}
+
+async function saveAllNow() {
+  try {
+    if (selectedType) {
+      await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
+      await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+      await storageAPI.set('session:liveTitle:' + selectedType, document.getElementById('liveTitlePreview').value);
+      await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
+    }
+    await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
+    await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
+    await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
+  } catch (e) {}
+  flashSavedIndicator();
+}
+
+document.getElementById('saveNowBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveNowBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  await saveAllNow();
+  btn.textContent = 'Saved!';
+  setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1200);
+});
+
+setInterval(() => { saveAllNow(); }, 3000);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') saveAllNow();
+});
+
+function seedTagsFromBakedIn() {
+  tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  renderTags();
+}
+
+async function restoreWorkSession(type) {
+  try {
+    const savedPool = await storageAPI.get('session:pool:' + type);
+    pastedPool = (savedPool && savedPool.value) ? JSON.parse(savedPool.value) : [];
+  } catch (e) { pastedPool = []; }
+  ensurePersistentPoolWords();
+  renderPool();
+
+  try {
+    const savedTitle = await storageAPI.get('session:liveTitle:' + type);
+    if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null && savedTitle.value !== '') {
+      const staleList = OLD_DEFAULT_BAKED[type] || [];
+      const savedTrimmed = savedTitle.value.trim();
+      const isStaleDefault = staleList.includes(savedTrimmed) || staleList.some(s => buildMarkedTitle(s) === savedTrimmed);
+      const preview = document.getElementById('liveTitlePreview');
+      const valueToUse = isStaleDefault ? buildMarkedTitle(bakedPiecesValue) : savedTitle.value;
+      preview.value = valueToUse;
+      updateLiveTitleCount(valueToUse);
+    }
+  } catch (e) {}
+  renderPool();
+
+  try {
+    const savedTags = await storageAPI.get('session:tags:' + type);
+    tagsArray = (savedTags && savedTags.value) ? JSON.parse(savedTags.value) : [];
+    if (tagsArray.length === 0) tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  } catch (e) {
+    tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  const seenTags = new Set();
+  tagsArray = tagsArray.filter(t => {
+    const key = t.trim().toLowerCase();
+    if (seenTags.has(key)) return false;
+    seenTags.add(key);
+    return true;
+  });
+  renderTags();
+
+  try {
+    const savedDescription = await storageAPI.get('session:description:' + type);
+    const descBox = document.getElementById('descriptionOutput');
+    const descOutputBlock = document.getElementById('descriptionOutputBlock');
+    if (savedDescription && savedDescription.value) {
+      descBox.value = savedDescription.value;
+      descOutputBlock.style.display = 'block';
+    } else {
+      descBox.value = '';
+      descOutputBlock.style.display = 'none';
+    }
+  } catch (e) {}
+}
+
+const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
+
+function getBakedSegments() {
+  return bakedPiecesValue.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+function getOpenSlotNumbers() {
+  const text = document.getElementById('liveTitlePreview').value;
+  const segments = getBakedSegments();
+  const open = [];
+  segments.forEach((seg, idx) => {
+    if (text.includes(slotMarker(idx + 1))) open.push(idx + 1);
+  });
+  return open;
+}
+
+function buildMarkedTitle(template) {
+  const segments = template.split(',').map(s => s.trim()).filter(Boolean);
+  if (segments.length === 0) return template.trim();
+  return segments.map((seg, idx) => `${slotMarker(idx + 1)} ${seg}`).join(', ');
+}
+
+function seedLiveTitle() {
+  const preview = document.getElementById('liveTitlePreview');
+  const value = buildMarkedTitle(bakedPiecesValue);
+  preview.value = value;
+  updateLiveTitleCount(value);
+  renderPool();
+}
+
+let pastedPool = [];
+
+const PERSISTENT_POOL_WORDS = ['Vintage', 'Retro', 'Trendy'];
+
+function ensurePersistentPoolWords() {
+  PERSISTENT_POOL_WORDS.forEach(w => {
+    const exists = pastedPool.some(item => item.text.trim().toLowerCase() === w.toLowerCase());
+    if (!exists) pastedPool.push({ text: w, pinned: true });
+  });
+}
+
+function renderPool() {
+  const hadCommas = pastedPool.some(item => /[,\n，、]/.test(item.text));
+  if (hadCommas) {
+    const flat = pastedPool.map(item => item.text).join(',');
+    pastedPool = [];
+    pushSplit(flat);
+  }
+  const listEl = document.getElementById('keywordPoolList');
+  listEl.innerHTML = '';
+  pastedPool.forEach((item, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip pill' + (item.pinned ? ' pinned-word' : '');
+    chip.title = 'Click to add to the title';
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'pill-text';
+    textSpan.contentEditable = 'true';
+    textSpan.textContent = item.text;
+    textSpan.addEventListener('input', () => {
+      item.text = textSpan.textContent;
+      lenSpan.textContent = item.text.length;
+    });
+    textSpan.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); textSpan.blur(); }
+    });
+    textSpan.addEventListener('click', (e) => e.stopPropagation());
+
+    const lenSpan = document.createElement('span');
+    lenSpan.className = 'len';
+    lenSpan.textContent = item.text.length;
+
+    const openSlots = getOpenSlotNumbers();
+    const slotBtns = document.createElement('span');
+    slotBtns.className = 'slot-btns';
+    openSlots.forEach(n => {
+      const sBtn = document.createElement('button');
+      sBtn.className = 'slot-btn';
+      sBtn.textContent = n;
+      sBtn.title = `Place at spot ${n}`;
+      sBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const preview = document.getElementById('liveTitlePreview');
+        const casedText = toTitleCase(item.text);
+        preview.value = preview.value.replace(slotMarker(n), `${casedText} ${slotMarker(n)}`);
+        updateLiveTitleCount(preview.value);
+        autosaveTitle(preview.value);
+        if (!item.pinned) pastedPool.splice(i, 1);
+        renderPool();
+      });
+      slotBtns.appendChild(sBtn);
+    });
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-btn-pill';
+    copyBtn.textContent = 'Copy';
+    copyBtn.title = 'Copy this keyword';
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyToClipboard(item.text + ' ', copyBtn, 'Copy');
+    });
+
+    const words = item.text.trim().split(/\s+/);
+    let splitBtn = null;
+    if (words.length > 1) {
+      splitBtn = document.createElement('button');
+      splitBtn.className = 'copy-btn-pill';
+      splitBtn.textContent = 'Split';
+      splitBtn.title = 'Split into separate word pills';
+      splitBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        words.forEach(w => pastedPool.push({ text: w }));
+        renderPool();
+      });
+    }
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'Remove from pool';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pastedPool.splice(i, 1);
+      renderPool();
+    });
+
+    chip.addEventListener('click', () => {
+      const preview = document.getElementById('liveTitlePreview');
+      const current = preview.value.trim();
+      const casedText = toTitleCase(item.text);
+      preview.value = current ? `${current} ${casedText}` : casedText;
+      updateLiveTitleCount(preview.value);
+      autosaveTitle(preview.value);
+      if (!item.pinned) pastedPool.splice(i, 1);
+      renderPool();
+    });
+
+    chip.appendChild(textSpan);
+    chip.appendChild(lenSpan);
+    if (openSlots.length) chip.appendChild(slotBtns);
+    if (splitBtn) chip.appendChild(splitBtn);
+    chip.appendChild(copyBtn);
+    chip.appendChild(removeBtn);
+    listEl.appendChild(chip);
+  });
+  autosavePool();
+}
+
+const KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
+
+Break the text into short descriptive keyword phrases, 2 to 4 words each, that the seller could reuse in a new title. Keep small connector words like "I", "a", "for" attached to the phrase they belong with rather than dropping them, for example "I Could Be Meaner" should stay together as one phrase, not become "Could Be Meaner". Skip generic product type or format words like PNG, SVG, digital download, tumbler, wrap, sublimation, design, seamless, skinny, 20oz, unless they are part of a distinctly descriptive phrase. Do not return duplicate phrases.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"keywords": ["phrase 1", "phrase 2"]}`;
+
+async function extractKeywords(text) {
+  const result = await callClaude(KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }]);
+  return result.keywords || [];
+}
+
+const STRIP_PRODUCT_WORDING_SYSTEM = `You are helping an Etsy seller pull just the descriptive part out of a full title they pasted from a listing.
+
+The pasted text has comma separated segments. Each segment mixes a descriptive phrase with generic product or format wording tacked onto the end, for example "Salty Heifer Seamless Tumbler Wrap" mixes the descriptive phrase "Salty Heifer" with the generic tail "Seamless Tumbler Wrap".
+
+For every segment, strip off the generic product or format wording and return only the descriptive lead phrase. Generic wording includes things like: tumbler, wrap, png, svg, design, sublimation, seamless, skinny, 20oz, 20 oz, digital download, instant download, download, gift. Keep the descriptive phrase exactly as cased in the original. Return one phrase per segment, in the same order, even if a segment turns out to be entirely generic with nothing descriptive left (in that case return an empty string for that segment). Do not merge segments together.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"phrases": ["phrase 1", "phrase 2", "phrase 3"]}`;
+
+async function stripProductWording(text) {
+  const result = await callClaude(STRIP_PRODUCT_WORDING_SYSTEM, [{ type: 'text', text }]);
+  return (result.phrases || []).filter(Boolean);
+}
+
+function pushSplit(text) {
+  const normalized = text.replace(/[，、]/g, ',');
+  const parts = normalized.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+  parts.forEach(p => pastedPool.push({ text: p }));
+}
+
+async function addToPastedPool(text, allowExtraction) {
+  const trimmed = text.trim();
+  const hasDelimiters = /[,\n，、]/.test(trimmed);
+  const statusEl = document.getElementById('poolStatus');
+  if (hasDelimiters && allowExtraction) {
+    setStatus(statusEl, 'Stripping product wording, keeping the descriptive part...');
+    try {
+      const phrases = await stripProductWording(trimmed);
+      if (phrases.length) {
+        phrases.forEach(p => pushSplit(p));
+      } else {
+        pushSplit(trimmed);
+      }
+      renderPool();
+    } catch (err) {
+      pushSplit(trimmed);
+      renderPool();
+    } finally {
+      setStatus(statusEl, '');
+    }
+  } else if (hasDelimiters) {
+    pushSplit(trimmed);
+    renderPool();
+  } else if (allowExtraction && trimmed.split(/\s+/).length > 5) {
+    setStatus(statusEl, 'Reading that title for keywords...');
+    try {
+      const keywords = await extractKeywords(trimmed);
+      keywords.forEach(k => pushSplit(k));
+      renderPool();
+    } catch (err) {
+      pushSplit(trimmed);
+      renderPool();
+    } finally {
+      setStatus(statusEl, '');
+    }
+  } else {
+    pushSplit(trimmed);
+    renderPool();
+  }
+}
+
+document.getElementById('addPoolBulkBtn').addEventListener('click', async () => {
+  const box = document.getElementById('poolBulkInput');
+  if (!box.value.trim()) return;
+  await addToPastedPool(box.value, true);
+  box.value = '';
+});
+
+document.getElementById('poolBulkInput').addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const box = e.target;
+    if (!box.value.trim()) return;
+    await addToPastedPool(box.value, true);
+    box.value = '';
+  }
+});
+
+document.getElementById('poolSingleInput').addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const input = e.target;
+    if (!input.value.trim()) return;
+    await addToPastedPool(input.value, false);
+    input.value = '';
+  }
+});
+
+document.getElementById('clearPoolBtn').addEventListener('click', () => {
+  pastedPool = [];
+  ensurePersistentPoolWords();
+  renderPool();
+});
+
+document.getElementById('splitAllPoolBtn').addEventListener('click', () => {
+  const next = [];
+  let splitCount = 0;
+  pastedPool.forEach(item => {
+    const words = item.text.trim().split(/\s+/);
+    if (words.length > 1 && !item.pinned) {
+      words.forEach(w => next.push({ text: w }));
+      splitCount++;
+    } else {
+      next.push(item);
+    }
+  });
+  pastedPool = next;
+  renderPool();
+  const statusEl = document.getElementById('poolStatus');
+  setStatus(statusEl, splitCount > 0 ? `Split ${splitCount} keyword${splitCount === 1 ? '' : 's'} into words` : 'Nothing to split, every keyword is already a single word');
+  setTimeout(() => setStatus(statusEl, ''), 2200);
+});
+
+function toTitleCase(str) {
+  return str.split(' ').map(word => {
+    if (!word) return word;
+    const match = word.match(/^(.*?)([,.:;!?]*)$/);
+    const core = match[1];
+    const trailing = match[2];
+    if (!core) return word;
+    if (/^[A-Z0-9]+$/.test(core) && core.length > 1) return core + trailing;
+    return core.charAt(0).toUpperCase() + core.slice(1).toLowerCase() + trailing;
+  }).join(' ');
+}
+
+function updateLiveTitleCount(text) {
+  const countEl = document.getElementById('liveTitleCount');
+  let markerOverhead = 0;
+  for (let n = 1; n <= 10; n++) {
+    if (text.includes(slotMarker(n))) markerOverhead += 2;
+  }
+  const realLength = text.length - markerOverhead;
+  countEl.textContent = `${realLength} / 140 chars`;
+  countEl.style.color = realLength > 140 ? '#e88a83' : 'var(--mauve)';
+  window._liveTitle = text;
+}
+
+document.getElementById('liveTitlePreview').addEventListener('input', (e) => {
+  updateLiveTitleCount(e.target.value);
+  autosaveTitle(e.target.value);
+  renderPool();
+});
+
+document.getElementById('copyLiveTitleBtn').addEventListener('click', () => {
+  const preview = document.getElementById('liveTitlePreview');
+  let cleaned = preview.value;
+  for (let n = 1; n <= 10; n++) {
+    cleaned = cleaned.split(slotMarker(n) + ' ').join('');
+    cleaned = cleaned.split(slotMarker(n)).join('');
+  }
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim();
+  cleaned = cleaned.replace(/^,\s*/, '').replace(/,\s*$/, '');
+  preview.value = cleaned;
+  updateLiveTitleCount(cleaned);
+  autosaveTitle(cleaned);
+  renderPool();
+  const btn = document.getElementById('copyLiveTitleBtn');
+  copyToClipboard(cleaned, btn, 'Copy this title');
+});
+
+document.getElementById('resetLiveTitleBtn').addEventListener('click', () => {
+  seedLiveTitle();
+});
+
+
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+document.addEventListener('paste', (e) => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  const files = [];
+  for (const item of items) {
+    if (item.type && item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) files.push(file);
+    }
+  }
+  if (files.length) handleFiles(files);
+});
+
+
+
+document.getElementById('pasteClipboardBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('pasteClipboardBtn');
+  const original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.read) {
+      btn.textContent = 'Use Ctrl+V instead';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    const clipboardItems = await navigator.clipboard.read();
+    const files = [];
+    for (const item of clipboardItems) {
+      const imgType = item.types.find(t => t.startsWith('image/'));
+      if (imgType) {
+        const blob = await item.getType(imgType);
+        files.push(new File([blob], 'pasted-image.png', { type: imgType }));
+      }
+    }
+    if (files.length) {
+      handleFiles(files);
+      btn.textContent = 'Pasted!';
+    } else {
+      btn.textContent = 'No image found on clipboard';
+    }
+    setTimeout(() => btn.textContent = original, 1800);
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Could not access clipboard';
+    setTimeout(() => btn.textContent = original, 1800);
+  }
+});
+
+async function pasteTextFromClipboard(btn, onText) {
+  const original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      btn.textContent = 'Use Ctrl+V instead';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) {
+      btn.textContent = 'Clipboard is empty';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    await onText(text);
+    btn.textContent = 'Pasted!';
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Could not access clipboard';
+  }
+  setTimeout(() => btn.textContent = original, 1800);
+}
+
+document.getElementById('pastePoolClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pastePoolClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => { await addToPastedPool(text, true); });
+});
+
+document.getElementById('pasteTagsClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteTagsClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => {
+    text.replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(t => tagsArray.push(t));
+    renderTags();
+  });
+});
+
+const MAX_IMAGES = 3;
+
+function handleFiles(files) {
+  const statusEl = document.getElementById('promptsError');
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    if (uploadedImages.length >= MAX_IMAGES) {
+      setError(statusEl, `You can add up to ${MAX_IMAGES} images. Remove one first to add another.`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      uploadedImages.push({ base64, mediaType: file.type });
+      renderThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+  fileInput.value = '';
+}
+
+function thumbSrc(img) {
+  return img.url ? img.url : `data:${img.mediaType};base64,${img.base64}`;
+}
+
+function renderThumbs() {
+  thumbs.innerHTML = '';
+  uploadedImages.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb';
+    div.innerHTML = `<img src="${thumbSrc(img)}" data-i="${i}"><button data-i="${i}">×</button>`;
+    thumbs.appendChild(div);
+  });
+}
+
+thumbs.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (btn) {
+    uploadedImages.splice(Number(btn.dataset.i), 1);
+    renderThumbs();
+    return;
+  }
+  const img = e.target.closest('img');
+  if (img) {
+    openLightbox(thumbSrc(uploadedImages[Number(img.dataset.i)]));
+  }
+});
+
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxOverlay').classList.add('show');
+}
+
+document.getElementById('lightboxOverlay').addEventListener('click', () => {
+  document.getElementById('lightboxOverlay').classList.remove('show');
+  document.getElementById('lightboxImg').src = '';
+});
+
+function addImageUrl(url) {
+  const trimmed = url.trim();
+  if (!trimmed) return;
+  if (uploadedImages.length >= MAX_IMAGES) {
+    setError(document.getElementById('promptsError'), `You can add up to ${MAX_IMAGES} images. Remove one first to add another.`);
+    return;
+  }
+  uploadedImages.push({ url: trimmed });
+  renderThumbs();
+}
+
+document.getElementById('addImageUrlBtn').addEventListener('click', () => {
+  const input = document.getElementById('imageUrlInput');
+  addImageUrl(input.value);
+  input.value = '';
+});
+
+document.getElementById('imageUrlInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addImageUrl(e.target.value);
+    e.target.value = '';
+  }
+});
+
+document.getElementById('pasteImageUrlClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteImageUrlClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => { addImageUrl(text); });
+});
+
+function setStatus(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
+function setError(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
+
+async function callClaude(systemPrompt, userContent) {
+  const savedKey = localStorage.getItem('shop_builder_api_key');
+  const headers = { "Content-Type": "application/json" };
+  if (savedKey) {
+    headers['x-api-key'] = savedKey;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  }
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 4000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userContent }]
+    })
+  });
+  if (!response.ok) {
+    let detail = '';
+    try { const errBody = await response.json(); detail = errBody?.error?.message || ''; } catch (e) {}
+    throw new Error(`API request failed (${response.status})${detail ? ': ' + detail : ''}`);
+  }
+  const data = await response.json();
+  const textBlock = data.content.find(b => b.type === 'text');
+  if (!textBlock) throw new Error('Response had no text content to parse.');
+  const raw = textBlock.text.trim();
+  let cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+      } catch (e2) {
+        throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+      }
+    }
+    throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+  }
+}
+
+const PROMPTS_SYSTEM = `You are a production assistant that writes AI image generation prompts for Etsy digital products (Tumbler Wrap PNG, Shirt PNG, Laser Wrap SVG).
+
+You will be given one or more inspo screenshots, a product type, optional keywords or a working title for extra context, either creative direction or an instruction to auto suggest improvements, and a palette mode of either "match" or "vary".
+
+Study the screenshot(s) in full detail: exact subject, pose, expression, any text or wording shown, color palette and how colors are distributed, background elements and patterns, layout, and overall mood. If keywords or a working title are given, treat them as important context: work several of the specific descriptive words or phrases from them naturally into the prompts themselves wherever they fit the visual, not just as background understanding. Use them to fill in or sharpen details the screenshot alone leaves ambiguous.
+
+If no creative direction is given, generate 2 to 3 quick one sentence design suggestions to elevate the design past the original, and use those as the creative direction for the prompts. Return these suggestions in the "suggestions" field. If creative direction was given, leave "suggestions" as an empty string.
+
+Then write exactly 5 image prompts that closely recreate the actual inspo design, not a generic version of the general theme. Every prompt must read like it was written by someone who studied the specific screenshot.
+
+Prompt 1 is always the closest match to the reference: it must stay as close as possible to the exact subject, pose, composition, layout, and color palette seen in the screenshot, with only the minimum creative improvement needed to make it original. Think of prompt 1 as "recreate this design," and prompts 2 through 5 as "creative variations on this design."
+
+Color palette handling, this is critical:
+- First, identify the actual color palette used in the reference screenshot as 3 to 5 hex codes with short plain English names (for example "deep terracotta", "warm cream", "dusty sage").
+- If palette mode is "match": every one of the 5 prompts uses this exact same reference palette. Return the same palette array for all 5 prompts.
+- If palette mode is "vary": prompt 1 still uses the exact reference palette. Prompts 2 through 5 must each get their own distinct 3 to 5 color palette, different from the reference and different from each other, chosen to still suit the subject and mood. Each prompt's palette array should reflect the palette actually used in that specific prompt's text.
+- Every prompt's written text must describe exact color relationships using the colors from that prompt's palette, not just a generic palette list dropped in.
+
+Rules for every prompt:
+- Name the specific subject, pose, and expression exactly as seen, not generic descriptions
+- If the design includes any text or wording, treat it as one complete phrase and include the full phrase intact in every single prompt, never split across prompts. Put the exact full phrase in quotation marks as its own clear clause (for example: the words "I COULD BE MEANER" rendered in bold gold distressed lettering). Specify roughly where it sits and its style based on the analysis
+- Name specific background elements and patterns exactly as seen rather than generic filler
+- Describe exact color relationships using that prompt's palette, not just a palette list
+- Vary sentence structure and opening line across the 5 prompts (start with scene, subject, mood, setting, or a visual detail, never with the product name)
+- Use approximately 70% proven visual direction from the screenshot, 30% creative improvement from the direction/suggestions, except prompt 1 which stays as close to the reference as possible
+- Do not number or label prompts, no bullets, no introductions
+- Never use em dashes, use commas, colons, periods, or parentheses instead
+- Never use the product format name anywhere in the prompt, not just the opening line. Never write words like tumbler, wrap, cup, mug, shirt, tee, svg, or laser at any point in the prompt body. These prompts describe only the flat 2D artwork content itself (the subject, scene, colors, text, patterns), never the physical object it will end up printed on. If a format word appears anywhere in the prompt, an AI image generator is likely to render an actual product photo (a wrapped cup, a folded shirt) instead of standalone flat artwork, which defeats the purpose
+
+Product type specific rules:
+Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt itself, describe the seamless edge to edge artwork only.
+Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Never write the words shirt or tee anywhere in the prompt body itself, describe the artwork only. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation, designed to feel like an Etsy bestseller."
+Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"suggestions": "string or empty string", "prompts": [{"text": "prompt 1 text", "palette": [{"hex": "#RRGGBB", "name": "color name"}], "matchesReference": true}, {"text": "prompt 2 text", "palette": [{"hex": "#RRGGBB", "name": "color name"}], "matchesReference": false}]}
+The "prompts" array must always have exactly 5 items, each with a "palette" array of 3 to 5 hex/name pairs, and "matchesReference" set to true only for prompt 1.`;
+
+document.getElementById('designKeywords').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('generatePromptsBtn').click();
+  }
+});
+
+document.getElementById('pasteKeywordsClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteKeywordsClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => {
+    const box = document.getElementById('designKeywords');
+    box.value = box.value ? box.value + ', ' + text.trim() : text.trim();
+  });
+});
+
+document.getElementById('creativeDirection').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('generatePromptsBtn').click();
+  }
+});
+
+document.getElementById('generatePromptsBtn').addEventListener('click', async () => {  const statusEl = document.getElementById('promptsStatus');
+  const errorEl = document.getElementById('promptsError');
+  const outputBlock = document.getElementById('promptsOutputBlock');
+  setError(errorEl, '');
+  outputBlock.style.display = 'none';
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+  if (uploadedImages.length === 0) { setError(errorEl, 'Upload or paste at least one screenshot.'); return; }
+
+  const direction = document.getElementById('creativeDirection').value.trim();
+  const keywords = document.getElementById('designKeywords').value.trim();
+  const btn = document.getElementById('generatePromptsBtn');
+  btn.disabled = true;
+  setStatus(statusEl, 'Analyzing design and writing prompts...');
+
+  try {
+    const userContent = [];
+    uploadedImages.forEach(img => {
+      if (img.url) {
+        userContent.push({ type: 'image', source: { type: 'url', url: img.url } });
+      } else {
+        userContent.push({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } });
+      }
+    });
+    const varyPalette = document.getElementById('varyPaletteCheckbox').checked;
+    userContent.push({
+      type: 'text',
+      text: `Product type: ${selectedType}\nKeywords or working title (weave several of these descriptive words naturally into the prompts): ${keywords ? keywords : 'none given'}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}\nPalette mode: ${varyPalette ? 'vary' : 'match'}`
+    });
+
+    const result = await callClaude(PROMPTS_SYSTEM, userContent);
+    const rawPrompts = result.prompts || [];
+    lastPromptsText = rawPrompts.map(p => (typeof p === 'string' ? p : p.text));
+    lastPromptsPalettes = rawPrompts.map(p => (typeof p === 'string' ? [] : (p.palette || [])));
+
+    const noteEl = document.getElementById('suggestionsNote');
+    if (result.suggestions) {
+      noteEl.style.display = 'block';
+      noteEl.textContent = 'Auto suggestions since no direction given: ' + result.suggestions;
+    } else {
+      noteEl.style.display = 'none';
+    }
+
+    const list = document.getElementById('promptsList');
+    list.innerHTML = '';
+    lastPromptsText.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'prompt-item';
+      div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${i === 0 ? '<span class="anchor-badge">Closest to reference</span>' : ''}${renderPaletteRow(lastPromptsPalettes[i])}<div>${escapeHtml(p)}</div></div>`;
+      list.appendChild(div);
+    });
+    outputBlock.style.display = 'block';
+    setStatus(statusEl, '');
+
+    promptHistory.unshift({
+      productType: selectedType,
+      timestamp: Date.now(),
+      prompts: lastPromptsText.slice(),
+      palettes: lastPromptsPalettes.slice(),
+      suggestions: result.suggestions || ''
+    });
+    renderPromptHistoryButton();
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong generating prompts: ' + (err.message || 'try again') + '.');
+  } finally {
+    btn.disabled = false;
+    setStatus(statusEl, '');
+  }
+});
+
+document.getElementById('promptsList').addEventListener('click', (e) => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  const item = btn.closest('.prompt-item');
+  const willBeUsed = !item.classList.contains('used');
+  item.classList.toggle('used', willBeUsed);
+  copyToClipboard(lastPromptsText[Number(btn.dataset.idx)], btn, willBeUsed ? 'Used' : 'Copy');
+});
+
+function copyAllPrompts(btn) {
+  document.querySelectorAll('#promptsList .prompt-item').forEach(item => {
+    item.classList.add('used');
+    const copyBtn = item.querySelector('.copy-btn');
+    if (copyBtn) copyBtn.textContent = 'Used';
+  });
+  copyToClipboard(lastPromptsText.join('\n\n\n'), btn, 'Copy all prompts');
+}
+
+document.getElementById('copyAllPromptsBtn').addEventListener('click', () => {
+  copyAllPrompts(document.getElementById('copyAllPromptsBtn'));
+});
+
+document.getElementById('copyAllPromptsTopBtn').addEventListener('click', () => {
+  copyAllPrompts(document.getElementById('copyAllPromptsTopBtn'));
+});
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderPromptHistoryButton() {
+  const btn = document.getElementById('viewHistoryBtn');
+  if (promptHistory.length === 0) {
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'inline-flex';
+  btn.textContent = `View Past Prompts (${promptHistory.length})`;
+}
+
+document.getElementById('viewHistoryBtn').addEventListener('click', () => {
+  const panel = document.getElementById('historyPanel');
+  const isOpen = panel.style.display !== 'none';
+  if (isOpen) {
+    panel.style.display = 'none';
+    return;
+  }
+  renderHistoryPanel();
+  panel.style.display = 'block';
+});
+
+function renderHistoryPanel() {
+  const listEl = document.getElementById('historyList');
+  listEl.innerHTML = '';
+  promptHistory.forEach((batch, batchIdx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'history-batch';
+
+    const time = new Date(batch.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const header = document.createElement('div');
+    header.className = 'history-batch-header';
+    header.innerHTML = `<span>${escapeHtml(batch.productType)} · ${time}</span>`;
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'btn secondary';
+    loadBtn.style.fontSize = '11px';
+    loadBtn.textContent = 'Load this batch';
+    loadBtn.addEventListener('click', () => {
+      lastPromptsText = batch.prompts.slice();
+      lastPromptsPalettes = (batch.palettes || []).slice();
+      const list = document.getElementById('promptsList');
+      list.innerHTML = '';
+      lastPromptsText.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'prompt-item';
+        div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${i === 0 ? '<span class="anchor-badge">Closest to reference</span>' : ''}${renderPaletteRow(lastPromptsPalettes[i])}<div>${escapeHtml(p)}</div></div>`;
+        list.appendChild(div);
+      });
+      document.getElementById('promptsOutputBlock').style.display = 'block';
+      document.getElementById('historyPanel').style.display = 'none';
+      document.getElementById('suggestionsNote').style.display = batch.suggestions ? 'block' : 'none';
+      if (batch.suggestions) document.getElementById('suggestionsNote').textContent = 'Auto suggestions since no direction given: ' + batch.suggestions;
+    });
+    header.appendChild(loadBtn);
+    wrap.appendChild(header);
+
+    batch.prompts.forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = 'prompt-item';
+      item.style.fontSize = '12.5px';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn secondary copy-btn';
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', () => {
+        copyToClipboard(p, copyBtn, 'Copy');
+      });
+      const contentDiv = document.createElement('div');
+      const palette = (batch.palettes || [])[i];
+      contentDiv.innerHTML = `${i === 0 ? '<span class="anchor-badge">Closest to reference</span>' : ''}${renderPaletteRow(palette)}<div>${escapeHtml(p)}</div>`;
+      item.appendChild(copyBtn);
+      item.appendChild(contentDiv);
+      wrap.appendChild(item);
+    });
+
+    listEl.appendChild(wrap);
+  });
+}
+
+function copyToClipboard(text, btn, originalLabel) {
+  const done = (label) => {
+    btn.textContent = label;
+    setTimeout(() => { btn.textContent = originalLabel; }, 1200);
+  };
+  const fallback = () => {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      done(ok ? 'Copied' : 'Select & copy');
+    } catch (e) {
+      done('Select & copy');
+    }
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => done('Copied')).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+const TAGS_SYSTEM = `You are a production assistant that suggests a few additional Etsy tags for the seller's own Etsy shop, on top of tags they already have.
+
+Inputs: product type, tags already in use (do not repeat these), the current live title the seller is building, and design context from image prompts already written for this design.
+
+Suggest new tags derived from the live title and design context. Do not duplicate or rephrase any tag already in use. Suggest 3 to 5 new tags. Each tag must be 20 characters or fewer including spaces. Never use em dashes.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"tags": ["new tag 1", "new tag 2"]}`;
+
+document.getElementById('generateTitlesBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('titlesStatus');
+  const errorEl = document.getElementById('titlesError');
+  setError(errorEl, '');
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+
+  const btn = document.getElementById('generateTitlesBtn');
+  btn.disabled = true;
+  setStatus(statusEl, 'Finding more tags...');
+
+  try {
+    const designContext = lastPromptsText.length
+      ? lastPromptsText.join('\n\n')
+      : 'No image prompts generated yet in this session.';
+
+    const userText = `Product type: ${selectedType}\n\nTags already in use: ${tagsArray.join(', ') || 'none yet'}\n\nCurrent live title: ${window._liveTitle || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+
+    const result = await callClaude(TAGS_SYSTEM, [{ type: 'text', text: userText }]);
+
+    const rawTags = result.tags || [];
+    const flattened = [];
+    rawTags.forEach(t => {
+      String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flattened.push(p));
+    });
+    const seen = new Set(tagsArray.map(t => t.toLowerCase()));
+    flattened.forEach(t => {
+      const key = t.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      tagsArray.push(t);
+      suggestedTagKeys.add(key);
+    });
+    renderTags();
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong finding more tags: ' + (err.message || 'try again') + '.');
+  } finally {
+    btn.disabled = false;
+    setStatus(statusEl, '');
+  }
+});
+
+const DESCRIPTION_SYSTEM = `You are a production assistant that writes Etsy listing descriptions for a seller's own digital download shop, every single one in this exact 3 sentence structure, never more, never fewer sentences.
+
+Sentence 1, the hook: "Celebrate your love for [the theme or subject] with this [adjective] [adjective] design!" Adapt the wording naturally to fit the specific theme, always end this sentence with an exclamation point, keep it warm and inviting.
+
+Sentence 2, the use case: "Perfect for [the target audience for this theme], this [a style descriptor like retro, trendy, vintage, whatever actually fits] "[the catchy phrase or pun from the title, in quotation marks]" [the product type in plain words] is ideal for creating [2 to 3 specific real use cases that match the exact product type given]." If nothing in the title or keywords reads like a clear catchy phrase or pun, drop the quoted phrase entirely and just describe the design plainly in its place, keeping the rest of the sentence structure intact.
+
+Sentence 3, the closer, this exact line every time, word for word: "Download instantly and get creative!"
+
+Use cases in sentence 2 must match the actual product type given:
+- PNG: shirts, mugs, sublimation, DTF, tumblers
+- Tumbler Wrap or Glass Tumbler Wrap: 20oz skinny tumblers, glass cups, sublimation tumbler wraps
+- Laser Wrap: laser cutting, laser engraving, Glowforge projects
+
+Base the theme, subject, adjectives, audience, and catchy phrase entirely on the live title, tags, and design context given. Never use em dashes, use commas or periods instead. Keep the tone upbeat and casual, like a seller talking directly to a buyer, not corporate or stiff.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"description": "the full 3 sentence description as one string"}`;
+
+async function runDescriptionGeneration() {
+  const statusEl = document.getElementById('descriptionStatus');
+  const errorEl = document.getElementById('descriptionError');
+  const outputBlock = document.getElementById('descriptionOutputBlock');
+  setError(errorEl, '');
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+
+  const genBtn = document.getElementById('generateDescriptionBtn');
+  const regenBtn = document.getElementById('regenerateDescriptionBtn');
+  genBtn.disabled = true;
+  if (regenBtn) regenBtn.disabled = true;
+  setStatus(statusEl, 'Writing description...');
+
+  try {
+    const designContext = lastPromptsText.length
+      ? lastPromptsText.join('\n\n')
+      : 'No image prompts generated yet in this session.';
+
+    const userText = `Product type: ${selectedType}\n\nLive title: ${window._liveTitle || 'none built yet'}\n\nTags: ${tagsArray.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+
+    const result = await callClaude(DESCRIPTION_SYSTEM, [{ type: 'text', text: userText }]);
+    const descText = (result.description || '').trim();
+    document.getElementById('descriptionOutput').value = descText;
+    outputBlock.style.display = 'block';
+    autosaveDescription(descText);
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong writing the description: ' + (err.message || 'try again') + '.');
+  } finally {
+    genBtn.disabled = false;
+    if (regenBtn) regenBtn.disabled = false;
+    setStatus(statusEl, '');
+  }
+}
+
+document.getElementById('generateDescriptionBtn').addEventListener('click', runDescriptionGeneration);
+document.getElementById('regenerateDescriptionBtn').addEventListener('click', runDescriptionGeneration);
+
+document.getElementById('copyDescriptionBtn').addEventListener('click', () => {
+  const btn = document.getElementById('copyDescriptionBtn');
+  copyToClipboard(document.getElementById('descriptionOutput').value, btn, 'Copy Description');
+});
+
+document.getElementById('descriptionOutput').addEventListener('input', (e) => {
+  autosaveDescription(e.target.value);
+});
+
+const autosaveDescription = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:description:' + selectedType, val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+
+
+function renderTags() {
+  const hadCommas = tagsArray.some(t => /[,\n，、]/.test(t));
+  if (hadCommas) {
+    const flattened = [];
+    tagsArray.forEach(t => {
+      String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flattened.push(p));
+    });
+    tagsArray = flattened;
+  }
+
+  const tagsList = document.getElementById('tagsList');
+  const countBadge = document.getElementById('tagCountBadge');
+  const dupeFlag = document.getElementById('tagDupeFlag');
+
+  const lowerCounts = {};
+  tagsArray.forEach(t => {
+    const key = t.trim().toLowerCase();
+    lowerCounts[key] = (lowerCounts[key] || 0) + 1;
+  });
+  const hasDupes = Object.values(lowerCounts).some(c => c > 1);
+
+  const bakedSet = new Set(bakedTagsValue.split(',').map(s => s.trim().toLowerCase()).filter(Boolean));
+
+  tagsList.innerHTML = '';
+  tagsArray.forEach((tag, i) => {
+    const key = tag.trim().toLowerCase();
+    const isDupe = lowerCounts[key] > 1;
+    const overLen = tag.length > 20;
+    const isSuggested = suggestedTagKeys.has(key);
+    const isBaked = bakedSet.has(key);
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip' + (isDupe ? ' dupe' : '') + (isSuggested ? ' suggested' : '') + (isBaked ? ' baked' : '');
+    chip.title = isBaked ? 'Baked in tag' : '';
+    const isMultiWord = tag.trim().split(/\s+/).length > 1;
+    const splitBtnHtml = isMultiWord ? `<button class="copy-btn-pill" data-action="split" data-i="${i}" title="Split into separate word tags">Split</button>` : '';
+    chip.innerHTML = `<span>${escapeHtml(tag)}</span><span class="len${overLen ? ' over' : ''}">${tag.length}</span>${splitBtnHtml}<button class="copy-btn-pill" data-action="copy" data-i="${i}" title="Copy this tag">Copy</button><button data-action="remove" data-i="${i}" title="Remove">×</button>`;
+    tagsList.appendChild(chip);
+  });
+
+  countBadge.textContent = `${tagsArray.length}/13 tags`;
+  countBadge.classList.toggle('over', tagsArray.length > 13);
+  dupeFlag.classList.toggle('show', hasDupes);
+
+  window._lastTags = tagsArray;
+  autosaveTags();
+}
+
+document.getElementById('tagsList').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const i = Number(btn.dataset.i);
+  if (btn.dataset.action === 'copy') {
+    const original = btn.textContent;
+    copyToClipboard(tagsArray[i], btn, original);
+    return;
+  }
+  if (btn.dataset.action === 'split') {
+    const words = tagsArray[i].trim().split(/\s+/);
+    tagsArray.splice(i, 1, ...words);
+    renderTags();
+    return;
+  }
+  tagsArray.splice(i, 1);
+  renderTags();
+});
+
+document.getElementById('splitAllTagsBtn').addEventListener('click', () => {
+  const next = [];
+  let splitCount = 0;
+  tagsArray.forEach(tag => {
+    const words = tag.trim().split(/\s+/);
+    if (words.length > 1) {
+      words.forEach(w => next.push(w));
+      splitCount++;
+    } else {
+      next.push(tag);
+    }
+  });
+  tagsArray = next;
+  renderTags();
+  const statusEl = document.getElementById('titlesStatus');
+  setStatus(statusEl, splitCount > 0 ? `Split ${splitCount} tag${splitCount === 1 ? '' : 's'} into words` : 'Nothing to split, every tag is already a single word');
+  setTimeout(() => setStatus(statusEl, ''), 2200);
+});
+
+function addTagFromInput() {
+  const input = document.getElementById('addTagInput');
+  const val = input.value.trim();
+  if (!val) return;
+  val.replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(t => tagsArray.push(t));
+  input.value = '';
+  renderTags();
+}
+
+document.getElementById('addTagBtn').addEventListener('click', addTagFromInput);
+document.getElementById('addTagInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); addTagFromInput(); }
+});
+
+document.getElementById('copyAllTagsBtn').addEventListener('click', () => {
+  const btn = document.getElementById('copyAllTagsBtn');
+  copyToClipboard(tagsArray.join(', '), btn, 'Copy all tags');
+});
+
+document.getElementById('backToTopBtn').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', async () => {
+  if (!selectedType) {
+    const statusEl = document.getElementById('bottomBarStatus');
+    statusEl.textContent = 'Pick a product type first';
+    setTimeout(() => statusEl.textContent = '', 2000);
+    return;
+  }
+  pastedPool = [];
+  ensurePersistentPoolWords();
+  suggestedTagKeys = new Set();
+  renderPool();
+  seedTagsFromBakedIn();
+  seedLiveTitle();
+  document.getElementById('descriptionOutput').value = '';
+  document.getElementById('descriptionOutputBlock').style.display = 'none';
+  try {
+    await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
+    await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+    await storageAPI.set('session:description:' + selectedType, '');
+  } catch (e) {}
+  const statusEl = document.getElementById('bottomBarStatus');
+  statusEl.textContent = 'Cleared';
+  setTimeout(() => statusEl.textContent = '', 2000);
+});
+
+(async function initLastSession() {
+  try {
+    const savedType = await storageAPI.get('session:productType');
+    if (savedType && savedType.value) {
+      const btn = document.querySelector(`.type-btn[data-type="${savedType.value}"]`);
+      if (btn) {
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = savedType.value;
+        await loadBakedTags(selectedType);
+        await loadBakedPieces(selectedType);
+        await restoreWorkSession(selectedType);
+        if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
+        if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
+      }
+    }
+  } catch (e) {}
+
+  try {
+    const savedKeywords = await storageAPI.get('session:designKeywords');
+    if (savedKeywords && savedKeywords.value) document.getElementById('designKeywords').value = savedKeywords.value;
+    const savedDirection = await storageAPI.get('session:creativeDirection');
+    if (savedDirection && savedDirection.value) document.getElementById('creativeDirection').value = savedDirection.value;
+  } catch (e) {}
+})();
+
+function checkApiKeyUI() {
+  const key = localStorage.getItem('shop_builder_api_key');
+  const wrap = document.getElementById('apiKeyInputWrap');
+  const saved = document.getElementById('apiKeySavedMsg');
+  const compact = document.getElementById('apiKeyCompact');
+  const full = document.getElementById('apiKeyFull');
+  if (key) {
+    wrap.style.display = 'none';
+    saved.style.display = 'block';
+    compact.style.display = 'flex';
+    full.style.display = 'none';
+  } else {
+    wrap.style.display = 'block';
+    saved.style.display = 'none';
+    compact.style.display = 'none';
+    full.style.display = 'block';
+  }
+}
+
+document.getElementById('manageApiKeyBtn').addEventListener('click', () => {
+  document.getElementById('apiKeyCompact').style.display = 'none';
+  document.getElementById('apiKeyFull').style.display = 'block';
+});
+
+document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) return;
+  localStorage.setItem('shop_builder_api_key', val);
+  document.getElementById('apiKeyInput').value = '';
+  checkApiKeyUI();
+});
+
+document.getElementById('changeApiKeyBtn').addEventListener('click', () => {
+  localStorage.removeItem('shop_builder_api_key');
+  checkApiKeyUI();
+});
+
+checkApiKeyUI();
+
+/* ---------- Tabs ---------- */
+
+document.getElementById('tabNav').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(btn.dataset.tab).classList.add('active');
+  document.getElementById('pageWrap').classList.toggle('wide', btn.dataset.tab === 'calendarTab');
+  if (btn.dataset.tab === 'calendarTab') {
+    await loadCalendarEntries();
+    renderCalendarMonth();
+    renderStreak();
+  }
+});
+
+/* ---------- Listing Calendar ---------- */
+
+const PRODUCT_TYPES = [
+  { name: 'Glass Tumbler Wrap', color: '#c9a96e' },
+  { name: 'Laser Wrap', color: '#8a9bb0' },
+  { name: 'PNG', color: '#b98a9e' },
+  { name: 'Tumbler Wrap', color: '#8fa88f' }
+];
+
+let calendarEntries = {};
+let calViewDate = new Date();
+calViewDate.setDate(1);
+let selectedDayKey = null;
+let selectedCount = null;
+let selectedTypes = new Set();
+
+function dateKey(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+function todayKey() {
+  const t = new Date();
+  return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+}
+
+async function loadCalendarEntries() {
+  try {
+    const result = await storageAPI.get('calendar:entries');
+    calendarEntries = (result && result.value) ? JSON.parse(result.value) : {};
+  } catch (e) { calendarEntries = {}; }
+}
+
+async function saveCalendarEntries() {
+  try { await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries)); } catch (e) {}
+}
+
+function renderCalLegend() {
+  const el = document.getElementById('calLegend');
+  el.innerHTML = PRODUCT_TYPES.map(t =>
+    `<span class="cal-legend-item"><span class="cal-legend-dot" style="background:${t.color}"></span>${t.name}</span>`
+  ).join('');
+}
+
+function renderCalendarMonth() {
+  const year = calViewDate.getFullYear();
+  const month = calViewDate.getMonth();
+  document.getElementById('calMonthLabel').textContent = calViewDate.toLocaleDateString([], { month: 'long', year: 'numeric' });
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+    const label = document.createElement('div');
+    label.className = 'cal-daylabel';
+    label.textContent = d;
+    grid.appendChild(label);
+  });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const tKey = todayKey();
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-cell empty';
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = dateKey(year, month, d);
+    const entry = calendarEntries[key];
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (key === tKey ? ' today' : '');
+    const typesHtml = (entry && entry.types && entry.types.length)
+      ? `<div class="cal-types">${entry.types.map(tn => {
+          const pt = PRODUCT_TYPES.find(p => p.name === tn);
+          return `<span class="cal-type-label" style="background:${pt ? pt.color : '#999'}">${tn}</span>`;
+        }).join('')}</div>`
+      : '';
+    cell.innerHTML = `<span class="cal-date">${d}</span>${entry ? `<span class="cal-count">${entry.count} listing${entry.count === 1 ? '' : 's'}</span>` : ''}${typesHtml}`;
+    cell.addEventListener('click', () => openDayEditor(key, d, month, year));
+    grid.appendChild(cell);
+  }
+}
+
+function openDayEditor(key, d, month, year) {
+  selectedDayKey = key;
+  const entry = calendarEntries[key];
+  selectedCount = entry ? entry.count : null;
+  selectedTypes = new Set(entry ? entry.types : []);
+
+  const dateObj = new Date(year, month, d);
+  document.getElementById('dayEditorDate').textContent = dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  renderCountRow();
+  renderTypeMultiselect();
+
+  const editorCard = document.getElementById('dayEditorCard');
+  editorCard.style.display = 'block';
+  editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderCountRow() {
+  const row = document.getElementById('countRow');
+  row.innerHTML = '';
+  for (let n = 1; n <= 10; n++) {
+    const btn = document.createElement('button');
+    btn.className = 'count-btn' + (selectedCount === n ? ' active' : '');
+    btn.textContent = n;
+    btn.addEventListener('click', () => {
+      selectedCount = (selectedCount === n) ? null : n;
+      renderCountRow();
+    });
+    row.appendChild(btn);
+  }
+}
+
+function renderTypeMultiselect() {
+  const wrap = document.getElementById('typeMultiselect');
+  wrap.innerHTML = '';
+  PRODUCT_TYPES.forEach(t => {
+    const isActive = selectedTypes.has(t.name);
+    const chip = document.createElement('button');
+    chip.className = 'type-ms-chip' + (isActive ? ' active' : '');
+    if (isActive) chip.style.background = t.color;
+    chip.innerHTML = `<span class="dot" style="background:${isActive ? '#fff' : t.color}"></span>${t.name}`;
+    chip.addEventListener('click', () => {
+      if (selectedTypes.has(t.name)) selectedTypes.delete(t.name);
+      else selectedTypes.add(t.name);
+      renderTypeMultiselect();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+document.getElementById('saveDayBtn').addEventListener('click', async () => {
+  if (!selectedDayKey) return;
+  if (!selectedCount) {
+    const statusEl = document.getElementById('bottomBarStatus');
+    statusEl.textContent = 'Pick how many listings first';
+    setTimeout(() => statusEl.textContent = '', 2000);
+    return;
+  }
+  calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
+  await saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+document.getElementById('deleteDayBtn').addEventListener('click', async () => {
+  if (!selectedDayKey) return;
+  delete calendarEntries[selectedDayKey];
+  await saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+function closeDayEditor() {
+  document.getElementById('dayEditorCard').style.display = 'none';
+  selectedDayKey = null;
+}
+
+document.getElementById('closeDayEditorBtn').addEventListener('click', closeDayEditor);
+
+document.getElementById('calPrevBtn').addEventListener('click', () => {
+  calViewDate.setMonth(calViewDate.getMonth() - 1);
+  renderCalendarMonth();
+});
+
+document.getElementById('calNextBtn').addEventListener('click', () => {
+  calViewDate.setMonth(calViewDate.getMonth() + 1);
+  renderCalendarMonth();
+});
+
+function renderStreak() {
+  const el = document.getElementById('streakRow');
+  let streak = 0;
+  let cursor = new Date();
+  while (true) {
+    const key = dateKey(cursor.getFullYear(), cursor.getMonth(), cursor.getDate());
+    const entry = calendarEntries[key];
+    if (entry && entry.count > 0) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  el.textContent = streak > 0
+    ? `🔥 ${streak} day streak, keep it going`
+    : 'No listing logged for today yet, add one to start a streak';
+}
+
+renderCalLegend();
+
+</script>
+</body>
+</html>
