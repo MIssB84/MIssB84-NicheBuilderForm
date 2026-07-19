@@ -674,7 +674,8 @@ typeRow.addEventListener('click', async (e) => {
 
 const DEFAULT_BAKED_TAGS = {
   'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler',
-  'Shirt PNG': 'Digital Download, Sublimation Png, Png For Shirts, Tshirt Png Design, Sublimation Design, trendy shirt png'
+  'Shirt PNG': 'Digital Download, Sublimation Png, Png For Shirts, Tshirt Png Design, Sublimation Design, trendy shirt png',
+  'Laser Wrap SVG': '40 Oz Tumbler Wrap, tumbler engrave file, tumbler wrap svg, tumbler laser svg, 40oz laser svg, 40oz laser engraved, laser engraved cup, 40oz with handle, 20oz 30oz 40oz'
 };
 
 const OLD_DEFAULT_BAKED_TAGS = {
@@ -719,7 +720,8 @@ async function loadBakedTags(type) {
 
 const DEFAULT_BAKED = {
   'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download',
-  'Shirt PNG': 'PNG, PNG, T Shirt Sublimation Design, Digital Download'
+  'Shirt PNG': 'PNG, PNG, T Shirt Sublimation Design, Digital Download',
+  'Laser Wrap SVG': 'Laser Wrap SVG for Laser Rotary, Engraved Full Wrap 40oz Tumbler, Seamless Design Digital Download'
 };
 
 const OLD_DEFAULT_BAKED = {
@@ -1467,7 +1469,7 @@ Rules for every prompt:
 Product type specific rules:
 Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt itself, describe the seamless edge to edge artwork only.
 Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Never write the words shirt or tee anywhere in the prompt body itself, describe the artwork only. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation, designed to feel like an Etsy bestseller."
-Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only.
+Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only. Since this becomes a laser engraving, favor a composition that reads clearly in bold shapes: distinct, well separated elements with clean silhouettes rather than tiny intricate detail, dense overlapping clutter, or fussy fine linework, since that gets muddy no matter how clean the art style is. Simple, graphic, uncluttered wins over busy and detailed here.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"suggestions": "string or empty string", "prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
