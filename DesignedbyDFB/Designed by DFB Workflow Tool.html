@@ -323,6 +323,11 @@
     font-size: 13.5px; font-weight: 600; margin: 14px 0 20px; display: inline-block;
   }
 
+  .month-progress { margin: 0 0 20px; }
+  .month-progress-label { font-size: 13px; font-weight: 600; color: var(--bg); margin-bottom: 6px; }
+  .month-progress-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
+  .month-progress-fill { background: var(--rose); height: 100%; border-radius: 20px; transition: width 0.3s ease; }
+
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
   .cal-month-label { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--bg); font-weight: 700; }
 
@@ -531,6 +536,11 @@
 
       <div class="streak-row" id="streakRow"></div>
 
+      <div class="month-progress">
+        <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
+        <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
+      </div>
+
       <div class="cal-header">
         <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
         <div class="cal-month-label" id="calMonthLabel"></div>
@@ -553,7 +563,6 @@
 
       <div class="copy-all-row">
         <button class="btn" id="saveDayBtn">Save Day</button>
-        <button class="btn secondary" id="deleteDayBtn">Delete Entry</button>
         <button class="btn secondary" id="closeDayEditorBtn">Close</button>
       </div>
     </div>
@@ -591,7 +600,7 @@
   <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 30s</span>
   <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
   <button class="btn secondary bottom-bar-btn" id="backToTopBtn">Back to Top</button>
-  <button class="btn bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
+  <button class="btn secondary bottom-bar-btn" id="clearAllBtn" style="border-color:var(--warn); color:var(--warn);">Clear Builder Fields</button>
 </div>
 
 <script>
@@ -769,10 +778,13 @@ async function saveAllNow() {
       await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
       await storageAPI.set('session:liveTitle:' + selectedType, document.getElementById('liveTitlePreview').value);
       await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
+      await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages));
     }
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
     await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
-    await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
+    if (calendarLoaded) {
+      await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
+    }
   } catch (e) {}
   flashSavedIndicator();
 }
@@ -848,6 +860,14 @@ async function restoreWorkSession(type) {
       descOutputBlock.style.display = 'none';
     }
   } catch (e) {}
+
+  try {
+    const savedImages = await storageAPI.get('session:images:' + type);
+    uploadedImages = (savedImages && savedImages.value) ? JSON.parse(savedImages.value) : [];
+  } catch (e) {
+    uploadedImages = [];
+  }
+  renderThumbs();
 }
 
 const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
@@ -1295,7 +1315,14 @@ function renderThumbs() {
     div.innerHTML = `<img src="${thumbSrc(img)}" data-i="${i}"><button data-i="${i}">×</button>`;
     thumbs.appendChild(div);
   });
+  autosaveImages();
 }
+
+const autosaveImages = debounce(async () => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages)); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
 
 thumbs.addEventListener('click', (e) => {
   const btn = e.target.closest('button');
@@ -1890,6 +1917,9 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     setTimeout(() => statusEl.textContent = '', 2000);
     return;
   }
+  const confirmed = confirm('Clear the title, tags, keyword pool, screenshots/URLs, and description for this product type? This does not touch your Listing Calendar or your API key.');
+  if (!confirmed) return;
+
   pastedPool = [];
   ensurePersistentPoolWords();
   suggestedTagKeys = new Set();
@@ -1898,13 +1928,16 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   seedLiveTitle();
   document.getElementById('descriptionOutput').value = '';
   document.getElementById('descriptionOutputBlock').style.display = 'none';
+  uploadedImages = [];
+  renderThumbs();
   try {
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
     await storageAPI.set('session:description:' + selectedType, '');
+    await storageAPI.set('session:images:' + selectedType, JSON.stringify([]));
   } catch (e) {}
   const statusEl = document.getElementById('bottomBarStatus');
-  statusEl.textContent = 'Cleared';
+  statusEl.textContent = 'Builder fields cleared';
   setTimeout(() => statusEl.textContent = '', 2000);
 });
 
@@ -1932,6 +1965,8 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     const savedDirection = await storageAPI.get('session:creativeDirection');
     if (savedDirection && savedDirection.value) document.getElementById('creativeDirection').value = savedDirection.value;
   } catch (e) {}
+
+  await loadCalendarEntries();
 })();
 
 function checkApiKeyUI() {
@@ -2000,6 +2035,7 @@ const PRODUCT_TYPES = [
 ];
 
 let calendarEntries = {};
+let calendarLoaded = false;
 let calViewDate = new Date();
 calViewDate.setDate(1);
 let selectedDayKey = null;
@@ -2019,9 +2055,11 @@ async function loadCalendarEntries() {
     const result = await storageAPI.get('calendar:entries');
     calendarEntries = (result && result.value) ? JSON.parse(result.value) : {};
   } catch (e) { calendarEntries = {}; }
+  calendarLoaded = true;
 }
 
 async function saveCalendarEntries() {
+  if (!calendarLoaded) return;
   try { await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries)); } catch (e) {}
 }
 
@@ -2071,6 +2109,21 @@ function renderCalendarMonth() {
     cell.addEventListener('click', () => openDayEditor(key, d, month, year));
     grid.appendChild(cell);
   }
+
+  renderMonthProgress(year, month, daysInMonth);
+}
+
+const POST_GOAL_DAYS = 21;
+
+function renderMonthProgress(year, month, daysInMonth) {
+  let loggedDays = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const entry = calendarEntries[dateKey(year, month, d)];
+    if (entry && entry.count > 0) loggedDays++;
+  }
+  const pct = Math.min(100, Math.round((loggedDays / POST_GOAL_DAYS) * 100));
+  document.getElementById('monthProgressLabel').textContent = `${loggedDays} / ${POST_GOAL_DAYS} days this month`;
+  document.getElementById('monthProgressFill').style.width = pct + '%';
 }
 
 function openDayEditor(key, d, month, year) {
@@ -2132,15 +2185,6 @@ document.getElementById('saveDayBtn').addEventListener('click', async () => {
     return;
   }
   calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
-  await saveCalendarEntries();
-  renderCalendarMonth();
-  renderStreak();
-  closeDayEditor();
-});
-
-document.getElementById('deleteDayBtn').addEventListener('click', async () => {
-  if (!selectedDayKey) return;
-  delete calendarEntries[selectedDayKey];
   await saveCalendarEntries();
   renderCalendarMonth();
   renderStreak();
