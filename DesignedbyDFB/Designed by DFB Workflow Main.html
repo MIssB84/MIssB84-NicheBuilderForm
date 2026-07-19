@@ -1938,7 +1938,7 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     setTimeout(() => statusEl.textContent = '', 2000);
     return;
   }
-  const confirmed = confirm('Clear the title, tags, keyword pool, screenshots/URLs, and description for this product type? This does not touch your Listing Calendar or your API key.');
+  const confirmed = confirm('Clear the title, tags, keyword pool, screenshots/URLs, description, keywords, and creative direction for this product type? This does not touch your Listing Calendar or your API key.');
   if (!confirmed) return;
 
   pastedPool = [];
@@ -1951,11 +1951,15 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   document.getElementById('descriptionOutputBlock').style.display = 'none';
   uploadedImages = [];
   renderThumbs();
+  document.getElementById('designKeywords').value = '';
+  document.getElementById('creativeDirection').value = '';
   try {
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
     await storageAPI.set('session:description:' + selectedType, '');
     await storageAPI.set('session:images:' + selectedType, JSON.stringify([]));
+    await storageAPI.set('session:designKeywords', '');
+    await storageAPI.set('session:creativeDirection', '');
   } catch (e) {}
   const statusEl = document.getElementById('bottomBarStatus');
   statusEl.textContent = 'Builder fields cleared';
