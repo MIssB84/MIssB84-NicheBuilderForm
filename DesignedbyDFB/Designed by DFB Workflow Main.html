@@ -336,6 +336,13 @@
   .month-progress-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
   .month-progress-fill { background: var(--rose); height: 100%; border-radius: 20px; transition: width 0.3s ease; }
 
+  .month-stats-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .month-stats-row .month-progress { flex: 1; min-width: 220px; }
+  .month-listings-count {
+    background: var(--paste-sage); color: var(--bg); font-weight: 700; font-size: 14px;
+    padding: 8px 16px; border-radius: 20px; white-space: nowrap;
+  }
+
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
   .cal-month-label { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--bg); font-weight: 700; }
 
@@ -544,9 +551,12 @@
 
       <div class="streak-row" id="streakRow"></div>
 
-      <div class="month-progress">
-        <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
-        <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
+      <div class="month-stats-row">
+        <div class="month-progress">
+          <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
+          <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
+        </div>
+        <div class="month-listings-count" id="monthListingsCount">0 listings this month</div>
       </div>
 
       <div class="cal-header">
@@ -571,6 +581,7 @@
 
       <div class="copy-all-row">
         <button class="btn" id="saveDayBtn">Save Day</button>
+        <button class="btn secondary" id="deleteDayBtn">Delete This Day</button>
         <button class="btn secondary" id="closeDayEditorBtn">Close</button>
       </div>
     </div>
@@ -608,7 +619,7 @@
   <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 30s</span>
   <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
   <button class="btn secondary bottom-bar-btn" id="backToTopBtn">Back to Top</button>
-  <button class="btn secondary bottom-bar-btn" id="clearAllBtn" style="border-color:var(--warn); color:var(--warn);">Clear Builder Fields</button>
+  <button class="btn secondary bottom-bar-btn" id="clearAllBtn" style="border-color:var(--paste-sage); color:var(--paste-sage);">Clear Builder Fields</button>
 </div>
 
 <script>
@@ -2125,13 +2136,18 @@ const POST_GOAL_DAYS = 21;
 
 function renderMonthProgress(year, month, daysInMonth) {
   let loggedDays = 0;
+  let totalListings = 0;
   for (let d = 1; d <= daysInMonth; d++) {
     const entry = calendarEntries[dateKey(year, month, d)];
-    if (entry && entry.count > 0) loggedDays++;
+    if (entry && entry.count > 0) {
+      loggedDays++;
+      totalListings += entry.count;
+    }
   }
   const pct = Math.min(100, Math.round((loggedDays / POST_GOAL_DAYS) * 100));
   document.getElementById('monthProgressLabel').textContent = `${loggedDays} / ${POST_GOAL_DAYS} days this month`;
   document.getElementById('monthProgressFill').style.width = pct + '%';
+  document.getElementById('monthListingsCount').textContent = `${totalListings} listing${totalListings === 1 ? '' : 's'} this month`;
 }
 
 function openDayEditor(key, d, month, year) {
@@ -2193,6 +2209,15 @@ document.getElementById('saveDayBtn').addEventListener('click', async () => {
     return;
   }
   calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
+  await saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+document.getElementById('deleteDayBtn').addEventListener('click', async () => {
+  if (!selectedDayKey) return;
+  delete calendarEntries[selectedDayKey];
   await saveCalendarEntries();
   renderCalendarMonth();
   renderStreak();
