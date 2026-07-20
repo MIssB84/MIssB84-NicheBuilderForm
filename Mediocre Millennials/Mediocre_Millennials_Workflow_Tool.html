@@ -951,6 +951,20 @@ function renderAllGarmentTitles() {
   autosaveGarmentState();
 }
 
+function addTagsBulk(key, rawText) {
+  const pieces = rawText.replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+  if (!pieces.length) return;
+  const seen = new Set(garmentTags[key].map(t => t.trim().toLowerCase()));
+  pieces.forEach(p => {
+    const k = p.toLowerCase();
+    if (seen.has(k)) return;
+    seen.add(k);
+    garmentTags[key].push(p);
+  });
+  renderTagsForGarment(key);
+  autosaveGarmentState();
+}
+
 function renderTagsForGarment(key) {
   const listEl = document.getElementById('garmentTagsList-' + key);
   const badgeEl = document.getElementById('garmentTagBadge-' + key);
@@ -1009,8 +1023,9 @@ function renderGarmentPanels() {
       </div>
       <div class="tag-list" id="garmentTagsList-${g.key}" style="margin-top:8px;"></div>
       <div class="add-tag-row" style="margin-top:10px;">
-        <input type="text" id="garmentAddTag-${g.key}" placeholder="Add a tag and press Enter">
+        <input type="text" id="garmentAddTag-${g.key}" placeholder="Paste tags separated by commas, or add one and press Enter">
         <button class="btn small add-garment-tag" data-garment="${g.key}">Add</button>
+        <button class="btn paste-btn paste-garment-tags" data-garment="${g.key}">Paste from Clipboard</button>
         <button class="btn secondary copy-garment-tags" data-garment="${g.key}">Copy all tags</button>
       </div>
     </div>
@@ -1025,8 +1040,7 @@ function renderGarmentPanels() {
     document.getElementById('garmentAddTag-' + g.key).addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const val = e.target.value.trim();
-        if (val) { garmentTags[g.key].push(val); renderTagsForGarment(g.key); autosaveGarmentState(); }
+        addTagsBulk(g.key, e.target.value);
         e.target.value = '';
       }
     });
@@ -1035,9 +1049,15 @@ function renderGarmentPanels() {
   wrap.querySelectorAll('.add-garment-tag').forEach(btn => btn.addEventListener('click', () => {
     const key = btn.dataset.garment;
     const input = document.getElementById('garmentAddTag-' + key);
-    const val = input.value.trim();
-    if (val) { garmentTags[key].push(val); renderTagsForGarment(key); autosaveGarmentState(); }
+    addTagsBulk(key, input.value);
     input.value = '';
+  }));
+
+  wrap.querySelectorAll('.paste-garment-tags').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.garment;
+    pasteTextFromClipboard(btn, (text) => {
+      addTagsBulk(key, text);
+    });
   }));
 
   wrap.querySelectorAll('.copy-garment-title').forEach(btn => btn.addEventListener('click', () => {
