@@ -620,18 +620,22 @@
 
     <div class="add-tag-row" style="margin-top:10px;">
       <input type="text" id="pasteLineBabyTee" placeholder="Keywords or a title...">
+      <button class="btn small" id="pasteLineBabyTeeAddBtn">Add to Pool</button>
       <button class="btn paste-btn" id="pasteLineBabyTeeBtn">Paste from Clipboard</button>
     </div>
     <div class="add-tag-row" style="margin-top:8px;">
       <input type="text" id="pasteLineTShirt" placeholder="Keywords or a title...">
+      <button class="btn small" id="pasteLineTShirtAddBtn">Add to Pool</button>
       <button class="btn paste-btn" id="pasteLineTShirtBtn">Paste from Clipboard</button>
     </div>
     <div class="add-tag-row" style="margin-top:8px;">
       <input type="text" id="pasteLineSweatshirt" placeholder="Keywords or a title...">
+      <button class="btn small" id="pasteLineSweatshirtAddBtn">Add to Pool</button>
       <button class="btn paste-btn" id="pasteLineSweatshirtBtn">Paste from Clipboard</button>
     </div>
     <div class="add-tag-row" style="margin-top:8px;">
       <input type="text" id="pasteLineRandom" placeholder="Random keywords...">
+      <button class="btn small" id="pasteLineRandomAddBtn">Add to Pool</button>
       <button class="btn paste-btn" id="pasteLineRandomBtn">Paste from Clipboard</button>
     </div>
     <div class="status" id="poolStatus" style="margin-top:8px;"></div>
@@ -858,7 +862,7 @@ const GARMENTS = [
     bakedTags: ['Y2K Baby Tee', 'Baby Tee', 'Y2K Top', 'Fitted Tee', 'Y2K Tee']
   },
   {
-    key: 'tshirt', label: 'T Shirt', segments: ['Comfort Colors Unisex T Shirt', 'Shirt', 'T Shirt', 'Graphic Tee Shirt'], giftDefault: 'Gift For Her',
+    key: 'tshirt', label: 'T Shirt', segments: ['Comfort Colors Unisex T Shirt', 'Shirt', 'Tee'], giftDefault: 'Gift For Her',
     bakedTags: ['Comfort Colors Tee', 'Unisex Tee', 'Vintage Tee', 'Gift For Her']
   },
   {
@@ -878,6 +882,27 @@ function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 let garmentManualTitles = { babytee: null, tshirt: null, sweatshirt: null }; // non-null once hand-edited, overrides the template
 let garmentTags = { babytee: [], tshirt: [], sweatshirt: [] };
 let activeGarment = 'babytee';
+
+// Undo support: snapshot keywordSlots before every pool-driven add (or reset) so a keyword
+// that pushes a title over 140 characters can be backed out with one click.
+let keywordSlotsHistory = [];
+function pushKeywordSlotsHistory() {
+  keywordSlotsHistory.push([...keywordSlots]);
+  if (keywordSlotsHistory.length > 20) keywordSlotsHistory.shift();
+  updateUndoButtonState();
+}
+function undoKeywordSlots() {
+  if (!keywordSlotsHistory.length) return;
+  keywordSlots = keywordSlotsHistory.pop();
+  GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
+  renderAllGarmentTitles();
+  updateUndoButtonState();
+}
+function updateUndoButtonState() {
+  document.querySelectorAll('.undo-keyword-btn').forEach(btn => {
+    btn.disabled = keywordSlotsHistory.length === 0;
+  });
+}
 
 function buildGarmentTitle(key) {
   if (garmentManualTitles[key] !== null) return garmentManualTitles[key];
@@ -971,6 +996,7 @@ function renderGarmentPanels() {
       </div>
       <div class="copy-all-row">
         <button class="btn secondary copy-garment-title" data-garment="${g.key}">Copy this title</button>
+        <button class="btn secondary undo-keyword-btn" data-garment="${g.key}" title="Undo the last keyword you added" disabled>Undo Last Add</button>
         <button class="btn secondary reset-garment-title" data-garment="${g.key}">Reset all 3 to blank template</button>
       </div>
 
@@ -1019,9 +1045,14 @@ function renderGarmentPanels() {
     copyToClipboard(cleanTitleText(document.getElementById('garmentTitle-' + key).value), btn, 'Copy this title');
   }));
 
+  wrap.querySelectorAll('.undo-keyword-btn').forEach(btn => btn.addEventListener('click', () => {
+    undoKeywordSlots();
+  }));
+
   wrap.querySelectorAll('.reset-garment-title').forEach(btn => btn.addEventListener('click', () => {
     const confirmed = confirm('This clears every keyword you\'ve slotted in so far, on all 3 titles, back to just the bare numbered template. Continue?');
     if (!confirmed) return;
+    pushKeywordSlotsHistory();
     keywordSlots = new Array(MAX_SEGMENTS).fill('');
     GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
     renderAllGarmentTitles();
@@ -1203,6 +1234,7 @@ function renderPool() {
       sBtn.title = `Drop in front of spot ${n} in every title that has one`;
       sBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        pushKeywordSlotsHistory();
         const casedText = toTitleCase(item.text);
         keywordSlots[n - 1] = keywordSlots[n - 1] ? `${keywordSlots[n - 1]} ${casedText}` : casedText;
         GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
@@ -1422,9 +1454,10 @@ async function addToPastedPool(text, allowExtraction) {
   }
 }
 
-function wirePasteLine(inputId, btnId) {
+function wirePasteLine(inputId, btnId, addBtnId) {
   const input = document.getElementById(inputId);
   const btn = document.getElementById(btnId);
+  const addBtn = addBtnId ? document.getElementById(addBtnId) : null;
   input.addEventListener('keydown', async (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -1438,12 +1471,18 @@ function wirePasteLine(inputId, btnId) {
       await addToPastedPool(text, true);
     });
   });
+  if (addBtn) {
+    addBtn.addEventListener('click', async () => {
+      if (!input.value.trim()) return;
+      await addToPastedPool(input.value, true);
+    });
+  }
 }
 
-wirePasteLine('pasteLineBabyTee', 'pasteLineBabyTeeBtn');
-wirePasteLine('pasteLineTShirt', 'pasteLineTShirtBtn');
-wirePasteLine('pasteLineSweatshirt', 'pasteLineSweatshirtBtn');
-wirePasteLine('pasteLineRandom', 'pasteLineRandomBtn');
+wirePasteLine('pasteLineBabyTee', 'pasteLineBabyTeeBtn', 'pasteLineBabyTeeAddBtn');
+wirePasteLine('pasteLineTShirt', 'pasteLineTShirtBtn', 'pasteLineTShirtAddBtn');
+wirePasteLine('pasteLineSweatshirt', 'pasteLineSweatshirtBtn', 'pasteLineSweatshirtAddBtn');
+wirePasteLine('pasteLineRandom', 'pasteLineRandomBtn', 'pasteLineRandomAddBtn');
 
 document.getElementById('poolSingleInput').addEventListener('keydown', async (e) => {
   if (e.key === 'Enter') {
@@ -2278,7 +2317,8 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   suggestedTagKeys = new Set();
   renderPool();
 
-  keywordSlots = ['', ''];
+  keywordSlots = new Array(MAX_SEGMENTS).fill('');
+  keywordSlotsHistory = [];
   GARMENTS.forEach(g => {
     garmentManualTitles[g.key] = null;
     garmentTags[g.key] = [...g.bakedTags];
