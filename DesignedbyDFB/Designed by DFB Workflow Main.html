@@ -8,27 +8,32 @@
 
   :root {
     --bg: #292320;
-    --cream: #faf7f3;
-    --sage: #b7879f;
-    --sage-dark: #966780;
-    --sage-tint: #f4eef3;
-    --rose: #b7879f;
-    --rose-tint: #f4eef3;
-    --border: #e7e0d9;
-    --light-bg: #ffffff;
+    --cream: #f5eddf;
+    --gold: #c9a96e;
+    --rose: var(--sage);
+    --border: #ead9d5;
+    --light-bg: #fdf7f2;
     --mid-text: #5a4a45;
     --muted: #998f89;
+    --muted-onbg: #c4b0a8;
     --warn: #b3453f;
-    --blush: #f0ece7;
-    --paste-sage: #b2c4b4;
-    --paste-sage-dark: #8ea377;
+    --blush: #fbeeec;
+    --page-bg: #000000;
+    --card-bg: #ffffff;
+    --mauve: #b7879f;
+    --mauve-dark: #966780;
+    --mauve-tint: #f4eef3;
+    --sage: #aec4b2;
+    --sage-dark: #8fac96;
+    --sage-tint: #eef3ef;
+    --badge-bg: #e7e0d9;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: #000000;
+    background: var(--page-bg);
     color: var(--cream);
     font-family: 'Jost', sans-serif;
     padding: 32px 20px 90px;
@@ -41,14 +46,15 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: #000000;
-    border-top: 1px solid #2a2a2a;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
     padding: 14px 24px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 16px;
     z-index: 50;
+    box-shadow: 0 -3px 16px rgba(42,31,28,0.06);
   }
 
   .bottom-bar-status {
@@ -58,33 +64,33 @@
   }
 
   .bottom-bar .btn.bottom-bar-btn {
-    background: transparent;
-    color: var(--cream);
+    background: var(--sage);
+    color: var(--bg);
     border: 1.5px solid var(--sage);
   }
 
-  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--sage); color: var(--bg); }
+  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--sage-dark); color: #fff; }
 
   h1 {
     font-family: 'Playfair Display', serif;
     font-size: 30px;
-    color: var(--cream);
+    color: var(--mauve);
     margin: 0 0 4px;
     letter-spacing: 0.3px;
   }
 
-  .subhead { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .subhead { color: var(--muted-onbg); font-size: 14px; margin-bottom: 28px; }
 
   .card {
     position: relative;
     overflow: hidden;
-    background: var(--light-bg);
+    background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 24px;
     color: var(--mid-text);
-    box-shadow: 0 3px 16px rgba(42,31,28,0.06);
+    box-shadow: 0 3px 16px rgba(42,31,28,0.07);
   }
 
   .card::before {
@@ -109,7 +115,7 @@
 
   .step-tag {
     font-size: 11px;
-    background: var(--sage);
+    background: var(--mauve);
     color: #fff;
     padding: 2px 8px;
     border-radius: 20px;
@@ -135,8 +141,8 @@
     text-align: center;
   }
 
-  .type-btn:hover { border-color: var(--sage); }
-  .type-btn.active { background: var(--bg); border-color: var(--bg); color: var(--cream); }
+  .type-btn:hover { border-color: var(--mauve); }
+  .type-btn.active { background: var(--mauve); border-color: var(--mauve); color: #fff; }
 
   label { display: block; font-size: 13px; font-weight: 600; color: var(--bg); margin: 16px 0 6px; }
   label.first { margin-top: 0; }
@@ -155,7 +161,7 @@
     background: #fff;
   }
 
-  textarea:focus, input:focus { outline: 2px solid var(--sage); outline-offset: 1px; }
+  textarea:focus, input:focus { outline: 2px solid var(--mauve); outline-offset: 1px; }
 
   .drop-zone {
     border: 2px dashed var(--border);
@@ -167,7 +173,7 @@
     transition: border-color 0.15s ease;
   }
 
-  .drop-zone:hover { border-color: var(--sage); }
+  .drop-zone:hover { border-color: var(--mauve); }
   .drop-zone input { display: none; }
   .drop-zone p { margin: 0; font-size: 13px; color: #9a877f; }
   .drop-zone p.small { font-size: 11px; margin-top: 4px; }
@@ -193,29 +199,32 @@
 
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
-    background: var(--sage); color: #fff; border: none;
+    background: var(--mauve); color: #fff; border: none;
     padding: 11px 22px; border-radius: 8px; font-family: 'Jost', sans-serif;
     font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 16px;
   }
 
-  .btn:hover { background: var(--sage-dark); }
+  .btn:hover { background: var(--mauve-dark); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .btn.secondary {
-    background: transparent; color: var(--bg); border: 1.5px solid var(--border);
+    background: var(--sage); color: var(--bg); border: 1.5px solid var(--sage);
     padding: 7px 14px; font-size: 12px; margin-top: 0;
   }
 
-  .btn.secondary:hover { border-color: var(--sage); background: var(--sage-tint); }
+  .btn.secondary:hover { border-color: var(--sage-dark); background: var(--sage-dark); color: #fff; }
   .btn.small { padding: 8px 14px; font-size: 12.5px; margin-top: 0; }
 
-  .btn.paste-btn {
-    background: var(--paste-sage); color: var(--bg); border: none;
-    padding: 7px 14px; font-size: 12px; margin-top: 0; font-weight: 600;
-  }
-  .btn.paste-btn:hover { background: var(--paste-sage-dark); color: #fff; }
+  .status { font-size: 13px; color: var(--mauve-dark); margin-top: 10px; display: none; }
 
-  .status { font-size: 13px; color: var(--sage-dark); margin-top: 10px; display: none; }
+  .idea-card { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .idea-card .idea-thumb { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--sage-tint); cursor: zoom-in; }
+  .idea-card .idea-link-face { width: 100%; aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: var(--sage-tint); color: var(--sage-dark); text-decoration: none; padding: 12px; text-align: center; }
+  .idea-card .idea-link-face .idea-domain { font-size: 12px; font-weight: 700; word-break: break-word; }
+  .idea-card .idea-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .idea-card textarea.idea-note { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 9px; font-family: 'Jost', sans-serif; font-size: 12.5px; color: var(--mid-text); resize: vertical; min-height: 40px; }
+  .idea-card .idea-actions { display: flex; gap: 8px; align-items: center; }
+  .idea-card .idea-actions a, .idea-card .idea-actions button { font-size: 11.5px; }
   .status.show { display: block; }
 
   .error { font-size: 13px; color: var(--warn); margin-top: 10px; display: none; }
@@ -231,6 +240,17 @@
   .prompt-item .copy-btn { align-self: flex-end; margin-top: 0; flex-shrink: 0; }
   .prompt-item.used { background: #ece5df; color: #a89a92; opacity: 0.7; }
   .prompt-item.used .copy-btn { color: var(--sage-dark); border-color: var(--sage); }
+
+  .palette-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px dashed var(--border); }
+  .palette-tag { font-size: 10px; letter-spacing: 0.5px; font-weight: 700; color: #9a877f; text-transform: uppercase; margin-right: 2px; }
+  .palette-swatch { display: flex; align-items: center; gap: 5px; }
+  .palette-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; }
+  .palette-hex { font-size: 11px; color: #6b5d54; font-family: monospace; }
+  .prompt-item.used .palette-row { opacity: 0.6; }
+  .anchor-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: var(--bg); background: var(--rose); border-radius: 4px; padding: 2px 7px; margin-bottom: 8px;
+  }
 
   .history-batch {
     background: #fff; border: 1px solid var(--border); border-radius: 10px;
@@ -259,27 +279,27 @@
   .tag-chip .len { color: #9a877f; font-size: 10px; }
   .tag-chip .len.over { color: var(--warn); font-weight: 700; }
   .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
-  .tag-chip.suggested { border-color: var(--rose); background: var(--rose-tint); }
-  .tag-chip.suggested .len { color: #96677f; }
-  .tag-chip.suggested::before { content: '✦ '; color: var(--rose); font-size: 11px; }
+  .tag-chip.suggested { border-color: var(--sage); background: var(--sage-tint); }
+  .tag-chip.suggested .len { color: var(--sage-dark); }
+  .tag-chip.suggested::before { content: '✦ '; color: var(--sage-dark); font-size: 11px; }
   .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
   .tag-chip.baked { background: #e8e2db; border-color: #b8a99c; color: #6b5d54; }
-  .tag-chip.pinned-word { border-color: var(--sage); background: var(--sage-tint); }
+  .tag-chip.pinned-word { border-color: var(--mauve); background: var(--mauve-tint); }
   .tag-chip.baked .len { color: #8a7a6e; }
   .tag-chip.baked.dupe { border-color: var(--warn); background: #fdf1f0; }
-  .tag-chip.baked.suggested { background: #eaded9; border-color: var(--rose); }
-  .tag-chip.chosen { background: var(--bg); color: var(--cream); border-color: var(--bg); }
+  .tag-chip.baked.suggested { background: var(--sage-tint); border-color: var(--sage); }
+  .tag-chip.chosen { background: var(--mauve); color: #fff; border-color: var(--mauve); }
 
   .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
   .pill-text { outline: none; min-width: 20px; cursor: text; }
-  .pill-text:focus { background: var(--sage-tint); border-radius: 4px; padding: 0 2px; }
+  .pill-text:focus { background: #fbf3e3; border-radius: 4px; padding: 0 2px; }
   .slot-btns { display: flex; gap: 3px; }
   .slot-btn {
     width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border);
     background: #fff; color: var(--mid-text); font-size: 10.5px; font-weight: 700;
     cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center;
   }
-  .slot-btn:hover { border-color: var(--sage); background: var(--sage); color: #fff; }
+  .slot-btn:hover { border-color: var(--sage); background: var(--sage); color: var(--bg); }
   .pill .remove-btn {
     background: none; border: none; color: #9a877f; cursor: pointer; font-size: 13px; padding: 0 2px;
   }
@@ -311,16 +331,16 @@
     padding: 10px 12px; margin-top: 6px;
   }
 
-  .divider-label { text-align: center; color: var(--muted); font-size: 12px; letter-spacing: 1px; margin: 30px 0 -6px; }
+  .divider-label { text-align: center; color: var(--muted-onbg); font-size: 12px; letter-spacing: 1px; margin: 30px 0 -6px; }
 
-  .tab-nav { display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--muted); }
+  .tab-nav { display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid #3a332f; }
   .tab-btn {
-    background: transparent; border: none; color: var(--muted);
+    background: transparent; border: none; color: var(--muted-onbg);
     font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14.5px;
     padding: 10px 2px 12px; cursor: pointer; border-bottom: 2px solid transparent;
     margin-bottom: -1px; transition: color 0.15s ease, border-color 0.15s ease;
   }
-  .tab-btn:hover { color: var(--cream); }
+  .tab-btn:hover { color: var(--mauve); }
   .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
 
   .tab-panel { display: none; }
@@ -329,18 +349,6 @@
   .streak-row {
     background: var(--rose); color: #fff; border-radius: 10px; padding: 10px 16px;
     font-size: 13.5px; font-weight: 600; margin: 14px 0 20px; display: inline-block;
-  }
-
-  .month-progress { margin: 0 0 20px; }
-  .month-progress-label { font-size: 13px; font-weight: 600; color: var(--bg); margin-bottom: 6px; }
-  .month-progress-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
-  .month-progress-fill { background: var(--rose); height: 100%; border-radius: 20px; transition: width 0.3s ease; }
-
-  .month-stats-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .month-stats-row .month-progress { flex: 1; min-width: 220px; }
-  .month-listings-count {
-    background: var(--paste-sage); color: var(--bg); font-weight: 700; font-size: 14px;
-    padding: 8px 16px; border-radius: 20px; white-space: nowrap;
   }
 
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
@@ -388,168 +396,21 @@
   }
   .type-ms-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
   .type-ms-chip.active { color: #fff; border-color: transparent; }
-
-  /* ---------- Bestseller Finder ---------- */
-  .bsf * { box-sizing: border-box; }
-  .bsf { font-family: 'Jost', sans-serif; font-size: 15px; }
-  .bsf-hero { padding: 0 0 0.5rem; text-align: center; }
-  .bsf-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--rose); margin-bottom: 0.7rem; display: block; }
-  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.4vw, 40px); line-height: 1.1; color: var(--cream); margin-bottom: 0.75rem; font-weight: 700; }
-  .bsf-h1 em { color: var(--rose); font-style: italic; }
-  .bsf-sub { font-size: 14px; font-weight: 300; color: #c9beb8; line-height: 1.55; max-width: 700px; margin: 0 auto 1.2rem; }
-
-  .bsf-dashboard { display: flex; flex-direction: column; gap: 1.2rem; max-width: 1100px; margin: 0 auto; align-items: center; }
-  .bsf-quickfills { min-width: 0; width: 100%; }
-  .bsf-chips-section { margin-bottom: 0.9rem; }
-  .bsf-chips-label { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--rose); margin-bottom: 8px; display: block; }
-  .bsf-chips-hint { font-size: 11px; font-weight: 300; color: #8a8078; margin-bottom: 9px; display: block; font-style: italic; }
-  .bsf-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 1040px; margin: 0 auto; }
-  .bsf-chip { background-color: var(--border) !important; border: 2px solid var(--border) !important; color: var(--bg) !important; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 22px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s, transform 0.12s; -webkit-appearance: none; appearance: none; white-space: nowrap; }
-  .bsf-chip:hover { background-color: var(--rose) !important; border-color: var(--rose) !important; color: var(--bg) !important; }
-  .bsf-chip:active { transform: scale(0.97); }
-  .bsf-chip.active { background-color: var(--rose) !important; border-color: var(--rose) !important; color: var(--bg) !important; }
-  .bsf-divider { width: 54px; height: 1px; background: rgba(183,135,159,0.35); margin: 0.9rem auto; }
-
-  .bsf-card { background: #ffffff !important; border: 1.5px solid var(--border) !important; border-radius: 20px; padding: 1.5rem 1.5rem; text-align: left; box-shadow: 0 18px 45px rgba(0,0,0,0.35); max-width: 600px; width: 100%; margin: 0 auto; }
-  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 23px; font-weight: 700; color: var(--bg) !important; text-align: center; margin-bottom: 4px; }
-  .bsf-card-sub { font-size: 13px; font-weight: 300; color: var(--muted) !important; text-align: center; margin-bottom: 1.15rem; line-height: 1.45; }
-  .bsf-field { margin-bottom: 0.95rem; }
-  .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .bsf-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg) !important; }
-  .bsf-label-right { display: flex; align-items: center; gap: 10px; }
-  .bsf-optional { font-size: 10px; font-weight: 400; color: var(--muted) !important; font-style: italic; }
-  .bsf-clear-link { font-size: 10px; font-weight: 600; color: var(--rose) !important; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Jost', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 2px; -webkit-appearance: none; appearance: none; }
-  .bsf-clear-link:hover { color: var(--sage-dark) !important; }
-  .bsf-input-wrap { position: relative; }
-  .bsf-input { width: 100%; padding: 13px 15px; border: 1.5px solid var(--border) !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 400; color: var(--bg) !important; background: var(--light-bg) !important; outline: none; transition: border-color 0.2s, background 0.2s; }
-  .bsf-input:focus { border-color: var(--rose) !important; background: #fff !important; }
-  .bsf-input::placeholder { color: var(--muted) !important; }
-  .bsf-btn { width: 100%; padding: 15px; background-color: var(--rose) !important; color: var(--bg) !important; border: none !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.2rem; -webkit-appearance: none; appearance: none; }
-  .bsf-btn:active { transform: scale(0.985); }
-  .bsf-confirm { display: none; margin-top: 0.9rem; padding: 0.9rem; background: var(--light-bg) !important; border: 1.5px solid var(--border) !important; border-radius: 12px; text-align: center; }
-  .bsf-confirm.show { display: block; animation: bsfFadeUp 0.3s ease; }
-  .bsf-confirm-text { font-family: 'Playfair Display', serif; font-size: 15px; font-style: italic; color: var(--bg) !important; margin-bottom: 3px; }
-  .bsf-confirm-sub { font-size: 11px; color: var(--muted) !important; font-weight: 300; }
-  @keyframes bsfFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  @media (max-width: 900px) {
-    .bsf-card { max-width: 500px; margin: 0 auto; }
-    .bsf-chips { max-width: 100%; }
-  }
 </style>
 </head>
 <body>
 <div class="wrap" id="pageWrap">
-  <h1>Designed by DFB <span style="color:var(--rose);">Workflow Tool</span></h1>
+  <h1>Designed by DFB Workflow Tool</h1>
   <div class="subhead">Screenshot to prompts, plus titles and tags built from your own baked in language and keywords.</div>
 
   <div class="tab-nav" id="tabNav">
-    <button class="tab-btn active" data-tab="bestsellerTab">Bestseller Finder</button>
-    <button class="tab-btn" data-tab="builderTab">Listing Builder</button>
+    <button class="tab-btn active" data-tab="builderTab">Listing Builder</button>
     <button class="tab-btn" data-tab="calendarTab">Listing Calendar</button>
+    <button class="tab-btn" data-tab="ideaVaultTab">Idea Vault</button>
     <button class="tab-btn" data-tab="apiKeyTab" style="margin-left:auto;">API Key</button>
   </div>
 
-  <div class="tab-panel active" id="bestsellerTab">
-    <div class="bsf">
-      <div class="bsf-hero">
-        <span class="bsf-eyebrow">Members-only tool</span>
-        <h1 class="bsf-h1">Dania's Etsy <em>Bestseller</em><br>Finder</h1>
-        <p class="bsf-sub">Type your niche and go straight to Etsy listings that are already selling. No scrolling, no guessing.</p>
-
-        <div class="bsf-dashboard">
-          <div class="bsf-quickfills">
-            <div class="bsf-chips-section">
-              <span class="bsf-chips-label">Quick-fill a niche</span>
-              <span class="bsf-chips-hint">Pick one or more — they'll combine automatically</span>
-              <div class="bsf-chips" id="niche-chips">
-                <button class="bsf-chip" onclick="toggleNiche(this,'animals')">animals</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'boho')">boho</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'bookish')">bookish</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'christian')">christian</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'christmas')">christmas</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'coffee')">coffee</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'coquette')">coquette</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'cottagecore')">cottagecore</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'dark academia')">dark academia</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'floral')">floral</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'funny')">funny</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'groovy')">groovy</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'halloween')">halloween</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'maximalist')">maximalist</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'mental health')">mental health</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'mom life')">mom life</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'nurse')">nurse</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'pets')">pets</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'preppy')">preppy</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'retro')">retro</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'samsung')">samsung</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'teacher')">teacher</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'trendy')">trendy</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'vintage')">vintage</button>
-                <button class="bsf-chip" onclick="toggleNiche(this,'western')">western</button>
-              </div>
-            </div>
-
-            <div class="bsf-divider"></div>
-
-            <div class="bsf-chips-section">
-              <span class="bsf-chips-label">Quick-fill a product type</span>
-              <div class="bsf-chips" id="product-chips">
-                <button class="bsf-chip" onclick="fillProduct(this,'canva template')">canva template</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'digital invitation')">digital invitation</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'digital journal')">digital journal</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'digital planner')">digital planner</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'frame tv art')">frame tv art</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'png')">png</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'printable wall art')">printable wall art</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'shirt png')">shirt png</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'tumbler wrap')">tumbler wrap</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'shirt')">shirt</button>
-                <button class="bsf-chip" onclick="fillProduct(this,'sweatshirt')">sweatshirt</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="bsf-card">
-            <p class="bsf-card-title">Find Bestsellers</p>
-            <p class="bsf-card-sub">Pick chips or type your own. Product type is optional but sharpens results.</p>
-
-            <div class="bsf-field">
-              <div class="bsf-label-row">
-                <span class="bsf-label">Niche</span>
-                <button class="bsf-clear-link" onclick="clearNiche()">Clear</button>
-              </div>
-              <div class="bsf-input-wrap">
-                <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. coquette teacher samsung"/>
-              </div>
-            </div>
-
-            <div class="bsf-field">
-              <div class="bsf-label-row">
-                <div class="bsf-label-right">
-                  <span class="bsf-label">Product Type</span>
-                  <span class="bsf-optional">optional</span>
-                </div>
-                <button class="bsf-clear-link" onclick="clearProduct()">Clear</button>
-              </div>
-              <div class="bsf-input-wrap">
-                <input class="bsf-input" type="text" id="bsf-product" placeholder="e.g. printable wall art, png"/>
-              </div>
-            </div>
-
-            <button class="bsf-btn" id="bsf-main-btn" onclick="bsfGo()">Find Bestsellers</button>
-            <div class="bsf-confirm" id="bsf-confirm">
-              <p class="bsf-confirm-text">Opening your results on Etsy...</p>
-              <p class="bsf-confirm-sub">A new tab just opened with your bestseller search.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="tab-panel" id="builderTab">
+  <div class="tab-panel active" id="builderTab">
   <div class="card">
     <h2><span class="step-tag">Product Type</span></h2>
     <div class="type-row" id="typeRow">
@@ -569,22 +430,28 @@
       <p class="small">Up to 3 images total, click any thumbnail to view it bigger</p>
       <input type="file" id="fileInput" accept="image/*" multiple>
     </div>
-    <button class="btn paste-btn" id="pasteClipboardBtn" style="margin-top:10px;">Paste from Clipboard</button>
+    <button class="btn secondary" id="pasteClipboardBtn" style="margin-top:10px;">Paste from Clipboard</button>
     <div class="add-tag-row" style="margin-top:10px;">
       <input type="text" id="imageUrlInput" placeholder="Or paste an image URL and press Enter">
       <button class="btn small" id="addImageUrlBtn">Add URL</button>
-      <button class="btn paste-btn" id="pasteImageUrlClipboardBtn">Paste URL from Clipboard</button>
+      <button class="btn secondary" id="pasteImageUrlClipboardBtn">Paste URL from Clipboard</button>
     </div>
     <div class="thumbs" id="thumbs"></div>
 
     <label>Keywords or working title (optional)</label>
     <div class="hint">Extra context for the AI, like a working title or a few keywords naming the subject, elements, or theme. Helps it read the screenshot more accurately, and it'll work some of these descriptive words into the prompts themselves. Press Enter to generate.</div>
     <textarea id="designKeywords" rows="2" placeholder="e.g. spooky cat witch coffee, Halloween cottagecore, hocus pocus themed"></textarea>
-    <button class="btn paste-btn" id="pasteKeywordsClipboardBtn" style="margin-top:8px;">Paste from Clipboard</button>
+    <button class="btn secondary" id="pasteKeywordsClipboardBtn" style="margin-top:8px;">Paste from Clipboard</button>
 
     <label>Creative direction (optional)</label>
     <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating. Press Enter to generate.</div>
     <textarea id="creativeDirection" rows="2" placeholder="e.g. deeper color palette, add more stars, softer background"></textarea>
+
+    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:16px;">
+      <input type="checkbox" id="varyPaletteCheckbox" checked style="width:16px; height:16px; margin:0;">
+      <span>Give each prompt a different color palette</span>
+    </label>
+    <div class="hint" style="margin-top:2px;">Unchecked: every prompt matches the color palette from your reference image. Checked: prompt 1 still matches the reference, prompts 2 through 5 each get their own distinct palette.</div>
 
     <button class="btn" id="generatePromptsBtn">Generate 5 Prompts</button>
     <button class="btn secondary" id="viewHistoryBtn" style="display:none;">View Past Prompts (0)</button>
@@ -613,10 +480,10 @@
   <div class="card">
     <h2><span class="step-tag">Step 2</span> Titles &amp; Tags</h2>
 
-    <div style="background:var(--sage-tint); border-left:4px solid var(--sage); border-radius:8px; padding:16px;">
-      <div style="font-size:11px; letter-spacing:1px; color:var(--sage-dark); font-weight:700;">LIVE TITLE</div>
-      <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--bg); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
-      <div id="liveTitleCount" style="font-size:13px; color:var(--sage-dark); margin-top:10px; font-weight:700;">0 / 140 chars</div>
+    <div style="background:var(--bg); border-radius:10px; padding:16px;">
+      <div style="font-size:11px; letter-spacing:1px; color:var(--mauve); font-weight:700;">LIVE TITLE</div>
+      <textarea id="liveTitlePreview" rows="2" style="width:100%; background:transparent; border:none; color:var(--cream); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pill below to add it"></textarea>
+      <div id="liveTitleCount" style="font-size:13px; color:var(--mauve); margin-top:10px; font-weight:700;">0 / 140 chars</div>
     </div>
     <div class="hint" style="margin-top:6px;">Starts filled in with your baked in wording for this product type. Click directly into it to type, edit, or delete anything by hand.</div>
     <div class="copy-all-row">
@@ -634,7 +501,7 @@
     <div class="add-tag-row">
       <button class="btn small" id="addPoolBulkBtn">Add to pool</button>
       <input type="text" id="poolSingleInput" placeholder="Or type one keyword and press Enter">
-      <button class="btn paste-btn" id="pastePoolClipboardBtn">Paste from Clipboard</button>
+      <button class="btn secondary" id="pastePoolClipboardBtn">Paste from Clipboard</button>
     </div>
     <div class="status" id="poolStatus"></div>
 
@@ -657,7 +524,7 @@
     <div class="add-tag-row">
       <input type="text" id="addTagInput" placeholder="Add a tag and press Enter">
       <button class="btn small" id="addTagBtn">Add</button>
-      <button class="btn paste-btn" id="pasteTagsClipboardBtn">Paste from Clipboard</button>
+      <button class="btn secondary" id="pasteTagsClipboardBtn">Paste from Clipboard</button>
     </div>
     <div class="add-tag-row" style="margin-top:12px;">
       <button class="btn secondary" id="copyAllTagsBtn">Copy all tags</button>
@@ -699,14 +566,6 @@
 
       <div class="streak-row" id="streakRow"></div>
 
-      <div class="month-stats-row">
-        <div class="month-progress">
-          <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
-          <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
-        </div>
-        <div class="month-listings-count" id="monthListingsCount">0 listings this month</div>
-      </div>
-
       <div class="cal-header">
         <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
         <div class="cal-month-label" id="calMonthLabel"></div>
@@ -729,9 +588,25 @@
 
       <div class="copy-all-row">
         <button class="btn" id="saveDayBtn">Save Day</button>
-        <button class="btn secondary" id="deleteDayBtn">Delete This Day</button>
+        <button class="btn secondary" id="deleteDayBtn">Delete Entry</button>
         <button class="btn secondary" id="closeDayEditorBtn">Close</button>
       </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="ideaVaultTab">
+    <div class="card">
+      <h2><span class="step-tag">Save For Later</span> Idea Vault</h2>
+      <div class="hint" style="margin-top:-8px;">Paste a listing URL or an image URL any time you spot something you want to come back to. Photos show as a thumbnail, everything else shows as a link card.</div>
+
+      <div class="add-tag-row" style="margin-top:14px;">
+        <input type="text" id="ideaUrlInput" placeholder="Paste a listing URL or image URL...">
+        <button class="btn secondary" id="ideaPasteBtn">Paste from Clipboard</button>
+        <button class="btn small" id="ideaAddBtn">Add</button>
+      </div>
+
+      <div id="ideaVaultGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-top:22px;"></div>
+      <div id="ideaVaultEmpty" class="hint" style="display:none; margin-top:22px;">Nothing saved yet. Paste a URL above to start your vault.</div>
     </div>
   </div>
 
@@ -764,10 +639,10 @@
 
 <div class="bottom-bar">
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
-  <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 30s</span>
+  <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 3s</span>
   <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
   <button class="btn secondary bottom-bar-btn" id="backToTopBtn">Back to Top</button>
-  <button class="btn secondary bottom-bar-btn" id="clearAllBtn" style="border-color:var(--paste-sage); color:var(--paste-sage);">Clear Builder Fields</button>
+  <button class="btn bottom-bar-btn" id="clearAllBtn">Clear Everything</button>
 </div>
 
 <script>
@@ -795,7 +670,18 @@ const storageAPI = {
 let selectedType = null;
 let uploadedImages = [];
 let lastPromptsText = [];
+let lastPromptsPalettes = [];
 let promptHistory = [];
+
+function renderPaletteRow(palette) {
+  if (!palette || !palette.length) return '';
+  const swatches = palette.map(c => {
+    const hex = escapeHtml(c.hex || '');
+    const name = escapeHtml(c.name || '');
+    return `<span class="palette-swatch" title="${name}"><span class="palette-dot" style="background:${hex};"></span><span class="palette-hex">${hex}${name ? ' &middot; ' + name : ''}</span></span>`;
+  }).join('');
+  return `<div class="palette-row"><span class="palette-tag">Palette</span>${swatches}</div>`;
+}
 let suggestedTagKeys = new Set();
 let tagsArray = [];
 let bakedPiecesValue = '';
@@ -822,8 +708,7 @@ typeRow.addEventListener('click', async (e) => {
 
 const DEFAULT_BAKED_TAGS = {
   'Tumbler Wrap PNG': 'digital download, sublimation design, 20oz tumbler wrap, 20 oz tumbler, tumbler wrap png, 20oz skinny tumbler',
-  'Shirt PNG': 'Digital Download, Sublimation Png, Png For Shirts, Tshirt Png Design, Sublimation Design, trendy shirt png',
-  'Laser Wrap SVG': '40 Oz Tumbler Wrap, tumbler engrave file, tumbler wrap svg, tumbler laser svg, 40oz laser svg, 40oz laser engraved, laser engraved cup, 40oz with handle, 20oz 30oz 40oz'
+  'Shirt PNG': 'Digital Download, Sublimation Png, Png For Shirts, Tshirt Png Design, Sublimation Design, trendy shirt png'
 };
 
 const OLD_DEFAULT_BAKED_TAGS = {
@@ -868,8 +753,7 @@ async function loadBakedTags(type) {
 
 const DEFAULT_BAKED = {
   'Tumbler Wrap PNG': 'Tumbler Wrap PNG Sublimation Design, Seamless 20oz Skinny Tumbler, Digital Download',
-  'Shirt PNG': 'PNG, PNG, T Shirt Sublimation Design, Digital Download',
-  'Laser Wrap SVG': 'Laser Wrap SVG for Laser Rotary, Engraved Full Wrap 40oz Tumbler, Seamless Design Digital Download'
+  'Shirt PNG': 'PNG, PNG, T Shirt Sublimation Design, Digital Download'
 };
 
 const OLD_DEFAULT_BAKED = {
@@ -947,13 +831,10 @@ async function saveAllNow() {
       await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
       await storageAPI.set('session:liveTitle:' + selectedType, document.getElementById('liveTitlePreview').value);
       await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
-      await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages));
     }
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
     await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
-    if (calendarLoaded) {
-      await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
-    }
+    await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
   } catch (e) {}
   flashSavedIndicator();
 }
@@ -968,7 +849,7 @@ document.getElementById('saveNowBtn').addEventListener('click', async () => {
   setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1200);
 });
 
-setInterval(() => { saveAllNow(); }, 30000);
+setInterval(() => { saveAllNow(); }, 3000);
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') saveAllNow();
@@ -1029,14 +910,6 @@ async function restoreWorkSession(type) {
       descOutputBlock.style.display = 'none';
     }
   } catch (e) {}
-
-  try {
-    const savedImages = await storageAPI.get('session:images:' + type);
-    uploadedImages = (savedImages && savedImages.value) ? JSON.parse(savedImages.value) : [];
-  } catch (e) {
-    uploadedImages = [];
-  }
-  renderThumbs();
 }
 
 const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
@@ -1333,7 +1206,7 @@ function updateLiveTitleCount(text) {
   }
   const realLength = text.length - markerOverhead;
   countEl.textContent = `${realLength} / 140 chars`;
-  countEl.style.color = realLength > 140 ? '#c94a3f' : 'var(--sage-dark)';
+  countEl.style.color = realLength > 140 ? '#e88a83' : 'var(--mauve)';
   window._liveTitle = text;
 }
 
@@ -1484,14 +1357,7 @@ function renderThumbs() {
     div.innerHTML = `<img src="${thumbSrc(img)}" data-i="${i}"><button data-i="${i}">×</button>`;
     thumbs.appendChild(div);
   });
-  autosaveImages();
 }
-
-const autosaveImages = debounce(async () => {
-  if (!selectedType) return;
-  try { await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages)); } catch (e) {}
-  flashSavedIndicator();
-}, 600);
 
 thumbs.addEventListener('click', (e) => {
   const btn = e.target.closest('button');
@@ -1595,7 +1461,7 @@ async function callClaude(systemPrompt, userContent) {
 
 const PROMPTS_SYSTEM = `You are a production assistant that writes AI image generation prompts for Etsy digital products (Tumbler Wrap PNG, Shirt PNG, Laser Wrap SVG).
 
-You will be given one or more inspo screenshots, a product type, optional keywords or a working title for extra context, and either creative direction or an instruction to auto suggest improvements.
+You will be given one or more inspo screenshots, a product type, optional keywords or a working title for extra context, either creative direction or an instruction to auto suggest improvements, and a palette mode of either "match" or "vary".
 
 Study the screenshot(s) in full detail: exact subject, pose, expression, any text or wording shown, color palette and how colors are distributed, background elements and patterns, layout, and overall mood. If keywords or a working title are given, treat them as important context: work several of the specific descriptive words or phrases from them naturally into the prompts themselves wherever they fit the visual, not just as background understanding. Use them to fill in or sharpen details the screenshot alone leaves ambiguous.
 
@@ -1603,13 +1469,21 @@ If no creative direction is given, generate 2 to 3 quick one sentence design sug
 
 Then write exactly 5 image prompts that closely recreate the actual inspo design, not a generic version of the general theme. Every prompt must read like it was written by someone who studied the specific screenshot.
 
+Prompt 1 is always the closest match to the reference: it must stay as close as possible to the exact subject, pose, composition, layout, and color palette seen in the screenshot, with only the minimum creative improvement needed to make it original. Think of prompt 1 as "recreate this design," and prompts 2 through 5 as "creative variations on this design."
+
+Color palette handling, this is critical:
+- First, identify the actual color palette used in the reference screenshot as 3 to 5 hex codes with short plain English names (for example "deep terracotta", "warm cream", "dusty sage").
+- If palette mode is "match": every one of the 5 prompts uses this exact same reference palette. Return the same palette array for all 5 prompts.
+- If palette mode is "vary": prompt 1 still uses the exact reference palette. Prompts 2 through 5 must each get their own distinct 3 to 5 color palette, different from the reference and different from each other, chosen to still suit the subject and mood. Each prompt's palette array should reflect the palette actually used in that specific prompt's text.
+- Every prompt's written text must describe exact color relationships using the colors from that prompt's palette, not just a generic palette list dropped in.
+
 Rules for every prompt:
 - Name the specific subject, pose, and expression exactly as seen, not generic descriptions
 - If the design includes any text or wording, treat it as one complete phrase and include the full phrase intact in every single prompt, never split across prompts. Put the exact full phrase in quotation marks as its own clear clause (for example: the words "I COULD BE MEANER" rendered in bold gold distressed lettering). Specify roughly where it sits and its style based on the analysis
 - Name specific background elements and patterns exactly as seen rather than generic filler
-- Describe exact color relationships, not just a palette list
+- Describe exact color relationships using that prompt's palette, not just a palette list
 - Vary sentence structure and opening line across the 5 prompts (start with scene, subject, mood, setting, or a visual detail, never with the product name)
-- Use approximately 70% proven visual direction from the screenshot, 30% creative improvement from the direction/suggestions
+- Use approximately 70% proven visual direction from the screenshot, 30% creative improvement from the direction/suggestions, except prompt 1 which stays as close to the reference as possible
 - Do not number or label prompts, no bullets, no introductions
 - Never use em dashes, use commas, colons, periods, or parentheses instead
 - Never use the product format name anywhere in the prompt, not just the opening line. Never write words like tumbler, wrap, cup, mug, shirt, tee, svg, or laser at any point in the prompt body. These prompts describe only the flat 2D artwork content itself (the subject, scene, colors, text, patterns), never the physical object it will end up printed on. If a format word appears anywhere in the prompt, an AI image generator is likely to render an actual product photo (a wrapped cup, a folded shirt) instead of standalone flat artwork, which defeats the purpose
@@ -1617,10 +1491,11 @@ Rules for every prompt:
 Product type specific rules:
 Tumbler Wrap PNG: full wrap artwork, seamless patterns, edge to edge coverage, layered composition, repeating elements, full canvas coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, 20 oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt itself, describe the seamless edge to edge artwork only.
 Shirt PNG: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on a shirt. Avoid one isolated object, basic clipart, realistic scenes, landscapes. Never write the words shirt or tee anywhere in the prompt body itself, describe the artwork only. Every Shirt PNG prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation, designed to feel like an Etsy bestseller."
-Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only. Since this becomes a laser engraving, favor a composition that reads clearly in bold shapes: distinct, well separated elements with clean silhouettes rather than tiny intricate detail, dense overlapping clutter, or fussy fine linework, since that gets muddy no matter how clean the art style is. Simple, graphic, uncluttered wins over busy and detailed here.
+Laser Wrap SVG: design concept only, no style or medium language since style is picked separately. Full wrap coverage, seamless composition, edge to edge design, cohesive theme, strong subject and supporting elements. Avoid naming a color palette, naming an art style, single centered graphic, cups, mugs, containers, mockups. Never write the words laser, svg, tumbler, or wrap anywhere in the prompt itself, describe the seamless artwork only.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
-{"suggestions": "string or empty string", "prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
+{"suggestions": "string or empty string", "prompts": [{"text": "prompt 1 text", "palette": [{"hex": "#RRGGBB", "name": "color name"}], "matchesReference": true}, {"text": "prompt 2 text", "palette": [{"hex": "#RRGGBB", "name": "color name"}], "matchesReference": false}]}
+The "prompts" array must always have exactly 5 items, each with a "palette" array of 3 to 5 hex/name pairs, and "matchesReference" set to true only for prompt 1.`;
 
 document.getElementById('designKeywords').addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {
@@ -1668,13 +1543,16 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
         userContent.push({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } });
       }
     });
+    const varyPalette = document.getElementById('varyPaletteCheckbox').checked;
     userContent.push({
       type: 'text',
-      text: `Product type: ${selectedType}\nKeywords or working title (weave several of these descriptive words naturally into the prompts): ${keywords ? keywords : 'none given'}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}`
+      text: `Product type: ${selectedType}\nKeywords or working title (weave several of these descriptive words naturally into the prompts): ${keywords ? keywords : 'none given'}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}\nPalette mode: ${varyPalette ? 'vary' : 'match'}`
     });
 
     const result = await callClaude(PROMPTS_SYSTEM, userContent);
-    lastPromptsText = result.prompts || [];
+    const rawPrompts = result.prompts || [];
+    lastPromptsText = rawPrompts.map(p => (typeof p === 'string' ? p : p.text));
+    lastPromptsPalettes = rawPrompts.map(p => (typeof p === 'string' ? [] : (p.palette || [])));
 
     const noteEl = document.getElementById('suggestionsNote');
     if (result.suggestions) {
@@ -1689,7 +1567,7 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
     lastPromptsText.forEach((p, i) => {
       const div = document.createElement('div');
       div.className = 'prompt-item';
-      div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${escapeHtml(p)}</div>`;
+      div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${i === 0 ? '<span class="anchor-badge">Closest to reference</span>' : ''}${renderPaletteRow(lastPromptsPalettes[i])}<div>${escapeHtml(p)}</div></div>`;
       list.appendChild(div);
     });
     outputBlock.style.display = 'block';
@@ -1699,6 +1577,7 @@ document.getElementById('generatePromptsBtn').addEventListener('click', async ()
       productType: selectedType,
       timestamp: Date.now(),
       prompts: lastPromptsText.slice(),
+      palettes: lastPromptsPalettes.slice(),
       suggestions: result.suggestions || ''
     });
     renderPromptHistoryButton();
@@ -1781,12 +1660,13 @@ function renderHistoryPanel() {
     loadBtn.textContent = 'Load this batch';
     loadBtn.addEventListener('click', () => {
       lastPromptsText = batch.prompts.slice();
+      lastPromptsPalettes = (batch.palettes || []).slice();
       const list = document.getElementById('promptsList');
       list.innerHTML = '';
       lastPromptsText.forEach((p, i) => {
         const div = document.createElement('div');
         div.className = 'prompt-item';
-        div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${escapeHtml(p)}</div>`;
+        div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${i === 0 ? '<span class="anchor-badge">Closest to reference</span>' : ''}${renderPaletteRow(lastPromptsPalettes[i])}<div>${escapeHtml(p)}</div></div>`;
         list.appendChild(div);
       });
       document.getElementById('promptsOutputBlock').style.display = 'block';
@@ -1807,10 +1687,11 @@ function renderHistoryPanel() {
       copyBtn.addEventListener('click', () => {
         copyToClipboard(p, copyBtn, 'Copy');
       });
-      const textDiv = document.createElement('div');
-      textDiv.textContent = p;
+      const contentDiv = document.createElement('div');
+      const palette = (batch.palettes || [])[i];
+      contentDiv.innerHTML = `${i === 0 ? '<span class="anchor-badge">Closest to reference</span>' : ''}${renderPaletteRow(palette)}<div>${escapeHtml(p)}</div>`;
       item.appendChild(copyBtn);
-      item.appendChild(textDiv);
+      item.appendChild(contentDiv);
       wrap.appendChild(item);
     });
 
@@ -1908,7 +1789,7 @@ Sentence 3, the closer, this exact line every time, word for word: "Download ins
 Use cases in sentence 2 must match the actual product type given:
 - PNG: shirts, mugs, sublimation, DTF, tumblers
 - Tumbler Wrap or Glass Tumbler Wrap: 20oz skinny tumblers, glass cups, sublimation tumbler wraps
-- Laser Wrap: laser engraving on rotary tumblers, laser cutting files, full wrap tumbler engraving projects
+- Laser Wrap: laser cutting, laser engraving, Glowforge projects
 
 Base the theme, subject, adjectives, audience, and catchy phrase entirely on the live title, tags, and design context given. Never use em dashes, use commas or periods instead. Keep the tone upbeat and casual, like a seller talking directly to a buyer, not corporate or stiff.
 
@@ -2086,9 +1967,6 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     setTimeout(() => statusEl.textContent = '', 2000);
     return;
   }
-  const confirmed = confirm('Clear the title, tags, keyword pool, screenshots/URLs, description, keywords, and creative direction for this product type? This does not touch your Listing Calendar or your API key.');
-  if (!confirmed) return;
-
   pastedPool = [];
   ensurePersistentPoolWords();
   suggestedTagKeys = new Set();
@@ -2097,20 +1975,13 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   seedLiveTitle();
   document.getElementById('descriptionOutput').value = '';
   document.getElementById('descriptionOutputBlock').style.display = 'none';
-  uploadedImages = [];
-  renderThumbs();
-  document.getElementById('designKeywords').value = '';
-  document.getElementById('creativeDirection').value = '';
   try {
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
     await storageAPI.set('session:description:' + selectedType, '');
-    await storageAPI.set('session:images:' + selectedType, JSON.stringify([]));
-    await storageAPI.set('session:designKeywords', '');
-    await storageAPI.set('session:creativeDirection', '');
   } catch (e) {}
   const statusEl = document.getElementById('bottomBarStatus');
-  statusEl.textContent = 'Builder fields cleared';
+  statusEl.textContent = 'Cleared';
   setTimeout(() => statusEl.textContent = '', 2000);
 });
 
@@ -2138,8 +2009,6 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     const savedDirection = await storageAPI.get('session:creativeDirection');
     if (savedDirection && savedDirection.value) document.getElementById('creativeDirection').value = savedDirection.value;
   } catch (e) {}
-
-  await loadCalendarEntries();
 })();
 
 function checkApiKeyUI() {
@@ -2196,19 +2065,160 @@ document.getElementById('tabNav').addEventListener('click', async (e) => {
     renderCalendarMonth();
     renderStreak();
   }
+  if (btn.dataset.tab === 'ideaVaultTab') {
+    await initIdeaVault();
+  }
+});
+
+/* ---------- Idea Vault ---------- */
+
+let ideaVaultItems = [];
+
+function looksLikeImageUrl(url) {
+  if (/^data:image\//i.test(url)) return true;
+  return /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i.test(url.split('#')[0]);
+}
+
+async function initIdeaVault() {
+  try {
+    const saved = await storageAPI.get('ideaVault:items');
+    ideaVaultItems = (saved && saved.value) ? JSON.parse(saved.value) : [];
+  } catch (e) { ideaVaultItems = []; }
+  renderIdeaVault();
+}
+
+const autosaveIdeaVault = debounce(async () => {
+  try { await storageAPI.set('ideaVault:items', JSON.stringify(ideaVaultItems)); } catch (e) {}
+}, 500);
+
+function renderIdeaVault() {
+  const grid = document.getElementById('ideaVaultGrid');
+  const empty = document.getElementById('ideaVaultEmpty');
+  if (!grid) return;
+  grid.innerHTML = '';
+  empty.style.display = ideaVaultItems.length ? 'none' : 'block';
+
+  // newest first
+  [...ideaVaultItems].reverse().forEach((item) => {
+    const realIndex = ideaVaultItems.indexOf(item);
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+
+    if (looksLikeImageUrl(item.url)) {
+      const img = document.createElement('img');
+      img.className = 'idea-thumb';
+      img.src = item.url;
+      img.alt = 'Saved idea';
+      img.addEventListener('click', () => openLightbox(item.url));
+      img.addEventListener('error', () => {
+        img.replaceWith(buildLinkFace(item.url));
+      });
+      card.appendChild(img);
+    } else {
+      card.appendChild(buildLinkFace(item.url));
+    }
+
+    const body = document.createElement('div');
+    body.className = 'idea-body';
+
+    const note = document.createElement('textarea');
+    note.className = 'idea-note';
+    note.placeholder = 'Why did you save this?';
+    note.value = item.note || '';
+    note.addEventListener('input', () => {
+      ideaVaultItems[realIndex].note = note.value;
+      autosaveIdeaVault();
+    });
+    body.appendChild(note);
+
+    const actions = document.createElement('div');
+    actions.className = 'idea-actions';
+
+    const visitLink = document.createElement('a');
+    visitLink.href = item.url;
+    visitLink.target = '_blank';
+    visitLink.rel = 'noopener';
+    visitLink.className = 'btn secondary small';
+    visitLink.textContent = 'Open';
+    actions.appendChild(visitLink);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn secondary small';
+    copyBtn.textContent = 'Copy URL';
+    copyBtn.addEventListener('click', () => copyToClipboard(item.url, copyBtn, 'Copy URL'));
+    actions.appendChild(copyBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn secondary small';
+    delBtn.style.marginLeft = 'auto';
+    delBtn.style.color = 'var(--warn)';
+    delBtn.style.borderColor = 'var(--warn)';
+    delBtn.textContent = '×';
+    delBtn.title = 'Remove';
+    delBtn.addEventListener('click', () => {
+      ideaVaultItems.splice(realIndex, 1);
+      renderIdeaVault();
+      autosaveIdeaVault();
+    });
+    actions.appendChild(delBtn);
+
+    body.appendChild(actions);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+}
+
+function buildLinkFace(url) {
+  const face = document.createElement('a');
+  face.className = 'idea-link-face';
+  face.href = url;
+  face.target = '_blank';
+  face.rel = 'noopener';
+  let domain = url;
+  try { domain = new URL(url).hostname.replace(/^www\./, ''); } catch (e) {}
+  face.innerHTML = `<span style="font-size:26px;">🔗</span><span class="idea-domain">${escapeHtml(domain)}</span>`;
+  return face;
+}
+
+function addIdea(rawUrl) {
+  const url = rawUrl.trim();
+  if (!url) return;
+  ideaVaultItems.push({ url, note: '', addedAt: Date.now() });
+  renderIdeaVault();
+  autosaveIdeaVault();
+}
+
+document.getElementById('ideaAddBtn').addEventListener('click', () => {
+  const input = document.getElementById('ideaUrlInput');
+  addIdea(input.value);
+  input.value = '';
+});
+
+document.getElementById('ideaUrlInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addIdea(e.target.value);
+    e.target.value = '';
+  }
+});
+
+document.getElementById('ideaPasteBtn').addEventListener('click', () => {
+  const btn = document.getElementById('ideaPasteBtn');
+  pasteTextFromClipboard(btn, (text) => {
+    addIdea(text);
+  });
 });
 
 /* ---------- Listing Calendar ---------- */
 
 const PRODUCT_TYPES = [
-  { name: 'Glass Tumbler Wrap', color: '#b8a888' },
-  { name: 'Laser Wrap', color: '#8ea377' },
-  { name: 'PNG', color: '#b7879f' },
-  { name: 'Tumbler Wrap', color: '#6b5d54' }
+  { name: 'Glass Tumbler Wrap', color: '#c9a96e' },
+  { name: 'Laser Wrap', color: '#8a9bb0' },
+  { name: 'PNG', color: '#b98a9e' },
+  { name: 'Tumbler Wrap', color: '#8fa88f' }
 ];
 
 let calendarEntries = {};
-let calendarLoaded = false;
 let calViewDate = new Date();
 calViewDate.setDate(1);
 let selectedDayKey = null;
@@ -2228,11 +2238,9 @@ async function loadCalendarEntries() {
     const result = await storageAPI.get('calendar:entries');
     calendarEntries = (result && result.value) ? JSON.parse(result.value) : {};
   } catch (e) { calendarEntries = {}; }
-  calendarLoaded = true;
 }
 
 async function saveCalendarEntries() {
-  if (!calendarLoaded) return;
   try { await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries)); } catch (e) {}
 }
 
@@ -2282,26 +2290,6 @@ function renderCalendarMonth() {
     cell.addEventListener('click', () => openDayEditor(key, d, month, year));
     grid.appendChild(cell);
   }
-
-  renderMonthProgress(year, month, daysInMonth);
-}
-
-const POST_GOAL_DAYS = 21;
-
-function renderMonthProgress(year, month, daysInMonth) {
-  let loggedDays = 0;
-  let totalListings = 0;
-  for (let d = 1; d <= daysInMonth; d++) {
-    const entry = calendarEntries[dateKey(year, month, d)];
-    if (entry && entry.count > 0) {
-      loggedDays++;
-      totalListings += entry.count;
-    }
-  }
-  const pct = Math.min(100, Math.round((loggedDays / POST_GOAL_DAYS) * 100));
-  document.getElementById('monthProgressLabel').textContent = `${loggedDays} / ${POST_GOAL_DAYS} days this month`;
-  document.getElementById('monthProgressFill').style.width = pct + '%';
-  document.getElementById('monthListingsCount').textContent = `${totalListings} listing${totalListings === 1 ? '' : 's'} this month`;
 }
 
 function openDayEditor(key, d, month, year) {
@@ -2415,69 +2403,6 @@ function renderStreak() {
 }
 
 renderCalLegend();
-
-/* ---------- Bestseller Finder ---------- */
-
-var selectedNiches = [];
-
-function toggleNiche(el, val) {
-  var idx = selectedNiches.indexOf(val);
-  if (idx > -1) {
-    selectedNiches.splice(idx, 1);
-    el.classList.remove('active');
-  } else {
-    selectedNiches.push(val);
-    el.classList.add('active');
-  }
-  document.getElementById('bsf-niche').value = selectedNiches.join(' ');
-}
-
-function clearNiche() {
-  selectedNiches = [];
-  document.getElementById('bsf-niche').value = '';
-  document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
-  document.getElementById('bsf-niche').style.removeProperty('border-color');
-}
-
-function fillProduct(el, val) {
-  document.getElementById('bsf-product').value = val;
-  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-}
-
-function clearProduct() {
-  document.getElementById('bsf-product').value = '';
-  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
-}
-
-function bsfGo() {
-  var niche = document.getElementById('bsf-niche').value.trim();
-  var product = document.getElementById('bsf-product').value.trim();
-  if (!niche) {
-    document.getElementById('bsf-niche').style.setProperty('border-color', '#b7879f', 'important');
-    document.getElementById('bsf-niche').focus();
-    return;
-  }
-  var q = encodeURIComponent(product ? niche + ' ' + product : niche);
-  window.open('https://www.etsy.com/search?q=' + q + '&order=most_relevant&is_best_seller=true', '_blank');
-  var conf = document.getElementById('bsf-confirm');
-  conf.classList.add('show');
-  setTimeout(function() { conf.classList.remove('show'); }, 4000);
-}
-
-document.getElementById('bsf-niche').addEventListener('input', function() {
-  if (!this.value.trim()) {
-    selectedNiches = [];
-    document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
-  }
-});
-
-document.getElementById('bsf-niche').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('bsf-product').focus(); });
-document.getElementById('bsf-product').addEventListener('keydown', function(e) { if (e.key === 'Enter') bsfGo(); });
-
-var bsfMainBtn = document.getElementById('bsf-main-btn');
-bsfMainBtn.addEventListener('mouseover', function() { this.style.setProperty('background-color', '#966780', 'important'); this.style.setProperty('color', '#ffffff', 'important'); });
-bsfMainBtn.addEventListener('mouseout', function() { this.style.setProperty('background-color', '#b7879f', 'important'); this.style.setProperty('color', '#292320', 'important'); });
 
 </script>
 </body>
