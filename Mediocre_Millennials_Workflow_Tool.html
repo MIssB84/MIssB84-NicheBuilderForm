@@ -1,0 +1,2907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mediocre Millennials Workflow Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #292320;
+    --cream: #faf7f3;
+    --sage: #b7879f;
+    --sage-dark: #966780;
+    --sage-tint: #f4eef3;
+    --rose: #b7879f;
+    --rose-tint: #f4eef3;
+    --border: #e7e0d9;
+    --light-bg: #ffffff;
+    --mid-text: #5a4a45;
+    --muted: #998f89;
+    --warn: #b3453f;
+    --blush: #f0ece7;
+    --paste-sage: #b2c4b4;
+    --paste-sage-dark: #8ea377;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #000000;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    padding: 32px 20px 90px;
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  .bottom-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000000;
+    border-top: 1px solid #2a2a2a;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    z-index: 50;
+  }
+
+  .bottom-bar-status {
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-right: auto;
+  }
+
+  .bottom-bar .btn.bottom-bar-btn {
+    background: transparent;
+    color: var(--cream);
+    border: 1.5px solid var(--sage);
+  }
+
+  .bottom-bar .btn.bottom-bar-btn:hover { background: var(--sage); color: var(--bg); }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--cream);
+    margin: 0 0 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .subhead { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+  .card {
+    position: relative;
+    overflow: hidden;
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+    color: var(--mid-text);
+    box-shadow: 0 3px 16px rgba(42,31,28,0.06);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--rose);
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--bg);
+    font-size: 19px;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .step-tag {
+    font-size: 11px;
+    background: var(--sage);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .type-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+
+  .type-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--mid-text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+  }
+
+  .type-btn:hover { border-color: var(--sage); }
+  .type-btn.active { background: var(--bg); border-color: var(--bg); color: var(--cream); }
+
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--bg); margin: 16px 0 6px; }
+  label.first { margin-top: 0; }
+
+  .hint { font-size: 12px; color: var(--muted); margin-top: -2px; margin-bottom: 6px; }
+
+  textarea, input[type="text"], input[type="password"] {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    color: var(--mid-text);
+    resize: vertical;
+    background: #fff;
+  }
+
+  textarea:focus, input:focus { outline: 2px solid var(--sage); outline-offset: 1px; }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.15s ease;
+  }
+
+  .drop-zone:hover { border-color: var(--sage); }
+  .drop-zone input { display: none; }
+  .drop-zone p { margin: 0; font-size: 13px; color: #9a877f; }
+  .drop-zone p.small { font-size: 11px; margin-top: 4px; }
+
+  .thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+  .thumb { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: zoom-in; }
+
+  .lightbox-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(20,14,12,0.88);
+    z-index: 100; align-items: center; justify-content: center; padding: 30px; cursor: zoom-out;
+  }
+  .lightbox-overlay.show { display: flex; }
+  .lightbox-overlay img { max-width: 90vw; max-height: 90vh; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+
+  .thumb button {
+    position: absolute; top: 2px; right: 2px;
+    background: rgba(42,31,28,0.85); color: #fff; border: none;
+    border-radius: 50%; width: 18px; height: 18px; font-size: 11px;
+    line-height: 18px; cursor: pointer; padding: 0;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--sage); color: #fff; border: none;
+    padding: 11px 22px; border-radius: 8px; font-family: 'Jost', sans-serif;
+    font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 16px;
+  }
+
+  .btn:hover { background: var(--sage-dark); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn.secondary {
+    background: transparent; color: var(--bg); border: 1.5px solid var(--border);
+    padding: 7px 14px; font-size: 12px; margin-top: 0;
+  }
+
+  .btn.secondary:hover { border-color: var(--sage); background: var(--sage-tint); }
+  .btn.small { padding: 8px 14px; font-size: 12.5px; margin-top: 0; }
+
+  .btn.paste-btn {
+    background: var(--paste-sage); color: var(--bg); border: none;
+    padding: 7px 14px; font-size: 12px; margin-top: 0; font-weight: 600;
+  }
+  .btn.paste-btn:hover { background: var(--paste-sage-dark); color: #fff; }
+
+  .status { font-size: 13px; color: var(--sage-dark); margin-top: 10px; display: none; }
+  .status.show { display: block; }
+
+  .error { font-size: 13px; color: var(--warn); margin-top: 10px; display: none; }
+  .error.show { display: block; }
+
+  .output-block { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+  .prompt-item {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; margin-bottom: 10px; font-size: 13.5px; line-height: 1.5;
+    display: flex; flex-direction: column-reverse; gap: 10px;
+  }
+  .prompt-item .copy-btn { align-self: flex-end; margin-top: 0; flex-shrink: 0; }
+  .prompt-item.used { background: #ece5df; color: #a89a92; opacity: 0.7; }
+  .prompt-item.used .copy-btn { color: var(--sage-dark); border-color: var(--sage); }
+
+  .history-batch {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  .history-batch-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px; color: #9a877f; margin-bottom: 8px;
+  }
+
+  .title-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; gap: 10px;
+  }
+  .title-item .text { font-size: 13.5px; }
+  .title-item .count { font-size: 11px; color: #9a877f; white-space: nowrap; }
+  .title-item .count.over { color: var(--warn); font-weight: 700; }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  .tag-chip {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 20px;
+    padding: 5px 6px 5px 12px; font-size: 12.5px; display: flex; align-items: center; gap: 6px;
+  }
+  .tag-chip .len { color: #9a877f; font-size: 10px; }
+  .tag-chip .len.over { color: var(--warn); font-weight: 700; }
+  .tag-chip.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.suggested { border-color: var(--rose); background: var(--rose-tint); }
+  .tag-chip.suggested .len { color: #96677f; }
+  .tag-chip.suggested::before { content: '✦ '; color: var(--rose); font-size: 11px; }
+  .tag-chip.suggested.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.baked { background: #e8e2db; border-color: #b8a99c; color: #6b5d54; }
+  .tag-chip.pinned-word { border-color: var(--sage); background: var(--sage-tint); }
+  .tag-chip.baked .len { color: #8a7a6e; }
+  .tag-chip.baked.dupe { border-color: var(--warn); background: #fdf1f0; }
+  .tag-chip.baked.suggested { background: #eaded9; border-color: var(--rose); }
+  .tag-chip.chosen { background: var(--bg); color: var(--cream); border-color: var(--bg); }
+
+  .pill { align-items: center; gap: 8px; padding: 6px 8px 6px 12px; cursor: pointer; }
+  .pill-text { outline: none; min-width: 20px; cursor: text; }
+  .pill-text:focus { background: var(--sage-tint); border-radius: 4px; padding: 0 2px; }
+  .slot-btns { display: flex; gap: 3px; }
+  .slot-btn {
+    width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border);
+    background: #fff; color: var(--mid-text); font-size: 10.5px; font-weight: 700;
+    cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .slot-btn:hover { border-color: var(--sage); background: var(--sage); color: #fff; }
+  .pill .remove-btn {
+    background: none; border: none; color: #9a877f; cursor: pointer; font-size: 13px; padding: 0 2px;
+  }
+  .pill .remove-btn:hover { color: var(--warn); }
+  .copy-btn-pill {
+    background: none; border: 1px solid var(--border); border-radius: 12px; color: var(--mid-text);
+    cursor: pointer; font-size: 10.5px; padding: 2px 8px; font-family: 'Jost', sans-serif;
+  }
+  .copy-btn-pill:hover { border-color: var(--sage); color: var(--bg); }
+  .tag-chip button {
+    background: none; border: none; color: #9a877f; cursor: pointer;
+    font-size: 13px; line-height: 1; padding: 2px;
+  }
+  .tag-chip button:hover { color: var(--warn); }
+
+  .tag-meta { display: flex; gap: 16px; align-items: center; margin-top: 10px; font-size: 12.5px; }
+  .tag-meta .count-badge { font-weight: 600; }
+  .tag-meta .count-badge.over { color: var(--warn); }
+  .tag-meta .dupe-flag { color: var(--warn); font-weight: 600; display: none; }
+  .tag-meta .dupe-flag.show { display: inline; }
+
+  .add-tag-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .add-tag-row input { flex: 1; min-width: 140px; }
+
+  .copy-all-row { display: flex; gap: 10px; margin-top: 14px; }
+
+  .baked-tags-box, .baked-titles-box {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-top: 6px;
+  }
+
+  .divider-label { text-align: center; color: var(--muted); font-size: 12px; letter-spacing: 1px; margin: 30px 0 -6px; }
+
+  .tab-nav { display: flex; gap: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--muted); }
+  .tab-btn {
+    background: transparent; border: none; color: var(--muted);
+    font-family: 'Jost', sans-serif; font-weight: 600; font-size: 14.5px;
+    padding: 10px 2px 12px; cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .tab-btn:hover { color: var(--cream); }
+  .tab-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
+  .garment-warn-dot { display: none; width: 7px; height: 7px; border-radius: 50%; background: var(--warn); margin-left: 5px; vertical-align: middle; }
+  .garment-warn-dot.show { display: inline-block; }
+  .garment-panel { display: none; }
+  .garment-panel.active { display: block; }
+  .idea-card { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .idea-card .idea-thumb { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--sage-tint); cursor: zoom-in; }
+  .idea-card .idea-link-face { width: 100%; aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: var(--sage-tint); color: var(--sage-dark); text-decoration: none; padding: 12px; text-align: center; }
+  .idea-card .idea-link-face .idea-domain { font-size: 12px; font-weight: 700; word-break: break-word; }
+  .idea-card .idea-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .idea-card textarea.idea-note { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 9px; font-family: 'Jost', sans-serif; font-size: 12.5px; color: var(--mid-text); resize: vertical; min-height: 40px; }
+  .idea-card .idea-actions { display: flex; gap: 8px; align-items: center; }
+  .idea-card .idea-actions a, .idea-card .idea-actions button { font-size: 11.5px; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .streak-row {
+    background: var(--rose); color: #fff; border-radius: 10px; padding: 10px 16px;
+    font-size: 13.5px; font-weight: 600; margin: 14px 0 20px; display: inline-block;
+  }
+
+  .month-progress { margin: 0 0 20px; }
+  .month-progress-label { font-size: 13px; font-weight: 600; color: var(--bg); margin-bottom: 6px; }
+  .month-progress-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
+  .month-progress-fill { background: var(--rose); height: 100%; border-radius: 20px; transition: width 0.3s ease; }
+
+  .month-stats-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .month-stats-row .month-progress { flex: 1; min-width: 220px; }
+  .month-listings-count {
+    background: var(--paste-sage); color: var(--bg); font-weight: 700; font-size: 14px;
+    padding: 8px 16px; border-radius: 20px; white-space: nowrap;
+  }
+
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
+  .cal-month-label { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--bg); font-weight: 700; }
+
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; font-size: 12px; color: var(--mid-text); }
+  .cal-legend-item { display: flex; align-items: center; gap: 6px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .wrap.wide { max-width: 1180px; }
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .cal-daylabel { text-align: center; font-size: 11px; color: var(--muted); font-weight: 600; padding-bottom: 4px; }
+  .cal-cell {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    min-height: 92px; padding: 8px; cursor: pointer; display: flex; flex-direction: column;
+    gap: 4px; transition: border-color 0.15s ease;
+  }
+  .cal-cell:hover { border-color: var(--rose); }
+  .cal-cell.empty { background: transparent; border: none; cursor: default; }
+  .cal-cell.today { border-color: var(--rose); border-width: 2px; }
+  .cal-cell .cal-date { font-size: 12.5px; font-weight: 600; color: var(--mid-text); }
+  .cal-cell .cal-count { font-size: 10.5px; color: #9a877f; }
+  .cal-cell .cal-types { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; }
+  .cal-type-label {
+    font-size: 10px; font-weight: 600; color: #fff; padding: 2px 6px; border-radius: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;
+  }
+
+  .count-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .count-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: #fff; color: var(--mid-text); font-family: 'Jost', sans-serif;
+    font-weight: 600; cursor: pointer; font-size: 13.5px;
+  }
+  .count-btn:hover { border-color: var(--rose); }
+  .count-btn.active { background: var(--rose); border-color: var(--rose); color: #fff; }
+
+  .type-multiselect { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .type-ms-chip {
+    padding: 9px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: 'Jost', sans-serif; color: var(--mid-text); display: flex;
+    align-items: center; gap: 7px; transition: all 0.15s ease;
+  }
+  .type-ms-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .type-ms-chip.active { color: #fff; border-color: transparent; }
+
+  /* ---------- Bestseller Finder ---------- */
+  .bsf * { box-sizing: border-box; }
+  .bsf { font-family: 'Jost', sans-serif; font-size: 15px; }
+  .bsf-hero { padding: 0 0 0.5rem; text-align: center; }
+  .bsf-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--rose); margin-bottom: 0.7rem; display: block; }
+  .bsf-h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.4vw, 40px); line-height: 1.1; color: var(--cream); margin-bottom: 0.75rem; font-weight: 700; }
+  .bsf-h1 em { color: var(--rose); font-style: italic; }
+  .bsf-sub { font-size: 14px; font-weight: 300; color: #c9beb8; line-height: 1.55; max-width: 700px; margin: 0 auto 1.2rem; }
+
+  .bsf-dashboard { display: flex; flex-direction: column; gap: 1.2rem; max-width: 1100px; margin: 0 auto; align-items: center; }
+  .bsf-quickfills { min-width: 0; width: 100%; }
+  .bsf-chips-section { margin-bottom: 0.9rem; }
+  .bsf-chips-label { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--rose); margin-bottom: 8px; display: block; }
+  .bsf-chips-hint { font-size: 11px; font-weight: 300; color: #8a8078; margin-bottom: 9px; display: block; font-style: italic; }
+  .bsf-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 1040px; margin: 0 auto; }
+  .bsf-chip { background-color: var(--border) !important; border: 2px solid var(--border) !important; color: var(--bg) !important; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 22px; border-radius: 100px; cursor: pointer; transition: background-color 0.18s, border-color 0.18s, transform 0.12s; -webkit-appearance: none; appearance: none; white-space: nowrap; }
+  .bsf-chip:hover { background-color: var(--rose) !important; border-color: var(--rose) !important; color: var(--bg) !important; }
+  .bsf-chip:active { transform: scale(0.97); }
+  .bsf-chip.active { background-color: var(--rose) !important; border-color: var(--rose) !important; color: var(--bg) !important; }
+  .bsf-divider { width: 54px; height: 1px; background: rgba(183,135,159,0.35); margin: 0.9rem auto; }
+
+  .bsf-card { background: #ffffff !important; border: 1.5px solid var(--border) !important; border-radius: 20px; padding: 1.5rem 1.5rem; text-align: left; box-shadow: 0 18px 45px rgba(0,0,0,0.35); max-width: 600px; width: 100%; margin: 0 auto; }
+  .bsf-card-title { font-family: 'Playfair Display', serif; font-size: 23px; font-weight: 700; color: var(--bg) !important; text-align: center; margin-bottom: 4px; }
+  .bsf-card-sub { font-size: 13px; font-weight: 300; color: var(--muted) !important; text-align: center; margin-bottom: 1.15rem; line-height: 1.45; }
+  .bsf-field { margin-bottom: 0.95rem; }
+  .bsf-label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .bsf-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bg) !important; }
+  .bsf-label-right { display: flex; align-items: center; gap: 10px; }
+  .bsf-optional { font-size: 10px; font-weight: 400; color: var(--muted) !important; font-style: italic; }
+  .bsf-clear-link { font-size: 10px; font-weight: 600; color: var(--rose) !important; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Jost', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 2px; -webkit-appearance: none; appearance: none; }
+  .bsf-clear-link:hover { color: var(--sage-dark) !important; }
+  .bsf-input-wrap { position: relative; }
+  .bsf-input { width: 100%; padding: 13px 15px; border: 1.5px solid var(--border) !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 400; color: var(--bg) !important; background: var(--light-bg) !important; outline: none; transition: border-color 0.2s, background 0.2s; }
+  .bsf-input:focus { border-color: var(--rose) !important; background: #fff !important; }
+  .bsf-input::placeholder { color: var(--muted) !important; }
+  .bsf-btn { width: 100%; padding: 15px; background-color: var(--rose) !important; color: var(--bg) !important; border: none !important; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.06em; cursor: pointer; transition: background-color 0.2s, transform 0.12s; margin-top: 0.2rem; -webkit-appearance: none; appearance: none; }
+  .bsf-btn:active { transform: scale(0.985); }
+  .bsf-confirm { display: none; margin-top: 0.9rem; padding: 0.9rem; background: var(--light-bg) !important; border: 1.5px solid var(--border) !important; border-radius: 12px; text-align: center; }
+  .bsf-confirm.show { display: block; animation: bsfFadeUp 0.3s ease; }
+  .bsf-confirm-text { font-family: 'Playfair Display', serif; font-size: 15px; font-style: italic; color: var(--bg) !important; margin-bottom: 3px; }
+  .bsf-confirm-sub { font-size: 11px; color: var(--muted) !important; font-weight: 300; }
+  @keyframes bsfFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 900px) {
+    .bsf-card { max-width: 500px; margin: 0 auto; }
+    .bsf-chips { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="pageWrap">
+  <h1>Mediocre Millennials <span style="color:var(--rose);">Workflow Tool</span></h1>
+  <div class="subhead">Screenshot to prompts, plus SEO'd titles and tags for Baby Tee, Comfort Colors, and Gildan sweatshirt, all from one design.</div>
+
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="bestsellerTab">Bestseller Finder</button>
+    <button class="tab-btn" data-tab="builderTab">Listing Builder</button>
+    <button class="tab-btn" data-tab="calendarTab">Listing Calendar</button>
+    <button class="tab-btn" data-tab="trackerTab">Design Tracker</button>
+    <button class="tab-btn" data-tab="ideaVaultTab">Idea Vault</button>
+    <button class="tab-btn" data-tab="apiKeyTab" style="margin-left:auto;">API Key</button>
+  </div>
+
+  <div class="tab-panel active" id="bestsellerTab">
+    <div class="bsf">
+      <div class="bsf-hero">
+        <span class="bsf-eyebrow">Mediocre Millennials</span>
+        <h1 class="bsf-h1">Dania's Etsy <em>Bestseller</em><br>Finder</h1>
+        <p class="bsf-sub">Type your niche and go straight to Etsy apparel listings that are already selling. No scrolling, no guessing.</p>
+
+        <div class="bsf-dashboard">
+          <div class="bsf-quickfills">
+            <div class="bsf-chips-section">
+              <span class="bsf-chips-label">Quick-fill a niche</span>
+              <span class="bsf-chips-hint">Pick one or more — they'll combine automatically</span>
+              <div class="bsf-chips" id="niche-chips">
+                <button class="bsf-chip" onclick="toggleNiche(this,'sassy')">sassy</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'funny')">funny</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'retro')">retro</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'vintage')">vintage</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'y2k')">y2k</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'mom life')">mom life</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'millennial')">millennial</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'mental health')">mental health</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'wine')">wine</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'coffee')">coffee</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'sarcastic')">sarcastic</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'nurse')">nurse</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'teacher')">teacher</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'dog mom')">dog mom</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'cat mom')">cat mom</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'plus size')">plus size</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'trendy')">trendy</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'girls trip')">girls trip</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'bachelorette')">bachelorette</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'birthday')">birthday</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'christmas')">christmas</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'halloween')">halloween</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'western')">western</button>
+                <button class="bsf-chip" onclick="toggleNiche(this,'gym')">gym</button>
+              </div>
+            </div>
+
+            <div class="bsf-divider"></div>
+
+            <div class="bsf-chips-section">
+              <span class="bsf-chips-label">Quick-fill a product type</span>
+              <div class="bsf-chips" id="product-chips">
+                <button class="bsf-chip" onclick="fillProduct(this,'baby tee')">baby tee</button>
+                <button class="bsf-chip" onclick="fillProduct(this,'t shirt')">t shirt</button>
+                <button class="bsf-chip" onclick="fillProduct(this,'comfort colors')">comfort colors</button>
+                <button class="bsf-chip" onclick="fillProduct(this,'sweatshirt')">sweatshirt</button>
+                <button class="bsf-chip" onclick="fillProduct(this,'crewneck')">crewneck</button>
+                <button class="bsf-chip" onclick="fillProduct(this,'unisex shirt')">unisex shirt</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bsf-card">
+            <p class="bsf-card-title">Find Bestsellers</p>
+            <p class="bsf-card-sub">Pick chips or type your own. Product type is optional but sharpens results.</p>
+
+            <div class="bsf-field">
+              <div class="bsf-label-row">
+                <span class="bsf-label">Niche</span>
+                <button class="bsf-clear-link" onclick="clearNiche()">Clear</button>
+              </div>
+              <div class="bsf-input-wrap">
+                <input class="bsf-input" type="text" id="bsf-niche" placeholder="e.g. coquette teacher samsung"/>
+              </div>
+            </div>
+
+            <div class="bsf-field">
+              <div class="bsf-label-row">
+                <div class="bsf-label-right">
+                  <span class="bsf-label">Product Type</span>
+                  <span class="bsf-optional">optional</span>
+                </div>
+                <button class="bsf-clear-link" onclick="clearProduct()">Clear</button>
+              </div>
+              <div class="bsf-input-wrap">
+                <input class="bsf-input" type="text" id="bsf-product" placeholder="e.g. printable wall art, png"/>
+              </div>
+            </div>
+
+            <button class="bsf-btn" id="bsf-main-btn" onclick="bsfGo()">Find Bestsellers</button>
+            <div class="bsf-confirm" id="bsf-confirm">
+              <p class="bsf-confirm-text">Opening your results on Etsy...</p>
+              <p class="bsf-confirm-sub">A new tab just opened with your bestseller search.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="builderTab">
+  <div class="card">
+    <h2><span class="step-tag">Step 1</span> Image Prompts</h2>
+    <div class="hint" style="margin-top:-8px;">One design goes on all 3 products (Baby Tee, Comfort Colors, Gildan Sweatshirt), so there's no product type to pick here, just build the artwork.</div>
+
+    <label class="first">Inspo screenshot(s), up to 3</label>
+    <div class="drop-zone" id="dropZone">
+      <p>Click to upload, or paste a screenshot with Ctrl+V</p>
+      <p class="small">Up to 3 images total, click any thumbnail to view it bigger</p>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+    <button class="btn paste-btn" id="pasteClipboardBtn" style="margin-top:10px;">Paste from Clipboard</button>
+    <div class="add-tag-row" style="margin-top:10px;">
+      <input type="text" id="imageUrlInput" placeholder="Or paste an image URL and press Enter">
+      <button class="btn small" id="addImageUrlBtn">Add URL</button>
+      <button class="btn paste-btn" id="pasteImageUrlClipboardBtn">Paste URL from Clipboard</button>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+
+    <label>Keywords or working title (optional)</label>
+    <div class="hint">Extra context for the AI, like a working title or a few keywords naming the subject, elements, or theme. Helps it read the screenshot more accurately, and it'll work some of these descriptive words into the prompts themselves. Press Enter to generate.</div>
+    <textarea id="designKeywords" rows="2" placeholder="e.g. spooky cat witch coffee, Halloween cottagecore, hocus pocus themed"></textarea>
+    <button class="btn paste-btn" id="pasteKeywordsClipboardBtn" style="margin-top:8px;">Paste from Clipboard</button>
+
+    <label>Creative direction (optional)</label>
+    <div class="hint">Leave blank and it'll auto suggest 2 to 3 quick improvements before generating. Press Enter to generate.</div>
+    <textarea id="creativeDirection" rows="2" placeholder="e.g. deeper color palette, add more stars, softer background"></textarea>
+
+    <button class="btn" id="generatePromptsBtn">Generate 5 Prompts</button>
+    <button class="btn secondary" id="viewHistoryBtn" style="display:none;">View Past Prompts (0)</button>
+    <div class="status" id="promptsStatus"></div>
+    <div class="error" id="promptsError"></div>
+
+    <div class="output-block" id="promptsOutputBlock" style="display:none;">
+      <div id="suggestionsNote" style="display:none; font-size:12.5px; color:var(--muted); margin-bottom:12px;"></div>
+      <div class="copy-all-row" style="margin-top:0; margin-bottom:14px;">
+        <button class="btn secondary" id="copyAllPromptsTopBtn">Copy all prompts</button>
+      </div>
+      <div id="promptsList"></div>
+      <div class="copy-all-row">
+        <button class="btn secondary" id="copyAllPromptsBtn">Copy all prompts</button>
+      </div>
+    </div>
+
+    <div id="historyPanel" style="display:none; margin-top:18px; border-top:1px solid var(--border); padding-top:16px;">
+      <label class="first" style="margin-top:0;">Past Prompts This Session</label>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="divider-label">— then —</div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 2</span> Titles &amp; Tags per Product</h2>
+    <div class="hint" style="margin-top:-8px;">Paste keywords or existing titles below to build a shared keyword pool, then click a pool pill's ① or ② to drop it into all 3 titles at once. Each product keeps its own baked in garment wording, its own character count, and its own tags.</div>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Paste keywords or existing titles</label>
+      <div class="hint">Each line strips out garment wording automatically, keeping just the words that describe the design. Everything lands in the shared pool below, alphabetized, deduped, and split into single words.</div>
+    </div>
+
+    <div class="add-tag-row" style="margin-top:10px;">
+      <input type="text" id="pasteLineBabyTee" placeholder="Keywords or a title...">
+      <button class="btn small" id="pasteLineBabyTeeAddBtn">Add to Pool</button>
+      <button class="btn paste-btn" id="pasteLineBabyTeeBtn">Paste from Clipboard</button>
+    </div>
+    <div class="add-tag-row" style="margin-top:8px;">
+      <input type="text" id="pasteLineTShirt" placeholder="Keywords or a title...">
+      <button class="btn small" id="pasteLineTShirtAddBtn">Add to Pool</button>
+      <button class="btn paste-btn" id="pasteLineTShirtBtn">Paste from Clipboard</button>
+    </div>
+    <div class="add-tag-row" style="margin-top:8px;">
+      <input type="text" id="pasteLineSweatshirt" placeholder="Keywords or a title...">
+      <button class="btn small" id="pasteLineSweatshirtAddBtn">Add to Pool</button>
+      <button class="btn paste-btn" id="pasteLineSweatshirtBtn">Paste from Clipboard</button>
+    </div>
+    <div class="add-tag-row" style="margin-top:8px;">
+      <input type="text" id="pasteLineRandom" placeholder="Random keywords...">
+      <button class="btn small" id="pasteLineRandomAddBtn">Add to Pool</button>
+      <button class="btn paste-btn" id="pasteLineRandomBtn">Paste from Clipboard</button>
+    </div>
+    <div class="status" id="poolStatus" style="margin-top:8px;"></div>
+
+    <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Shared keyword pool</label>
+      <div class="hint">Click a pill's ① to drop it before the garment name in all 3 titles, or ② to drop it after. Click the pill itself to add it to the end of whichever title tab is active below. Use +Tags to add it to all 3 tag lists at once.</div>
+    </div>
+
+    <div class="tag-list" id="keywordPoolList" style="margin-top:8px;"></div>
+    <div class="add-tag-row" style="margin-top:10px;">
+      <input type="text" id="poolSingleInput" placeholder="Or type one keyword and press Enter">
+      <button class="btn secondary" id="clearPoolBtn">Clear pool</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Titles &amp; tags by product</label>
+    </div>
+
+    <div class="tab-nav" id="garmentTabNav" style="margin-bottom:16px;">
+      <button class="tab-btn garment-tab-btn active" data-garment="babytee">Baby Tee <span class="garment-warn-dot" id="warnDot-babytee"></span></button>
+      <button class="tab-btn garment-tab-btn" data-garment="tshirt">T Shirt <span class="garment-warn-dot" id="warnDot-tshirt"></span></button>
+      <button class="tab-btn garment-tab-btn" data-garment="sweatshirt">Sweatshirt <span class="garment-warn-dot" id="warnDot-sweatshirt"></span></button>
+    </div>
+
+    <div id="garmentPanels"></div>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Suggest more tags for this product (optional)</label>
+      <div class="hint">Adds AI suggested tags on top of what's already there for the active product tab above, based on its title and your image prompts. Won't remove or replace anything.</div>
+    </div>
+
+    <button class="btn" id="generateTitlesBtn" style="margin-top:20px;">Suggest More Tags</button>
+    <div class="status" id="titlesStatus"></div>
+    <div class="error" id="titlesError"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 2.5</span> AI SEO Assist (optional)</h2>
+    <div class="hint">Not sure your 3 titles above are strong enough yet? Let AI take a pass at all 3 at once, filling each out toward 140 characters with extra niche keywords and a gift ending, without you having to hand build them. Review and copy over whichever ones you like, this won't touch your tabs above automatically.</div>
+    <button class="btn secondary" id="aiAssistSeoBtn" style="margin-top:10px;">Let AI Punch Up All 3 Titles</button>
+    <div class="status" id="seoStatus"></div>
+    <div class="error" id="seoError"></div>
+    <div id="seoResults" style="display:none; margin-top:18px;"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step-tag">Step 3</span> Description</h2>
+    <div class="hint">Writes your listing description in your fixed format, a hook, a use case line with the catchy phrase from your title in quotes, then the download line. Pulls from your live title, tags, and image prompts already generated for this design.</div>
+
+    <button class="btn" id="generateDescriptionBtn">Generate Description</button>
+    <div class="status" id="descriptionStatus"></div>
+    <div class="error" id="descriptionError"></div>
+
+    <div class="output-block" id="descriptionOutputBlock" style="display:none; margin-top:14px;">
+      <textarea id="descriptionOutput" rows="5" style="width:100%; font-family:'Jost', sans-serif; font-size:14px; line-height:1.6; padding:12px; border-radius:8px; border:1px solid var(--border); resize:vertical; color:var(--bg);"></textarea>
+      <div class="copy-all-row">
+        <button class="btn secondary" id="copyDescriptionBtn">Copy Description</button>
+        <button class="btn secondary" id="regenerateDescriptionBtn">Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Send to Design Tracker</h2>
+    <div class="hint" style="margin-top:-8px;">Done with this design? Log it in the Design Tracker without retyping anything. This always creates a fresh entry, even if the name matches one you already have.</div>
+
+    <label class="first">Design name</label>
+    <input type="text" id="trackerDesignName" placeholder="Name this design...">
+
+    <label style="margin-top:14px;">Which garments did you finish?</label>
+    <div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:8px;">
+      <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0; font-size:14px; color:var(--bg);"><input type="checkbox" id="trackerCheckBabyTee" style="width:16px; height:16px;"> Baby Tee</label>
+      <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0; font-size:14px; color:var(--bg);"><input type="checkbox" id="trackerCheckTShirt" style="width:16px; height:16px;"> T Shirt</label>
+      <label style="display:flex; align-items:center; gap:6px; font-weight:400; text-transform:none; letter-spacing:0; font-size:14px; color:var(--bg);"><input type="checkbox" id="trackerCheckSweatshirt" style="width:16px; height:16px;"> Sweatshirt</label>
+    </div>
+
+    <button class="btn" id="sendToTrackerBtn" style="margin-top:16px;">Add to Design Tracker</button>
+    <div class="status" id="trackerSendStatus"></div>
+  </div>
+  </div>
+
+  <div class="tab-panel" id="calendarTab">
+    <div class="card">
+      <h2><span class="step-tag">Consistency</span> Listing Calendar</h2>
+      <div class="hint">Log how many listings you added each day and which product types, so you can spot gaps and stay consistent.</div>
+
+      <div class="streak-row" id="streakRow"></div>
+
+      <div class="month-stats-row">
+        <div class="month-progress">
+          <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
+          <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
+        </div>
+        <div class="month-listings-count" id="monthListingsCount">0 listings this month</div>
+      </div>
+
+      <div class="cal-header">
+        <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
+        <div class="cal-month-label" id="calMonthLabel"></div>
+        <button class="btn secondary small" id="calNextBtn">Next ›</button>
+      </div>
+
+      <div class="cal-legend" id="calLegend"></div>
+
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <div class="card" id="dayEditorCard" style="display:none;">
+      <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
+
+      <label class="first">How many listings did you add?</label>
+      <div class="count-row" id="countRow"></div>
+
+      <label>Product type(s) added</label>
+      <div class="type-multiselect" id="typeMultiselect"></div>
+
+      <div class="copy-all-row">
+        <button class="btn" id="saveDayBtn">Save Day</button>
+        <button class="btn secondary" id="deleteDayBtn">Delete This Day</button>
+        <button class="btn secondary" id="closeDayEditorBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="trackerTab">
+    <div class="card" style="padding:0; overflow:hidden;">
+      <iframe id="trackerFrame" title="POD Design Tracker" style="width:100%; border:none; display:block; min-height:600px;"></iframe>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="ideaVaultTab">
+    <div class="card">
+      <h2>Idea Vault</h2>
+      <div class="hint" style="margin-top:-8px;">Paste a listing URL or an image URL any time you spot something you want to come back to. Photos show as a thumbnail, everything else shows as a link card.</div>
+
+      <div class="add-tag-row" style="margin-top:14px;">
+        <input type="text" id="ideaUrlInput" placeholder="Paste a listing URL or image URL...">
+        <button class="btn paste-btn" id="ideaPasteBtn">Paste from Clipboard</button>
+        <button class="btn small" id="ideaAddBtn">Add</button>
+      </div>
+
+      <div id="ideaVaultGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-top:22px;"></div>
+      <div id="ideaVaultEmpty" class="hint" style="display:none; margin-top:22px;">Nothing saved yet. Paste a URL above to start your vault.</div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="apiKeyTab">
+    <div class="card" id="apiKeyCard">
+      <div id="apiKeyCompact" style="display:none; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <span style="font-size:13px; color:var(--mid-text);">API key saved for this browser.</span>
+        <button class="btn secondary small" id="manageApiKeyBtn">Manage key</button>
+      </div>
+      <div id="apiKeyFull">
+        <h2><span class="step-tag">API Key</span></h2>
+        <div class="hint">Only needed if you're running this outside Claude.ai, like on GitHub Pages. Inside Claude.ai's own preview, skip this, it just works. Your key is stored only in this browser, never sent anywhere but Anthropic's API. You only need to enter it once, it'll stay saved and this section tucks itself away after that.</div>
+        <div id="apiKeyInputWrap" style="display:none; margin-top:10px;">
+          <div class="add-tag-row">
+            <input type="password" id="apiKeyInput" placeholder="Paste your Anthropic API key (sk-ant-...)">
+            <button class="btn small" id="saveApiKeyBtn">Save Key</button>
+          </div>
+        </div>
+        <div id="apiKeySavedMsg" style="display:none; margin-top:10px; font-size:13px; color:var(--mid-text);">
+          API key saved in this browser. <button class="btn secondary" id="changeApiKeyBtn" style="margin-left:8px;">Change key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <img id="lightboxImg" src="" alt="Enlarged image">
+</div>
+
+<div class="bottom-bar">
+  <span class="bottom-bar-status" id="bottomBarStatus"></span>
+  <span id="autosaveStatus" style="color:var(--muted); font-size:12.5px; margin-right:14px;">Autosaving every 30s</span>
+  <button class="btn secondary bottom-bar-btn" id="saveNowBtn">Save Now</button>
+  <button class="btn secondary bottom-bar-btn" id="backToTopBtn">Back to Top</button>
+  <button class="btn secondary bottom-bar-btn" id="clearAllBtn" style="border-color:var(--paste-sage); color:var(--paste-sage);">Clear Builder Fields</button>
+</div>
+
+<script>
+const TRACKER_HTML = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>POD Design Tracker \u2014 Mediocre Millennials</title>\n<link href=\"https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap\" rel=\"stylesheet\">\n<style>\n*{box-sizing:border-box;margin:0;padding:0}\n:root{\n  --espresso:#2a1f1c;--blush:#dea193;--gold:#c9a96e;--cream:#f5eddf;\n  --parchment:#fdf7f2;--muted:#5a4a45;--border:#ead9d5;\n  --done-bg:#e8f4ec;--done-text:#2d6a40;--done-border:#a8d5b5;\n  --warn-bg:#fff8ec;--warn-text:#7a5200;\n}\nbody{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--espresso);min-height:100vh;font-size:14px}\nheader{background:var(--espresso);color:var(--cream);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}\nheader h1{font-size:16px;font-weight:600;letter-spacing:.02em}\nheader span{font-size:12px;opacity:.55}\n.main{max-width:1150px;margin:0 auto;padding:22px 18px}\n\n/* Stats */\n.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}\n.stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px}\n.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}\n.stat-num{font-size:24px;font-weight:600;color:var(--espresso)}\n.stat-sub{font-size:11px;color:var(--muted);margin-top:2px}\n.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-top:7px;overflow:hidden}\n.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s}\n\n.missing-banner{background:var(--warn-bg);border:1px solid #f0d9a0;border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:13px;color:var(--warn-text);display:none}\n.missing-banner.show{display:block}\n\n/* Controls */\n.controls{background:#fff;border:1px solid var(--border);border-radius:12px;padding:15px 17px;margin-bottom:14px}\n.controls-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:11px}\n.search-input{flex:1;min-width:160px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}\n.search-input:focus{outline:none;border-color:var(--blush)}\nselect{padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment);cursor:pointer}\nselect:focus{outline:none;border-color:var(--blush)}\n.tabs{display:flex;gap:5px;margin-bottom:11px;flex-wrap:wrap}\n.tab{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted);transition:all .15s}\n.tab.active{background:var(--espresso);color:var(--cream);border-color:var(--espresso)}\n.mode-row{display:flex;gap:6px;margin-bottom:10px}\n.mode-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}\n.mode-btn.active{background:var(--blush);color:#fff;border-color:var(--blush)}\n.add-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}\n.add-row input[type=text]{flex:1;min-width:160px;padding:7px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}\n.add-row input[type=text]:focus{outline:none;border-color:var(--blush)}\ntextarea{width:100%;min-height:75px;resize:vertical;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}\ntextarea:focus{outline:none;border-color:var(--blush)}\n.btn{padding:7px 15px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;background:var(--espresso);color:var(--cream);transition:opacity .15s}\n.btn:hover{opacity:.85}\n.btn-sm{padding:5px 12px;font-size:12px}\n.btn-outline{background:var(--parchment);color:var(--muted);border-color:var(--border)}\n.btn-outline:hover{background:var(--cream)}\n.btn-blush{background:var(--blush);color:#fff;border-color:var(--blush)}\n.btn-blush:hover{opacity:.85}\n.hint{font-size:11px;color:var(--muted)}\n.divider{height:1px;background:var(--border);margin:11px 0}\n\n/* Sort */\n.sort-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}\n.sort-bar span{font-size:11px;color:var(--muted);font-weight:500}\n.sort-btn{padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}\n.sort-btn.active{background:var(--espresso);color:var(--cream);border-color:var(--espresso)}\n\n/* Bulk */\n.bulk-bar{background:var(--espresso);color:var(--cream);border-radius:10px;padding:10px 14px;display:none;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}\n.bulk-bar.show{display:flex}\n.bulk-bar span{font-size:13px}\n.bulk-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:var(--cream);transition:background .15s}\n.bulk-btn:hover{background:rgba(255,255,255,.2)}\n.bulk-btn.danger{border-color:rgba(220,80,80,.5);background:rgba(220,80,80,.15)}\n.bulk-btn.danger:hover{background:rgba(220,80,80,.3)}\n\n.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}\n\n/* Table */\n.col-header{display:grid;grid-template-columns:28px 90px 1fr 140px 90px 90px 90px 32px;gap:8px;align-items:center;padding:0 12px 5px;font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em}\n.design-list{display:flex;flex-direction:column;gap:5px}\n.design-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .15s}\n.design-card:hover{box-shadow:0 2px 8px rgba(42,31,28,.07)}\n.design-card.complete{opacity:.5}\n.design-card.selected{border-color:var(--blush);box-shadow:0 0 0 2px rgba(222,161,147,.25)}\n.card-main{display:grid;grid-template-columns:28px 90px 1fr 140px 90px 90px 90px 32px;gap:8px;align-items:center;padding:10px 12px;cursor:pointer}\n.card-main:hover{background:var(--parchment)}\n\n/* Checkbox */\n.cb{width:16px;height:16px;border:1.5px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:10px}\n.cb.checked{background:var(--blush);border-color:var(--blush);color:#fff}\n\n/* Thumb */\n.thumb-wrap{width:80px;height:80px;border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--parchment);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0}\n.thumb-wrap img{width:100%;height:100%;object-fit:cover}\n.thumb-placeholder{font-size:16px;color:var(--border)}\n.thumb-overlay{display:none;position:absolute;inset:0;background:rgba(42,31,28,.4);align-items:center;justify-content:center;color:#fff;font-size:13px}\n.thumb-wrap:hover .thumb-overlay{display:flex}\n\n.design-name{font-size:13px;font-weight:600;color:var(--espresso);line-height:1.3}\n.name-edit{font-size:13px;font-weight:600;color:var(--espresso);border:1.5px solid var(--blush);border-radius:6px;padding:3px 7px;font-family:inherit;background:#fff;outline:none;width:100%;margin-bottom:2px}\n.design-name-wrap{cursor:text}\n.design-name-wrap:hover .design-name{text-decoration:underline dotted var(--blush)}\n\n/* Category dropdown on card */\n.cat-select{width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:12px;color:var(--espresso);background:var(--parchment);cursor:pointer}\n.cat-select:focus{outline:none;border-color:var(--blush)}\n.cat-select.unset{color:var(--muted)}\n\n/* Pills */\n.pill{display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border-radius:6px;padding:5px 10px;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;width:82px}\n.pill.done{background:var(--done-bg);color:var(--done-text);border-color:var(--done-border)}\n.pill.todo{background:var(--parchment);color:var(--muted);border-color:var(--border)}\n.pill:hover{filter:brightness(.94)}\n\n.del-btn{background:none;border:none;color:var(--border);cursor:pointer;font-size:15px;padding:0;width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}\n.del-btn:hover{color:#c0392b;background:#fdf0ed}\n\n/* Expandable notes */\n.card-details{border-top:1px solid var(--border);padding:12px 14px;background:var(--parchment);display:none}\n.card-details.open{display:block}\n.detail-field label{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px}\n.detail-field textarea{min-height:55px;width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--espresso);background:#fff;resize:vertical}\n.detail-field textarea:focus{outline:none;border-color:var(--blush)}\n\n.empty{text-align:center;padding:36px;color:var(--muted);font-size:14px}\n\n/* Modals shared */\n.modal-bg{display:none;position:fixed;inset:0;background:rgba(42,31,28,.5);z-index:100;align-items:center;justify-content:center}\n.modal-bg.open{display:flex}\n.modal{background:#fff;border-radius:14px;padding:22px;width:380px;max-width:95vw;max-height:90vh;overflow-y:auto}\n.modal h3{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--espresso)}\n.modal-actions{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap}\n.btn-ghost{padding:7px 13px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--parchment);color:var(--muted)}\n.btn-ghost:hover{background:var(--cream)}\n\n/* Thumbnail modal */\n.modal-name{font-size:12px;color:var(--muted);margin-bottom:14px}\n.modal-preview{width:100%;max-height:200px;object-fit:contain;border-radius:8px;margin-bottom:10px;display:none;background:var(--parchment)}\n.file-drop{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;margin-bottom:8px;color:var(--muted);font-size:13px;transition:border-color .15s}\n.file-drop:hover{border-color:var(--blush)}\n.modal input[type=text]{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment);margin-bottom:8px}\n.modal input[type=text]:focus{outline:none;border-color:var(--blush)}\n\n/* Category manager modal */\n.cat-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:300px;overflow-y:auto}\n.cat-row{display:flex;gap:6px;align-items:center}\n.cat-row input{flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}\n.cat-row input:focus{outline:none;border-color:var(--blush)}\n.cat-del{background:none;border:none;color:var(--border);cursor:pointer;font-size:16px;padding:2px 5px;border-radius:5px;transition:all .15s;flex-shrink:0}\n.cat-del:hover{color:#c0392b;background:#fdf0ed}\n.cat-add-row{display:flex;gap:8px}\n.cat-add-row input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--espresso);background:var(--parchment)}\n.cat-add-row input:focus{outline:none;border-color:var(--blush)}\n.cat-empty{font-size:13px;color:var(--muted);text-align:center;padding:16px 0}\n\n@media(max-width:720px){\n  .stats{grid-template-columns:repeat(2,1fr)}\n  .col-header{display:none}\n  .card-main{grid-template-columns:28px 80px 1fr 32px;grid-template-rows:auto auto}\n  .cat-col,.pill-tee,.pill-baby,.pill-sweat{display:none}\n}\n\n/* Page nav tabs */\n.page-nav{display:flex;gap:6px;padding:0 28px;background:var(--espresso)}\n.page-tab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;color:var(--cream);opacity:.55;border-bottom:2px solid transparent;transition:all .15s}\n.page-tab.active{opacity:1;border-bottom-color:var(--blush)}\n.page-tab .badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--blush);color:#fff;font-size:11px;font-weight:600;margin-left:6px}\n.page{display:none}\n.page.active{display:block}\n\n/* To-be-added list */\n.tba-list{display:flex;flex-direction:column;gap:6px}\n.tba-row{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:all .15s}\n.tba-row:hover{border-color:var(--blush);box-shadow:0 2px 8px rgba(42,31,28,.06)}\n.tba-name{flex:1;font-size:13px;font-weight:600;color:var(--espresso)}\n.tba-add-icon{width:24px;height:24px;border-radius:50%;background:var(--parchment);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);flex-shrink:0;transition:all .15s}\n.tba-row:hover .tba-add-icon{background:var(--blush);color:#fff;border-color:var(--blush)}\n.tba-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}\n.tba-header-row h2{font-size:16px;font-weight:600;color:var(--espresso)}\n.tba-count{font-size:12px;color:var(--muted)}\n.tba-bulk-row{display:flex;gap:8px;margin-bottom:14px}\n</style>\n</head>\n<body>\n\n<header>\n  <h1>POD Design Tracker</h1>\n  <span>Mediocre Millennials</span>\n</header>\n\n<div class=\"page-nav\">\n  <div class=\"page-tab active\" onclick=\"setPage('tracker',this)\">Tracker</div>\n  <div class=\"page-tab\" onclick=\"setPage('tba',this)\">To Be Added <span class=\"badge\" id=\"tbaBadge\">0</span></div>\n</div>\n\n<div class=\"page active\" id=\"page-tracker\">\n<div class=\"main\">\n\n  <div class=\"stats\">\n    <div class=\"stat\">\n      <div class=\"stat-label\">Total designs</div>\n      <div class=\"stat-num\" id=\"statTotal\">0</div>\n      <div class=\"progress-bar\"><div class=\"progress-fill\" id=\"statBar\" style=\"width:0%\"></div></div>\n      <div class=\"stat-sub\" id=\"statPct\">0% fully listed</div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"stat-label\">T-shirts</div>\n      <div class=\"stat-num\" id=\"statTee\">0</div>\n      <div class=\"stat-sub\" id=\"statTeeSub\"></div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"stat-label\">Baby tees</div>\n      <div class=\"stat-num\" id=\"statBaby\">0</div>\n      <div class=\"stat-sub\" id=\"statBabySub\"></div>\n    </div>\n    <div class=\"stat\">\n      <div class=\"stat-label\">Sweatshirts</div>\n      <div class=\"stat-num\" id=\"statSweat\">0</div>\n      <div class=\"stat-sub\" id=\"statSweatSub\"></div>\n    </div>\n  </div>\n\n  <div class=\"missing-banner\" id=\"missingBanner\"></div>\n\n  <div class=\"controls\">\n    <div class=\"tabs\">\n      <div class=\"tab active\" onclick=\"setTab('all',this)\">All</div>\n      <div class=\"tab\" onclick=\"setTab('incomplete',this)\">Missing products</div>\n      <div class=\"tab\" onclick=\"setTab('complete',this)\">Complete</div>\n    </div>\n    <div class=\"controls-row\">\n      <input class=\"search-input\" type=\"text\" id=\"searchInput\" placeholder=\"Search designs...\" oninput=\"renderList()\">\n      <select id=\"filterSelect\" onchange=\"renderList()\">\n        <option value=\"all\">All products</option>\n        <option value=\"any_tee\">Missing t-shirt</option>\n        <option value=\"any_baby\">Missing baby tee</option>\n        <option value=\"any_sweat\">Missing sweatshirt</option>\n      </select>\n      <select id=\"catFilter\" onchange=\"renderList()\">\n        <option value=\"all\">All categories</option>\n      </select>\n      <div class=\"sort-bar\">\n        <span>Sort:</span>\n        <div class=\"sort-btn active\" onclick=\"setSort('az',this)\">A\u2013Z</div>\n        <div class=\"sort-btn\" onclick=\"setSort('incomplete',this)\">Least complete</div>\n      </div>\n    </div>\n    <div class=\"divider\"></div>\n    <div class=\"mode-row\">\n      <div class=\"mode-btn active\" onclick=\"setMode('single',this)\">+ Add one</div>\n      <div class=\"mode-btn\" onclick=\"setMode('paste',this)\">Paste list</div>\n    </div>\n    <div id=\"singleArea\">\n      <div class=\"add-row\">\n        <input type=\"text\" id=\"newName\" placeholder=\"Design name...\" onkeydown=\"if(event.key==='Enter')addSingle()\">\n        <button class=\"btn btn-sm\" onclick=\"addSingle()\">Add</button>\n      </div>\n    </div>\n    <div id=\"pasteArea\" style=\"display:none\">\n      <textarea id=\"pasteText\" placeholder=\"Paste design names here, one per line...\"></textarea>\n      <div style=\"display:flex;gap:8px;align-items:center;margin-top:7px\">\n        <button class=\"btn btn-sm\" onclick=\"addPaste()\">Add all</button>\n        <span class=\"hint\">Duplicates skipped automatically</span>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"toolbar\">\n    <button class=\"btn btn-sm btn-blush\" onclick=\"openCatManager()\">Manage categories</button>\n    <button class=\"btn btn-sm btn-outline\" onclick=\"exportCSV()\">Export CSV</button>\n    <span id=\"countLabel\" style=\"font-size:12px;color:var(--muted);margin-left:4px\"></span>\n  </div>\n\n  <div class=\"bulk-bar\" id=\"bulkBar\">\n    <span id=\"bulkCount\">0 selected</span>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('tee')\">Mark t-shirt #1</button>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('tee2')\">Mark t-shirt #2</button>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('baby')\">Mark baby tee #1</button>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('baby2')\">Mark baby tee #2</button>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('sweat')\">Mark sweatshirt #1</button>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('sweat2')\">Mark sweatshirt #2</button>\n    <button class=\"bulk-btn\" onclick=\"bulkMark('all')\">Mark all listed</button>\n    <button class=\"bulk-btn danger\" onclick=\"bulkDelete()\">Delete</button>\n    <button class=\"bulk-btn\" onclick=\"clearSelection()\" style=\"margin-left:auto\">Clear</button>\n  </div>\n\n  <div class=\"col-header\">\n    <div id=\"selectAllCb\" class=\"cb\" onclick=\"toggleSelectAll()\" title=\"Select all\"></div>\n    <span>Image</span>\n    <span>Design</span>\n    <span>Category</span>\n    <span>T-shirt</span>\n    <span>Baby tee</span>\n    <span>Sweatshirt</span>\n    <span></span>\n  </div>\n\n  <div class=\"design-list\" id=\"designList\"></div>\n</div>\n</div>\n\n<div class=\"page\" id=\"page-tba\">\n<div class=\"main\">\n  <div class=\"tba-header-row\">\n    <h2>To Be Added</h2>\n    <span class=\"tba-count\" id=\"tbaCount\">0 designs</span>\n  </div>\n  <div class=\"tba-bulk-row\">\n    <button class=\"btn btn-sm btn-outline\" onclick=\"addAllTba()\">Add all to tracker</button>\n  </div>\n  <div class=\"tba-list\" id=\"tbaList\"></div>\n</div>\n</div>\n\n<!-- Thumbnail modal -->\n<div class=\"modal-bg\" id=\"thumbModal\">\n  <div class=\"modal\">\n    <h3>Add thumbnail</h3>\n    <div class=\"modal-name\" id=\"modalDesignName\"></div>\n    <img class=\"modal-preview\" id=\"modalPreview\" alt=\"preview\">\n    <div class=\"file-drop\" id=\"fileDrop\" onclick=\"document.getElementById('fileInput').click()\">\n      Click to upload image<br><span style=\"font-size:11px;opacity:.6\">or drag and drop \u2014 JPG, PNG, WEBP</span>\n    </div>\n    <input type=\"file\" id=\"fileInput\" accept=\"image/*\" style=\"display:none\" onchange=\"handleFile(this)\">\n    <div style=\"font-size:12px;color:var(--muted);margin-bottom:6px;text-align:center\">\u2014 or paste a URL \u2014</div>\n    <input type=\"text\" id=\"urlInput\" placeholder=\"https://...\">\n    <div class=\"modal-actions\">\n      <button class=\"btn\" onclick=\"saveThumb()\">Save</button>\n      <button class=\"btn-ghost\" onclick=\"closeThumbModal()\">Cancel</button>\n      <button class=\"btn-ghost\" onclick=\"removeThumb()\" style=\"margin-left:auto;color:#c0392b\">Remove</button>\n    </div>\n  </div>\n</div>\n\n<!-- Category manager modal -->\n<div class=\"modal-bg\" id=\"catModal\">\n  <div class=\"modal\">\n    <h3>Manage categories</h3>\n    <div class=\"cat-list\" id=\"catList\"></div>\n    <div style=\"font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500\">Add new category</div>\n    <div class=\"cat-add-row\">\n      <input type=\"text\" id=\"newCatInput\" placeholder=\"Category name...\" onkeydown=\"if(event.key==='Enter')addCategory()\">\n      <button class=\"btn btn-sm\" onclick=\"addCategory()\">Add</button>\n    </div>\n    <div class=\"modal-actions\">\n      <button class=\"btn-ghost\" onclick=\"closeCatModal()\">Done</button>\n    </div>\n  </div>\n</div>\n\n<script>\nconst KEY='pod_tracker_v3';\nconst CAT_KEY='pod_categories_v1';\nconst TBA_KEY='pod_to_be_added_v1';\nlet designs=[];\nlet categories=[]; // array of strings\nlet tbaList=[]; // array of strings - designs waiting to be added\nlet currentTab='all';\nlet currentSort='az';\nlet selected=new Set();\nlet editingThumbId=null;\nlet pendingThumb=null;\nlet expandedIds=new Set();\n\nconst DEFAULT_TBA = [\n\"90 Vintage Cats\",\"Ain't My First Rodeo\",\"All Panic No Disco Raccoon\",\"Back to School Skeleton Teacher\",\n\"Baking Tee Sourdough\",\"Ballpark Auntie\",\"Be Kind of a Bitch\",\"Big Pickle Energy\",\"Boo Felicia Goose\",\n\"Boo Ghost Goose\",\"Boo Ghost Raccoon\",\"Book Lover Sweatshirt\",\"Bookish Romance Reader\",\"Books and Coffee\",\n\"Caffeinated and Feral Raccoon\",\"Christmas Ghost\",\"Christmas Tree Bow\",\"Coffee Club\",\"Coffee First Tan Later\",\n\"Cold Brew and Beach Days\",\"Comfort Colors At Least My Trauma Made Me Funny\",\"Comfort Colors Boho Daisy Flower\",\n\"Cute and Expensive\",\"Dibs on the Villain\",\"Easy Tiger\",\"Even Baddies Get Saddies\",\"Feral and Pregnant Raccoon\",\n\"Funny Christmas Geese\",\"Funny Christmas Raccoon\",\"Funny Dachshund Drinking Iced Coffee\",\"Funny Goose Halloween\",\n\"Funny Halloween Country Boo Crew\",\"Funny Lesbian Certified Muff Diver\",\"Funny Lesbian Femme 4 Femme\",\n\"Funny Lesbian Gay Girl Summer\",\"Funny Lesbian Masc Magnet\",\"Funny Lesbian Save a Horse Ride a Cowgirl\",\n\"Funny Math Teacher\",\"Funny Racoon Rodeo\",\"Funny Sourdough All You Knead\",\"Funny Sourdough Mama Makes the Dough\",\n\"Funny Unhinged Thanks Its the Trauma\",\"Gator Done\",\"Ghost Stories Camping\",\"Golden Retriever Life Is Golden\",\n\"Goose Halloween\",\"Halloween Deer Hunting\",\"Hot Girls Rescue Cats\",\"Hot Girls Rescue Dogs\",\n\"I Run on Coffee and Christmas Cheer\",\"I Support Women's Rights and Wrongs Strawberry\",\"I'd Rather be Reading\",\n\"Iced Coffee and Sunshine\",\"In Carbs We Trust Spaghetti\",\"In My Feral Era Raccoon\",\"In My Sourdough Era\",\n\"It's Called a Trash Can Not a Trash Cannot\",\"LGBT I Turned Her Gay\",\"LGBT Lesbian Femme for Femme\",\n\"LGBT Lesbian Save a Horse Ride a Cowgirl\",\"LGBT Lesbians Do It Better\",\"LGBT Masc Magnet\",\n\"LGBT Hot Lesbians Social Club\",\"LGBT I Like Girls Who Like Girls\",\"LGBT Lesbians Eat What\",\"LGBT World's Best Lesbian\",\n\"LGBT Lesbian University\",\"Life Happens Dogs Help\",\"Life Is Golden Retriever\",\"Life is Short Buy the Tickets\",\n\"Live Laugh Lobotomy Cat\",\"Live Laugh Lobotomy Dolphin\",\"Live Laugh Lobotomy Frog\",\"Live Laugh Lobotomy Llama\",\n\"Live Laugh Lobotomy Sloth\",\"Live Laugh Lobotomy Unicorn\",\"Mahalo Hawaii\",\"Math Ain't Mathin\",\"My Tummy Hurts Raccoon\",\n\"Never Underestimate a Public School Teacher\",\"On the Rocks Christmas\",\"Pasta la Vista\",\"Pickle Queen\",\n\"Playing Dead Inside Opossum\",\"Problem Solver Math Teacher\",\"Raccoon Drinking Iced Coffee\",\"Raccoon Halloween\",\n\"Remember Your Why\",\"Retro Black Cat Halloween\",\"Retro Coffee Brew Buddies Forever\",\n\"Retro Pickle Must Love Pickles and Cats\",\"Retro Pickle Must Love Pickles and Dogs\",\"Ride Wild\",\"Salty Soul\",\n\"Santa Claus World Tour\",\"Sea Turtle Save the Turtles\",\"Self Starter Sourdough\",\"Six Seven Christmas\",\n\"Smoking Chihuahua\",\"Spaghetti Funny Food\",\"Tattoos are Trashy\",\"The World Needs You\",\n\"These Boots Are Made For Teaching\",\"Tiger Face with Glasses Coquette\",\"Tiger Face with Glasses Rainbow\",\n\"Tired Moms Book Club\",\"Tired Moms Coffee Club\",\"Tomato Girl Summer\",\"Trick or Teach Halloween\",\n\"Vintage Halloween Creepin it Cozy Ghost\",\"Vintage Halloween Spooky Vibes Ghost\",\"Vintage Halloween Witchy Vibes\",\n\"Vintage Pressed Flowers\",\"Vintage Rocky Mountains Colorado\",\"Vintage Sasquatch\",\"Your Little Ray of Sunshine Has Arrived\"\n];\n\nfunction load(){\n  try{ const r=localStorage.getItem(KEY); if(r) designs=JSON.parse(r); }catch(e){ designs=[]; }\n  try{ const r=localStorage.getItem(CAT_KEY); if(r) categories=JSON.parse(r); categories.sort((a,b)=>a.localeCompare(b)); }catch(e){ categories=[]; }\n  try{\n    const r=localStorage.getItem(TBA_KEY);\n    if(r) tbaList=JSON.parse(r);\n    else { tbaList=[...DEFAULT_TBA]; saveTba(); } // first run seeds the list\n  }catch(e){ tbaList=[...DEFAULT_TBA]; }\n}\nfunction save(){ try{ localStorage.setItem(KEY,JSON.stringify(designs)); }catch(e){} }\nfunction saveCats(){ try{ localStorage.setItem(CAT_KEY,JSON.stringify(categories)); }catch(e){} }\nfunction saveTba(){ try{ localStorage.setItem(TBA_KEY,JSON.stringify(tbaList)); }catch(e){} }\n\nfunction setPage(p, el){\n  document.querySelectorAll('.page-tab').forEach(t=>t.classList.remove('active'));\n  el.classList.add('active');\n  document.getElementById('page-tracker').classList.toggle('active', p==='tracker');\n  document.getElementById('page-tba').classList.toggle('active', p==='tba');\n  if(p==='tba') renderTba();\n}\n\nfunction addFromTba(name){\n  if(!designs.find(d=>d.name.toLowerCase()===name.toLowerCase())){\n    designs.push({id:Date.now()+Math.random(),name,tee:false,tee2:false,baby:false,baby2:false,sweat:false,sweat2:false,thumb:null,notes:'',category:''});\n    save();\n  }\n  tbaList = tbaList.filter(n=>n!==name);\n  saveTba();\n  renderTba();\n  renderStats(); // update tracker count badge silently in background\n}\n\nfunction addAllTba(){\n  if(!tbaList.length) return;\n  if(!confirm('Add all '+tbaList.length+' designs to the tracker?')) return;\n  tbaList.forEach(name=>{\n    if(!designs.find(d=>d.name.toLowerCase()===name.toLowerCase())){\n      designs.push({id:Date.now()+Math.random(),name,tee:false,tee2:false,baby:false,baby2:false,sweat:false,sweat2:false,thumb:null,notes:'',category:''});\n    }\n  });\n  tbaList=[];\n  save(); saveTba(); renderTba(); render();\n}\n\nfunction renderTba(){\n  document.getElementById('tbaCount').textContent = tbaList.length+' design'+(tbaList.length!==1?'s':'');\n  document.getElementById('tbaBadge').textContent = tbaList.length;\n  const el=document.getElementById('tbaList');\n  if(!tbaList.length){ el.innerHTML='<div class=\"empty\">All caught up \u2014 nothing left to add.</div>'; return; }\n  el.innerHTML = tbaList.map(name=>`\n    <div class=\"tba-row\" onclick=\"addFromTba(${JSON.stringify(name)})\" title=\"Click to add to tracker\">\n      <span class=\"tba-name\">${name}</span>\n      <div class=\"tba-add-icon\">+</div>\n    </div>`).join('');\n}\n\nfunction setMode(m,el){\n  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));\n  el.classList.add('active');\n  document.getElementById('singleArea').style.display=m==='single'?'':'none';\n  document.getElementById('pasteArea').style.display=m==='paste'?'':'none';\n}\nfunction setTab(t,el){\n  currentTab=t;\n  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));\n  el.classList.add('active'); renderList();\n}\nfunction setSort(s,el){\n  currentSort=s;\n  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));\n  el.classList.add('active'); renderList();\n}\n\nfunction addSingle(){\n  const inp=document.getElementById('newName');\n  const name=inp.value.trim(); if(!name) return;\n  designs.push({id:Date.now(),name,tee:false,tee2:false,baby:false,baby2:false,sweat:false,sweat2:false,thumb:null,notes:'',category:''});\n  inp.value=''; save(); render();\n}\nfunction addPaste(){\n  const lines=document.getElementById('pasteText').value.split('\\n').map(l=>l.trim()).filter(Boolean);\n  lines.forEach(name=>{\n    if(!designs.find(d=>d.name.toLowerCase()===name.toLowerCase()))\n      designs.push({id:Date.now()+Math.random(),name,tee:false,tee2:false,baby:false,baby2:false,sweat:false,sweat2:false,thumb:null,notes:'',category:''});\n  });\n  document.getElementById('pasteText').value=''; save(); render();\n}\n\nfunction toggle(id,field,e){\n  e&&e.stopPropagation();\n  const d=designs.find(x=>x.id===id); if(d){ d[field]=!d[field]; save(); render(); }\n}\nfunction updateCat(id,val,e){\n  e&&e.stopPropagation();\n  const d=designs.find(x=>x.id===id); if(d){ d.category=val; save(); renderStats(); }\n}\nfunction updateNotes(id,val){\n  const d=designs.find(x=>x.id===id); if(d){ d.notes=val; save(); }\n}\nfunction startNameEdit(id, wrap){\n  if(wrap.querySelector('.name-edit')) return; // already editing\n  const d=designs.find(x=>x.id===id); if(!d) return;\n  const nameDiv=wrap.querySelector('.design-name');\n  const subDiv=wrap.querySelector('div[style]');\n  nameDiv.style.display='none';\n  const inp=document.createElement('input');\n  inp.className='name-edit';\n  inp.value=d.name;\n  inp.onclick=e=>e.stopPropagation();\n  inp.onkeydown=e=>{\n    if(e.key==='Enter'){inp.blur();}\n    if(e.key==='Escape'){nameDiv.style.display='';inp.remove();}\n  };\n  inp.onblur=()=>{\n    const newName=inp.value.trim();\n    if(newName && newName!==d.name){ d.name=newName; save(); render(); }\n    else{ nameDiv.style.display=''; inp.remove(); }\n  };\n  wrap.insertBefore(inp, subDiv);\n  inp.focus(); inp.select();\n}\nfunction remove(id,e){\n  e&&e.stopPropagation();\n  if(!confirm('Remove this design?')) return;\n  designs=designs.filter(x=>x.id!==id); selected.delete(id); expandedIds.delete(id);\n  save(); render();\n}\nfunction isComplete(d){ return d.tee&&d.tee2&&d.baby&&d.baby2&&d.sweat&&d.sweat2; }\nfunction countListed(d){ return [d.tee,d.tee2,d.baby,d.baby2,d.sweat,d.sweat2].filter(Boolean).length; }\n\n// Selection\nfunction toggleSelect(id,e){\n  e&&e.stopPropagation();\n  if(selected.has(id)) selected.delete(id); else selected.add(id); renderList();\n}\nfunction toggleSelectAll(){\n  const vis=getFilteredList().map(d=>d.id);\n  if(vis.every(id=>selected.has(id))) vis.forEach(id=>selected.delete(id));\n  else vis.forEach(id=>selected.add(id)); renderList();\n}\nfunction clearSelection(){ selected.clear(); renderList(); }\nfunction bulkMark(field){\n  selected.forEach(id=>{\n    const d=designs.find(x=>x.id===id); if(!d) return;\n    if(field==='all'){d.tee=true;d.tee2=true;d.baby=true;d.baby2=true;d.sweat=true;d.sweat2=true;}else d[field]=true;\n  });\n  selected.clear(); save(); render();\n}\nfunction bulkDelete(){\n  if(!confirm('Delete '+selected.size+' design(s)?')) return;\n  designs=designs.filter(x=>!selected.has(x.id)); selected.clear(); save(); render();\n}\n\n// Expand\nfunction toggleExpand(id,e){\n  if(e.target.closest('.cb,.pill,.del-btn,.thumb-wrap,.cat-select')) return;\n  if(expandedIds.has(id)) expandedIds.delete(id); else expandedIds.add(id); renderList();\n}\n\n// --- Category manager ---\nfunction openCatManager(){\n  renderCatList();\n  document.getElementById('catModal').classList.add('open');\n  document.getElementById('newCatInput').value='';\n}\nfunction closeCatModal(){\n  document.getElementById('catModal').classList.remove('open');\n  refreshCatDropdowns(); render();\n}\nfunction renderCatList(){\n  const el=document.getElementById('catList');\n  if(!categories.length){ el.innerHTML='<div class=\"cat-empty\">No categories yet. Add one below.</div>'; return; }\n  el.innerHTML=categories.map((c,i)=>{\n    const inCat=designs.filter(d=>d.category===c);\n    const count=inCat.length;\n    const complete=inCat.filter(isComplete).length;\n    const pct=count?Math.round((complete/count)*100):0;\n    const pctColor=pct===100?'var(--done-text)':pct>0?'var(--warn-text)':'var(--muted)';\n    return `\n    <div class=\"cat-row\">\n      <input type=\"text\" value=\"${c}\" onchange=\"renameCategory(${i},this.value)\" onblur=\"renameCategory(${i},this.value)\">\n      <span style=\"font-size:12px;color:var(--muted);white-space:nowrap;flex-shrink:0\">${count} design${count!==1?'s':''}</span>\n      <span style=\"font-size:12px;font-weight:600;color:${pctColor};white-space:nowrap;flex-shrink:0;min-width:38px;text-align:right\">${pct}%</span>\n      <button class=\"cat-del\" onclick=\"deleteCategory(${i})\" title=\"Delete\">\u2715</button>\n    </div>`;\n  }).join('');\n}\nfunction addCategory(){\n  const inp=document.getElementById('newCatInput');\n  const name=inp.value.trim(); if(!name) return;\n  if(categories.find(c=>c.toLowerCase()===name.toLowerCase())) return;\n  categories.push(name);\n  categories.sort((a,b)=>a.localeCompare(b));\n  inp.value=''; saveCats(); renderCatList();\n}\nfunction renameCategory(idx,newName){\n  newName=newName.trim(); if(!newName) return;\n  const old=categories[idx];\n  if(!old||old===newName) return;\n  designs.forEach(d=>{ if(d.category===old) d.category=newName; });\n  categories[idx]=newName;\n  categories.sort((a,b)=>a.localeCompare(b));\n  saveCats(); save(); renderCatList();\n}\nfunction deleteCategory(idx){\n  const name=categories[idx];\n  if(!confirm('Delete category \"'+name+'\"? Designs using it will be unassigned.')) return;\n  designs.forEach(d=>{ if(d.category===name) d.category=''; });\n  categories.splice(idx,1); saveCats(); save(); renderCatList();\n}\nfunction refreshCatDropdowns(){\n  // Update category filter dropdown\n  const cf=document.getElementById('catFilter');\n  const prev=cf.value;\n  cf.innerHTML='<option value=\"all\">All categories</option>'+categories.map(c=>`<option value=\"${c}\">${c}</option>`).join('');\n  if(categories.includes(prev)) cf.value=prev;\n}\n\n// --- Thumbnail modal ---\nfunction openThumbModal(id,e){\n  e&&e.stopPropagation();\n  editingThumbId=id; pendingThumb=null;\n  const d=designs.find(x=>x.id===id);\n  document.getElementById('modalDesignName').textContent=d.name;\n  document.getElementById('urlInput').value='';\n  const prev=document.getElementById('modalPreview');\n  if(d.thumb){prev.src=d.thumb;prev.style.display='block';}else prev.style.display='none';\n  document.getElementById('thumbModal').classList.add('open');\n}\nfunction closeThumbModal(){ document.getElementById('thumbModal').classList.remove('open'); editingThumbId=null; pendingThumb=null; }\nfunction handleFile(inp){\n  const file=inp.files[0]; if(!file) return;\n  const r=new FileReader();\n  r.onload=e=>{pendingThumb=e.target.result;const p=document.getElementById('modalPreview');p.src=pendingThumb;p.style.display='block';};\n  r.readAsDataURL(file);\n}\nfunction saveThumb(){\n  const d=designs.find(x=>x.id===editingThumbId); if(!d){closeThumbModal();return;}\n  const url=document.getElementById('urlInput').value.trim();\n  if(pendingThumb) d.thumb=pendingThumb; else if(url) d.thumb=url;\n  save(); render(); closeThumbModal();\n}\nfunction removeThumb(){\n  const d=designs.find(x=>x.id===editingThumbId);\n  if(d){d.thumb=null;save();render();}\n  closeThumbModal();\n}\n\nconst fd=document.getElementById('fileDrop');\nfd.addEventListener('dragover',e=>{e.preventDefault();fd.style.borderColor='var(--blush)';});\nfd.addEventListener('dragleave',()=>{fd.style.borderColor='var(--border)';});\nfd.addEventListener('drop',e=>{e.preventDefault();fd.style.borderColor='var(--border)';const f=e.dataTransfer.files[0];if(f){const r=new FileReader();r.onload=ev=>{pendingThumb=ev.target.result;const p=document.getElementById('modalPreview');p.src=pendingThumb;p.style.display='block';};r.readAsDataURL(f);}});\ndocument.getElementById('thumbModal').addEventListener('click',function(e){if(e.target===this)closeThumbModal();});\ndocument.getElementById('catModal').addEventListener('click',function(e){if(e.target===this)closeCatModal();});\n\n// Export\nfunction exportCSV(){\n  const rows=[['Name','Category','T-shirt #1','T-shirt #2','Baby Tee #1','Baby Tee #2','Sweatshirt #1','Sweatshirt #2','Notes']];\n  designs.forEach(d=>rows.push([d.name,d.category||'',d.tee?'Yes':'No',d.tee2?'Yes':'No',d.baby?'Yes':'No',d.baby2?'Yes':'No',d.sweat?'Yes':'No',d.sweat2?'Yes':'No',d.notes||'']));\n  const csv=rows.map(r=>r.map(c=>'\"'+String(c).replace(/\"/g,'\"\"')+'\"').join(',')).join('\\n');\n  const a=document.createElement('a');\n  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);\n  a.download='pod-tracker-export.csv'; a.click();\n}\n\nfunction getFilteredList(){\n  const q=document.getElementById('searchInput').value.toLowerCase();\n  const filter=document.getElementById('filterSelect').value;\n  const catFilter=document.getElementById('catFilter').value;\n  let list=designs.filter(d=>d.name.toLowerCase().includes(q));\n  if(filter==='tee') list=list.filter(d=>!d.tee);\n  else if(filter==='tee2') list=list.filter(d=>!d.tee2);\n  else if(filter==='baby') list=list.filter(d=>!d.baby);\n  else if(filter==='baby2') list=list.filter(d=>!d.baby2);\n  else if(filter==='sweat') list=list.filter(d=>!d.sweat);\n  else if(filter==='sweat2') list=list.filter(d=>!d.sweat2);\n  else if(filter==='any_tee') list=list.filter(d=>!d.tee||!d.tee2);\n  else if(filter==='any_baby') list=list.filter(d=>!d.baby||!d.baby2);\n  else if(filter==='any_sweat') list=list.filter(d=>!d.sweat||!d.sweat2);\n  if(catFilter!=='all') list=list.filter(d=>d.category===catFilter);\n  if(currentTab==='incomplete') list=list.filter(d=>!isComplete(d));\n  else if(currentTab==='complete') list=list.filter(d=>isComplete(d));\n  if(currentSort==='az') list.sort((a,b)=>a.name.localeCompare(b.name));\n  else if(currentSort==='incomplete') list.sort((a,b)=>countListed(a)-countListed(b));\n  return list;\n}\n\nfunction renderStats(){\n  const total=designs.length;\n  const complete=designs.filter(isComplete).length;\n  const tees=designs.filter(d=>d.tee&&d.tee2).length;\n  const babies=designs.filter(d=>d.baby&&d.baby2).length;\n  const sweats=designs.filter(d=>d.sweat&&d.sweat2).length;\n  const pct=total?Math.round((complete/total)*100):0;\n  document.getElementById('statTotal').textContent=total;\n  document.getElementById('statTee').textContent=tees;\n  document.getElementById('statBaby').textContent=babies;\n  document.getElementById('statSweat').textContent=sweats;\n  document.getElementById('statTeeSub').textContent=total?(total-tees)+' remaining':'';\n  document.getElementById('statBabySub').textContent=total?(total-babies)+' remaining':'';\n  document.getElementById('statSweatSub').textContent=total?(total-sweats)+' remaining':'';\n  document.getElementById('statBar').style.width=pct+'%';\n  document.getElementById('statPct').textContent=pct+'% fully listed (2 per product)';\n  const banner=document.getElementById('missingBanner');\n  if(total>0&&complete<total){\n    const parts=[];\n    const teeSlots=designs.filter(d=>d.tee&&d.tee2).length; if(total-teeSlots>0) parts.push((total-teeSlots)+' t-shirt pairs');\n    const babySlots=designs.filter(d=>d.baby&&d.baby2).length; if(total-babySlots>0) parts.push((total-babySlots)+' baby tee pairs');\n    const sweatSlots=designs.filter(d=>d.sweat&&d.sweat2).length; if(total-sweatSlots>0) parts.push((total-sweatSlots)+' sweatshirt pairs');\n    banner.textContent='Still needed: '+parts.join(', ')+'.';\n    banner.classList.add('show');\n  } else banner.classList.remove('show');\n}\n\nfunction renderList(){\n  const list=getFilteredList();\n  document.getElementById('countLabel').textContent=list.length+' design'+(list.length!==1?'s':'');\n  const bulkBar=document.getElementById('bulkBar');\n  if(selected.size>0){bulkBar.classList.add('show');document.getElementById('bulkCount').textContent=selected.size+' selected';}\n  else bulkBar.classList.remove('show');\n  const saCb=document.getElementById('selectAllCb');\n  const visIds=list.map(d=>d.id);\n  const allSel=visIds.length>0&&visIds.every(id=>selected.has(id));\n  saCb.className='cb'+(allSel?' checked':'');\n  saCb.textContent=allSel?'\u2713':'';\n  const el=document.getElementById('designList');\n  if(!list.length){el.innerHTML='<div class=\"empty\">No designs found</div>';return;}\n\n\n  el.innerHTML=list.map(d=>{\n    const n=countListed(d);\n    const pct=Math.round((n/6)*100);\n    const r=28; const circ=2*Math.PI*r;\n    const dash=Math.round((pct/100)*circ); const gap=circ-dash;\n    const ringColor=pct===100?'#2d6a40':pct>0?'var(--gold)':'var(--border)';\n    const thumbInner=d.thumb?`<img src=\"${d.thumb}\" alt=\"${d.name}\">`:`<span class=\"thumb-placeholder\">+</span>`;\n    const isExp=expandedIds.has(d.id);\n    const isSel=selected.has(d.id);\n    const noCat=!d.category;\n    return `\n    <div class=\"design-card ${isComplete(d)?'complete':''} ${isSel?'selected':''}\" id=\"card-${d.id}\">\n      <div class=\"card-main\" onclick=\"toggleExpand(${d.id},event)\">\n        <div class=\"cb ${isSel?'checked':''}\" onclick=\"toggleSelect(${d.id},event)\">${isSel?'\u2713':''}</div>\n        <div style=\"position:relative;width:80px;height:80px;flex-shrink:0\">\n          <svg width=\"80\" height=\"80\" viewBox=\"0 0 80 80\" style=\"position:absolute;top:0;left:0;transform:rotate(-90deg)\">\n            <circle cx=\"40\" cy=\"40\" r=\"${r}\" fill=\"none\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n            <circle cx=\"40\" cy=\"40\" r=\"${r}\" fill=\"none\" stroke=\"${ringColor}\" stroke-width=\"2.5\" stroke-dasharray=\"${dash} ${gap}\" stroke-linecap=\"round\"/>\n          </svg>\n          <div class=\"thumb-wrap\" style=\"position:absolute;inset:5px;width:70px;height:70px;border-radius:5px;\" onclick=\"openThumbModal(${d.id},event)\">\n            ${thumbInner}\n            <div class=\"thumb-overlay\">\u270e</div>\n          </div>\n        </div>\n        <div class=\"design-name-wrap\" onclick=\"event.stopPropagation();startNameEdit(${d.id},this)\" title=\"Click to rename\">\n          <div class=\"design-name\">${d.name}</div>\n          <div style=\"font-size:11px;color:var(--muted);font-weight:400;margin-top:2px\">${n}/6 listings</div>\n        </div>\n        <div class=\"cat-col\" onclick=\"event.stopPropagation()\">\n          <select class=\"cat-select ${noCat?'unset':''}\" onchange=\"updateCat(${d.id},this.value,event)\">\n            <option value=\"\" ${noCat?'selected':''}>-- none --</option>\n            ${categories.map(c=>`<option value=\"${c}\" ${d.category===c?'selected':''}>${c}</option>`).join('')}\n          </select>\n        </div>\n        <div class=\"pill-tee\" style=\"display:flex;flex-direction:column;gap:3px\">\n          <span class=\"pill ${d.tee?'done':'todo'}\" onclick=\"toggle(${d.id},'tee',event)\" style=\"width:82px;font-size:11px\">${d.tee?'\u2713 #1':'Tee #1'}</span>\n          <span class=\"pill ${d.tee2?'done':'todo'}\" onclick=\"toggle(${d.id},'tee2',event)\" style=\"width:82px;font-size:11px\">${d.tee2?'\u2713 #2':'Tee #2'}</span>\n        </div>\n        <div class=\"pill-baby\" style=\"display:flex;flex-direction:column;gap:3px\">\n          <span class=\"pill ${d.baby?'done':'todo'}\" onclick=\"toggle(${d.id},'baby',event)\" style=\"width:82px;font-size:11px\">${d.baby?'\u2713 #1':'Baby #1'}</span>\n          <span class=\"pill ${d.baby2?'done':'todo'}\" onclick=\"toggle(${d.id},'baby2',event)\" style=\"width:82px;font-size:11px\">${d.baby2?'\u2713 #2':'Baby #2'}</span>\n        </div>\n        <div class=\"pill-sweat\" style=\"display:flex;flex-direction:column;gap:3px\">\n          <span class=\"pill ${d.sweat?'done':'todo'}\" onclick=\"toggle(${d.id},'sweat',event)\" style=\"width:82px;font-size:11px\">${d.sweat?'\u2713 #1':'Sweat #1'}</span>\n          <span class=\"pill ${d.sweat2?'done':'todo'}\" onclick=\"toggle(${d.id},'sweat2',event)\" style=\"width:82px;font-size:11px\">${d.sweat2?'\u2713 #2':'Sweat #2'}</span>\n        </div>\n        <button class=\"del-btn\" onclick=\"remove(${d.id},event)\" title=\"Remove\">\u2715</button>\n      </div>\n      ${isExp?`\n      <div class=\"card-details open\">\n        <div class=\"detail-field\">\n          <label>Notes</label>\n          <textarea placeholder=\"Colorways, mockup status, reminders...\" onchange=\"updateNotes(${d.id},this.value)\">${d.notes||''}</textarea>\n        </div>\n      </div>`:''}\n    </div>`;\n  }).join('');\n}\n\nfunction render(){ renderStats(); renderList(); refreshCatDropdowns(); document.getElementById('tbaBadge').textContent=tbaList.length; }\nload(); render();\n\n// Lets the parent page (the Listing Builder's \"Send to Design Tracker\" button) add a\n// finished design here without Dania having to retype it by hand.\nwindow.addEventListener('message', function(e){\n  var msg = e.data;\n  if (!msg || msg.type !== 'mm-add-design') return;\n  designs.push({\n    id: Date.now() + Math.random(),\n    name: msg.name || 'Untitled design',\n    tee: !!msg.tee, tee2: false,\n    baby: !!msg.baby, baby2: false,\n    sweat: !!msg.sweat, sweat2: false,\n    thumb: null,\n    notes: msg.notes || '',\n    category: msg.category || ''\n  });\n  save();\n  render();\n});\n<\/script>\n</body>\n</html>\n";
+
+const storageAPI = {
+  async get(key) {
+    if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function') {
+      try { return await window.storage.get(key); } catch (e) { return null; }
+    }
+    try {
+      const val = localStorage.getItem('shopbuilder:' + key);
+      return val !== null ? { key, value: val } : null;
+    } catch (e) { return null; }
+  },
+  async set(key, value) {
+    if (typeof window.storage !== 'undefined' && window.storage && typeof window.storage.set === 'function') {
+      try { return await window.storage.set(key, value); } catch (e) { return null; }
+    }
+    try {
+      localStorage.setItem('shopbuilder:' + key, value);
+      return { key, value };
+    } catch (e) { return null; }
+  }
+};
+
+// We keep a fixed pseudo product type under the hood purely so the existing
+// image-prompt storage/session plumbing (Step 1) keeps working without a rewrite.
+const selectedType = 'POD Design';
+let uploadedImages = [];
+let lastPromptsText = [];
+let promptHistory = [];
+let suggestedTagKeys = new Set();
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const thumbs = document.getElementById('thumbs');
+
+/* ---------- Step 2: 3 garment tabs sharing one keyword pool ---------- */
+
+const GARMENTS = [
+  {
+    key: 'babytee', label: 'Baby Tee', segments: ['Y2K Baby Tee', 'Shirt', 'Top'], giftDefault: 'Gift For Her',
+    bakedTags: ['Y2K Baby Tee', 'Baby Tee', 'Y2K Top', 'Fitted Tee', 'Y2K Tee']
+  },
+  {
+    key: 'tshirt', label: 'T Shirt', segments: ['Comfort Colors Unisex T Shirt', 'Shirt', 'Tee'], giftDefault: 'Gift For Her',
+    bakedTags: ['Comfort Colors Tee', 'Unisex Tee', 'Vintage Tee', 'Gift For Her']
+  },
+  {
+    key: 'sweatshirt', label: 'Sweatshirt', segments: ['Crewneck Sweatshirt', 'Pullover', 'Sweater'], giftDefault: 'Gift For Her',
+    bakedTags: ['Crewneck Sweatshirt', 'Pullover Sweatshirt', 'Unisex Sweatshirt', 'Cozy Sweatshirt', 'Trendy Viral Sweater']
+  }
+];
+
+// Shared across all 3 title tabs: keywordSlots[0] prefixes segment 1 of whichever
+// garment is showing it, keywordSlots[1] prefixes segment 2, and so on. Baby Tee and
+// Sweatshirt only have 3 segments, so slot 4 (T Shirt only) simply has nowhere to land
+// on those two, which is expected.
+const MAX_SEGMENTS = Math.max(...GARMENTS.map(g => g.segments.length));
+let keywordSlots = new Array(MAX_SEGMENTS).fill('');
+const CIRCLED_NUMS = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
+function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
+let garmentManualTitles = { babytee: null, tshirt: null, sweatshirt: null }; // non-null once hand-edited, overrides the template
+let garmentTags = { babytee: [], tshirt: [], sweatshirt: [] };
+let activeGarment = 'babytee';
+
+// Undo support: snapshot keywordSlots before every pool-driven add (or reset) so a keyword
+// that pushes a title over 140 characters can be backed out with one click.
+let keywordSlotsHistory = [];
+function pushKeywordSlotsHistory() {
+  keywordSlotsHistory.push([...keywordSlots]);
+  if (keywordSlotsHistory.length > 20) keywordSlotsHistory.shift();
+  updateUndoButtonState();
+}
+function undoKeywordSlots() {
+  if (!keywordSlotsHistory.length) return;
+  keywordSlots = keywordSlotsHistory.pop();
+  GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
+  renderAllGarmentTitles();
+  updateUndoButtonState();
+}
+function updateUndoButtonState() {
+  document.querySelectorAll('.undo-keyword-btn').forEach(btn => {
+    btn.disabled = keywordSlotsHistory.length === 0;
+  });
+}
+
+function buildGarmentTitle(key) {
+  if (garmentManualTitles[key] !== null) return garmentManualTitles[key];
+  const g = GARMENTS.find(x => x.key === key);
+  const clauses = g.segments.map((seg, i) => {
+    const kw = keywordSlots[i] ? keywordSlots[i] + ' ' : '';
+    return `${kw}${slotMarker(i + 1)} ${seg}`;
+  });
+  clauses.push(g.giftDefault);
+  return clauses.join(', ');
+}
+
+// Strips the visual ①②③ markers back out, used anywhere the title is actually copied,
+// sent to the AI, or logged to the Tracker, so the markers never leak out of this tool.
+function cleanTitleText(text) {
+  let cleaned = text;
+  for (let n = 1; n <= 10; n++) {
+    cleaned = cleaned.split(slotMarker(n) + ' ').join('').split(slotMarker(n)).join('');
+  }
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim();
+  cleaned = cleaned.replace(/^,\s*/, '').replace(/,\s*$/, '');
+  return cleaned;
+}
+
+function renderGarmentTitle(key) {
+  const box = document.getElementById('garmentTitle-' + key);
+  const countEl = document.getElementById('garmentCount-' + key);
+  const warnDot = document.getElementById('warnDot-' + key);
+  if (!box) return;
+  const value = buildGarmentTitle(key);
+  box.value = value;
+  // Real character count excludes the visual ①②③ markers (2 chars each: symbol + space),
+  // since those never actually go into the real Etsy title.
+  let markerOverhead = 0;
+  for (let n = 1; n <= 10; n++) {
+    if (value.includes(slotMarker(n))) markerOverhead += 2;
+  }
+  const len = value.length - markerOverhead;
+  countEl.textContent = `${len} / 140 chars`;
+  countEl.style.color = len > 140 ? '#c94a3f' : 'var(--sage-dark)';
+  if (warnDot) warnDot.classList.toggle('show', len > 140);
+}
+
+function renderAllGarmentTitles() {
+  GARMENTS.forEach(g => renderGarmentTitle(g.key));
+  autosaveGarmentState();
+}
+
+function renderTagsForGarment(key) {
+  const listEl = document.getElementById('garmentTagsList-' + key);
+  const badgeEl = document.getElementById('garmentTagBadge-' + key);
+  if (!listEl) return;
+  const tags = garmentTags[key];
+  const g = GARMENTS.find(x => x.key === key);
+  const bakedSet = new Set(g.bakedTags.map(t => t.toLowerCase()));
+  badgeEl.textContent = `${tags.length}/13 tags`;
+  const seen = new Set();
+  const dupes = new Set();
+  tags.forEach(t => {
+    const k = t.trim().toLowerCase();
+    if (seen.has(k)) dupes.add(k); else seen.add(k);
+  });
+  listEl.innerHTML = '';
+  tags.forEach((tag, i) => {
+    const overLen = tag.length > 20;
+    const isDupe = dupes.has(tag.trim().toLowerCase());
+    const isSuggested = suggestedTagKeys.has(tag.toLowerCase());
+    const isBaked = !isSuggested && bakedSet.has(tag.trim().toLowerCase());
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip pill' + (isDupe ? ' dupe' : '') + (isSuggested ? ' suggested' : '') + (isBaked ? ' baked' : '');
+    chip.title = isBaked ? 'Baked in tag' : (isSuggested ? 'AI suggested tag' : '');
+    chip.innerHTML = `<span>${escapeHtml(tag)}</span><span class="len${overLen ? ' over' : ''}">${tag.length}</span><button data-action="remove" title="Remove">×</button>`;
+    chip.querySelector('button').addEventListener('click', (e) => {
+      e.stopPropagation();
+      garmentTags[key].splice(i, 1);
+      renderTagsForGarment(key);
+      autosaveGarmentState();
+    });
+    listEl.appendChild(chip);
+  });
+}
+
+function renderGarmentPanels() {
+  const wrap = document.getElementById('garmentPanels');
+  wrap.innerHTML = GARMENTS.map((g, idx) => `
+    <div class="garment-panel${idx === 0 ? ' active' : ''}" id="garmentPanel-${g.key}">
+      <div style="background:var(--sage-tint); border-left:4px solid var(--sage); border-radius:8px; padding:16px;">
+        <div style="font-size:11px; letter-spacing:1px; color:var(--sage-dark); font-weight:700;">${g.label.toUpperCase()} TITLE</div>
+        <textarea id="garmentTitle-${g.key}" rows="2" style="width:100%; background:transparent; border:none; color:var(--bg); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pool pill above to add it"></textarea>
+        <div id="garmentCount-${g.key}" style="font-size:13px; color:var(--sage-dark); margin-top:10px; font-weight:700;">0 / 140 chars</div>
+      </div>
+      <div class="copy-all-row">
+        <button class="btn secondary copy-garment-title" data-garment="${g.key}">Copy this title</button>
+        <button class="btn secondary undo-keyword-btn" data-garment="${g.key}" title="Undo the last keyword you added" disabled>Undo Last Add</button>
+        <button class="btn secondary reset-garment-title" data-garment="${g.key}">Reset all 3 to blank template</button>
+      </div>
+
+      <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:14px;">
+        <label class="first" style="margin-top:0;">${g.label} tags</label>
+        <div class="hint">Starts filled in with baked in ${g.label.toLowerCase()} tags. Click × to remove one, or use +Tags on a pool pill above to add it here and to the other 2 products at once.</div>
+      </div>
+      <div class="tag-meta">
+        <span class="count-badge" id="garmentTagBadge-${g.key}">0/13 tags</span>
+      </div>
+      <div class="tag-list" id="garmentTagsList-${g.key}" style="margin-top:8px;"></div>
+      <div class="add-tag-row" style="margin-top:10px;">
+        <input type="text" id="garmentAddTag-${g.key}" placeholder="Add a tag and press Enter">
+        <button class="btn small add-garment-tag" data-garment="${g.key}">Add</button>
+        <button class="btn secondary copy-garment-tags" data-garment="${g.key}">Copy all tags</button>
+      </div>
+    </div>
+  `).join('');
+
+  GARMENTS.forEach(g => {
+    document.getElementById('garmentTitle-' + g.key).addEventListener('input', (e) => {
+      garmentManualTitles[g.key] = e.target.value;
+      renderGarmentTitle(g.key);
+      autosaveGarmentState();
+    });
+    document.getElementById('garmentAddTag-' + g.key).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (val) { garmentTags[g.key].push(val); renderTagsForGarment(g.key); autosaveGarmentState(); }
+        e.target.value = '';
+      }
+    });
+  });
+
+  wrap.querySelectorAll('.add-garment-tag').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.garment;
+    const input = document.getElementById('garmentAddTag-' + key);
+    const val = input.value.trim();
+    if (val) { garmentTags[key].push(val); renderTagsForGarment(key); autosaveGarmentState(); }
+    input.value = '';
+  }));
+
+  wrap.querySelectorAll('.copy-garment-title').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.garment;
+    copyToClipboard(cleanTitleText(document.getElementById('garmentTitle-' + key).value), btn, 'Copy this title');
+  }));
+
+  wrap.querySelectorAll('.undo-keyword-btn').forEach(btn => btn.addEventListener('click', () => {
+    undoKeywordSlots();
+  }));
+
+  wrap.querySelectorAll('.reset-garment-title').forEach(btn => btn.addEventListener('click', () => {
+    const confirmed = confirm('This clears every keyword you\'ve slotted in so far, on all 3 titles, back to just the bare numbered template. Continue?');
+    if (!confirmed) return;
+    pushKeywordSlotsHistory();
+    keywordSlots = new Array(MAX_SEGMENTS).fill('');
+    GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
+    renderAllGarmentTitles();
+  }));
+
+  wrap.querySelectorAll('.copy-garment-tags').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.garment;
+    copyToClipboard(garmentTags[key].join(', '), btn, 'Copy all tags');
+  }));
+
+  GARMENTS.forEach(g => renderTagsForGarment(g.key));
+  renderAllGarmentTitles();
+}
+
+document.getElementById('garmentTabNav').addEventListener('click', (e) => {
+  const btn = e.target.closest('.garment-tab-btn');
+  if (!btn) return;
+  activeGarment = btn.dataset.garment;
+  document.querySelectorAll('.garment-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.garment-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('garmentPanel-' + activeGarment).classList.add('active');
+});
+
+const PASTE_LINE_IDS = ['pasteLineBabyTee', 'pasteLineTShirt', 'pasteLineSweatshirt', 'pasteLineRandom'];
+function getPasteLineValues() {
+  return PASTE_LINE_IDS.map(id => document.getElementById(id).value);
+}
+function setPasteLineValues(values) {
+  if (!Array.isArray(values)) return;
+  PASTE_LINE_IDS.forEach((id, i) => {
+    if (typeof values[i] === 'string') document.getElementById(id).value = values[i];
+  });
+}
+
+const autosaveGarmentState = debounce(async () => {
+  try {
+    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags, pasteLines: getPasteLineValues() }));
+    flashSavedIndicator();
+  } catch (e) {}
+}, 600);
+
+// Tags Dania never wants to see again, even if an old saved session still has them.
+const BANNED_TAGS = {
+  tshirt: ['heavyweight tee', 'comfort colors']
+};
+
+async function restoreGarmentState() {
+  GARMENTS.forEach(g => { garmentTags[g.key] = [...g.bakedTags]; });
+  try {
+    const saved = await storageAPI.get('session:garmentState');
+    if (saved && saved.value) {
+      const parsed = JSON.parse(saved.value);
+      if (Array.isArray(parsed.keywordSlots)) {
+        keywordSlots = parsed.keywordSlots;
+        while (keywordSlots.length < MAX_SEGMENTS) keywordSlots.push('');
+      }
+      if (parsed.garmentManualTitles) garmentManualTitles = parsed.garmentManualTitles;
+      if (parsed.garmentTags) {
+        GARMENTS.forEach(g => {
+          if (Array.isArray(parsed.garmentTags[g.key]) && parsed.garmentTags[g.key].length) {
+            garmentTags[g.key] = parsed.garmentTags[g.key];
+          }
+        });
+      }
+      if (parsed.pasteLines) setPasteLineValues(parsed.pasteLines);
+    }
+  } catch (e) {}
+
+  GARMENTS.forEach(g => {
+    const banned = BANNED_TAGS[g.key] || [];
+    if (!banned.length) return;
+    garmentTags[g.key] = garmentTags[g.key].filter(t => !banned.includes(t.trim().toLowerCase()));
+  });
+  autosaveGarmentState();
+}
+
+async function initBuilder() {
+  await restoreGarmentState();
+  renderGarmentPanels();
+  try {
+    const savedPool = await storageAPI.get('session:pool:' + selectedType);
+    pastedPool = (savedPool && savedPool.value) ? JSON.parse(savedPool.value) : [];
+  } catch (e) { pastedPool = []; }
+  ensurePersistentPoolWords();
+  renderPool();
+
+  try {
+    const savedDescription = await storageAPI.get('session:description:' + selectedType);
+    const descBox = document.getElementById('descriptionOutput');
+    const descOutputBlock = document.getElementById('descriptionOutputBlock');
+    if (savedDescription && savedDescription.value) {
+      descBox.value = savedDescription.value;
+      descOutputBlock.style.display = 'block';
+    }
+  } catch (e) {}
+
+  try {
+    const savedImages = await storageAPI.get('session:images:' + selectedType);
+    uploadedImages = (savedImages && savedImages.value) ? JSON.parse(savedImages.value) : [];
+  } catch (e) { uploadedImages = []; }
+  renderThumbs();
+
+  try {
+    const savedSeo = await storageAPI.get('session:seoResults:' + selectedType);
+    if (savedSeo && savedSeo.value) {
+      seoResultsData = JSON.parse(savedSeo.value);
+      renderSeoResults(seoResultsData);
+    }
+  } catch (e) {}
+}
+
+let pastedPool = [];
+
+const PERSISTENT_POOL_WORDS = ['Vintage', 'Retro', 'Trendy'];
+
+function ensurePersistentPoolWords() {
+  PERSISTENT_POOL_WORDS.forEach(w => {
+    const exists = pastedPool.some(item => item.text.trim().toLowerCase() === w.toLowerCase());
+    if (!exists) pastedPool.push({ text: w, pinned: true });
+  });
+}
+
+function debounce(fn, delay) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+function renderPool() {
+  const hadCommas = pastedPool.some(item => /[,\n，、]/.test(item.text));
+  if (hadCommas) {
+    const flat = pastedPool.map(item => item.text).join(',');
+    pastedPool = [];
+    pushSplit(flat);
+  }
+
+  // Dedupe (case-insensitive, keep pinned entries first) and alphabetize.
+  const seenLower = new Set();
+  const deduped = [];
+  pastedPool.forEach(item => {
+    const key = item.text.trim().toLowerCase();
+    if (!key || seenLower.has(key)) return;
+    seenLower.add(key);
+    deduped.push(item);
+  });
+  deduped.sort((a, b) => a.text.trim().toLowerCase().localeCompare(b.text.trim().toLowerCase()));
+  pastedPool = deduped;
+
+  const listEl = document.getElementById('keywordPoolList');
+  listEl.innerHTML = '';
+  pastedPool.forEach((item, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip pill' + (item.pinned ? ' pinned-word' : '');
+    chip.title = 'Click to add to the active title tab';
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'pill-text';
+    textSpan.contentEditable = 'true';
+    textSpan.textContent = item.text;
+    textSpan.addEventListener('input', () => {
+      item.text = textSpan.textContent;
+      lenSpan.textContent = item.text.length;
+    });
+    textSpan.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); textSpan.blur(); }
+    });
+    textSpan.addEventListener('click', (e) => e.stopPropagation());
+
+    const lenSpan = document.createElement('span');
+    lenSpan.className = 'len';
+    lenSpan.textContent = item.text.length;
+
+    const slotBtns = document.createElement('span');
+    slotBtns.className = 'slot-btns';
+    for (let n = 1; n <= MAX_SEGMENTS; n++) {
+      const sBtn = document.createElement('button');
+      sBtn.className = 'slot-btn';
+      sBtn.textContent = n;
+      sBtn.title = `Drop in front of spot ${n} in every title that has one`;
+      sBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pushKeywordSlotsHistory();
+        const casedText = toTitleCase(item.text);
+        keywordSlots[n - 1] = keywordSlots[n - 1] ? `${keywordSlots[n - 1]} ${casedText}` : casedText;
+        GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
+        renderAllGarmentTitles();
+        if (!item.pinned) pastedPool.splice(i, 1);
+        renderPool();
+      });
+      slotBtns.appendChild(sBtn);
+    }
+
+    const tagAllBtn = document.createElement('button');
+    tagAllBtn.className = 'copy-btn-pill';
+    tagAllBtn.textContent = '+Tags';
+    tagAllBtn.title = 'Add to all 3 tag lists';
+    tagAllBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const cased = toTitleCase(item.text);
+      GARMENTS.forEach(g => {
+        const exists = garmentTags[g.key].some(t => t.toLowerCase() === cased.toLowerCase());
+        if (!exists) garmentTags[g.key].push(cased);
+        renderTagsForGarment(g.key);
+      });
+      autosaveGarmentState();
+      tagAllBtn.textContent = 'Added!';
+      setTimeout(() => { tagAllBtn.textContent = '+Tags'; }, 1200);
+    });
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-btn-pill';
+    copyBtn.textContent = 'Copy';
+    copyBtn.title = 'Copy this keyword';
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyToClipboard(item.text + ' ', copyBtn, 'Copy');
+    });
+
+    const words = item.text.trim().split(/\s+/);
+    let splitBtn = null;
+    if (words.length > 1) {
+      splitBtn = document.createElement('button');
+      splitBtn.className = 'copy-btn-pill';
+      splitBtn.textContent = 'Split';
+      splitBtn.title = 'Split into separate word pills';
+      splitBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        words.forEach(w => pastedPool.push({ text: w }));
+        renderPool();
+      });
+    }
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'Remove from pool';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pastedPool.splice(i, 1);
+      renderPool();
+    });
+
+    chip.addEventListener('click', () => {
+      const box = document.getElementById('garmentTitle-' + activeGarment);
+      const casedText = toTitleCase(item.text);
+      garmentManualTitles[activeGarment] = box.value.trim() ? `${box.value.trim()} ${casedText}` : casedText;
+      renderGarmentTitle(activeGarment);
+      autosaveGarmentState();
+      if (!item.pinned) pastedPool.splice(i, 1);
+      renderPool();
+    });
+
+    chip.appendChild(textSpan);
+    chip.appendChild(lenSpan);
+    chip.appendChild(slotBtns);
+    chip.appendChild(tagAllBtn);
+    if (splitBtn) chip.appendChild(splitBtn);
+    chip.appendChild(copyBtn);
+    chip.appendChild(removeBtn);
+    listEl.appendChild(chip);
+  });
+  autosavePool();
+}
+
+const autosavePool = debounce(async () => {
+  try { await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool)); } catch (e) {}
+}, 600);
+
+const autosaveKeywords = debounce(async (val) => {
+  try { await storageAPI.set('session:designKeywords', val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+const autosaveDirection = debounce(async (val) => {
+  try { await storageAPI.set('session:creativeDirection', val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+document.getElementById('designKeywords').addEventListener('input', (e) => autosaveKeywords(e.target.value));
+document.getElementById('creativeDirection').addEventListener('input', (e) => autosaveDirection(e.target.value));
+
+function flashSavedIndicator() {
+  const el = document.getElementById('autosaveStatus');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = 'Saved ' + now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+}
+
+async function saveAllNow() {
+  try {
+    await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
+    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags, pasteLines: getPasteLineValues() }));
+    await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
+    await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages));
+    await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
+    await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
+    if (calendarLoaded) {
+      await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
+    }
+  } catch (e) {}
+  flashSavedIndicator();
+}
+
+document.getElementById('saveNowBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('saveNowBtn');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  await saveAllNow();
+  btn.textContent = 'Saved!';
+  setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1200);
+});
+
+setInterval(() => { saveAllNow(); }, 30000);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') saveAllNow();
+});
+
+const KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
+
+Break the text into short descriptive keyword phrases, 2 to 4 words each, that the seller could reuse in a new title. Keep small connector words like "I", "a", "for" attached to the phrase they belong with rather than dropping them, for example "I Could Be Meaner" should stay together as one phrase, not become "Could Be Meaner". Skip generic garment or format words like shirt, tee, t shirt, baby tee, comfort colors, sweatshirt, crewneck, unisex, sublimation, DTF, design, gift, unless they are part of a distinctly descriptive phrase. Do not return duplicate phrases.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"keywords": ["phrase 1", "phrase 2"]}`;
+
+async function extractKeywords(text) {
+  const result = await callClaude(KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }]);
+  return result.keywords || [];
+}
+
+const STRIP_PRODUCT_WORDING_SYSTEM = `You are helping an Etsy seller pull just the descriptive part out of a full title they pasted from a listing.
+
+The pasted text has comma separated segments. Each segment mixes a descriptive phrase with generic garment or format wording tacked onto the end, for example "Salty Heifer Comfort Colors Tee" mixes the descriptive phrase "Salty Heifer" with the generic tail "Comfort Colors Tee".
+
+For every segment, strip off the generic garment or format wording and return only the descriptive lead phrase. Generic wording includes things like: shirt, tee, t shirt, baby tee, comfort colors, sweatshirt, crewneck, pullover, unisex, sublimation, DTF, design, gift. Keep the descriptive phrase exactly as cased in the original. Return one phrase per segment, in the same order, even if a segment turns out to be entirely generic with nothing descriptive left (in that case return an empty string for that segment). Do not merge segments together.
+
+Respond ONLY with valid JSON, no preamble, no markdown fences:
+{"phrases": ["phrase 1", "phrase 2", "phrase 3"]}`;
+
+async function stripProductWording(text) {
+  const result = await callClaude(STRIP_PRODUCT_WORDING_SYSTEM, [{ type: 'text', text }]);
+  return (result.phrases || []).filter(Boolean);
+}
+
+function pushSplit(text) {
+  const normalized = text.replace(/[，、]/g, ',');
+  const parts = normalized.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+  parts.forEach(p => {
+    pastedPool.push({ text: p });
+    const words = p.split(/\s+/).filter(Boolean);
+    if (words.length > 1) {
+      words.forEach(w => {
+        const exists = pastedPool.some(item => item.text.toLowerCase() === w.toLowerCase());
+        if (!exists) pastedPool.push({ text: w });
+      });
+    }
+  });
+}
+
+async function addToPastedPool(text, allowExtraction) {
+  const trimmed = text.trim();
+  const hasDelimiters = /[,\n，、]/.test(trimmed);
+  const statusEl = document.getElementById('poolStatus');
+  if (hasDelimiters && allowExtraction) {
+    setStatus(statusEl, 'Stripping garment wording, keeping the descriptive part...');
+    try {
+      const phrases = await stripProductWording(trimmed);
+      if (phrases.length) {
+        phrases.forEach(p => pushSplit(p));
+      } else {
+        pushSplit(trimmed);
+      }
+      renderPool();
+    } catch (err) {
+      pushSplit(trimmed);
+      renderPool();
+    } finally {
+      setStatus(statusEl, '');
+    }
+  } else if (hasDelimiters) {
+    pushSplit(trimmed);
+    renderPool();
+  } else if (allowExtraction && trimmed.split(/\s+/).length > 5) {
+    setStatus(statusEl, 'Reading that title for keywords...');
+    try {
+      const keywords = await extractKeywords(trimmed);
+      keywords.forEach(k => pushSplit(k));
+      renderPool();
+    } catch (err) {
+      pushSplit(trimmed);
+      renderPool();
+    } finally {
+      setStatus(statusEl, '');
+    }
+  } else {
+    pushSplit(trimmed);
+    renderPool();
+  }
+}
+
+function wirePasteLine(inputId, btnId, addBtnId) {
+  const input = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  const addBtn = addBtnId ? document.getElementById(addBtnId) : null;
+  input.addEventListener('keydown', async (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (!input.value.trim()) return;
+      await addToPastedPool(input.value, true);
+    }
+  });
+  btn.addEventListener('click', () => {
+    pasteTextFromClipboard(btn, async (text) => {
+      input.value = text;
+      await addToPastedPool(text, true);
+    });
+  });
+  if (addBtn) {
+    addBtn.addEventListener('click', async () => {
+      if (!input.value.trim()) return;
+      await addToPastedPool(input.value, true);
+    });
+  }
+}
+
+wirePasteLine('pasteLineBabyTee', 'pasteLineBabyTeeBtn', 'pasteLineBabyTeeAddBtn');
+wirePasteLine('pasteLineTShirt', 'pasteLineTShirtBtn', 'pasteLineTShirtAddBtn');
+wirePasteLine('pasteLineSweatshirt', 'pasteLineSweatshirtBtn', 'pasteLineSweatshirtAddBtn');
+wirePasteLine('pasteLineRandom', 'pasteLineRandomBtn', 'pasteLineRandomAddBtn');
+
+document.getElementById('poolSingleInput').addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const input = e.target;
+    if (!input.value.trim()) return;
+    await addToPastedPool(input.value, false);
+    input.value = '';
+  }
+});
+
+document.getElementById('clearPoolBtn').addEventListener('click', () => {
+  pastedPool = [];
+  ensurePersistentPoolWords();
+  renderPool();
+});
+
+function toTitleCase(str) {
+  return str.split(' ').map(word => {
+    if (!word) return word;
+    const match = word.match(/^(.*?)([,.:;!?]*)$/);
+    const core = match[1];
+    const trailing = match[2];
+    if (!core) return word;
+    if (/^[A-Z0-9]+$/.test(core) && core.length > 1) return core + trailing;
+    return core.charAt(0).toUpperCase() + core.slice(1).toLowerCase() + trailing;
+  }).join(' ');
+}
+
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+document.addEventListener('paste', (e) => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  const files = [];
+  for (const item of items) {
+    if (item.type && item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) files.push(file);
+    }
+  }
+  if (files.length) handleFiles(files);
+});
+
+
+
+document.getElementById('pasteClipboardBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('pasteClipboardBtn');
+  const original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.read) {
+      btn.textContent = 'Use Ctrl+V instead';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    const clipboardItems = await navigator.clipboard.read();
+    const files = [];
+    for (const item of clipboardItems) {
+      const imgType = item.types.find(t => t.startsWith('image/'));
+      if (imgType) {
+        const blob = await item.getType(imgType);
+        files.push(new File([blob], 'pasted-image.png', { type: imgType }));
+      }
+    }
+    if (files.length) {
+      handleFiles(files);
+      btn.textContent = 'Pasted!';
+    } else {
+      btn.textContent = 'No image found on clipboard';
+    }
+    setTimeout(() => btn.textContent = original, 1800);
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Could not access clipboard';
+    setTimeout(() => btn.textContent = original, 1800);
+  }
+});
+
+async function pasteTextFromClipboard(btn, onText) {
+  const original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      btn.textContent = 'Use Ctrl+V instead';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) {
+      btn.textContent = 'Clipboard is empty';
+      setTimeout(() => btn.textContent = original, 1800);
+      return;
+    }
+    await onText(text);
+    btn.textContent = 'Pasted!';
+  } catch (err) {
+    console.error(err);
+    btn.textContent = 'Could not access clipboard';
+  }
+  setTimeout(() => btn.textContent = original, 1800);
+}
+
+const MAX_IMAGES = 3;
+
+function handleFiles(files) {
+  const statusEl = document.getElementById('promptsError');
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    if (uploadedImages.length >= MAX_IMAGES) {
+      setError(statusEl, `You can add up to ${MAX_IMAGES} images. Remove one first to add another.`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      uploadedImages.push({ base64, mediaType: file.type });
+      renderThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+  fileInput.value = '';
+}
+
+function thumbSrc(img) {
+  return img.url ? img.url : `data:${img.mediaType};base64,${img.base64}`;
+}
+
+function renderThumbs() {
+  thumbs.innerHTML = '';
+  uploadedImages.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'thumb';
+    div.innerHTML = `<img src="${thumbSrc(img)}" data-i="${i}"><button data-i="${i}">×</button>`;
+    thumbs.appendChild(div);
+  });
+  autosaveImages();
+}
+
+const autosaveImages = debounce(async () => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages)); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+thumbs.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (btn) {
+    uploadedImages.splice(Number(btn.dataset.i), 1);
+    renderThumbs();
+    return;
+  }
+  const img = e.target.closest('img');
+  if (img) {
+    openLightbox(thumbSrc(uploadedImages[Number(img.dataset.i)]));
+  }
+});
+
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxOverlay').classList.add('show');
+}
+
+document.getElementById('lightboxOverlay').addEventListener('click', () => {
+  document.getElementById('lightboxOverlay').classList.remove('show');
+  document.getElementById('lightboxImg').src = '';
+});
+
+function addImageUrl(url) {
+  const trimmed = url.trim();
+  if (!trimmed) return;
+  if (uploadedImages.length >= MAX_IMAGES) {
+    setError(document.getElementById('promptsError'), `You can add up to ${MAX_IMAGES} images. Remove one first to add another.`);
+    return;
+  }
+  uploadedImages.push({ url: trimmed });
+  renderThumbs();
+}
+
+document.getElementById('addImageUrlBtn').addEventListener('click', () => {
+  const input = document.getElementById('imageUrlInput');
+  addImageUrl(input.value);
+  input.value = '';
+});
+
+document.getElementById('imageUrlInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addImageUrl(e.target.value);
+    e.target.value = '';
+  }
+});
+
+document.getElementById('pasteImageUrlClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteImageUrlClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => { addImageUrl(text); });
+});
+
+function setStatus(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
+function setError(el, msg) { el.textContent = msg; el.classList.toggle('show', !!msg); }
+
+async function callClaude(systemPrompt, userContent) {
+  const savedKey = localStorage.getItem('shop_builder_api_key');
+  const headers = { "Content-Type": "application/json" };
+  if (savedKey) {
+    headers['x-api-key'] = savedKey;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  }
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 4000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userContent }]
+    })
+  });
+  if (!response.ok) {
+    let detail = '';
+    try { const errBody = await response.json(); detail = errBody?.error?.message || ''; } catch (e) {}
+    throw new Error(`API request failed (${response.status})${detail ? ': ' + detail : ''}`);
+  }
+  const data = await response.json();
+  const textBlock = data.content.find(b => b.type === 'text');
+  if (!textBlock) throw new Error('Response had no text content to parse.');
+  const raw = textBlock.text.trim();
+  let cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const firstBrace = cleaned.indexOf('{');
+    const lastBrace = cleaned.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+      } catch (e2) {
+        throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+      }
+    }
+    throw new Error('Could not parse response as JSON: ' + cleaned.slice(0, 150));
+  }
+}
+
+const PROMPTS_SYSTEM = `You are a production assistant that writes AI image generation prompts for print on demand apparel graphics (the same design gets printed on Baby Tees, Comfort Colors t-shirts, and Gildan sweatshirts, sassy or funny Gen Z and Millennial women's niche apparel).
+
+You will be given one or more inspo screenshots, optional keywords or a working title for extra context, and either creative direction or an instruction to auto suggest improvements.
+
+Study the screenshot(s) in full detail: exact subject, pose, expression, any text or wording shown, color palette and how colors are distributed, background elements and patterns, layout, and overall mood. If keywords or a working title are given, treat them as important context: work several of the specific descriptive words or phrases from them naturally into the prompts themselves wherever they fit the visual, not just as background understanding. Use them to fill in or sharpen details the screenshot alone leaves ambiguous.
+
+If no creative direction is given, generate 2 to 3 quick one sentence design suggestions to elevate the design past the original, and use those as the creative direction for the prompts. Return these suggestions in the "suggestions" field. If creative direction was given, leave "suggestions" as an empty string.
+
+Then write exactly 5 image prompts that closely recreate the actual inspo design, not a generic version of the general theme. Every prompt must read like it was written by someone who studied the specific screenshot.
+
+Rules for every prompt:
+- Name the specific subject, pose, and expression exactly as seen, not generic descriptions
+- If the design includes any text or wording, treat it as one complete phrase and include the full phrase intact in every single prompt, never split across prompts. Put the exact full phrase in quotation marks as its own clear clause (for example: the words "I COULD BE MEANER" rendered in bold gold distressed lettering). Specify roughly where it sits and its style based on the analysis
+- Name specific background elements and patterns exactly as seen rather than generic filler
+- Describe exact color relationships, not just a palette list
+- Vary sentence structure and opening line across the 5 prompts (start with scene, subject, mood, setting, or a visual detail, never with the product name)
+- Use approximately 70% proven visual direction from the screenshot, 30% creative improvement from the direction/suggestions
+- Do not number or label prompts, no bullets, no introductions
+- Never use em dashes, use commas, colons, periods, or parentheses instead
+- Never write the words shirt, tee, tshirt, sweatshirt, crewneck, garment, or mockup anywhere in the prompt body. This describes only the flat 2D artwork content itself (the subject, scene, colors, text, patterns), never the physical garment it ends up printed on. If a garment word appears anywhere in the prompt, an AI image generator is likely to render a photo of a folded or worn shirt instead of standalone flat artwork, which defeats the purpose
+- Composition: curated grouping or collage arrangement, strong main focal element, 3 to 5 supporting elements, cohesive theme, feels complete enough to sell on apparel. Avoid one isolated object, basic clipart, realistic scenes, landscapes
+- Every prompt must end exactly: "Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD, DTF, or screen print, designed to feel like an Etsy bestseller."
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"suggestions": "string or empty string", "prompts": ["prompt 1", "prompt 2", "prompt 3", "prompt 4", "prompt 5"]}`;
+
+document.getElementById('designKeywords').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('generatePromptsBtn').click();
+  }
+});
+
+document.getElementById('pasteKeywordsClipboardBtn').addEventListener('click', () => {
+  const btn = document.getElementById('pasteKeywordsClipboardBtn');
+  pasteTextFromClipboard(btn, async (text) => {
+    const box = document.getElementById('designKeywords');
+    box.value = box.value ? box.value + ', ' + text.trim() : text.trim();
+  });
+});
+
+document.getElementById('creativeDirection').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('generatePromptsBtn').click();
+  }
+});
+
+document.getElementById('generatePromptsBtn').addEventListener('click', async () => {  const statusEl = document.getElementById('promptsStatus');
+  const errorEl = document.getElementById('promptsError');
+  const outputBlock = document.getElementById('promptsOutputBlock');
+  setError(errorEl, '');
+  outputBlock.style.display = 'none';
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+  if (uploadedImages.length === 0) { setError(errorEl, 'Upload or paste at least one screenshot.'); return; }
+
+  const direction = document.getElementById('creativeDirection').value.trim();
+  const keywords = document.getElementById('designKeywords').value.trim();
+  const btn = document.getElementById('generatePromptsBtn');
+  btn.disabled = true;
+  setStatus(statusEl, 'Analyzing design and writing prompts...');
+
+  try {
+    const userContent = [];
+    uploadedImages.forEach(img => {
+      if (img.url) {
+        userContent.push({ type: 'image', source: { type: 'url', url: img.url } });
+      } else {
+        userContent.push({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } });
+      }
+    });
+    userContent.push({
+      type: 'text',
+      text: `Keywords or working title (weave several of these descriptive words naturally into the prompts): ${keywords ? keywords : 'none given'}\nCreative direction: ${direction ? direction : 'none given, please auto suggest 2 to 3 improvements'}`
+    });
+
+    const result = await callClaude(PROMPTS_SYSTEM, userContent);
+    lastPromptsText = result.prompts || [];
+
+    const noteEl = document.getElementById('suggestionsNote');
+    if (result.suggestions) {
+      noteEl.style.display = 'block';
+      noteEl.textContent = 'Auto suggestions since no direction given: ' + result.suggestions;
+    } else {
+      noteEl.style.display = 'none';
+    }
+
+    const list = document.getElementById('promptsList');
+    list.innerHTML = '';
+    lastPromptsText.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'prompt-item';
+      div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${escapeHtml(p)}</div>`;
+      list.appendChild(div);
+    });
+    outputBlock.style.display = 'block';
+    setStatus(statusEl, '');
+
+    promptHistory.unshift({
+      productType: selectedType,
+      timestamp: Date.now(),
+      prompts: lastPromptsText.slice(),
+      suggestions: result.suggestions || ''
+    });
+    renderPromptHistoryButton();
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong generating prompts: ' + (err.message || 'try again') + '.');
+  } finally {
+    btn.disabled = false;
+    setStatus(statusEl, '');
+  }
+});
+
+document.getElementById('promptsList').addEventListener('click', (e) => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn) return;
+  const item = btn.closest('.prompt-item');
+  const willBeUsed = !item.classList.contains('used');
+  item.classList.toggle('used', willBeUsed);
+  copyToClipboard(lastPromptsText[Number(btn.dataset.idx)], btn, willBeUsed ? 'Used' : 'Copy');
+});
+
+function copyAllPrompts(btn) {
+  document.querySelectorAll('#promptsList .prompt-item').forEach(item => {
+    item.classList.add('used');
+    const copyBtn = item.querySelector('.copy-btn');
+    if (copyBtn) copyBtn.textContent = 'Used';
+  });
+  copyToClipboard(lastPromptsText.join('\n\n\n'), btn, 'Copy all prompts');
+}
+
+document.getElementById('copyAllPromptsBtn').addEventListener('click', () => {
+  copyAllPrompts(document.getElementById('copyAllPromptsBtn'));
+});
+
+document.getElementById('copyAllPromptsTopBtn').addEventListener('click', () => {
+  copyAllPrompts(document.getElementById('copyAllPromptsTopBtn'));
+});
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderPromptHistoryButton() {
+  const btn = document.getElementById('viewHistoryBtn');
+  if (promptHistory.length === 0) {
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'inline-flex';
+  btn.textContent = `View Past Prompts (${promptHistory.length})`;
+}
+
+document.getElementById('viewHistoryBtn').addEventListener('click', () => {
+  const panel = document.getElementById('historyPanel');
+  const isOpen = panel.style.display !== 'none';
+  if (isOpen) {
+    panel.style.display = 'none';
+    return;
+  }
+  renderHistoryPanel();
+  panel.style.display = 'block';
+});
+
+function renderHistoryPanel() {
+  const listEl = document.getElementById('historyList');
+  listEl.innerHTML = '';
+  promptHistory.forEach((batch, batchIdx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'history-batch';
+
+    const time = new Date(batch.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const header = document.createElement('div');
+    header.className = 'history-batch-header';
+    header.innerHTML = `<span>${escapeHtml(batch.productType)} · ${time}</span>`;
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'btn secondary';
+    loadBtn.style.fontSize = '11px';
+    loadBtn.textContent = 'Load this batch';
+    loadBtn.addEventListener('click', () => {
+      lastPromptsText = batch.prompts.slice();
+      const list = document.getElementById('promptsList');
+      list.innerHTML = '';
+      lastPromptsText.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'prompt-item';
+        div.innerHTML = `<button class="btn secondary copy-btn" data-idx="${i}">Copy</button><div>${escapeHtml(p)}</div>`;
+        list.appendChild(div);
+      });
+      document.getElementById('promptsOutputBlock').style.display = 'block';
+      document.getElementById('historyPanel').style.display = 'none';
+      document.getElementById('suggestionsNote').style.display = batch.suggestions ? 'block' : 'none';
+      if (batch.suggestions) document.getElementById('suggestionsNote').textContent = 'Auto suggestions since no direction given: ' + batch.suggestions;
+    });
+    header.appendChild(loadBtn);
+    wrap.appendChild(header);
+
+    batch.prompts.forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = 'prompt-item';
+      item.style.fontSize = '12.5px';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'btn secondary copy-btn';
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', () => {
+        copyToClipboard(p, copyBtn, 'Copy');
+      });
+      const textDiv = document.createElement('div');
+      textDiv.textContent = p;
+      item.appendChild(copyBtn);
+      item.appendChild(textDiv);
+      wrap.appendChild(item);
+    });
+
+    listEl.appendChild(wrap);
+  });
+}
+
+function copyToClipboard(text, btn, originalLabel) {
+  const done = (label) => {
+    btn.textContent = label;
+    setTimeout(() => { btn.textContent = originalLabel; }, 1200);
+  };
+  const fallback = () => {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      done(ok ? 'Copied' : 'Select & copy');
+    } catch (e) {
+      done('Select & copy');
+    }
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => done('Copied')).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+const TAGS_SYSTEM = `You are a production assistant that suggests a few additional Etsy tags for the seller's own POD apparel shop, on top of tags they already have for one specific garment.
+
+Inputs: which garment this is for, tags already in use for that garment (do not repeat these), the current title for that garment, and design context from image prompts already written for this design.
+
+Suggest new tags derived from the title and design context that make sense for that specific garment. Do not duplicate or rephrase any tag already in use. Suggest 3 to 5 new tags. Each tag must be 20 characters or fewer including spaces. Never use em dashes.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"tags": ["new tag 1", "new tag 2"]}`;
+
+document.getElementById('generateTitlesBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('titlesStatus');
+  const errorEl = document.getElementById('titlesError');
+  setError(errorEl, '');
+
+  const key = activeGarment;
+  const g = GARMENTS.find(x => x.key === key);
+  const btn = document.getElementById('generateTitlesBtn');
+  btn.disabled = true;
+  setStatus(statusEl, `Finding more tags for ${g.label}...`);
+
+  try {
+    const designContext = lastPromptsText.length
+      ? lastPromptsText.join('\n\n')
+      : 'No image prompts generated yet in this session.';
+
+    const userText = `Garment: ${g.label}\n\nTags already in use: ${garmentTags[key].join(', ') || 'none yet'}\n\nCurrent title for this garment: ${cleanTitleText(buildGarmentTitle(key)) || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+
+    const result = await callClaude(TAGS_SYSTEM, [{ type: 'text', text: userText }]);
+
+    const rawTags = result.tags || [];
+    const flattened = [];
+    rawTags.forEach(t => {
+      String(t).replace(/[，、]/g, ',').split(/[,\n]/).map(s => s.trim()).filter(Boolean).forEach(p => flattened.push(p));
+    });
+    const seen = new Set(garmentTags[key].map(t => t.toLowerCase()));
+    flattened.forEach(t => {
+      const tkey = t.toLowerCase();
+      if (seen.has(tkey)) return;
+      seen.add(tkey);
+      garmentTags[key].push(t);
+      suggestedTagKeys.add(tkey);
+    });
+    renderTagsForGarment(key);
+    autosaveGarmentState();
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong finding more tags: ' + (err.message || 'try again') + '.');
+  } finally {
+    btn.disabled = false;
+    setStatus(statusEl, '');
+  }
+});
+
+/* ---------- Step 3: SEO fan-out for all 3 products ---------- */
+
+const SEO_LABELS = { babytee: 'Baby Tee', tshirt: 'Comfort Colors Tee', sweatshirt: 'Gildan Sweatshirt' };
+
+const SEO_INSTRUCTIONS = {
+  babytee: `BABY TEE:
+- Include "Y2K Baby Tee" immediately after the first descriptive keyword. You can also work in shirt, tshirt, or tee later in the title.
+- NEVER use Cropped Tee, Crop Top, or Cropped Top anywhere in the title or tags.
+- NEVER use Comfort Colors, Crewneck, Pullover, Sweatshirt, or Sweater anywhere in the title or tags, those belong to other products only.
+- Tags: replace any garment tags with Title Case versions like Y2K Baby Tee, Baby Tee, Y2K Top, Fitted Tee, Y2K Tee.`,
+  tshirt: `COMFORT COLORS TEE:
+- Include "Comfort Colors" and "Unisex T Shirt" near each other in the title. No trademark symbol.
+- NEVER use Y2K, Y2K Baby Tee, Crewneck, Pullover, Sweatshirt, or Sweater anywhere in the title or tags, those belong to other products only.
+- Tags: replace any garment tags with Title Case versions like Comfort Colors Tee, Unisex Tee, Heavyweight Tee, Vintage Tee, Comfort Colors.`,
+  sweatshirt: `GILDAN SWEATSHIRT:
+- Include Crewneck, Pullover, and Sweatshirt or Sweater in the title. NEVER use shirt, tshirt, tee, baby tee, or Comfort Colors.
+- NEVER use Y2K, Y2K Baby Tee, or Fleece anywhere in the title or tags.
+- Tags: replace any garment tags with Title Case versions like Crewneck Sweatshirt, Pullover Sweatshirt, Unisex Sweatshirt, Cozy Sweatshirt, Sweater.`
+};
+
+const SEO_SYSTEM_BASE = `You are an Etsy SEO expert for a print on demand apparel shop. You are given a master source title and tags describing one design, the theme, niche, and catchy phrase, and must adapt it into a fully SEO'd listing for one specific garment.
+
+Rules:
+- TITLE: keep every niche keyword from the source title, apply the garment specific instructions below, hard limit 140 characters, never use em dashes. Make the title as full as possible, get as close to 140 characters as you can by pulling in additional relevant niche keywords, synonyms, and phrasing variations that fit naturally, do not just repeat words already there. The title must end with a gift related keyword such as Gift For Her, Gift For Him, Gift For Women, Funny Gift, or Gift Idea, whichever fits the niche best. If a gift keyword already exists in the source title, move it to the end.
+- TAGS: keep the non garment tags from the source as is, replace any garment tags per the instructions below. Each tag 20 characters or fewer including spaces, Title Case.
+- SUGGESTED: 5 new niche tags not already in the tag list, 20 characters or fewer, Title Case.
+- Never use em dashes anywhere in the title or tags, use commas or periods instead.
+
+Garment specific instructions:
+{INSTRUCTIONS}
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"title": "the full seo title", "tags": ["Tag", "Tag"], "suggestions": ["Tag", "Tag", "Tag", "Tag", "Tag"]}`;
+
+async function generateSeoForType(type, masterTitle, masterTags) {
+  const system = SEO_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[type]);
+  const userText = `Source title: "${masterTitle}"\nSource tags: ${masterTags.join(', ') || 'none'}`;
+  const result = await callClaude(system, [{ type: 'text', text: userText }]);
+  if (result && typeof result.title === 'string') {
+    result.title = enforceTitleLimit(result.title);
+  }
+  return result;
+}
+
+// Hard safety net: the AI is told to stay under 140 characters but doesn't always
+// listen exactly, so trim it back ourselves at a clean word/comma boundary.
+function enforceTitleLimit(title, limit) {
+  limit = limit || 140;
+  const trimmed = title.trim();
+  if (trimmed.length <= limit) return trimmed;
+  let cut = trimmed.slice(0, limit);
+  const lastComma = cut.lastIndexOf(',');
+  const lastSpace = cut.lastIndexOf(' ');
+  const boundary = lastComma > limit - 40 ? lastComma : lastSpace;
+  if (boundary > 0) cut = cut.slice(0, boundary);
+  return cut.replace(/[,\s]+$/, '').trim();
+}
+
+let seoResultsData = null;
+
+async function runSeoGeneration() {
+  const statusEl = document.getElementById('seoStatus');
+  const errorEl = document.getElementById('seoError');
+  setError(errorEl, '');
+
+  // Use the Baby Tee tab's title as the descriptive source (it carries the fullest
+  // theme wording), plus the union of tags already collected across all 3 tabs.
+  const sourceTitle = cleanTitleText(buildGarmentTitle('babytee')).trim();
+  if (!sourceTitle) { setError(errorEl, 'Build at least one title in Step 2 first.'); return; }
+  const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
+
+  const genBtn = document.getElementById('aiAssistSeoBtn');
+  genBtn.disabled = true;
+  setStatus(statusEl, 'Writing SEO for Baby Tee, Comfort Colors, and Gildan Sweatshirt...');
+
+  try {
+    const [babytee, tshirt, sweatshirt] = await Promise.all([
+      generateSeoForType('babytee', sourceTitle, combinedTags),
+      generateSeoForType('tshirt', sourceTitle, combinedTags),
+      generateSeoForType('sweatshirt', sourceTitle, combinedTags)
+    ]);
+    seoResultsData = { babytee, tshirt, sweatshirt };
+    renderSeoResults(seoResultsData);
+    try { await storageAPI.set('session:seoResults:' + selectedType, JSON.stringify(seoResultsData)); } catch (e) {}
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong writing SEO: ' + (err.message || 'try again') + '.');
+  } finally {
+    genBtn.disabled = false;
+    setStatus(statusEl, '');
+  }
+}
+
+function renderSeoResults(data) {
+  const wrap = document.getElementById('seoResults');
+  wrap.innerHTML = '';
+  wrap.style.display = 'block';
+
+  ['babytee', 'tshirt', 'sweatshirt'].forEach(key => {
+    const d = data[key];
+    if (!d) return;
+    const titleLen = (d.title || '').length;
+    const overLen = titleLen > 140;
+
+    const panel = document.createElement('div');
+    panel.style.cssText = 'background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:14px;';
+
+    const heading = document.createElement('div');
+    heading.style.cssText = "font-family:'Playfair Display', serif; font-size:15px; color:var(--bg); margin-bottom:10px;";
+    heading.textContent = SEO_LABELS[key];
+    panel.appendChild(heading);
+
+    const titleLabel = document.createElement('label');
+    titleLabel.className = 'first';
+    titleLabel.style.marginTop = '0';
+    titleLabel.innerHTML = `Title <span style="font-weight:400; text-transform:none; letter-spacing:0; color:${overLen ? 'var(--warn)' : 'var(--sage-dark)'};">(${titleLen} / 140)</span>`;
+    panel.appendChild(titleLabel);
+
+    const titleArea = document.createElement('textarea');
+    titleArea.rows = 2;
+    titleArea.value = d.title || '';
+    titleArea.addEventListener('input', () => {
+      const n = titleArea.value.length;
+      titleLabel.innerHTML = `Title <span style="font-weight:400; text-transform:none; letter-spacing:0; color:${n > 140 ? 'var(--warn)' : 'var(--sage-dark)'};">(${n} / 140)</span>`;
+      seoResultsData[key].title = titleArea.value;
+    });
+    panel.appendChild(titleArea);
+
+    const copyTitleRow = document.createElement('div');
+    copyTitleRow.className = 'copy-all-row';
+    const copyTitleBtn = document.createElement('button');
+    copyTitleBtn.className = 'btn secondary small';
+    copyTitleBtn.textContent = 'Copy title';
+    copyTitleBtn.addEventListener('click', () => copyToClipboard(titleArea.value, copyTitleBtn, 'Copy title'));
+    copyTitleRow.appendChild(copyTitleBtn);
+    const useBtn = document.createElement('button');
+    useBtn.className = 'btn small';
+    useBtn.textContent = `Use for ${SEO_LABELS[key]} tab`;
+    useBtn.addEventListener('click', () => {
+      garmentManualTitles[key] = titleArea.value;
+      garmentTags[key] = [...(seoResultsData[key].tags || [])];
+      renderGarmentTitle(key);
+      renderTagsForGarment(key);
+      autosaveGarmentState();
+      useBtn.textContent = 'Applied!';
+      setTimeout(() => { useBtn.textContent = `Use for ${SEO_LABELS[key]} tab`; }, 1400);
+    });
+    copyTitleRow.appendChild(useBtn);
+    panel.appendChild(copyTitleRow);
+
+    const tagsLabel = document.createElement('label');
+    tagsLabel.textContent = 'Tags';
+    panel.appendChild(tagsLabel);
+
+    const tagsList = document.createElement('div');
+    tagsList.className = 'tag-list';
+    (d.tags || []).forEach(t => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip pill';
+      chip.innerHTML = `<span>${escapeHtml(t)}</span><span class="len${t.length > 20 ? ' over' : ''}">${t.length}</span>`;
+      chip.title = 'Click to copy';
+      chip.style.cursor = 'pointer';
+      chip.addEventListener('click', () => copyToClipboard(t, chip, ''));
+      tagsList.appendChild(chip);
+    });
+    panel.appendChild(tagsList);
+
+    const copyTagsRow = document.createElement('div');
+    copyTagsRow.className = 'copy-all-row';
+    const copyTagsBtn = document.createElement('button');
+    copyTagsBtn.className = 'btn secondary small';
+    copyTagsBtn.textContent = 'Copy all tags';
+    copyTagsBtn.addEventListener('click', () => copyToClipboard((d.tags || []).join(', '), copyTagsBtn, 'Copy all tags'));
+    copyTagsRow.appendChild(copyTagsBtn);
+    panel.appendChild(copyTagsRow);
+
+    if (d.suggestions && d.suggestions.length) {
+      const sugLabel = document.createElement('label');
+      sugLabel.textContent = 'Suggested extra tags, click to add';
+      panel.appendChild(sugLabel);
+
+      const sugList = document.createElement('div');
+      sugList.className = 'tag-list';
+      d.suggestions.forEach(t => {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip pill suggested';
+        chip.innerHTML = `<span>${escapeHtml(t)}</span><span class="len${t.length > 20 ? ' over' : ''}">${t.length}</span>`;
+        chip.style.cursor = 'pointer';
+        chip.title = 'Click to add to tags above';
+        chip.addEventListener('click', () => {
+          if (!seoResultsData[key].tags.map(x => x.toLowerCase()).includes(t.toLowerCase())) {
+            seoResultsData[key].tags.push(t);
+            renderSeoResults(seoResultsData);
+            try { storageAPI.set('session:seoResults:' + selectedType, JSON.stringify(seoResultsData)); } catch (e) {}
+          }
+        });
+        sugList.appendChild(chip);
+      });
+      panel.appendChild(sugList);
+    }
+
+    wrap.appendChild(panel);
+  });
+}
+
+document.getElementById('aiAssistSeoBtn').addEventListener('click', runSeoGeneration);
+
+const DESCRIPTION_SYSTEM = `You are a production assistant that writes Etsy listing descriptions for a seller's own print on demand apparel shop, every single one in this exact 3 sentence structure, never more, never fewer sentences.
+
+Sentence 1, the hook: "Celebrate your love for [the theme or subject] with this [adjective] [adjective] design!" Adapt the wording naturally to fit the specific theme, always end this sentence with an exclamation point, keep it warm and inviting.
+
+Sentence 2, the use case: "Perfect for [the target audience for this theme], this [a style descriptor like retro, trendy, vintage, sassy, whatever actually fits] "[the catchy phrase or pun from the title, in quotation marks]" design is available on our Baby Tee, Comfort Colors tee, and cozy Gildan sweatshirt, so you can pick your favorite fit." If nothing in the title or keywords reads like a clear catchy phrase or pun, drop the quoted phrase entirely and just describe the design plainly in its place, keeping the rest of the sentence structure intact.
+
+Sentence 3, the closer, this exact line every time, word for word: "Order yours today and get ready to stand out!"
+
+Base the theme, subject, adjectives, audience, and catchy phrase entirely on the live title, tags, and design context given. Never use em dashes, use commas or periods instead. Keep the tone upbeat and casual, like a seller talking directly to a buyer, not corporate or stiff.
+
+Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
+{"description": "the full 3 sentence description as one string"}`;
+
+async function runDescriptionGeneration() {
+  const statusEl = document.getElementById('descriptionStatus');
+  const errorEl = document.getElementById('descriptionError');
+  const outputBlock = document.getElementById('descriptionOutputBlock');
+  setError(errorEl, '');
+
+  if (!selectedType) { setError(errorEl, 'Pick a product type first.'); return; }
+
+  const genBtn = document.getElementById('generateDescriptionBtn');
+  const regenBtn = document.getElementById('regenerateDescriptionBtn');
+  genBtn.disabled = true;
+  if (regenBtn) regenBtn.disabled = true;
+  setStatus(statusEl, 'Writing description...');
+
+  try {
+    const designContext = lastPromptsText.length
+      ? lastPromptsText.join('\n\n')
+      : 'No image prompts generated yet in this session.';
+
+    const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
+    const userText = `Title (Baby Tee version): ${cleanTitleText(buildGarmentTitle('babytee')) || 'none built yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+
+    const result = await callClaude(DESCRIPTION_SYSTEM, [{ type: 'text', text: userText }]);
+    const descText = (result.description || '').trim();
+    document.getElementById('descriptionOutput').value = descText;
+    outputBlock.style.display = 'block';
+    autosaveDescription(descText);
+  } catch (err) {
+    console.error(err);
+    setError(errorEl, 'Something went wrong writing the description: ' + (err.message || 'try again') + '.');
+  } finally {
+    genBtn.disabled = false;
+    if (regenBtn) regenBtn.disabled = false;
+    setStatus(statusEl, '');
+  }
+}
+
+document.getElementById('generateDescriptionBtn').addEventListener('click', runDescriptionGeneration);
+document.getElementById('regenerateDescriptionBtn').addEventListener('click', runDescriptionGeneration);
+
+document.getElementById('copyDescriptionBtn').addEventListener('click', () => {
+  const btn = document.getElementById('copyDescriptionBtn');
+  copyToClipboard(document.getElementById('descriptionOutput').value, btn, 'Copy Description');
+});
+
+document.getElementById('descriptionOutput').addEventListener('input', (e) => {
+  autosaveDescription(e.target.value);
+});
+
+const autosaveDescription = debounce(async (val) => {
+  if (!selectedType) return;
+  try { await storageAPI.set('session:description:' + selectedType, val); } catch (e) {}
+  flashSavedIndicator();
+}, 600);
+
+document.getElementById('backToTopBtn').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', async () => {
+  const confirmed = confirm('Clear all 3 titles, tags, the keyword pool, screenshots/URLs, description, keywords, and creative direction? This does not touch your Listing Calendar or your API key.');
+  if (!confirmed) return;
+
+  pastedPool = [];
+  ensurePersistentPoolWords();
+  suggestedTagKeys = new Set();
+  renderPool();
+
+  keywordSlots = new Array(MAX_SEGMENTS).fill('');
+  keywordSlotsHistory = [];
+  GARMENTS.forEach(g => {
+    garmentManualTitles[g.key] = null;
+    garmentTags[g.key] = [...g.bakedTags];
+  });
+  renderGarmentPanels();
+
+  document.getElementById('descriptionOutput').value = '';
+  document.getElementById('descriptionOutputBlock').style.display = 'none';
+  uploadedImages = [];
+  renderThumbs();
+  document.getElementById('designKeywords').value = '';
+  document.getElementById('creativeDirection').value = '';
+  seoResultsData = null;
+  document.getElementById('seoResults').style.display = 'none';
+  document.getElementById('seoResults').innerHTML = '';
+
+  try {
+    await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
+    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags }));
+    await storageAPI.set('session:description:' + selectedType, '');
+    await storageAPI.set('session:images:' + selectedType, JSON.stringify([]));
+    await storageAPI.set('session:designKeywords', '');
+    await storageAPI.set('session:creativeDirection', '');
+    await storageAPI.set('session:seoResults:' + selectedType, '');
+  } catch (e) {}
+  const statusEl = document.getElementById('bottomBarStatus');
+  statusEl.textContent = 'Builder fields cleared';
+  setTimeout(() => statusEl.textContent = '', 2000);
+});
+
+(async function initLastSession() {
+  await initBuilder();
+
+  try {
+    const savedKeywords = await storageAPI.get('session:designKeywords');
+    if (savedKeywords && savedKeywords.value) document.getElementById('designKeywords').value = savedKeywords.value;
+    const savedDirection = await storageAPI.get('session:creativeDirection');
+    if (savedDirection && savedDirection.value) document.getElementById('creativeDirection').value = savedDirection.value;
+  } catch (e) {}
+
+  await loadCalendarEntries();
+  await initIdeaVault();
+})();
+
+function checkApiKeyUI() {
+  const key = localStorage.getItem('shop_builder_api_key');
+  const wrap = document.getElementById('apiKeyInputWrap');
+  const saved = document.getElementById('apiKeySavedMsg');
+  const compact = document.getElementById('apiKeyCompact');
+  const full = document.getElementById('apiKeyFull');
+  if (key) {
+    wrap.style.display = 'none';
+    saved.style.display = 'block';
+    compact.style.display = 'flex';
+    full.style.display = 'none';
+  } else {
+    wrap.style.display = 'block';
+    saved.style.display = 'none';
+    compact.style.display = 'none';
+    full.style.display = 'block';
+  }
+}
+
+document.getElementById('manageApiKeyBtn').addEventListener('click', () => {
+  document.getElementById('apiKeyCompact').style.display = 'none';
+  document.getElementById('apiKeyFull').style.display = 'block';
+});
+
+document.getElementById('saveApiKeyBtn').addEventListener('click', () => {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) return;
+  localStorage.setItem('shop_builder_api_key', val);
+  document.getElementById('apiKeyInput').value = '';
+  checkApiKeyUI();
+});
+
+document.getElementById('changeApiKeyBtn').addEventListener('click', () => {
+  localStorage.removeItem('shop_builder_api_key');
+  checkApiKeyUI();
+});
+
+checkApiKeyUI();
+
+/* ---------- Tabs ---------- */
+
+document.getElementById('tabNav').addEventListener('click', async (e) => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(btn.dataset.tab).classList.add('active');
+  document.getElementById('pageWrap').classList.toggle('wide', btn.dataset.tab === 'calendarTab');
+  if (btn.dataset.tab === 'calendarTab') {
+    await loadCalendarEntries();
+    renderCalendarMonth();
+    renderStreak();
+  }
+  if (btn.dataset.tab === 'trackerTab') {
+    loadTrackerFrame();
+  }
+});
+
+let trackerFrameLoaded = false;
+let trackerFrameLoadPromise = null;
+/* ---------- Send to Design Tracker ---------- */
+
+document.getElementById('sendToTrackerBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('trackerSendStatus');
+  const name = document.getElementById('trackerDesignName').value.trim();
+  if (!name) { setStatus(statusEl, 'Give this design a name first.'); setTimeout(() => setStatus(statusEl, ''), 2500); return; }
+
+  const tee = document.getElementById('trackerCheckTShirt').checked;
+  const baby = document.getElementById('trackerCheckBabyTee').checked;
+  const sweat = document.getElementById('trackerCheckSweatshirt').checked;
+  if (!tee && !baby && !sweat) { setStatus(statusEl, 'Check off at least one garment.'); setTimeout(() => setStatus(statusEl, ''), 2500); return; }
+
+  const btn = document.getElementById('sendToTrackerBtn');
+  btn.disabled = true;
+  setStatus(statusEl, 'Sending to Design Tracker...');
+
+  try {
+    await loadTrackerFrame();
+    const frame = document.getElementById('trackerFrame');
+    frame.contentWindow.postMessage({ type: 'mm-add-design', name, tee, baby, sweat }, '*');
+    setTimeout(() => {
+      try {
+        frame.style.height = frame.contentWindow.document.documentElement.scrollHeight + 'px';
+      } catch (e) {}
+    }, 150);
+    document.getElementById('trackerDesignName').value = '';
+    document.getElementById('trackerCheckTShirt').checked = false;
+    document.getElementById('trackerCheckBabyTee').checked = false;
+    document.getElementById('trackerCheckSweatshirt').checked = false;
+    setStatus(statusEl, `Added "${name}" to the Design Tracker`);
+    setTimeout(() => setStatus(statusEl, ''), 2500);
+  } catch (e) {
+    setStatus(statusEl, 'Something went wrong sending that over, try again.');
+    setTimeout(() => setStatus(statusEl, ''), 2500);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function loadTrackerFrame() {
+  if (trackerFrameLoadPromise) return trackerFrameLoadPromise;
+  trackerFrameLoaded = true;
+  const frame = document.getElementById('trackerFrame');
+  trackerFrameLoadPromise = new Promise((resolve) => {
+    frame.addEventListener('load', () => {
+      try {
+        const resize = () => {
+          frame.style.height = frame.contentWindow.document.documentElement.scrollHeight + 'px';
+        };
+        resize();
+        new frame.contentWindow.ResizeObserver(resize).observe(frame.contentWindow.document.body);
+      } catch (e) {}
+      resolve();
+    });
+    frame.srcdoc = TRACKER_HTML;
+  });
+  return trackerFrameLoadPromise;
+}
+
+/* ---------- Idea Vault ---------- */
+
+let ideaVaultItems = [];
+
+function looksLikeImageUrl(url) {
+  if (/^data:image\//i.test(url)) return true;
+  return /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i.test(url.split('#')[0]);
+}
+
+async function initIdeaVault() {
+  try {
+    const saved = await storageAPI.get('ideaVault:items');
+    ideaVaultItems = (saved && saved.value) ? JSON.parse(saved.value) : [];
+  } catch (e) { ideaVaultItems = []; }
+  renderIdeaVault();
+}
+
+const autosaveIdeaVault = debounce(async () => {
+  try { await storageAPI.set('ideaVault:items', JSON.stringify(ideaVaultItems)); } catch (e) {}
+}, 500);
+
+function renderIdeaVault() {
+  const grid = document.getElementById('ideaVaultGrid');
+  const empty = document.getElementById('ideaVaultEmpty');
+  if (!grid) return;
+  grid.innerHTML = '';
+  empty.style.display = ideaVaultItems.length ? 'none' : 'block';
+
+  // newest first
+  [...ideaVaultItems].reverse().forEach((item) => {
+    const realIndex = ideaVaultItems.indexOf(item);
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+
+    if (looksLikeImageUrl(item.url)) {
+      const img = document.createElement('img');
+      img.className = 'idea-thumb';
+      img.src = item.url;
+      img.alt = 'Saved idea';
+      img.addEventListener('click', () => openLightbox(item.url));
+      img.addEventListener('error', () => {
+        img.replaceWith(buildLinkFace(item.url));
+      });
+      card.appendChild(img);
+    } else {
+      card.appendChild(buildLinkFace(item.url));
+    }
+
+    const body = document.createElement('div');
+    body.className = 'idea-body';
+
+    const note = document.createElement('textarea');
+    note.className = 'idea-note';
+    note.placeholder = 'Why did you save this?';
+    note.value = item.note || '';
+    note.addEventListener('input', () => {
+      ideaVaultItems[realIndex].note = note.value;
+      autosaveIdeaVault();
+    });
+    body.appendChild(note);
+
+    const actions = document.createElement('div');
+    actions.className = 'idea-actions';
+
+    const visitLink = document.createElement('a');
+    visitLink.href = item.url;
+    visitLink.target = '_blank';
+    visitLink.rel = 'noopener';
+    visitLink.className = 'btn secondary small';
+    visitLink.textContent = 'Open';
+    actions.appendChild(visitLink);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn secondary small';
+    copyBtn.textContent = 'Copy URL';
+    copyBtn.addEventListener('click', () => copyToClipboard(item.url, copyBtn, 'Copy URL'));
+    actions.appendChild(copyBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn secondary small';
+    delBtn.style.marginLeft = 'auto';
+    delBtn.style.color = 'var(--warn)';
+    delBtn.style.borderColor = 'var(--warn)';
+    delBtn.textContent = '×';
+    delBtn.title = 'Remove';
+    delBtn.addEventListener('click', () => {
+      ideaVaultItems.splice(realIndex, 1);
+      renderIdeaVault();
+      autosaveIdeaVault();
+    });
+    actions.appendChild(delBtn);
+
+    body.appendChild(actions);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+}
+
+function buildLinkFace(url) {
+  const face = document.createElement('a');
+  face.className = 'idea-link-face';
+  face.href = url;
+  face.target = '_blank';
+  face.rel = 'noopener';
+  let domain = url;
+  try { domain = new URL(url).hostname.replace(/^www\./, ''); } catch (e) {}
+  face.innerHTML = `<span style="font-size:26px;">🔗</span><span class="idea-domain">${escapeHtml(domain)}</span>`;
+  return face;
+}
+
+function addIdea(rawUrl) {
+  const url = rawUrl.trim();
+  if (!url) return;
+  ideaVaultItems.push({ url, note: '', addedAt: Date.now() });
+  renderIdeaVault();
+  autosaveIdeaVault();
+}
+
+document.getElementById('ideaAddBtn').addEventListener('click', () => {
+  const input = document.getElementById('ideaUrlInput');
+  addIdea(input.value);
+  input.value = '';
+});
+
+document.getElementById('ideaUrlInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addIdea(e.target.value);
+    e.target.value = '';
+  }
+});
+
+document.getElementById('ideaPasteBtn').addEventListener('click', () => {
+  const btn = document.getElementById('ideaPasteBtn');
+  pasteTextFromClipboard(btn, (text) => {
+    addIdea(text);
+  });
+});
+
+/* ---------- Listing Calendar ---------- */
+
+const PRODUCT_TYPES = [
+  { name: 'Baby Tee', color: '#dea193' },
+  { name: 'Comfort Colors', color: '#c9a96e' },
+  { name: 'Gildan Sweatshirt', color: '#8a7364' }
+];
+
+let calendarEntries = {};
+let calendarLoaded = false;
+let calViewDate = new Date();
+calViewDate.setDate(1);
+let selectedDayKey = null;
+let selectedCount = null;
+let selectedTypes = new Set();
+
+function dateKey(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+function todayKey() {
+  const t = new Date();
+  return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+}
+
+async function loadCalendarEntries() {
+  try {
+    const result = await storageAPI.get('calendar:entries');
+    calendarEntries = (result && result.value) ? JSON.parse(result.value) : {};
+  } catch (e) { calendarEntries = {}; }
+  calendarLoaded = true;
+}
+
+async function saveCalendarEntries() {
+  if (!calendarLoaded) return;
+  try { await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries)); } catch (e) {}
+}
+
+function renderCalLegend() {
+  const el = document.getElementById('calLegend');
+  el.innerHTML = PRODUCT_TYPES.map(t =>
+    `<span class="cal-legend-item"><span class="cal-legend-dot" style="background:${t.color}"></span>${t.name}</span>`
+  ).join('');
+}
+
+function renderCalendarMonth() {
+  const year = calViewDate.getFullYear();
+  const month = calViewDate.getMonth();
+  document.getElementById('calMonthLabel').textContent = calViewDate.toLocaleDateString([], { month: 'long', year: 'numeric' });
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+    const label = document.createElement('div');
+    label.className = 'cal-daylabel';
+    label.textContent = d;
+    grid.appendChild(label);
+  });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const tKey = todayKey();
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-cell empty';
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = dateKey(year, month, d);
+    const entry = calendarEntries[key];
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (key === tKey ? ' today' : '');
+    const typesHtml = (entry && entry.types && entry.types.length)
+      ? `<div class="cal-types">${entry.types.map(tn => {
+          const pt = PRODUCT_TYPES.find(p => p.name === tn);
+          return `<span class="cal-type-label" style="background:${pt ? pt.color : '#999'}">${tn}</span>`;
+        }).join('')}</div>`
+      : '';
+    cell.innerHTML = `<span class="cal-date">${d}</span>${entry ? `<span class="cal-count">${entry.count} listing${entry.count === 1 ? '' : 's'}</span>` : ''}${typesHtml}`;
+    cell.addEventListener('click', () => openDayEditor(key, d, month, year));
+    grid.appendChild(cell);
+  }
+
+  renderMonthProgress(year, month, daysInMonth);
+}
+
+const POST_GOAL_DAYS = 21;
+
+function renderMonthProgress(year, month, daysInMonth) {
+  let loggedDays = 0;
+  let totalListings = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const entry = calendarEntries[dateKey(year, month, d)];
+    if (entry && entry.count > 0) {
+      loggedDays++;
+      totalListings += entry.count;
+    }
+  }
+  const pct = Math.min(100, Math.round((loggedDays / POST_GOAL_DAYS) * 100));
+  document.getElementById('monthProgressLabel').textContent = `${loggedDays} / ${POST_GOAL_DAYS} days this month`;
+  document.getElementById('monthProgressFill').style.width = pct + '%';
+  document.getElementById('monthListingsCount').textContent = `${totalListings} listing${totalListings === 1 ? '' : 's'} this month`;
+}
+
+function openDayEditor(key, d, month, year) {
+  selectedDayKey = key;
+  const entry = calendarEntries[key];
+  selectedCount = entry ? entry.count : null;
+  selectedTypes = new Set(entry ? entry.types : []);
+
+  const dateObj = new Date(year, month, d);
+  document.getElementById('dayEditorDate').textContent = dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  renderCountRow();
+  renderTypeMultiselect();
+
+  const editorCard = document.getElementById('dayEditorCard');
+  editorCard.style.display = 'block';
+  editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderCountRow() {
+  const row = document.getElementById('countRow');
+  row.innerHTML = '';
+  for (let n = 1; n <= 10; n++) {
+    const btn = document.createElement('button');
+    btn.className = 'count-btn' + (selectedCount === n ? ' active' : '');
+    btn.textContent = n;
+    btn.addEventListener('click', () => {
+      selectedCount = (selectedCount === n) ? null : n;
+      renderCountRow();
+    });
+    row.appendChild(btn);
+  }
+}
+
+function renderTypeMultiselect() {
+  const wrap = document.getElementById('typeMultiselect');
+  wrap.innerHTML = '';
+  PRODUCT_TYPES.forEach(t => {
+    const isActive = selectedTypes.has(t.name);
+    const chip = document.createElement('button');
+    chip.className = 'type-ms-chip' + (isActive ? ' active' : '');
+    if (isActive) chip.style.background = t.color;
+    chip.innerHTML = `<span class="dot" style="background:${isActive ? '#fff' : t.color}"></span>${t.name}`;
+    chip.addEventListener('click', () => {
+      if (selectedTypes.has(t.name)) selectedTypes.delete(t.name);
+      else selectedTypes.add(t.name);
+      renderTypeMultiselect();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+document.getElementById('saveDayBtn').addEventListener('click', async () => {
+  if (!selectedDayKey) return;
+  if (!selectedCount) {
+    const statusEl = document.getElementById('bottomBarStatus');
+    statusEl.textContent = 'Pick how many listings first';
+    setTimeout(() => statusEl.textContent = '', 2000);
+    return;
+  }
+  calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
+  await saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+document.getElementById('deleteDayBtn').addEventListener('click', async () => {
+  if (!selectedDayKey) return;
+  delete calendarEntries[selectedDayKey];
+  await saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+function closeDayEditor() {
+  document.getElementById('dayEditorCard').style.display = 'none';
+  selectedDayKey = null;
+}
+
+document.getElementById('closeDayEditorBtn').addEventListener('click', closeDayEditor);
+
+document.getElementById('calPrevBtn').addEventListener('click', () => {
+  calViewDate.setMonth(calViewDate.getMonth() - 1);
+  renderCalendarMonth();
+});
+
+document.getElementById('calNextBtn').addEventListener('click', () => {
+  calViewDate.setMonth(calViewDate.getMonth() + 1);
+  renderCalendarMonth();
+});
+
+function renderStreak() {
+  const el = document.getElementById('streakRow');
+  let streak = 0;
+  let cursor = new Date();
+  while (true) {
+    const key = dateKey(cursor.getFullYear(), cursor.getMonth(), cursor.getDate());
+    const entry = calendarEntries[key];
+    if (entry && entry.count > 0) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  el.textContent = streak > 0
+    ? `🔥 ${streak} day streak, keep it going`
+    : 'No listing logged for today yet, add one to start a streak';
+}
+
+renderCalLegend();
+
+/* ---------- Bestseller Finder ---------- */
+
+var selectedNiches = [];
+
+function toggleNiche(el, val) {
+  var idx = selectedNiches.indexOf(val);
+  if (idx > -1) {
+    selectedNiches.splice(idx, 1);
+    el.classList.remove('active');
+  } else {
+    selectedNiches.push(val);
+    el.classList.add('active');
+  }
+  document.getElementById('bsf-niche').value = selectedNiches.join(' ');
+}
+
+function clearNiche() {
+  selectedNiches = [];
+  document.getElementById('bsf-niche').value = '';
+  document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('bsf-niche').style.removeProperty('border-color');
+}
+
+function fillProduct(el, val) {
+  document.getElementById('bsf-product').value = val;
+  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function clearProduct() {
+  document.getElementById('bsf-product').value = '';
+  document.querySelectorAll('#product-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+}
+
+function bsfGo() {
+  var niche = document.getElementById('bsf-niche').value.trim();
+  var product = document.getElementById('bsf-product').value.trim();
+  if (!niche) {
+    document.getElementById('bsf-niche').style.setProperty('border-color', '#b7879f', 'important');
+    document.getElementById('bsf-niche').focus();
+    return;
+  }
+  var q = encodeURIComponent(product ? niche + ' ' + product : niche);
+  window.open('https://www.etsy.com/search?q=' + q + '&order=most_relevant&is_best_seller=true', '_blank');
+  var conf = document.getElementById('bsf-confirm');
+  conf.classList.add('show');
+  setTimeout(function() { conf.classList.remove('show'); }, 4000);
+}
+
+document.getElementById('bsf-niche').addEventListener('input', function() {
+  if (!this.value.trim()) {
+    selectedNiches = [];
+    document.querySelectorAll('#niche-chips .bsf-chip').forEach(function(c) { c.classList.remove('active'); });
+  }
+});
+
+document.getElementById('bsf-niche').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('bsf-product').focus(); });
+document.getElementById('bsf-product').addEventListener('keydown', function(e) { if (e.key === 'Enter') bsfGo(); });
+
+var bsfMainBtn = document.getElementById('bsf-main-btn');
+bsfMainBtn.addEventListener('mouseover', function() { this.style.setProperty('background-color', '#966780', 'important'); this.style.setProperty('color', '#ffffff', 'important'); });
+bsfMainBtn.addEventListener('mouseout', function() { this.style.setProperty('background-color', '#b7879f', 'important'); this.style.setProperty('color', '#292320', 'important'); });
+
+</script>
+</body>
+</html>
