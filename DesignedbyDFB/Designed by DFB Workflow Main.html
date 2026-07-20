@@ -221,6 +221,10 @@
   .idea-card .idea-thumb { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--sage-tint); cursor: zoom-in; }
   .idea-card .idea-link-face { width: 100%; aspect-ratio: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: var(--sage-tint); color: var(--sage-dark); text-decoration: none; padding: 12px; text-align: center; }
   .idea-card .idea-link-face .idea-domain { font-size: 12px; font-weight: 700; word-break: break-word; }
+  .idea-card .idea-link-face.loading { color: var(--sage-dark); opacity: .7; }
+  .idea-card .idea-thumb-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1; background: var(--sage-tint); }
+  .idea-card .idea-thumb-wrap img.idea-thumb { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .idea-card .idea-title { font-size: 13px; font-weight: 700; color: var(--mid-text); line-height: 1.3; margin: 0; }
   .idea-card .idea-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .idea-card textarea.idea-note { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 9px; font-family: 'Jost', sans-serif; font-size: 12.5px; color: var(--mid-text); resize: vertical; min-height: 40px; }
   .idea-card .idea-actions { display: flex; gap: 8px; align-items: center; }
@@ -2079,12 +2083,48 @@ function looksLikeImageUrl(url) {
   return /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i.test(url.split('#')[0]);
 }
 
+// Pulls og:image / og:title out of a listing page so the card can show
+// a real thumbnail + title instead of just a plain link card.
+async function fetchIdeaMetadata(url) {
+  const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+  const res = await fetch(proxied);
+  if (!res.ok) throw new Error('fetch failed');
+  const html = await res.text();
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const getMeta = (prop) => {
+    const el = doc.querySelector(`meta[property="${prop}"]`) || doc.querySelector(`meta[name="${prop}"]`);
+    return el ? el.getAttribute('content') : null;
+  };
+  const image = getMeta('og:image');
+  let title = getMeta('og:title') || (doc.querySelector('title') ? doc.querySelector('title').textContent : null);
+  if (title) title = title.trim();
+  return { image, title };
+}
+
+function enrichIdeaItem(item) {
+  if (looksLikeImageUrl(item.url) || item.metaStatus) return; // already an image, or already handled
+  item.metaStatus = 'loading';
+  fetchIdeaMetadata(item.url).then((meta) => {
+    item.thumb = meta.image || null;
+    item.title = meta.title || null;
+    item.metaStatus = 'done';
+    renderIdeaVault();
+    autosaveIdeaVault();
+  }).catch(() => {
+    item.metaStatus = 'failed';
+    renderIdeaVault();
+  });
+}
+
 async function initIdeaVault() {
   try {
     const saved = await storageAPI.get('ideaVault:items');
     ideaVaultItems = (saved && saved.value) ? JSON.parse(saved.value) : [];
   } catch (e) { ideaVaultItems = []; }
   renderIdeaVault();
+  ideaVaultItems.forEach((item) => {
+    if (!looksLikeImageUrl(item.url) && !item.thumb && item.metaStatus !== 'failed') enrichIdeaItem(item);
+  });
 }
 
 const autosaveIdeaVault = debounce(async () => {
@@ -2114,12 +2154,37 @@ function renderIdeaVault() {
         img.replaceWith(buildLinkFace(item.url));
       });
       card.appendChild(img);
+    } else if (item.thumb) {
+      const wrap = document.createElement('div');
+      wrap.className = 'idea-thumb-wrap';
+      const img = document.createElement('img');
+      img.className = 'idea-thumb';
+      img.src = item.thumb;
+      img.alt = item.title || 'Saved listing';
+      img.addEventListener('click', () => window.open(item.url, '_blank', 'noopener'));
+      img.addEventListener('error', () => {
+        wrap.replaceWith(buildLinkFace(item.url));
+      });
+      wrap.appendChild(img);
+      card.appendChild(wrap);
+    } else if (item.metaStatus === 'loading') {
+      const face = buildLinkFace(item.url);
+      face.classList.add('loading');
+      face.querySelector('.idea-domain').textContent = 'Loading preview…';
+      card.appendChild(face);
     } else {
       card.appendChild(buildLinkFace(item.url));
     }
 
     const body = document.createElement('div');
     body.className = 'idea-body';
+
+    if (item.title) {
+      const titleEl = document.createElement('p');
+      titleEl.className = 'idea-title';
+      titleEl.textContent = item.title;
+      body.appendChild(titleEl);
+    }
 
     const note = document.createElement('textarea');
     note.className = 'idea-note';
@@ -2183,9 +2248,11 @@ function buildLinkFace(url) {
 function addIdea(rawUrl) {
   const url = rawUrl.trim();
   if (!url) return;
-  ideaVaultItems.push({ url, note: '', addedAt: Date.now() });
+  const item = { url, note: '', addedAt: Date.now() };
+  ideaVaultItems.push(item);
   renderIdeaVault();
   autosaveIdeaVault();
+  enrichIdeaItem(item);
 }
 
 document.getElementById('ideaAddBtn').addEventListener('click', () => {
