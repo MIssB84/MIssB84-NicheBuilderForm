@@ -2083,26 +2083,24 @@ function looksLikeImageUrl(url) {
   return /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i.test(url.split('#')[0]);
 }
 
-// Pulls og:image / og:title out of a listing page so the card can show
+// Pulls title/image out of a listing page so the card can show
 // a real thumbnail + title instead of just a plain link card.
+// Uses Microlink's free link-preview API: it renders pages in a real
+// headless browser (so it isn't blocked by Etsy's bot protection the
+// way a plain CORS-proxy fetch of raw HTML would be).
 async function fetchIdeaMetadata(url) {
-  const proxied = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-  const res = await fetch(proxied);
+  const apiUrl = 'https://api.microlink.io/?url=' + encodeURIComponent(url);
+  const res = await fetch(apiUrl);
   if (!res.ok) throw new Error('fetch failed');
-  const html = await res.text();
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const getMeta = (prop) => {
-    const el = doc.querySelector(`meta[property="${prop}"]`) || doc.querySelector(`meta[name="${prop}"]`);
-    return el ? el.getAttribute('content') : null;
-  };
-  const image = getMeta('og:image');
-  let title = getMeta('og:title') || (doc.querySelector('title') ? doc.querySelector('title').textContent : null);
-  if (title) title = title.trim();
+  const json = await res.json();
+  if (json.status !== 'success' || !json.data) throw new Error('no data');
+  const image = (json.data.image && json.data.image.url) || (json.data.screenshot && json.data.screenshot.url) || null;
+  const title = json.data.title ? json.data.title.trim() : null;
   return { image, title };
 }
 
 function enrichIdeaItem(item) {
-  if (looksLikeImageUrl(item.url) || item.metaStatus) return; // already an image, or already handled
+  if (looksLikeImageUrl(item.url) || item.metaStatus === 'loading') return;
   item.metaStatus = 'loading';
   fetchIdeaMetadata(item.url).then((meta) => {
     item.thumb = meta.image || null;
@@ -2110,7 +2108,8 @@ function enrichIdeaItem(item) {
     item.metaStatus = 'done';
     renderIdeaVault();
     autosaveIdeaVault();
-  }).catch(() => {
+  }).catch((err) => {
+    console.error('Idea Vault: preview fetch failed for', item.url, err);
     item.metaStatus = 'failed';
     renderIdeaVault();
   });
@@ -2171,6 +2170,10 @@ function renderIdeaVault() {
       const face = buildLinkFace(item.url);
       face.classList.add('loading');
       face.querySelector('.idea-domain').textContent = 'Loading preview…';
+      card.appendChild(face);
+    } else if (item.metaStatus === 'failed') {
+      const face = buildLinkFace(item.url);
+      face.querySelector('.idea-domain').textContent = 'Preview unavailable (click to open)';
       card.appendChild(face);
     } else {
       card.appendChild(buildLinkFace(item.url));
