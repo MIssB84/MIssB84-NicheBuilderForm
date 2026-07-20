@@ -971,7 +971,7 @@ function renderGarmentPanels() {
       </div>
       <div class="copy-all-row">
         <button class="btn secondary copy-garment-title" data-garment="${g.key}">Copy this title</button>
-        <button class="btn secondary reset-garment-title" data-garment="${g.key}">Reset from keywords</button>
+        <button class="btn secondary reset-garment-title" data-garment="${g.key}">Reset all 3 to blank template</button>
       </div>
 
       <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:14px;">
@@ -1020,10 +1020,11 @@ function renderGarmentPanels() {
   }));
 
   wrap.querySelectorAll('.reset-garment-title').forEach(btn => btn.addEventListener('click', () => {
-    const key = btn.dataset.garment;
-    garmentManualTitles[key] = null;
-    renderGarmentTitle(key);
-    autosaveGarmentState();
+    const confirmed = confirm('This clears every keyword you\'ve slotted in so far, on all 3 titles, back to just the bare numbered template. Continue?');
+    if (!confirmed) return;
+    keywordSlots = new Array(MAX_SEGMENTS).fill('');
+    GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
+    renderAllGarmentTitles();
   }));
 
   wrap.querySelectorAll('.copy-garment-tags').forEach(btn => btn.addEventListener('click', () => {
