@@ -854,20 +854,27 @@ const thumbs = document.getElementById('thumbs');
 
 const GARMENTS = [
   {
-    key: 'babytee', label: 'Baby Tee', fixedName: 'Y2K Baby Tee, Shirt, Top', giftDefault: 'Gift For Her',
+    key: 'babytee', label: 'Baby Tee', segments: ['Y2K Baby Tee', 'Shirt', 'Top'], giftDefault: 'Gift For Her',
     bakedTags: ['Y2K Baby Tee', 'Baby Tee', 'Y2K Top', 'Fitted Tee', 'Y2K Tee']
   },
   {
-    key: 'tshirt', label: 'T Shirt', fixedName: 'Comfort Colors Unisex T Shirt, Shirt, T Shirt, Graphic Tee Shirt', giftDefault: 'Gift For Her',
+    key: 'tshirt', label: 'T Shirt', segments: ['Comfort Colors Unisex T Shirt', 'Shirt', 'T Shirt', 'Graphic Tee Shirt'], giftDefault: 'Gift For Her',
     bakedTags: ['Comfort Colors Tee', 'Unisex Tee', 'Vintage Tee', 'Gift For Her']
   },
   {
-    key: 'sweatshirt', label: 'Sweatshirt', fixedName: 'Crewneck Sweatshirt, Pullover, Sweater', giftDefault: 'Gift For Her',
+    key: 'sweatshirt', label: 'Sweatshirt', segments: ['Crewneck Sweatshirt', 'Pullover', 'Sweater'], giftDefault: 'Gift For Her',
     bakedTags: ['Crewneck Sweatshirt', 'Pullover Sweatshirt', 'Unisex Sweatshirt', 'Cozy Sweatshirt', 'Trendy Viral Sweater']
   }
 ];
 
-let keywordSlots = ['', '']; // shared: ① before garment name, ② after garment name, used by all 3 titles
+// Shared across all 3 title tabs: keywordSlots[0] prefixes segment 1 of whichever
+// garment is showing it, keywordSlots[1] prefixes segment 2, and so on. Baby Tee and
+// Sweatshirt only have 3 segments, so slot 4 (T Shirt only) simply has nowhere to land
+// on those two, which is expected.
+const MAX_SEGMENTS = Math.max(...GARMENTS.map(g => g.segments.length));
+let keywordSlots = new Array(MAX_SEGMENTS).fill('');
+const CIRCLED_NUMS = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
+function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 let garmentManualTitles = { babytee: null, tshirt: null, sweatshirt: null }; // non-null once hand-edited, overrides the template
 let garmentTags = { babytee: [], tshirt: [], sweatshirt: [] };
 let activeGarment = 'babytee';
@@ -875,8 +882,24 @@ let activeGarment = 'babytee';
 function buildGarmentTitle(key) {
   if (garmentManualTitles[key] !== null) return garmentManualTitles[key];
   const g = GARMENTS.find(x => x.key === key);
-  const parts = [keywordSlots[0], g.fixedName, keywordSlots[1], g.giftDefault].filter(Boolean);
-  return parts.join(', ');
+  const clauses = g.segments.map((seg, i) => {
+    const kw = keywordSlots[i] ? keywordSlots[i] + ' ' : '';
+    return `${kw}${slotMarker(i + 1)} ${seg}`;
+  });
+  clauses.push(g.giftDefault);
+  return clauses.join(', ');
+}
+
+// Strips the visual ①②③ markers back out, used anywhere the title is actually copied,
+// sent to the AI, or logged to the Tracker, so the markers never leak out of this tool.
+function cleanTitleText(text) {
+  let cleaned = text;
+  for (let n = 1; n <= 10; n++) {
+    cleaned = cleaned.split(slotMarker(n) + ' ').join('').split(slotMarker(n)).join('');
+  }
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim();
+  cleaned = cleaned.replace(/^,\s*/, '').replace(/,\s*$/, '');
+  return cleaned;
 }
 
 function renderGarmentTitle(key) {
@@ -886,7 +909,13 @@ function renderGarmentTitle(key) {
   if (!box) return;
   const value = buildGarmentTitle(key);
   box.value = value;
-  const len = value.length;
+  // Real character count excludes the visual ①②③ markers (2 chars each: symbol + space),
+  // since those never actually go into the real Etsy title.
+  let markerOverhead = 0;
+  for (let n = 1; n <= 10; n++) {
+    if (value.includes(slotMarker(n))) markerOverhead += 2;
+  }
+  const len = value.length - markerOverhead;
   countEl.textContent = `${len} / 140 chars`;
   countEl.style.color = len > 140 ? '#c94a3f' : 'var(--sage-dark)';
   if (warnDot) warnDot.classList.toggle('show', len > 140);
@@ -987,7 +1016,7 @@ function renderGarmentPanels() {
 
   wrap.querySelectorAll('.copy-garment-title').forEach(btn => btn.addEventListener('click', () => {
     const key = btn.dataset.garment;
-    copyToClipboard(document.getElementById('garmentTitle-' + key).value, btn, 'Copy this title');
+    copyToClipboard(cleanTitleText(document.getElementById('garmentTitle-' + key).value), btn, 'Copy this title');
   }));
 
   wrap.querySelectorAll('.reset-garment-title').forEach(btn => btn.addEventListener('click', () => {
@@ -1016,9 +1045,20 @@ document.getElementById('garmentTabNav').addEventListener('click', (e) => {
   document.getElementById('garmentPanel-' + activeGarment).classList.add('active');
 });
 
+const PASTE_LINE_IDS = ['pasteLineBabyTee', 'pasteLineTShirt', 'pasteLineSweatshirt', 'pasteLineRandom'];
+function getPasteLineValues() {
+  return PASTE_LINE_IDS.map(id => document.getElementById(id).value);
+}
+function setPasteLineValues(values) {
+  if (!Array.isArray(values)) return;
+  PASTE_LINE_IDS.forEach((id, i) => {
+    if (typeof values[i] === 'string') document.getElementById(id).value = values[i];
+  });
+}
+
 const autosaveGarmentState = debounce(async () => {
   try {
-    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags, pasteLines: getPasteLineValues() }));
     flashSavedIndicator();
   } catch (e) {}
 }, 600);
@@ -1034,7 +1074,10 @@ async function restoreGarmentState() {
     const saved = await storageAPI.get('session:garmentState');
     if (saved && saved.value) {
       const parsed = JSON.parse(saved.value);
-      if (Array.isArray(parsed.keywordSlots)) keywordSlots = parsed.keywordSlots;
+      if (Array.isArray(parsed.keywordSlots)) {
+        keywordSlots = parsed.keywordSlots;
+        while (keywordSlots.length < MAX_SEGMENTS) keywordSlots.push('');
+      }
       if (parsed.garmentManualTitles) garmentManualTitles = parsed.garmentManualTitles;
       if (parsed.garmentTags) {
         GARMENTS.forEach(g => {
@@ -1043,6 +1086,7 @@ async function restoreGarmentState() {
           }
         });
       }
+      if (parsed.pasteLines) setPasteLineValues(parsed.pasteLines);
     }
   } catch (e) {}
 
@@ -1151,11 +1195,11 @@ function renderPool() {
 
     const slotBtns = document.createElement('span');
     slotBtns.className = 'slot-btns';
-    [1, 2].forEach(n => {
+    for (let n = 1; n <= MAX_SEGMENTS; n++) {
       const sBtn = document.createElement('button');
       sBtn.className = 'slot-btn';
       sBtn.textContent = n;
-      sBtn.title = `Drop into all 3 titles at spot ${n}`;
+      sBtn.title = `Drop in front of spot ${n} in every title that has one`;
       sBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         const casedText = toTitleCase(item.text);
@@ -1166,7 +1210,7 @@ function renderPool() {
         renderPool();
       });
       slotBtns.appendChild(sBtn);
-    });
+    }
 
     const tagAllBtn = document.createElement('button');
     tagAllBtn.className = 'copy-btn-pill';
@@ -1267,7 +1311,7 @@ function flashSavedIndicator() {
 async function saveAllNow() {
   try {
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
-    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags, pasteLines: getPasteLineValues() }));
     await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
     await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages));
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
@@ -1385,14 +1429,12 @@ function wirePasteLine(inputId, btnId) {
       e.preventDefault();
       if (!input.value.trim()) return;
       await addToPastedPool(input.value, true);
-      input.value = '';
     }
   });
   btn.addEventListener('click', () => {
     pasteTextFromClipboard(btn, async (text) => {
       input.value = text;
       await addToPastedPool(text, true);
-      input.value = '';
     });
   });
 }
@@ -1919,7 +1961,7 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
       ? lastPromptsText.join('\n\n')
       : 'No image prompts generated yet in this session.';
 
-    const userText = `Garment: ${g.label}\n\nTags already in use: ${garmentTags[key].join(', ') || 'none yet'}\n\nCurrent title for this garment: ${buildGarmentTitle(key) || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+    const userText = `Garment: ${g.label}\n\nTags already in use: ${garmentTags[key].join(', ') || 'none yet'}\n\nCurrent title for this garment: ${cleanTitleText(buildGarmentTitle(key)) || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
 
     const result = await callClaude(TAGS_SYSTEM, [{ type: 'text', text: userText }]);
 
@@ -2014,7 +2056,7 @@ async function runSeoGeneration() {
 
   // Use the Baby Tee tab's title as the descriptive source (it carries the fullest
   // theme wording), plus the union of tags already collected across all 3 tabs.
-  const sourceTitle = buildGarmentTitle('babytee').trim();
+  const sourceTitle = cleanTitleText(buildGarmentTitle('babytee')).trim();
   if (!sourceTitle) { setError(errorEl, 'Build at least one title in Step 2 first.'); return; }
   const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
 
@@ -2187,7 +2229,7 @@ async function runDescriptionGeneration() {
       : 'No image prompts generated yet in this session.';
 
     const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
-    const userText = `Title (Baby Tee version): ${buildGarmentTitle('babytee') || 'none built yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+    const userText = `Title (Baby Tee version): ${cleanTitleText(buildGarmentTitle('babytee')) || 'none built yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
 
     const result = await callClaude(DESCRIPTION_SYSTEM, [{ type: 'text', text: userText }]);
     const descText = (result.description || '').trim();
