@@ -153,6 +153,27 @@
   }
   .type-ms-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
   .type-ms-chip.active { color: #fff; border-color: transparent; }
+
+  .stats-total { font-size: 15px; font-weight: 700; color: var(--bg); margin-bottom: 16px; }
+  .stats-bars { display: flex; flex-direction: column; gap: 12px; }
+  .stats-bar-row { display: flex; flex-direction: column; gap: 4px; }
+  .stats-bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid-text); font-weight: 600; }
+  .stats-bar-track { background: var(--sage-tint); border-radius: 20px; height: 10px; overflow: hidden; }
+  .stats-bar-fill { height: 100%; border-radius: 20px; transition: width 0.3s ease; }
+
+  .type-count-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+  .type-count-row { display: flex; align-items: center; gap: 10px; }
+  .type-count-row .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .type-count-row .type-name { flex: 1; font-size: 13.5px; color: var(--mid-text); font-weight: 500; }
+  .type-count-controls { display: flex; align-items: center; gap: 6px; }
+  .stepper-btn {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: #fff; color: var(--mid-text); font-size: 15px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .stepper-btn:hover { border-color: var(--rose); background: var(--sage-tint); }
+  .type-count-value { width: 30px; text-align: center; font-size: 14px; font-weight: 700; color: var(--bg); }
+  .day-total { font-size: 13.5px; font-weight: 700; color: var(--bg); margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -162,14 +183,7 @@
 
   <div class="card">
     <h2><span class="step-tag">Consistency</span> This Month</h2>
-    <div class="hint">Saves automatically in this browser as you go. Click <strong>Save Backup File</strong> every so often, and if the calendar ever comes up blank, use <strong>Restore from Backup</strong> to bring it right back.</div>
-
-    <div class="copy-all-row" style="margin-top:14px;">
-      <button class="btn secondary small" id="calExportBtn">⬇ Save Backup File</button>
-      <button class="btn secondary small" id="calImportBtn">⬆ Restore from Backup</button>
-      <input type="file" id="calImportFile" accept="application/json" style="display:none;">
-      <span class="hint" id="calSaveStatus" style="margin:0; align-self:center;"></span>
-    </div>
+    <div class="hint">Saves automatically in this browser as you go.</div>
 
     <div class="streak-row" id="streakRow"></div>
 
@@ -184,14 +198,18 @@
     <div class="cal-grid" id="calGrid"></div>
   </div>
 
+  <div class="card">
+    <h2><span class="step-tag">Snapshot</span> <span id="statsMonthLabel"></span></h2>
+    <div class="stats-total" id="statsTotal"></div>
+    <div class="stats-bars" id="statsBars"></div>
+  </div>
+
   <div class="card" id="dayEditorCard" style="display:none;">
     <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
 
-    <label class="first">How many listings did you add?</label>
-    <div class="count-row" id="countRow"></div>
-
-    <label>Product type(s) added</label>
-    <div class="type-multiselect" id="typeMultiselect"></div>
+    <label class="first">How many of each type did you add?</label>
+    <div class="type-count-list" id="typeCountList"></div>
+    <div class="day-total" id="dayTotal">Total: 0 listings</div>
 
     <div class="copy-all-row">
       <button class="btn" id="saveDayBtn">Save Day</button>
@@ -234,8 +252,6 @@ let calendarEntries = {};
 let calViewDate = new Date();
 calViewDate.setDate(1);
 let selectedDayKey = null;
-let selectedCount = null;
-let selectedTypes = new Set();
 let calendarLoaded = false;
 
 function dateKey(y, m, d) {
@@ -274,46 +290,6 @@ function setCalSaveStatus(msg) {
   const el = document.getElementById('calSaveStatus');
   if (el) el.textContent = msg;
 }
-
-function exportCalendarBackup() {
-  const blob = new Blob([JSON.stringify(calendarEntries, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const today = new Date();
-  const stamp = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  a.href = url;
-  a.download = 'listing-calendar-backup-' + stamp + '.json';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  setCalSaveStatus('Backup file downloaded');
-}
-
-function importCalendarBackup(file) {
-  const reader = new FileReader();
-  reader.onload = async () => {
-    try {
-      const imported = JSON.parse(reader.result);
-      if (typeof imported !== 'object' || imported === null || Array.isArray(imported)) throw new Error('bad format');
-      calendarEntries = Object.assign({}, calendarEntries, imported);
-      await saveCalendarEntries();
-      renderCalendarMonth();
-      renderStreak();
-      setCalSaveStatus('Backup restored');
-    } catch (e) {
-      setCalSaveStatus('That file did not look like a calendar backup');
-    }
-  };
-  reader.readAsText(file);
-}
-
-document.getElementById('calExportBtn').addEventListener('click', exportCalendarBackup);
-document.getElementById('calImportBtn').addEventListener('click', () => document.getElementById('calImportFile').click());
-document.getElementById('calImportFile').addEventListener('change', (e) => {
-  if (e.target.files && e.target.files[0]) importCalendarBackup(e.target.files[0]);
-  e.target.value = '';
-});
 
 function renderCalLegend() {
   const el = document.getElementById('calLegend');
@@ -361,66 +337,135 @@ function renderCalendarMonth() {
     cell.addEventListener('click', () => openDayEditor(key, d, month, year));
     grid.appendChild(cell);
   }
+
+  renderMonthlyStats(year, month);
 }
+
+function computeMonthlyStats(year, month) {
+  const prefix = `${year}-${String(month + 1).padStart(2, '0')}-`;
+  const byType = {};
+  PRODUCT_TYPES.forEach(t => { byType[t.name] = 0; });
+  let total = 0;
+  Object.keys(calendarEntries).forEach((key) => {
+    if (!key.startsWith(prefix)) return;
+    const entry = calendarEntries[key];
+    if (!entry) return;
+    total += entry.count || 0;
+    if (entry.byType) {
+      PRODUCT_TYPES.forEach(t => { byType[t.name] += entry.byType[t.name] || 0; });
+    }
+  });
+  return { total, byType };
+}
+
+function renderMonthlyStats(year, month) {
+  const { total, byType } = computeMonthlyStats(year, month);
+  const monthLabel = new Date(year, month, 1).toLocaleDateString([], { month: 'long', year: 'numeric' });
+  document.getElementById('statsMonthLabel').textContent = monthLabel;
+  document.getElementById('statsTotal').textContent = `${total} listing${total === 1 ? '' : 's'} added so far`;
+
+  const maxCount = Math.max(1, ...PRODUCT_TYPES.map(t => byType[t.name]));
+  const bars = document.getElementById('statsBars');
+  bars.innerHTML = PRODUCT_TYPES.map(t => {
+    const count = byType[t.name];
+    const pct = count > 0 ? Math.max(4, Math.round((count / maxCount) * 100)) : 0;
+    return `
+      <div class="stats-bar-row">
+        <div class="stats-bar-label"><span>${t.name}</span><span>${count}</span></div>
+        <div class="stats-bar-track"><div class="stats-bar-fill" style="width:${pct}%; background:${t.color};"></div></div>
+      </div>`;
+  }).join('');
+}
+
+let dayTypeCounts = {};
 
 function openDayEditor(key, d, month, year) {
   selectedDayKey = key;
   const entry = calendarEntries[key];
-  selectedCount = entry ? entry.count : null;
-  selectedTypes = new Set(entry ? entry.types : []);
+  dayTypeCounts = {};
+  PRODUCT_TYPES.forEach(t => { dayTypeCounts[t.name] = (entry && entry.byType) ? (entry.byType[t.name] || 0) : 0; });
 
   const dateObj = new Date(year, month, d);
   document.getElementById('dayEditorDate').textContent = dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-  renderCountRow();
-  renderTypeMultiselect();
+  renderTypeCountList();
 
   const editorCard = document.getElementById('dayEditorCard');
   editorCard.style.display = 'block';
   editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function renderCountRow() {
-  const row = document.getElementById('countRow');
-  row.innerHTML = '';
-  for (let n = 1; n <= 10; n++) {
-    const btn = document.createElement('button');
-    btn.className = 'count-btn' + (selectedCount === n ? ' active' : '');
-    btn.textContent = n;
-    btn.addEventListener('click', () => {
-      selectedCount = (selectedCount === n) ? null : n;
-      renderCountRow();
+function renderTypeCountList() {
+  const list = document.getElementById('typeCountList');
+  list.innerHTML = '';
+  PRODUCT_TYPES.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'type-count-row';
+
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.style.background = t.color;
+    row.appendChild(dot);
+
+    const name = document.createElement('span');
+    name.className = 'type-name';
+    name.textContent = t.name;
+    row.appendChild(name);
+
+    const controls = document.createElement('div');
+    controls.className = 'type-count-controls';
+
+    const minusBtn = document.createElement('button');
+    minusBtn.className = 'stepper-btn';
+    minusBtn.textContent = '−';
+    minusBtn.addEventListener('click', () => {
+      dayTypeCounts[t.name] = Math.max(0, dayTypeCounts[t.name] - 1);
+      renderTypeCountList();
+      updateDayTotal();
     });
-    row.appendChild(btn);
-  }
+    controls.appendChild(minusBtn);
+
+    const value = document.createElement('span');
+    value.className = 'type-count-value';
+    value.textContent = dayTypeCounts[t.name];
+    controls.appendChild(value);
+
+    const plusBtn = document.createElement('button');
+    plusBtn.className = 'stepper-btn';
+    plusBtn.textContent = '+';
+    plusBtn.addEventListener('click', () => {
+      dayTypeCounts[t.name] += 1;
+      renderTypeCountList();
+      updateDayTotal();
+    });
+    controls.appendChild(plusBtn);
+
+    row.appendChild(controls);
+    list.appendChild(row);
+  });
+  updateDayTotal();
 }
 
-function renderTypeMultiselect() {
-  const wrap = document.getElementById('typeMultiselect');
-  wrap.innerHTML = '';
-  PRODUCT_TYPES.forEach(t => {
-    const isActive = selectedTypes.has(t.name);
-    const chip = document.createElement('button');
-    chip.className = 'type-ms-chip' + (isActive ? ' active' : '');
-    if (isActive) chip.style.background = t.color;
-    chip.innerHTML = `<span class="dot" style="background:${isActive ? '#fff' : t.color}"></span>${t.name}`;
-    chip.addEventListener('click', () => {
-      if (selectedTypes.has(t.name)) selectedTypes.delete(t.name);
-      else selectedTypes.add(t.name);
-      renderTypeMultiselect();
-    });
-    wrap.appendChild(chip);
-  });
+function updateDayTotal() {
+  const total = PRODUCT_TYPES.reduce((sum, t) => sum + dayTypeCounts[t.name], 0);
+  document.getElementById('dayTotal').textContent = `Total: ${total} listing${total === 1 ? '' : 's'}`;
 }
 
 document.getElementById('saveDayBtn').addEventListener('click', async () => {
   if (!selectedDayKey) return;
-  if (!selectedCount) {
-    setCalSaveStatus('Pick how many listings first');
+  const total = PRODUCT_TYPES.reduce((sum, t) => sum + dayTypeCounts[t.name], 0);
+  if (!total) {
+    setCalSaveStatus('Add at least one listing first');
     setTimeout(() => setCalSaveStatus(''), 2000);
     return;
   }
-  calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
+  const byType = {};
+  PRODUCT_TYPES.forEach(t => { if (dayTypeCounts[t.name] > 0) byType[t.name] = dayTypeCounts[t.name]; });
+  calendarEntries[selectedDayKey] = {
+    count: total,
+    types: Object.keys(byType),
+    byType
+  };
   await saveCalendarEntries();
   renderCalendarMonth();
   renderStreak();
