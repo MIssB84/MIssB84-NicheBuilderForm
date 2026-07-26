@@ -759,12 +759,15 @@
   <div class="tab-panel" id="ideaVaultTab">
     <div class="card">
       <h2><span class="step-tag">Save For Later</span> Idea Vault</h2>
-      <div class="hint" style="margin-top:-8px;">Paste a listing URL or an image URL any time you spot something you want to come back to. Photos show as a thumbnail, everything else shows as a link card.</div>
+      <div class="hint" style="margin-top:-8px;">Paste a listing URL or an image URL any time you spot something you want to come back to. Photos show as a thumbnail, everything else shows as a link card. If you save an image, drop the matching Etsy listing link in the second box so you can jump straight to it later.</div>
 
       <div class="add-tag-row" style="margin-top:14px;">
         <input type="text" id="ideaUrlInput" placeholder="Paste a listing URL or image URL...">
         <button class="btn secondary" id="ideaPasteBtn">Paste from Clipboard</button>
         <button class="btn small" id="ideaAddBtn">Add</button>
+      </div>
+      <div class="add-tag-row" style="margin-top:8px;">
+        <input type="text" id="ideaListingUrlInput" placeholder="Optional: paste the actual Etsy listing link here too...">
       </div>
 
       <div id="ideaVaultGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; margin-top:22px;"></div>
@@ -2415,15 +2418,40 @@ function renderIdeaVault() {
     });
     body.appendChild(note);
 
+    const listingInput = document.createElement('input');
+    listingInput.type = 'text';
+    listingInput.className = 'idea-note';
+    listingInput.style.minHeight = 'auto';
+    listingInput.placeholder = 'Etsy listing link for this idea (optional)';
+    listingInput.value = item.listingUrl || '';
+    listingInput.addEventListener('input', () => {
+      ideaVaultItems[realIndex].listingUrl = listingInput.value.trim();
+      autosaveIdeaVault();
+    });
+    listingInput.addEventListener('blur', () => {
+      renderIdeaVault();
+    });
+    body.appendChild(listingInput);
+
     const actions = document.createElement('div');
     actions.className = 'idea-actions';
+
+    if (item.listingUrl) {
+      const listingLink = document.createElement('a');
+      listingLink.href = item.listingUrl;
+      listingLink.target = '_blank';
+      listingLink.rel = 'noopener';
+      listingLink.className = 'btn small';
+      listingLink.textContent = 'View Listing';
+      actions.appendChild(listingLink);
+    }
 
     const visitLink = document.createElement('a');
     visitLink.href = item.url;
     visitLink.target = '_blank';
     visitLink.rel = 'noopener';
     visitLink.className = 'btn secondary small';
-    visitLink.textContent = 'Open';
+    visitLink.textContent = looksLikeImageUrl(item.url) ? 'Open Image' : 'Open';
     actions.appendChild(visitLink);
 
     const copyBtn = document.createElement('button');
@@ -2464,10 +2492,12 @@ function buildLinkFace(url) {
   return face;
 }
 
-function addIdea(rawUrl) {
+function addIdea(rawUrl, rawListingUrl) {
   const url = rawUrl.trim();
   if (!url) return;
+  const listingUrl = (rawListingUrl || '').trim();
   const item = { url, note: '', addedAt: Date.now() };
+  if (listingUrl) item.listingUrl = listingUrl;
   ideaVaultItems.push(item);
   renderIdeaVault();
   autosaveIdeaVault();
@@ -2476,14 +2506,28 @@ function addIdea(rawUrl) {
 
 document.getElementById('ideaAddBtn').addEventListener('click', () => {
   const input = document.getElementById('ideaUrlInput');
-  addIdea(input.value);
+  const listingInput = document.getElementById('ideaListingUrlInput');
+  addIdea(input.value, listingInput.value);
   input.value = '';
+  listingInput.value = '';
 });
 
 document.getElementById('ideaUrlInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
-    addIdea(e.target.value);
+    const listingInput = document.getElementById('ideaListingUrlInput');
+    addIdea(e.target.value, listingInput.value);
+    e.target.value = '';
+    listingInput.value = '';
+  }
+});
+
+document.getElementById('ideaListingUrlInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const urlInput = document.getElementById('ideaUrlInput');
+    addIdea(urlInput.value, e.target.value);
+    urlInput.value = '';
     e.target.value = '';
   }
 });
@@ -2491,7 +2535,8 @@ document.getElementById('ideaUrlInput').addEventListener('keydown', (e) => {
 document.getElementById('ideaPasteBtn').addEventListener('click', () => {
   const btn = document.getElementById('ideaPasteBtn');
   pasteTextFromClipboard(btn, (text) => {
-    addIdea(text);
+    addIdea(text, document.getElementById('ideaListingUrlInput').value);
+    document.getElementById('ideaListingUrlInput').value = '';
   });
 });
 
