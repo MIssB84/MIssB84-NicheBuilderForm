@@ -2108,9 +2108,28 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     setTimeout(() => statusEl.textContent = '', 2000);
     return;
   }
+
+  // Step 1: reference images + AI prompts
+  uploadedImages = [];
+  renderThumbs();
+  document.getElementById('designKeywords').value = '';
+  document.getElementById('creativeDirection').value = '';
+  document.getElementById('imageUrlInput').value = '';
+  document.getElementById('promptsOutputBlock').style.display = 'none';
+  document.getElementById('promptsList').innerHTML = '';
+  document.getElementById('promptsStatus').textContent = '';
+  document.getElementById('promptsError').textContent = '';
+  promptHistory = [];
+  renderPromptHistoryButton();
+  document.getElementById('historyPanel').style.display = 'none';
+  document.getElementById('historyList').innerHTML = '';
+
+  // Step 2: pool, tags, title, description
   pastedPool = [];
   suggestedTagKeys = new Set();
   renderPool();
+  document.getElementById('poolBulkInput').value = '';
+  document.getElementById('poolSingleInput').value = '';
   tagsArray = [];
   renderTags();
   const titlePreview = document.getElementById('liveTitlePreview');
@@ -2118,12 +2137,16 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   updateLiveTitleCount('');
   document.getElementById('descriptionOutput').value = '';
   document.getElementById('descriptionOutputBlock').style.display = 'none';
+
   try {
+    await storageAPI.set('session:designKeywords', '');
+    await storageAPI.set('session:creativeDirection', '');
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
     await storageAPI.set('session:liveTitle:' + selectedType, '');
     await storageAPI.set('session:description:' + selectedType, '');
   } catch (e) {}
+
   const statusEl = document.getElementById('bottomBarStatus');
   statusEl.textContent = 'Cleared';
   setTimeout(() => statusEl.textContent = '', 2000);
