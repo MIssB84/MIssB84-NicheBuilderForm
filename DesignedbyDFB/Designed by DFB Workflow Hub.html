@@ -720,7 +720,7 @@
         id="calendarFrame"
         src="https://missb84.github.io/MIssB84-NicheBuilderForm/DesignedbyDFB/Listing%20Calendar.html"
         title="Listing Calendar"
-        style="width:100%; min-height:900px; border:none; display:block; border-radius:14px;"
+        style="width:100%; height:900px; border:none; display:block; border-radius:14px;"
         loading="lazy">
       </iframe>
     </div>
@@ -2184,6 +2184,30 @@ document.getElementById('changeApiKeyBtn').addEventListener('click', () => {
 });
 
 checkApiKeyUI();
+
+/* ---------- Listing Calendar iframe auto-resize ---------- */
+(function() {
+  const frame = document.getElementById('calendarFrame');
+  if (!frame) return;
+
+  function resizeFrame() {
+    try {
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      if (doc && doc.body) {
+        const h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+        if (h > 0) frame.style.height = (h + 20) + 'px';
+      }
+    } catch (e) {
+      // Different origin than the Hub — browser blocks reading its height.
+      // Falls back to the fixed height set in the style attribute.
+    }
+  }
+
+  frame.addEventListener('load', () => {
+    resizeFrame();
+    setInterval(resizeFrame, 700);
+  });
+})();
 
 /* ---------- Bestseller Finder ---------- */
 var bsfSelectedNiches = [];
