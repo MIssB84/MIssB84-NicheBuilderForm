@@ -37,7 +37,18 @@
     padding: 32px 20px 60px;
   }
 
-  .wrap { max-width: 880px; margin: 0 auto; }
+  .wrap { max-width: 1160px; margin: 0 auto; }
+
+  .cal-layout { display: flex; gap: 20px; align-items: flex-start; }
+  .cal-main { flex: 1 1 640px; min-width: 0; }
+  .cal-side { flex: 0 0 300px; }
+  .cal-side .card { position: sticky; top: 20px; margin-bottom: 0; }
+
+  @media (max-width: 860px) {
+    .cal-layout { flex-direction: column; }
+    .cal-side { flex: 1 1 auto; width: 100%; }
+    .cal-side .card { position: static; }
+  }
 
   h1 {
     font-family: 'Playfair Display', serif;
@@ -174,6 +185,13 @@
   .stepper-btn:hover { border-color: var(--rose); background: var(--sage-tint); }
   .type-count-value { width: 30px; text-align: center; font-size: 14px; font-weight: 700; color: var(--bg); }
   .day-total { font-size: 13.5px; font-weight: 700; color: var(--bg); margin-top: 14px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(20,15,13,0.55);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; z-index: 100;
+  }
+  .modal-card { width: 100%; max-width: 460px; margin: 0; max-height: 90vh; overflow-y: auto; }
 </style>
 </head>
 <body>
@@ -181,30 +199,38 @@
   <h1>Listing Calendar</h1>
   <div class="subhead">Log how many listings you added each day and which product types, so you can spot gaps and stay consistent.</div>
 
-  <div class="card">
-    <h2><span class="step-tag">Consistency</span> This Month</h2>
-    <div class="hint">Saves automatically in this browser as you go.</div>
+  <div class="cal-layout">
+    <div class="cal-main">
+      <div class="card">
+        <h2><span class="step-tag">Consistency</span> This Month</h2>
+        <div class="hint">Saves automatically in this browser as you go.</div>
 
-    <div class="streak-row" id="streakRow"></div>
+        <div class="streak-row" id="streakRow"></div>
 
-    <div class="cal-header">
-      <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
-      <div class="cal-month-label" id="calMonthLabel"></div>
-      <button class="btn secondary small" id="calNextBtn">Next ›</button>
+        <div class="cal-header">
+          <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
+          <div class="cal-month-label" id="calMonthLabel"></div>
+          <button class="btn secondary small" id="calNextBtn">Next ›</button>
+        </div>
+
+        <div class="cal-legend" id="calLegend"></div>
+
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
     </div>
 
-    <div class="cal-legend" id="calLegend"></div>
-
-    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-side">
+      <div class="card">
+        <h2><span class="step-tag">Snapshot</span> <span id="statsMonthLabel"></span></h2>
+        <div class="stats-total" id="statsTotal"></div>
+        <div class="stats-bars" id="statsBars"></div>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="card">
-    <h2><span class="step-tag">Snapshot</span> <span id="statsMonthLabel"></span></h2>
-    <div class="stats-total" id="statsTotal"></div>
-    <div class="stats-bars" id="statsBars"></div>
-  </div>
-
-  <div class="card" id="dayEditorCard" style="display:none;">
+<div class="modal-overlay" id="dayEditorOverlay" style="display:none;">
+  <div class="card modal-card" id="dayEditorCard">
     <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
 
     <label class="first">How many of each type did you add?</label>
@@ -390,9 +416,7 @@ function openDayEditor(key, d, month, year) {
 
   renderTypeCountList();
 
-  const editorCard = document.getElementById('dayEditorCard');
-  editorCard.style.display = 'block';
-  editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('dayEditorOverlay').style.display = 'flex';
 }
 
 function renderTypeCountList() {
@@ -482,11 +506,14 @@ document.getElementById('deleteDayBtn').addEventListener('click', async () => {
 });
 
 function closeDayEditor() {
-  document.getElementById('dayEditorCard').style.display = 'none';
+  document.getElementById('dayEditorOverlay').style.display = 'none';
   selectedDayKey = null;
 }
 
 document.getElementById('closeDayEditorBtn').addEventListener('click', closeDayEditor);
+document.getElementById('dayEditorOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'dayEditorOverlay') closeDayEditor();
+});
 
 document.getElementById('calPrevBtn').addEventListener('click', () => {
   calViewDate.setMonth(calViewDate.getMonth() - 1);
