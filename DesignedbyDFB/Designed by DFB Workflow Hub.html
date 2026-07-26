@@ -715,45 +715,16 @@
   </div>
 
   <div class="tab-panel" id="calendarTab">
-    <div class="card">
-      <h2><span class="step-tag">Consistency</span> Listing Calendar</h2>
-      <div class="hint">Log how many listings you added each day and which product types, so you can spot gaps and stay consistent. This saves automatically in this browser as you go, but browsers can occasionally clear saved data (privacy settings, clearing cache, switching browsers/devices). Click <strong>Save Backup File</strong> every so often, and if the calendar ever comes up blank, use <strong>Restore from Backup</strong> to bring it right back.</div>
-
-      <div class="cal-backup-row" style="display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 4px;">
-        <button class="btn secondary small" id="calExportBtn">⬇ Save Backup File</button>
-        <button class="btn secondary small" id="calImportBtn">⬆ Restore from Backup</button>
-        <input type="file" id="calImportFile" accept="application/json" style="display:none;">
-        <span class="hint" id="calSaveStatus" style="margin:0; align-self:center;"></span>
-      </div>
-
-      <div class="streak-row" id="streakRow"></div>
-
-      <div class="cal-header">
-        <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
-        <div class="cal-month-label" id="calMonthLabel"></div>
-        <button class="btn secondary small" id="calNextBtn">Next ›</button>
-      </div>
-
-      <div class="cal-legend" id="calLegend"></div>
-
-      <div class="cal-grid" id="calGrid"></div>
+    <div class="card" style="padding:0; overflow:visible;">
+      <iframe
+        id="calendarFrame"
+        src="PASTE-YOUR-CALENDAR-LINK-HERE"
+        title="Listing Calendar"
+        style="width:100%; min-height:900px; border:none; display:block; border-radius:14px;"
+        loading="lazy">
+      </iframe>
     </div>
-
-    <div class="card" id="dayEditorCard" style="display:none;">
-      <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
-
-      <label class="first">How many listings did you add?</label>
-      <div class="count-row" id="countRow"></div>
-
-      <label>Product type(s) added</label>
-      <div class="type-multiselect" id="typeMultiselect"></div>
-
-      <div class="copy-all-row">
-        <button class="btn" id="saveDayBtn">Save Day</button>
-        <button class="btn secondary" id="deleteDayBtn">Delete Entry</button>
-        <button class="btn secondary" id="closeDayEditorBtn">Close</button>
-      </div>
-    </div>
+    <div class="hint" style="margin-top:-8px;">This lives in its own file now, so updates to the rest of this Hub will never touch its saved data. If the calendar above shows a broken-link icon, edit the <code>src</code> on this tab to your calendar tool's GitHub Pages link.</div>
   </div>
 
   <div class="tab-panel" id="ideaVaultTab">
@@ -999,7 +970,6 @@ async function saveAllNow() {
     }
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
     await storageAPI.set('session:creativeDirection', document.getElementById('creativeDirection').value);
-    await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
   } catch (e) {}
   flashSavedIndicator();
 }
@@ -2283,11 +2253,6 @@ document.getElementById('tabNav').addEventListener('click', async (e) => {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(btn.dataset.tab).classList.add('active');
   document.getElementById('pageWrap').classList.toggle('wide', btn.dataset.tab === 'calendarTab');
-  if (btn.dataset.tab === 'calendarTab') {
-    await loadCalendarEntries();
-    renderCalendarMonth();
-    renderStreak();
-  }
   if (btn.dataset.tab === 'ideaVaultTab') {
     await initIdeaVault();
   }
@@ -2540,265 +2505,6 @@ document.getElementById('ideaPasteBtn').addEventListener('click', () => {
   });
 });
 
-/* ---------- Listing Calendar ---------- */
-
-const PRODUCT_TYPES = [
-  { name: 'Glass Tumbler Wrap', color: '#c9a96e' },
-  { name: 'Laser Wrap', color: '#8a9bb0' },
-  { name: 'PNG', color: '#b98a9e' },
-  { name: 'Tumbler Wrap', color: '#8fa88f' }
-];
-
-let calendarEntries = {};
-let calViewDate = new Date();
-calViewDate.setDate(1);
-let selectedDayKey = null;
-let selectedCount = null;
-let selectedTypes = new Set();
-
-function dateKey(y, m, d) {
-  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-}
-function todayKey() {
-  const t = new Date();
-  return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
-}
-
-let calendarLoaded = false;
-
-async function loadCalendarEntries() {
-  try {
-    const result = await storageAPI.get('calendar:entries');
-    if (result && result.value) {
-      calendarEntries = JSON.parse(result.value);
-    } else if (!calendarLoaded) {
-      // Only treat as "nothing saved yet" the first time. If we've already
-      // loaded real data once this session, never let a failed/empty read
-      // wipe it out from memory.
-      calendarEntries = {};
-    }
-  } catch (e) {
-    // Parse or read error: keep whatever is already in memory instead of
-    // resetting to blank, so a bad read can't wipe good data.
-    if (!calendarLoaded) calendarEntries = {};
-  }
-  calendarLoaded = true;
-  setCalSaveStatus('');
-}
-
-async function saveCalendarEntries() {
-  try {
-    await storageAPI.set('calendar:entries', JSON.stringify(calendarEntries));
-    setCalSaveStatus('Saved just now');
-  } catch (e) {
-    setCalSaveStatus('Could not save — use Save Backup File to be safe');
-  }
-}
-
-function setCalSaveStatus(msg) {
-  const el = document.getElementById('calSaveStatus');
-  if (el) el.textContent = msg;
-}
-
-function exportCalendarBackup() {
-  const blob = new Blob([JSON.stringify(calendarEntries, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const today = new Date();
-  const stamp = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  a.href = url;
-  a.download = 'listing-calendar-backup-' + stamp + '.json';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  setCalSaveStatus('Backup file downloaded');
-}
-
-function importCalendarBackup(file) {
-  const reader = new FileReader();
-  reader.onload = async () => {
-    try {
-      const imported = JSON.parse(reader.result);
-      if (typeof imported !== 'object' || imported === null || Array.isArray(imported)) throw new Error('bad format');
-      calendarEntries = Object.assign({}, calendarEntries, imported);
-      await saveCalendarEntries();
-      renderCalendarMonth();
-      renderStreak();
-      setCalSaveStatus('Backup restored');
-    } catch (e) {
-      setCalSaveStatus('That file did not look like a calendar backup');
-    }
-  };
-  reader.readAsText(file);
-}
-
-document.getElementById('calExportBtn').addEventListener('click', exportCalendarBackup);
-document.getElementById('calImportBtn').addEventListener('click', () => document.getElementById('calImportFile').click());
-document.getElementById('calImportFile').addEventListener('change', (e) => {
-  if (e.target.files && e.target.files[0]) importCalendarBackup(e.target.files[0]);
-  e.target.value = '';
-});
-
-function renderCalLegend() {
-  const el = document.getElementById('calLegend');
-  el.innerHTML = PRODUCT_TYPES.map(t =>
-    `<span class="cal-legend-item"><span class="cal-legend-dot" style="background:${t.color}"></span>${t.name}</span>`
-  ).join('');
-}
-
-function renderCalendarMonth() {
-  const year = calViewDate.getFullYear();
-  const month = calViewDate.getMonth();
-  document.getElementById('calMonthLabel').textContent = calViewDate.toLocaleDateString([], { month: 'long', year: 'numeric' });
-
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-  ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
-    const label = document.createElement('div');
-    label.className = 'cal-daylabel';
-    label.textContent = d;
-    grid.appendChild(label);
-  });
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const tKey = todayKey();
-
-  for (let i = 0; i < firstDay; i++) {
-    const empty = document.createElement('div');
-    empty.className = 'cal-cell empty';
-    grid.appendChild(empty);
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const key = dateKey(year, month, d);
-    const entry = calendarEntries[key];
-    const cell = document.createElement('div');
-    cell.className = 'cal-cell' + (key === tKey ? ' today' : '');
-    const typesHtml = (entry && entry.types && entry.types.length)
-      ? `<div class="cal-types">${entry.types.map(tn => {
-          const pt = PRODUCT_TYPES.find(p => p.name === tn);
-          return `<span class="cal-type-label" style="background:${pt ? pt.color : '#999'}">${tn}</span>`;
-        }).join('')}</div>`
-      : '';
-    cell.innerHTML = `<span class="cal-date">${d}</span>${entry ? `<span class="cal-count">${entry.count} listing${entry.count === 1 ? '' : 's'}</span>` : ''}${typesHtml}`;
-    cell.addEventListener('click', () => openDayEditor(key, d, month, year));
-    grid.appendChild(cell);
-  }
-}
-
-function openDayEditor(key, d, month, year) {
-  selectedDayKey = key;
-  const entry = calendarEntries[key];
-  selectedCount = entry ? entry.count : null;
-  selectedTypes = new Set(entry ? entry.types : []);
-
-  const dateObj = new Date(year, month, d);
-  document.getElementById('dayEditorDate').textContent = dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
-  renderCountRow();
-  renderTypeMultiselect();
-
-  const editorCard = document.getElementById('dayEditorCard');
-  editorCard.style.display = 'block';
-  editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function renderCountRow() {
-  const row = document.getElementById('countRow');
-  row.innerHTML = '';
-  for (let n = 1; n <= 10; n++) {
-    const btn = document.createElement('button');
-    btn.className = 'count-btn' + (selectedCount === n ? ' active' : '');
-    btn.textContent = n;
-    btn.addEventListener('click', () => {
-      selectedCount = (selectedCount === n) ? null : n;
-      renderCountRow();
-    });
-    row.appendChild(btn);
-  }
-}
-
-function renderTypeMultiselect() {
-  const wrap = document.getElementById('typeMultiselect');
-  wrap.innerHTML = '';
-  PRODUCT_TYPES.forEach(t => {
-    const isActive = selectedTypes.has(t.name);
-    const chip = document.createElement('button');
-    chip.className = 'type-ms-chip' + (isActive ? ' active' : '');
-    if (isActive) chip.style.background = t.color;
-    chip.innerHTML = `<span class="dot" style="background:${isActive ? '#fff' : t.color}"></span>${t.name}`;
-    chip.addEventListener('click', () => {
-      if (selectedTypes.has(t.name)) selectedTypes.delete(t.name);
-      else selectedTypes.add(t.name);
-      renderTypeMultiselect();
-    });
-    wrap.appendChild(chip);
-  });
-}
-
-document.getElementById('saveDayBtn').addEventListener('click', async () => {
-  if (!selectedDayKey) return;
-  if (!selectedCount) {
-    const statusEl = document.getElementById('bottomBarStatus');
-    statusEl.textContent = 'Pick how many listings first';
-    setTimeout(() => statusEl.textContent = '', 2000);
-    return;
-  }
-  calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
-  await saveCalendarEntries();
-  renderCalendarMonth();
-  renderStreak();
-  closeDayEditor();
-});
-
-document.getElementById('deleteDayBtn').addEventListener('click', async () => {
-  if (!selectedDayKey) return;
-  delete calendarEntries[selectedDayKey];
-  await saveCalendarEntries();
-  renderCalendarMonth();
-  renderStreak();
-  closeDayEditor();
-});
-
-function closeDayEditor() {
-  document.getElementById('dayEditorCard').style.display = 'none';
-  selectedDayKey = null;
-}
-
-document.getElementById('closeDayEditorBtn').addEventListener('click', closeDayEditor);
-
-document.getElementById('calPrevBtn').addEventListener('click', () => {
-  calViewDate.setMonth(calViewDate.getMonth() - 1);
-  renderCalendarMonth();
-});
-
-document.getElementById('calNextBtn').addEventListener('click', () => {
-  calViewDate.setMonth(calViewDate.getMonth() + 1);
-  renderCalendarMonth();
-});
-
-function renderStreak() {
-  const el = document.getElementById('streakRow');
-  let streak = 0;
-  let cursor = new Date();
-  while (true) {
-    const key = dateKey(cursor.getFullYear(), cursor.getMonth(), cursor.getDate());
-    const entry = calendarEntries[key];
-    if (entry && entry.count > 0) {
-      streak++;
-      cursor.setDate(cursor.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-  el.textContent = streak > 0
-    ? `🔥 ${streak} day streak, keep it going`
-    : 'No listing logged for today yet, add one to start a streak';
-}
-
-renderCalLegend();
 
 </script>
 </body>
