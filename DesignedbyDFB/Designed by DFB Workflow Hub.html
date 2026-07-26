@@ -838,8 +838,6 @@ typeRow.addEventListener('click', async (e) => {
   await loadBakedTags(selectedType);
   await loadBakedPieces(selectedType);
   await restoreWorkSession(selectedType);
-  if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
-  if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
 });
 
 const DEFAULT_BAKED_TAGS = {
@@ -1005,22 +1003,30 @@ async function restoreWorkSession(type) {
 
   try {
     const savedTitle = await storageAPI.get('session:liveTitle:' + type);
-    if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null && savedTitle.value !== '') {
-      const staleList = OLD_DEFAULT_BAKED[type] || [];
-      const savedTrimmed = savedTitle.value.trim();
-      const isStaleDefault = staleList.includes(savedTrimmed) || staleList.some(s => buildMarkedTitle(s) === savedTrimmed);
-      const preview = document.getElementById('liveTitlePreview');
-      const valueToUse = isStaleDefault ? buildMarkedTitle(bakedPiecesValue) : savedTitle.value;
-      preview.value = valueToUse;
-      updateLiveTitleCount(valueToUse);
+    const preview = document.getElementById('liveTitlePreview');
+    if (savedTitle && savedTitle.value !== undefined && savedTitle.value !== null) {
+      if (savedTitle.value === '') {
+        preview.value = '';
+        updateLiveTitleCount('');
+      } else {
+        const staleList = OLD_DEFAULT_BAKED[type] || [];
+        const savedTrimmed = savedTitle.value.trim();
+        const isStaleDefault = staleList.includes(savedTrimmed) || staleList.some(s => buildMarkedTitle(s) === savedTrimmed);
+        const valueToUse = isStaleDefault ? buildMarkedTitle(bakedPiecesValue) : savedTitle.value;
+        preview.value = valueToUse;
+        updateLiveTitleCount(valueToUse);
+      }
     }
   } catch (e) {}
   renderPool();
 
   try {
     const savedTags = await storageAPI.get('session:tags:' + type);
-    tagsArray = (savedTags && savedTags.value) ? JSON.parse(savedTags.value) : [];
-    if (tagsArray.length === 0) tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+    if (savedTags && savedTags.value !== undefined && savedTags.value !== null) {
+      tagsArray = JSON.parse(savedTags.value);
+    } else {
+      tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
+    }
   } catch (e) {
     tagsArray = bakedTagsValue.split(',').map(s => s.trim()).filter(Boolean);
   }
@@ -2103,16 +2109,19 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
     return;
   }
   pastedPool = [];
-  ensurePersistentPoolWords();
   suggestedTagKeys = new Set();
   renderPool();
-  seedTagsFromBakedIn();
-  seedLiveTitle();
+  tagsArray = [];
+  renderTags();
+  const titlePreview = document.getElementById('liveTitlePreview');
+  titlePreview.value = '';
+  updateLiveTitleCount('');
   document.getElementById('descriptionOutput').value = '';
   document.getElementById('descriptionOutputBlock').style.display = 'none';
   try {
     await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
     await storageAPI.set('session:tags:' + selectedType, JSON.stringify(tagsArray));
+    await storageAPI.set('session:liveTitle:' + selectedType, '');
     await storageAPI.set('session:description:' + selectedType, '');
   } catch (e) {}
   const statusEl = document.getElementById('bottomBarStatus');
@@ -2132,8 +2141,6 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
         await loadBakedTags(selectedType);
         await loadBakedPieces(selectedType);
         await restoreWorkSession(selectedType);
-        if (tagsArray.length === 0 && bakedTagsValue) seedTagsFromBakedIn();
-        if (!document.getElementById('liveTitlePreview').value && bakedPiecesValue) seedLiveTitle();
       }
     }
   } catch (e) {}
