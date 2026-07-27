@@ -289,6 +289,7 @@
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showPage('library')">Kit Library</div>
     <div class="nav-tab" onclick="showPage('screenshot')">📸 Add via Screenshot</div>
+    <div class="nav-tab" onclick="showPage('apikey')">🔑 API Key</div>
   </div>
 </nav>
 
@@ -443,6 +444,34 @@
   <div id="ss-result"></div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     PAGE 3 — API KEY
+══════════════════════════════════════════ -->
+<div class="page" id="page-apikey">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#f0d4a0"></div>
+      <div class="gem" style="background:#e8a0b8"></div>
+      <div class="gem" style="background:#a8c5b0"></div>
+    </div>
+    <h2>API <em>Key</em></h2>
+    <p>Needed so the Screenshot tab can read colors once this file is downloaded and running on its own.</p>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>Anthropic API Key</label>
+      <input type="text" id="api-key-input" placeholder="sk-ant-..." />
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveApiKey()">Save Key</button>
+    <div id="api-key-status" style="font-size:0.82rem;color:var(--muted);margin-top:12px;"></div>
+  </div>
+
+  <div class="card" style="font-size:0.85rem;color:var(--muted);line-height:1.6;">
+    <strong style="color:var(--text);">Where to get a key:</strong> console.anthropic.com → Settings → API Keys → Create Key. Paste it above and hit Save — it's stored only in this browser, never sent anywhere except directly to Anthropic when you extract colors.
+  </div>
+</div>
+
 <!-- EDIT KIT MODAL -->
 <div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;">
   <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
@@ -532,6 +561,29 @@ function showPage(id) {
   event.currentTarget.classList.add('active');
   if (id === 'library') renderLibrary();
   if (id === 'screenshot') populateSSDatalist();
+  if (id === 'apikey') loadApiKeyStatus();
+}
+
+// ── API KEY ───────────────────────────────────────────
+function getApiKey() {
+  return localStorage.getItem('dac_tracker_api_key') || '';
+}
+
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key) { toast('Paste a key first.'); return; }
+  localStorage.setItem('dac_tracker_api_key', key);
+  document.getElementById('api-key-input').value = '';
+  loadApiKeyStatus();
+  toast('✓ API key saved');
+}
+
+function loadApiKeyStatus() {
+  const el = document.getElementById('api-key-status');
+  const key = getApiKey();
+  el.textContent = key
+    ? `✓ Key saved (ends in ...${key.slice(-4)})`
+    : 'No key saved yet — the Screenshot tab won\u2019t work without one.';
 }
 
 // ── MANUAL ADD TOGGLE ────────────────────────────────
@@ -886,6 +938,12 @@ async function extractAndSave() {
   if (!name) { toast('Enter a kit name.'); return; }
   if (!ssImageBase64) { toast('Add a screenshot first.'); return; }
 
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    toast('Add your API key in the API Key tab first.');
+    return;
+  }
+
   const btn = document.getElementById('extract-btn');
   btn.disabled = true;
   btn.innerHTML = `<span class="spinner"></span> Reading colors...`;
@@ -893,7 +951,12 @@ async function extractAndSave() {
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: 2000,
@@ -907,7 +970,11 @@ async function extractAndSave() {
       })
     });
 
-    if (!response.ok) throw new Error('API request failed');
+    if (!response.ok) {
+      const errBody = await response.json().catch(() => null);
+      const errMsg = errBody?.error?.message || `API request failed (${response.status})`;
+      throw new Error(errMsg);
+    }
     const result = await response.json();
     const textBlock = result.content.find(b => b.type === 'text');
     if (!textBlock) throw new Error('No text in response');
@@ -954,7 +1021,9 @@ async function extractAndSave() {
 
   } catch (err) {
     console.error(err);
-    toast('Could not read that screenshot — try a clearer image or add colors manually.');
+    toast(err.message && err.message !== 'No colors found in screenshot' && err.message !== 'Could not parse extracted colors'
+      ? `Error: ${err.message}`
+      : 'Could not read that screenshot — try a clearer image or add colors manually.');
   } finally {
     btn.innerHTML = 'Extract Colors & Save';
     updateExtractBtnState();
