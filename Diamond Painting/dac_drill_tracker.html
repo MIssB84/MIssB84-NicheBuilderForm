@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💎 DAC Drill Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface2: #fdf5f8;
+    --accent: #c084a0;
+    --accent-dark: #a06882;
+    --accent2: #7a9e87;
+    --accent2-dark: #5d7d69;
+    --gold: #c9a96e;
+    --text: #2a2320;
+    --muted: #9b8e88;
+    --border: #e8e0d8;
+    --border2: #f0e8e4;
+    --chip-bg: #f5eef3;
+    --danger: #c0444a;
+    --danger-light: #fdf0f0;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--text);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    padding: 16px 0;
+    margin-right: 24px;
+    white-space: nowrap;
+  }
+
+  .nav-tabs { display: flex; gap: 0; flex: 1; }
+
+  .nav-tab {
+    padding: 16px 20px;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: rgba(255,255,255,0.85); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .page { display: none; padding: 32px 24px 80px; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-header { margin-bottom: 28px; }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .section-header h2 em { font-style: italic; color: var(--accent); }
+  .section-header p { font-size: 0.875rem; color: var(--muted); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .row { display: flex; gap: 12px; }
+  .row .field { flex: 1; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 20px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+  .btn-green { background: var(--accent2); color: white; }
+  .btn-green:hover { background: var(--accent2-dark); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; border: 1.5px solid #e8c5c5; color: var(--danger); font-size: 0.8rem; padding: 6px 12px; }
+  .btn-danger:hover { background: var(--danger-light); }
+  .btn-full { width: 100%; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+  /* ── DMC CHIPS ── */
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip {
+    background: var(--chip-bg);
+    border: 1px solid #e8d5e0;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── KIT LIST ── */
+  .kit-item {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    background: var(--surface);
+    transition: border-color 0.2s;
+  }
+  .kit-item:hover { border-color: var(--accent); }
+  .kit-item-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; }
+  .kit-item-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .kit-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kit-meta { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .badge { font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .badge-shape { background: #f0ece6; color: var(--muted); }
+  .badge-count { background: var(--chip-bg); color: var(--accent); }
+  .badge-empty { background: #fdf0f0; color: var(--danger); }
+  .kit-expand { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border2); }
+  .kit-expand.open { display: block; }
+  .kit-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.88rem; }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+  /* ── SEARCH BOX ── */
+  .search-wrap { position: relative; }
+  .search-wrap input { padding-left: 38px; font-size: 1rem; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem; pointer-events: none; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* ── STATS ROW ── */
+  .stats-row { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-card { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--accent); }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  .gem-row { display: flex; gap: 4px; margin-bottom: 12px; }
+  .gem { width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg); }
+
+  /* ── COLLAPSIBLE ── */
+  .collapsible-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; font-weight: 600; color: var(--accent-dark);
+    cursor: pointer; margin-bottom: 14px;
+  }
+  .collapsible-body { display: none; }
+  .collapsible-body.open { display: block; }
+
+  /* ── DROPZONE ── */
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
+  }
+  .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: var(--chip-bg); }
+  .dropzone-icon { font-size: 2rem; margin-bottom: 8px; }
+  .dropzone-text { font-size: 0.85rem; color: var(--muted); }
+  .dropzone-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .preview-wrap { position: relative; display: inline-block; margin-top: 4px; }
+  .preview-img { max-width: 100%; max-height: 320px; border-radius: 12px; border: 1px solid var(--border); display: block; }
+  .preview-remove {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.6); color: white; border: none;
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 0.9rem;
+  }
+
+  .result-card {
+    background: linear-gradient(135deg,#fdf0f5,#f5f0fd);
+    border: 1.5px solid var(--accent);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 18px;
+  }
+  .result-title { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--accent-dark); margin-bottom: 4px; }
+  .result-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; }
+
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .row { flex-direction: column; }
+    .nav-tab { padding: 14px 12px; font-size: 0.78rem; }
+    .nav-brand { font-size: 0.95rem; margin-right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">💎 DAC Tracker</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('library')">Kit Library</div>
+    <div class="nav-tab" onclick="showPage('screenshot')">📸 Add via Screenshot</div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — KIT LIBRARY
+══════════════════════════════════════════ -->
+<div class="page active" id="page-library">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#e8a0b8"></div>
+      <div class="gem" style="background:#a8c5b0"></div>
+      <div class="gem" style="background:#b5c8f0"></div>
+      <div class="gem" style="background:#f0d4a0"></div>
+    </div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <h2>Kit <em>Library</em></h2>
+        <p>Every kit and its drill colors, all in one place.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-top:6px;">
+        <span id="save-indicator" style="font-size:0.75rem;color:var(--accent2);font-weight:600;opacity:0;transition:opacity 0.3s;">✓ Saved</span>
+        <button class="btn btn-ghost" style="font-size:0.8rem;padding:8px 14px;" onclick="exportBackup()">⬇ Export Backup</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="stats-row" class="stats-row"></div>
+
+  <!-- Search -->
+  <div class="card">
+    <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Find a Color</div>
+    <div class="row">
+      <div class="field" style="flex:2;margin-bottom:0;">
+        <div class="search-wrap">
+          <span class="search-icon">💎</span>
+          <input type="text" id="quick-dmc-search" placeholder="DMC code, e.g. 310 or Z704..." oninput="quickDMCSearch()" />
+        </div>
+      </div>
+      <div class="field" style="max-width:160px;margin-bottom:0;">
+        <select id="quick-shape-filter" onchange="quickDMCSearch()">
+          <option value="">Any shape</option>
+          <option value="Round">Round</option>
+          <option value="Square">Square</option>
+        </select>
+      </div>
+      <button class="btn btn-ghost" style="flex-shrink:0;" onclick="clearQuickSearch()" title="Clear search">✕</button>
+    </div>
+    <div id="quick-dmc-results"></div>
+  </div>
+
+  <!-- Filter by kit name -->
+  <div class="field" style="margin-bottom:16px;">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="library-search" placeholder="Filter kits by name..." oninput="renderLibrary()" />
+    </div>
+  </div>
+
+  <!-- Manual add, collapsed by default -->
+  <div class="collapsible-toggle" onclick="toggleManualAdd()">
+    <span id="manual-add-arrow">▸</span> Add a kit manually
+  </div>
+  <div class="collapsible-body" id="manual-add-body">
+    <div class="card">
+      <div class="row">
+        <div class="field">
+          <label>Kit Name</label>
+          <input type="text" id="add-kit-name" placeholder="e.g. Ghost Cafe" />
+        </div>
+        <div class="field" style="max-width:140px">
+          <label>Shape</label>
+          <select id="add-kit-shape">
+            <option value="">Select</option>
+            <option value="Round">Round</option>
+            <option value="Square">Square</option>
+          </select>
+        </div>
+        <div class="field" style="max-width:160px">
+          <label>Size (optional)</label>
+          <input type="text" id="add-kit-size" placeholder="e.g. 22 x 28 inch" />
+        </div>
+      </div>
+      <div class="field">
+        <label>DMC Numbers — comma-separated</label>
+        <textarea id="add-kit-dmc" placeholder="122, 129, 141, 152, 169, 223, 300, 310 ..."></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="addKit()">+ Add Kit</button>
+    </div>
+  </div>
+
+  <div id="kit-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — ADD VIA SCREENSHOT
+══════════════════════════════════════════ -->
+<div class="page" id="page-screenshot">
+  <div class="section-header">
+    <div class="gem-row">
+      <div class="gem" style="background:#b5c8f0"></div>
+      <div class="gem" style="background:#f0d4a0"></div>
+      <div class="gem" style="background:#e8a0b8"></div>
+    </div>
+    <h2>Add via <em>Screenshot</em></h2>
+    <p>Paste or upload the kit's color key. It reads the Code column and saves it straight to the kit.</p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="field">
+        <label>Kit Name</label>
+        <input type="text" id="ss-kit-name" placeholder="Start typing..." list="ss-kit-list" oninput="onSSNameInput()" />
+        <datalist id="ss-kit-list"></datalist>
+      </div>
+      <div class="field" style="max-width:140px">
+        <label>Shape</label>
+        <select id="ss-kit-shape">
+          <option value="">Select</option>
+          <option value="Round">Round</option>
+          <option value="Square">Square</option>
+        </select>
+      </div>
+      <div class="field" style="max-width:160px">
+        <label>Size (optional)</label>
+        <input type="text" id="ss-kit-size" placeholder="e.g. 22 x 28 inch" />
+      </div>
+    </div>
+    <div id="ss-existing-note" style="display:none;font-size:0.8rem;color:var(--accent-dark);background:var(--chip-bg);border-radius:8px;padding:8px 12px;margin-bottom:16px;"></div>
+
+    <div class="field">
+      <label>Color Key Screenshot</label>
+      <button class="btn btn-primary btn-full" id="paste-btn" onclick="pasteFromClipboard()" style="margin-bottom:10px;">📋 Paste from Clipboard</button>
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('ss-file-input').click()">
+        <div id="dropzone-empty">
+          <div class="dropzone-icon">📸</div>
+          <div class="dropzone-text">Or click here to upload a file</div>
+          <div class="dropzone-sub">Works best with the Number / Symbol / Code key sheet</div>
+        </div>
+        <div id="dropzone-preview" style="display:none;">
+          <div class="preview-wrap">
+            <img id="preview-img" class="preview-img" />
+            <button class="preview-remove" onclick="event.stopPropagation(); clearImage();">✕</button>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="ss-file-input" accept="image/*" style="display:none;" onchange="handleFileInput(event)" />
+    </div>
+
+    <button class="btn btn-primary btn-full" id="extract-btn" onclick="extractAndSave()" disabled>Extract Colors & Save</button>
+  </div>
+
+  <div id="ss-result"></div>
+</div>
+
+<!-- EDIT KIT MODAL -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px;">Edit Kit</h3>
+    <div class="field">
+      <label>Kit Name</label>
+      <input type="text" id="edit-kit-name" />
+    </div>
+    <div class="row">
+      <div class="field" style="max-width:140px">
+        <label>Shape</label>
+        <select id="edit-kit-shape">
+          <option value="Unknown">Unknown</option>
+          <option value="Round">Round</option>
+          <option value="Square">Square</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Size</label>
+        <input type="text" id="edit-kit-size" placeholder="e.g. 22 x 28 inch" />
+      </div>
+    </div>
+    <div class="field">
+      <label>DMC Numbers — comma-separated</label>
+      <textarea id="edit-kit-dmc" placeholder="122, 129, 141, 152 ..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="submitEditKit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ────────────────────────────────────────────
+const STORAGE_KEY = 'dac_tracker_v1';
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      parsed.kits = parsed.kits || [];
+      return parsed;
+    }
+    const seeded = { kits: [] };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
+    return seeded;
+  } catch { return { kits: [] }; }
+}
+
+function saveData(d) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+  showSaveIndicator();
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  el.textContent = '✓ Saved';
+  el.style.opacity = '1';
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(() => { el.style.opacity = '0'; }, 2000);
+}
+
+function exportBackup() {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dac_tracker_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup downloaded!');
+}
+
+let data = loadData();
+
+// ── NAV ──────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'library') renderLibrary();
+  if (id === 'screenshot') populateSSDatalist();
+}
+
+// ── MANUAL ADD TOGGLE ────────────────────────────────
+function toggleManualAdd() {
+  const body = document.getElementById('manual-add-body');
+  const arrow = document.getElementById('manual-add-arrow');
+  body.classList.toggle('open');
+  arrow.textContent = body.classList.contains('open') ? '▾' : '▸';
+}
+
+// ── ADD KIT (manual) ─────────────────────────────────
+function addKit() {
+  const name = document.getElementById('add-kit-name').value.trim();
+  const shape = document.getElementById('add-kit-shape').value;
+  const size = document.getElementById('add-kit-size').value.trim();
+  const rawDMC = document.getElementById('add-kit-dmc').value.trim();
+
+  if (!name) { toast('Enter a kit name.'); return; }
+
+  const dmc = rawDMC ? rawDMC.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  const kit = { id: Date.now(), name, shape: shape || 'Unknown', size, dmc };
+  data.kits.push(kit);
+  saveData(data);
+
+  document.getElementById('add-kit-name').value = '';
+  document.getElementById('add-kit-shape').value = '';
+  document.getElementById('add-kit-size').value = '';
+  document.getElementById('add-kit-dmc').value = '';
+
+  renderLibrary();
+  toast(`✓ ${name} added (${dmc.length} colors)`);
+}
+
+// ── RENDER LIBRARY ───────────────────────────────────
+function renderLibrary() {
+  const filter = (document.getElementById('library-search')?.value || '').toLowerCase();
+
+  const sorted = [...data.kits].sort((a, b) => a.name.localeCompare(b.name));
+  const kits = sorted.filter(k => k.name.toLowerCase().includes(filter));
+
+  const withColors = data.kits.filter(k => k.dmc && k.dmc.length > 0).length;
+  const needColors = data.kits.length - withColors;
+
+  const statsEl = document.getElementById('stats-row');
+  statsEl.innerHTML = `
+    <div class="stat-card"><div class="stat-num">${data.kits.length}</div><div class="stat-label">Kits logged</div></div>
+    <div class="stat-card"><div class="stat-num">${withColors}</div><div class="stat-label">Have colors</div></div>
+    <div class="stat-card"><div class="stat-num">${needColors}</div><div class="stat-label">Still need colors</div></div>
+  `;
+
+  const el = document.getElementById('kit-list');
+  if (!kits.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📦</div>No kits yet. Add one manually or head to the Screenshot tab.</div>`;
+    return;
+  }
+
+  const bulkBar = `
+    <div id="bulk-toolbar" style="display:none;align-items:center;justify-content:space-between;background:#fff3e0;border:1px solid #f0d4a0;border-radius:10px;padding:10px 16px;margin-bottom:12px;gap:10px;flex-wrap:wrap;">
+      <span id="bulk-count" style="font-size:0.85rem;font-weight:600;color:var(--text);">0 kits selected</span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:0.8rem;padding:7px 14px;" onclick="clearSelection()">Clear</button>
+        <button class="btn btn-danger" style="font-size:0.8rem;padding:7px 14px;" onclick="deleteSelected()">Delete Selected</button>
+      </div>
+    </div>
+  `;
+
+  el.innerHTML = bulkBar + kits.map((kit) => {
+    const globalNum = sorted.indexOf(kit) + 1;
+    const hasColors = kit.dmc && kit.dmc.length > 0;
+    return `
+    <div class="kit-item" id="kit-${kit.id}">
+      <div class="kit-item-header" style="gap:10px;">
+        <input type="checkbox" class="kit-checkbox" data-id="${kit.id}" onchange="updateBulkToolbar()" style="flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--accent);" />
+        <div style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;" onclick="toggleKit(${kit.id})">
+          <div class="kit-item-left">
+            <span style="font-size:0.78rem;font-weight:700;color:var(--muted);min-width:28px;flex-shrink:0;">#${globalNum}</span>
+            <div class="kit-name">${kit.name}</div>
+          </div>
+          <div class="kit-meta">
+            <span class="badge badge-shape">${kit.shape}</span>
+            ${kit.size ? `<span class="badge" style="background:#eef2f7;color:#5a6b7d;">${kit.size}</span>` : ''}
+            ${hasColors ? `<span class="badge badge-count">${kit.dmc.length} colors</span>` : `<span class="badge badge-empty">No colors yet</span>`}
+            <span style="color:var(--muted);font-size:0.85rem">▾</span>
+          </div>
+        </div>
+      </div>
+      <div class="kit-expand" id="expand-${kit.id}">
+        ${hasColors
+          ? `<div class="chip-grid">${kit.dmc.map(d => `<span class="chip">${d}</span>`).join('')}</div>`
+          : `<div style="font-size:0.82rem;color:var(--muted);">No colors logged yet — add via the Screenshot tab or Edit Kit below.</div>`
+        }
+        <div class="kit-actions">
+          <button class="btn btn-ghost" onclick="openEditModal(${kit.id})">Edit Kit</button>
+          <button class="btn btn-danger" onclick="deleteKit(${kit.id})">Delete Kit</button>
+        </div>
+      </div>
+    </div>
+  `}).join('');
+}
+
+function toggleKit(id) {
+  document.getElementById('expand-' + id).classList.toggle('open');
+}
+
+function deleteKit(id) {
+  if (!confirm('Delete this kit?')) return;
+  data.kits = data.kits.filter(k => k.id !== id);
+  saveData(data);
+  renderLibrary();
+  toast('Kit deleted.');
+}
+
+function updateBulkToolbar() {
+  const checked = document.querySelectorAll('.kit-checkbox:checked');
+  const toolbar = document.getElementById('bulk-toolbar');
+  const countEl = document.getElementById('bulk-count');
+  if (!toolbar) return;
+  if (checked.length > 0) {
+    toolbar.style.display = 'flex';
+    countEl.textContent = `${checked.length} kit${checked.length > 1 ? 's' : ''} selected`;
+  } else {
+    toolbar.style.display = 'none';
+  }
+}
+
+function clearSelection() {
+  document.querySelectorAll('.kit-checkbox').forEach(cb => cb.checked = false);
+  updateBulkToolbar();
+}
+
+function deleteSelected() {
+  const checked = [...document.querySelectorAll('.kit-checkbox:checked')];
+  if (!checked.length) return;
+  if (!confirm(`Delete ${checked.length} kit${checked.length > 1 ? 's' : ''}? This can't be undone.`)) return;
+  const ids = checked.map(cb => parseInt(cb.dataset.id));
+  data.kits = data.kits.filter(k => !ids.includes(k.id));
+  saveData(data);
+  renderLibrary();
+  toast(`${ids.length} kit${ids.length > 1 ? 's' : ''} deleted.`);
+}
+
+// ── SEARCH (color + shape) ──────────────────────────
+function quickDMCSearch() {
+  const query = document.getElementById('quick-dmc-search').value.trim().toLowerCase();
+  const shapeFilter = document.getElementById('quick-shape-filter').value;
+  showDMCResults(query, shapeFilter);
+}
+
+function clearQuickSearch() {
+  document.getElementById('quick-dmc-search').value = '';
+  document.getElementById('quick-shape-filter').value = '';
+  document.getElementById('quick-dmc-results').innerHTML = '';
+}
+
+function showDMCResults(query, shapeFilter) {
+  const el = document.getElementById('quick-dmc-results');
+  if (!query) { el.innerHTML = ''; return; }
+
+  let matches = data.kits.filter(k =>
+    k.dmc && k.dmc.some(d => d.toString().toLowerCase() === query)
+  );
+  if (shapeFilter) matches = matches.filter(k => k.shape === shapeFilter);
+
+  if (!matches.length) {
+    el.innerHTML = `<div style="font-size:0.85rem;color:var(--muted);padding:10px 4px;">No kits found with DMC ${query.toUpperCase()}${shapeFilter ? ' (' + shapeFilter + ')' : ''}.</div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div style="margin-top:14px;">
+      <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">
+        ${matches.length} kit${matches.length > 1 ? 's' : ''} with DMC ${query.toUpperCase()}
+      </div>
+      ${matches.map(kit => `
+        <div style="background:linear-gradient(135deg,#fdf0f5,#f5f0fd);border:1.5px solid var(--accent);border-radius:12px;padding:14px 18px;margin-bottom:8px;">
+          <div style="font-weight:700;font-size:0.95rem;color:var(--text);">${kit.name}</div>
+          <div style="font-size:0.78rem;color:var(--accent);margin-top:2px;">${kit.shape}${kit.size ? ' · ' + kit.size : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ── EDIT KIT MODAL ────────────────────────────────────
+let editKitId = null;
+
+function openEditModal(kitId) {
+  const kit = data.kits.find(k => k.id === kitId);
+  if (!kit) return;
+  editKitId = kitId;
+  document.getElementById('edit-kit-name').value = kit.name || '';
+  document.getElementById('edit-kit-shape').value = kit.shape || 'Unknown';
+  document.getElementById('edit-kit-size').value = kit.size || '';
+  document.getElementById('edit-kit-dmc').value = (kit.dmc || []).join(', ');
+  document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').style.display = 'none';
+  editKitId = null;
+}
+
+function submitEditKit() {
+  const kit = data.kits.find(k => k.id === editKitId);
+  if (!kit) return;
+
+  const name = document.getElementById('edit-kit-name').value.trim();
+  if (!name) { toast('Enter a kit name.'); return; }
+
+  const shape = document.getElementById('edit-kit-shape').value;
+  const size = document.getElementById('edit-kit-size').value.trim();
+  const rawDMC = document.getElementById('edit-kit-dmc').value.trim();
+  const dmc = rawDMC ? rawDMC.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  kit.name = name;
+  kit.shape = shape || 'Unknown';
+  kit.size = size;
+  kit.dmc = dmc;
+
+  saveData(data);
+  closeEditModal();
+  renderLibrary();
+  toast(`✓ ${name} updated`);
+}
+
+// ── SCREENSHOT TAB ────────────────────────────────────
+let ssImageBase64 = null;
+let ssImageMediaType = null;
+
+function populateSSDatalist() {
+  const dl = document.getElementById('ss-kit-list');
+  const sorted = [...data.kits].sort((a, b) => a.name.localeCompare(b.name));
+  dl.innerHTML = sorted.map(k => `<option value="${k.name}"></option>`).join('');
+}
+
+function onSSNameInput() {
+  const name = document.getElementById('ss-kit-name').value.trim();
+  const existing = data.kits.find(k => k.name.toLowerCase() === name.toLowerCase());
+  const note = document.getElementById('ss-existing-note');
+  if (existing) {
+    document.getElementById('ss-kit-shape').value = existing.shape && existing.shape !== 'Unknown' ? existing.shape : '';
+    document.getElementById('ss-kit-size').value = existing.size || '';
+    note.style.display = 'block';
+    note.textContent = existing.dmc && existing.dmc.length
+      ? `This kit already has ${existing.dmc.length} colors saved. Extracting will replace them.`
+      : `Existing kit found — colors will be added to it.`;
+  } else {
+    note.style.display = 'none';
+  }
+  updateExtractBtnState();
+}
+
+function updateExtractBtnState() {
+  const name = document.getElementById('ss-kit-name').value.trim();
+  document.getElementById('extract-btn').disabled = !(name && ssImageBase64);
+}
+
+// Drag & drop
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) loadImageFile(file);
+});
+
+// Paste support
+document.addEventListener('paste', e => {
+  if (!document.getElementById('page-screenshot').classList.contains('active')) return;
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) loadImageFile(file);
+      break;
+    }
+  }
+});
+
+async function pasteFromClipboard() {
+  const btn = document.getElementById('paste-btn');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = 'Reading clipboard...';
+  try {
+    const items = await navigator.clipboard.read();
+    let found = false;
+    for (const item of items) {
+      const imageType = item.types.find(t => t.startsWith('image/'));
+      if (imageType) {
+        const blob = await item.getType(imageType);
+        const file = new File([blob], 'clipboard-image', { type: imageType });
+        loadImageFile(file);
+        found = true;
+        break;
+      }
+    }
+    if (!found) toast('No image on your clipboard. Copy a screenshot first, then hit Paste.');
+  } catch (err) {
+    console.error(err);
+    toast("Could not read clipboard — make sure you copied a screenshot, or check your browser's clipboard permission.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+function handleFileInput(e) {
+  const file = e.target.files[0];
+  if (file) loadImageFile(file);
+}
+
+function loadImageFile(file) {
+  if (!file.type.startsWith('image/')) { toast('Please upload an image file.'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const result = reader.result;
+    ssImageMediaType = file.type;
+    ssImageBase64 = result.split(',')[1];
+    document.getElementById('preview-img').src = result;
+    document.getElementById('dropzone-empty').style.display = 'none';
+    document.getElementById('dropzone-preview').style.display = 'block';
+    updateExtractBtnState();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImage() {
+  ssImageBase64 = null;
+  ssImageMediaType = null;
+  document.getElementById('ss-file-input').value = '';
+  document.getElementById('dropzone-empty').style.display = 'block';
+  document.getElementById('dropzone-preview').style.display = 'none';
+  updateExtractBtnState();
+}
+
+const EXTRACTION_PROMPT = `This image is a diamond painting color key / legend sheet from a kit's instruction sheet. It is laid out in repeated column groups, each with a "Number" column (a row index, ignore this), a "Symbol" column (ignore this), and a "Code" column (the actual drill/DMC color code — extract this).
+
+Extract every value from every "Code" column across all groups on the sheet, left to right, top to bottom. Codes may be plain numbers (e.g. 310) or prefixed alphanumeric codes (e.g. Z704, AB3348, L666). Keep the exact formatting/casing shown.
+
+Respond with ONLY a raw JSON array of strings, nothing else — no markdown fences, no explanation, no extra text. Example format: ["155","159","224","Z704","AB3348"]`;
+
+async function extractAndSave() {
+  const name = document.getElementById('ss-kit-name').value.trim();
+  const shapeInput = document.getElementById('ss-kit-shape').value;
+  const sizeInput = document.getElementById('ss-kit-size').value.trim();
+
+  if (!name) { toast('Enter a kit name.'); return; }
+  if (!ssImageBase64) { toast('Add a screenshot first.'); return; }
+
+  const btn = document.getElementById('extract-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> Reading colors...`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: ssImageMediaType, data: ssImageBase64 } },
+            { type: "text", text: EXTRACTION_PROMPT }
+          ]
+        }]
+      })
+    });
+
+    if (!response.ok) throw new Error('API request failed');
+    const result = await response.json();
+    const textBlock = result.content.find(b => b.type === 'text');
+    if (!textBlock) throw new Error('No text in response');
+
+    let cleaned = textBlock.text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+    let codes;
+    try {
+      codes = JSON.parse(cleaned);
+    } catch {
+      throw new Error('Could not parse extracted colors');
+    }
+    if (!Array.isArray(codes) || codes.length === 0) throw new Error('No colors found in screenshot');
+
+    codes = codes.map(c => String(c).trim()).filter(Boolean);
+
+    const existing = data.kits.find(k => k.name.toLowerCase() === name.toLowerCase());
+    let wasExisting = false;
+    if (existing) {
+      wasExisting = true;
+      existing.dmc = codes;
+      if (shapeInput) existing.shape = shapeInput;
+      if (sizeInput) existing.size = sizeInput;
+    } else {
+      data.kits.push({ id: Date.now(), name, shape: shapeInput || 'Unknown', size: sizeInput, dmc: codes });
+    }
+    saveData(data);
+    populateSSDatalist();
+
+    document.getElementById('ss-result').innerHTML = `
+      <div class="result-card">
+        <div class="result-title">✓ ${codes.length} colors found for ${name}</div>
+        <div class="result-sub">${wasExisting ? 'Existing kit updated' : 'New kit created'} — double check the count against your sheet.</div>
+        <div class="chip-grid">${codes.map(c => `<span class="chip">${c}</span>`).join('')}</div>
+      </div>
+    `;
+    toast(`✓ Saved ${codes.length} colors to ${name}`);
+
+    // Reset form for next screenshot, keep result visible
+    document.getElementById('ss-kit-name').value = '';
+    document.getElementById('ss-kit-shape').value = '';
+    document.getElementById('ss-kit-size').value = '';
+    document.getElementById('ss-existing-note').style.display = 'none';
+    clearImage();
+
+  } catch (err) {
+    console.error(err);
+    toast('Could not read that screenshot — try a clearer image or add colors manually.');
+  } finally {
+    btn.innerHTML = 'Extract Colors & Save';
+    updateExtractBtnState();
+  }
+}
+
+// ── TOAST ────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── AUTOSAVE (every 3 seconds) ───────────────────────
+setInterval(() => { saveData(data); }, 3000);
+
+// ── INIT ─────────────────────────────────────────────
+renderLibrary();
+</script>
+
+</body>
+</html>
