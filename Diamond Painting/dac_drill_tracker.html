@@ -275,6 +275,58 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ── BACK TO TOP ── */
+  .back-to-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 140;
+    background: var(--text); color: white; border: none; border-radius: 50px;
+    padding: 12px 18px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25); display: none; align-items: center; gap: 6px;
+    transition: bottom 0.2s, opacity 0.2s;
+  }
+  .back-to-top.show { display: flex; }
+  .back-to-top.bulk-visible { bottom: 88px; }
+
+  /* ── STICKY BULK TOOLBAR ── */
+  #bulk-toolbar {
+    position: fixed;
+    left: 16px; right: 16px; bottom: 16px;
+    max-width: 868px; margin: 0 auto;
+    z-index: 150;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+
+  /* ── SKIPPED KIT ── */
+  .kit-item.skipped { opacity: 0.5; }
+  .kit-item.skipped:hover { opacity: 0.75; }
+  .badge-skip { background: #f0ece6; color: var(--muted); }
+
+  /* ── KIT THUMBNAIL ── */
+  .kit-thumb {
+    width: 44px; height: 44px; border-radius: 10px; object-fit: cover;
+    flex-shrink: 0; border: 1px solid var(--border); background: var(--bg);
+  }
+  .kit-thumb-placeholder {
+    width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+    background: var(--chip-bg); display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--muted); border: 1px dashed var(--border);
+  }
+
+  /* ── SKIP TOGGLE (compact, in-row) ── */
+  .skip-toggle-btn {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    border: 1.5px solid var(--border); background: var(--surface); cursor: pointer;
+    font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .skip-toggle-btn.active { background: #f0ece6; border-color: var(--muted); }
+  .skip-toggle-btn:hover { border-color: var(--accent); }
+
+  /* ── EDIT MODAL THUMBNAIL PREVIEW ── */
+  .thumb-preview-lg {
+    width: 100%; max-height: 180px; object-fit: contain; border-radius: 12px;
+    border: 1px solid var(--border); display: block; margin-bottom: 10px; background: var(--bg);
+  }
+
   @media (max-width: 600px) {
     .row { flex-direction: column; }
     .nav-tab { padding: 14px 12px; font-size: 0.78rem; }
@@ -367,15 +419,12 @@
             <option value="Square">Square</option>
           </select>
         </div>
-        <div class="field" style="max-width:160px">
-          <label>Size (optional)</label>
-          <input type="text" id="add-kit-size" placeholder="e.g. 22 x 28 inch" />
-        </div>
       </div>
       <div class="field">
         <label>DMC Numbers — comma-separated</label>
         <textarea id="add-kit-dmc" placeholder="122, 129, 141, 152, 169, 223, 300, 310 ..."></textarea>
       </div>
+      <button class="btn btn-ghost btn-full" style="margin-bottom:10px;" onclick="openManualSSModal()">📸 Fill In From Screenshot</button>
       <button class="btn btn-primary btn-full" onclick="addKit()">+ Add Kit</button>
     </div>
   </div>
@@ -411,10 +460,6 @@
           <option value="Round">Round</option>
           <option value="Square">Square</option>
         </select>
-      </div>
-      <div class="field" style="max-width:160px">
-        <label>Size (optional)</label>
-        <input type="text" id="ss-kit-size" placeholder="e.g. 22 x 28 inch" />
       </div>
     </div>
     <div id="ss-existing-note" style="display:none;font-size:0.8rem;color:var(--accent-dark);background:var(--chip-bg);border-radius:8px;padding:8px 12px;margin-bottom:16px;"></div>
@@ -480,23 +525,30 @@
       <label>Kit Name</label>
       <input type="text" id="edit-kit-name" />
     </div>
-    <div class="row">
-      <div class="field" style="max-width:140px">
-        <label>Shape</label>
-        <select id="edit-kit-shape">
-          <option value="Unknown">Unknown</option>
-          <option value="Round">Round</option>
-          <option value="Square">Square</option>
-        </select>
+    <div class="field">
+      <label>Thumbnail (optional)</label>
+      <div id="edit-thumb-preview-wrap"></div>
+      <button class="btn btn-ghost btn-full" id="edit-thumb-paste-btn" onclick="editPasteThumbnail()" style="margin-bottom:8px;">📋 Paste from Clipboard</button>
+      <div class="row" style="gap:8px;margin-bottom:0;">
+        <input type="text" id="edit-thumb-url" placeholder="or paste an image URL..." style="flex:1;" />
+        <button class="btn btn-ghost" onclick="useThumbnailUrl()">Use URL</button>
       </div>
-      <div class="field">
-        <label>Size</label>
-        <input type="text" id="edit-kit-size" placeholder="e.g. 22 x 28 inch" />
-      </div>
+    </div>
+    <div class="field">
+      <label>Shape</label>
+      <select id="edit-kit-shape">
+        <option value="Unknown">Unknown</option>
+        <option value="Round">Round</option>
+        <option value="Square">Square</option>
+      </select>
     </div>
     <div class="field">
       <label>DMC Numbers — comma-separated</label>
       <textarea id="edit-kit-dmc" placeholder="122, 129, 141, 152 ..."></textarea>
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+      <input type="checkbox" id="edit-kit-skip" style="width:16px;height:16px;accent-color:var(--accent);" />
+      <label for="edit-kit-skip" style="text-transform:none;font-size:0.85rem;letter-spacing:normal;font-weight:500;color:var(--text);margin-bottom:0;">This kit has no color key (skip colors)</label>
     </div>
     <div style="display:flex;gap:10px;margin-top:4px;">
       <button class="btn btn-ghost" style="flex:1" onclick="closeEditModal()">Cancel</button>
@@ -504,6 +556,34 @@
     </div>
   </div>
 </div>
+
+<!-- MANUAL ADD SCREENSHOT MODAL -->
+<div id="manual-ss-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,0.2);">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:6px;">Fill In From Screenshot</h3>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Extracted colors will drop into the DMC field on the form.</p>
+    <button class="btn btn-primary btn-full" id="manual-paste-btn" onclick="manualPasteFromClipboard()" style="margin-bottom:10px;">📋 Paste from Clipboard</button>
+    <div class="dropzone" id="manual-dropzone" onclick="document.getElementById('manual-ss-file-input').click()">
+      <div id="manual-dropzone-empty">
+        <div class="dropzone-icon">📸</div>
+        <div class="dropzone-text">Or click here to upload a file</div>
+      </div>
+      <div id="manual-dropzone-preview" style="display:none;">
+        <div class="preview-wrap">
+          <img id="manual-preview-img" class="preview-img" />
+          <button class="preview-remove" onclick="event.stopPropagation(); clearManualImage();">✕</button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="manual-ss-file-input" accept="image/*" style="display:none;" onchange="handleManualFileInput(event)" />
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeManualSSModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" id="manual-extract-btn" onclick="extractIntoManualForm()" disabled>Extract Colors</button>
+    </div>
+  </div>
+</div>
+
+<button id="back-to-top" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'});document.documentElement.scrollTop=0;document.body.scrollTop=0;">↑ Top</button>
 
 <div id="toast"></div>
 
@@ -598,20 +678,18 @@ function toggleManualAdd() {
 function addKit() {
   const name = document.getElementById('add-kit-name').value.trim();
   const shape = document.getElementById('add-kit-shape').value;
-  const size = document.getElementById('add-kit-size').value.trim();
   const rawDMC = document.getElementById('add-kit-dmc').value.trim();
 
   if (!name) { toast('Enter a kit name.'); return; }
 
   const dmc = rawDMC ? rawDMC.split(',').map(s => s.trim()).filter(Boolean) : [];
 
-  const kit = { id: Date.now(), name, shape: shape || 'Unknown', size, dmc };
+  const kit = { id: Date.now(), name, shape: shape || 'Unknown', dmc, skipColors: false };
   data.kits.push(kit);
   saveData(data);
 
   document.getElementById('add-kit-name').value = '';
   document.getElementById('add-kit-shape').value = '';
-  document.getElementById('add-kit-size').value = '';
   document.getElementById('add-kit-dmc').value = '';
 
   renderLibrary();
@@ -625,14 +703,16 @@ function renderLibrary() {
   const sorted = [...data.kits].sort((a, b) => a.name.localeCompare(b.name));
   const kits = sorted.filter(k => k.name.toLowerCase().includes(filter));
 
+  const skipped = data.kits.filter(k => k.skipColors).length;
   const withColors = data.kits.filter(k => k.dmc && k.dmc.length > 0).length;
-  const needColors = data.kits.length - withColors;
+  const needColors = data.kits.length - withColors - skipped;
 
   const statsEl = document.getElementById('stats-row');
   statsEl.innerHTML = `
     <div class="stat-card"><div class="stat-num">${data.kits.length}</div><div class="stat-label">Kits logged</div></div>
     <div class="stat-card"><div class="stat-num">${withColors}</div><div class="stat-label">Have colors</div></div>
     <div class="stat-card"><div class="stat-num">${needColors}</div><div class="stat-label">Still need colors</div></div>
+    <div class="stat-card"><div class="stat-num">${skipped}</div><div class="stat-label">No color key</div></div>
   `;
 
   const el = document.getElementById('kit-list');
@@ -642,7 +722,7 @@ function renderLibrary() {
   }
 
   const bulkBar = `
-    <div id="bulk-toolbar" style="display:none;align-items:center;justify-content:space-between;background:#fff3e0;border:1px solid #f0d4a0;border-radius:10px;padding:10px 16px;margin-bottom:12px;gap:10px;flex-wrap:wrap;">
+    <div id="bulk-toolbar" style="display:none;align-items:center;justify-content:space-between;background:#fff3e0;border:1px solid #f0d4a0;border-radius:10px;padding:10px 16px;gap:10px;flex-wrap:wrap;">
       <span id="bulk-count" style="font-size:0.85rem;font-weight:600;color:var(--text);">0 kits selected</span>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-ghost" style="font-size:0.8rem;padding:7px 14px;" onclick="clearSelection()">Clear</button>
@@ -654,19 +734,26 @@ function renderLibrary() {
   el.innerHTML = bulkBar + kits.map((kit) => {
     const globalNum = sorted.indexOf(kit) + 1;
     const hasColors = kit.dmc && kit.dmc.length > 0;
+    const skipped = !!kit.skipColors;
     return `
-    <div class="kit-item" id="kit-${kit.id}">
+    <div class="kit-item${skipped ? ' skipped' : ''}" id="kit-${kit.id}">
       <div class="kit-item-header" style="gap:10px;">
         <input type="checkbox" class="kit-checkbox" data-id="${kit.id}" onchange="updateBulkToolbar()" style="flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--accent);" />
-        <div style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;" onclick="toggleKit(${kit.id})">
+        ${kit.thumbnail ? `<img src="${escapeAttr(kit.thumbnail)}" class="kit-thumb" onclick="event.stopPropagation(); openEditModal(${kit.id});" />` : `<div class="kit-thumb-placeholder" onclick="event.stopPropagation(); openEditModal(${kit.id});">💎</div>`}
+        <div style="flex:1;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;min-width:0;" onclick="toggleKit(${kit.id})">
           <div class="kit-item-left">
             <span style="font-size:0.78rem;font-weight:700;color:var(--muted);min-width:28px;flex-shrink:0;">#${globalNum}</span>
             <div class="kit-name">${kit.name}</div>
           </div>
           <div class="kit-meta">
+            <button class="skip-toggle-btn${skipped ? ' active' : ''}" onclick="event.stopPropagation(); toggleSkipColors(${kit.id})" title="${skipped ? 'Unmark no color key' : 'Mark as no color key'}">${skipped ? '✓' : '⊘'}</button>
             <span class="badge badge-shape">${kit.shape}</span>
-            ${kit.size ? `<span class="badge" style="background:#eef2f7;color:#5a6b7d;">${kit.size}</span>` : ''}
-            ${hasColors ? `<span class="badge badge-count">${kit.dmc.length} colors</span>` : `<span class="badge badge-empty">No colors yet</span>`}
+            ${skipped
+              ? `<span class="badge badge-skip">No color key</span>`
+              : hasColors
+                ? `<span class="badge badge-count">${kit.dmc.length} colors</span>`
+                : `<span class="badge badge-empty">No colors yet</span>`
+            }
             <span style="color:var(--muted);font-size:0.85rem">▾</span>
           </div>
         </div>
@@ -674,7 +761,7 @@ function renderLibrary() {
       <div class="kit-expand" id="expand-${kit.id}">
         ${hasColors
           ? `<div class="chip-grid">${kit.dmc.map(d => `<span class="chip">${d}</span>`).join('')}</div>`
-          : `<div style="font-size:0.82rem;color:var(--muted);">No colors logged yet — add via the Screenshot tab or Edit Kit below.</div>`
+          : `<div style="font-size:0.82rem;color:var(--muted);">${skipped ? 'Marked as having no color key.' : 'No colors logged yet — add via the Screenshot tab or Edit Kit below.'}</div>`
         }
         <div class="kit-actions">
           <button class="btn btn-ghost" onclick="openEditModal(${kit.id})">Edit Kit</button>
@@ -683,6 +770,19 @@ function renderLibrary() {
       </div>
     </div>
   `}).join('');
+}
+
+function escapeAttr(str) {
+  return String(str).replace(/"/g, '&quot;');
+}
+
+function toggleSkipColors(id) {
+  const kit = data.kits.find(k => k.id === id);
+  if (!kit) return;
+  kit.skipColors = !kit.skipColors;
+  saveData(data);
+  renderLibrary();
+  toast(kit.skipColors ? `${kit.name} marked as no color key` : `${kit.name} unmarked`);
 }
 
 function toggleKit(id) {
@@ -701,12 +801,15 @@ function updateBulkToolbar() {
   const checked = document.querySelectorAll('.kit-checkbox:checked');
   const toolbar = document.getElementById('bulk-toolbar');
   const countEl = document.getElementById('bulk-count');
+  const backToTop = document.getElementById('back-to-top');
   if (!toolbar) return;
   if (checked.length > 0) {
     toolbar.style.display = 'flex';
     countEl.textContent = `${checked.length} kit${checked.length > 1 ? 's' : ''} selected`;
+    backToTop?.classList.add('bulk-visible');
   } else {
     toolbar.style.display = 'none';
+    backToTop?.classList.remove('bulk-visible');
   }
 }
 
@@ -761,7 +864,7 @@ function showDMCResults(query, shapeFilter) {
       ${matches.map(kit => `
         <div style="background:linear-gradient(135deg,#fdf0f5,#f5f0fd);border:1.5px solid var(--accent);border-radius:12px;padding:14px 18px;margin-bottom:8px;">
           <div style="font-weight:700;font-size:0.95rem;color:var(--text);">${kit.name}</div>
-          <div style="font-size:0.78rem;color:var(--accent);margin-top:2px;">${kit.shape}${kit.size ? ' · ' + kit.size : ''}</div>
+          <div style="font-size:0.78rem;color:var(--accent);margin-top:2px;">${kit.shape}</div>
         </div>
       `).join('')}
     </div>
@@ -770,21 +873,57 @@ function showDMCResults(query, shapeFilter) {
 
 // ── EDIT KIT MODAL ────────────────────────────────────
 let editKitId = null;
+let editThumbnailData = null;
+
+function renderEditThumbPreview() {
+  const wrap = document.getElementById('edit-thumb-preview-wrap');
+  wrap.innerHTML = editThumbnailData
+    ? `<img src="${escapeAttr(editThumbnailData)}" class="thumb-preview-lg" /><button class="btn btn-ghost btn-full" style="margin-bottom:8px;" onclick="removeThumbnail()">Remove Thumbnail</button>`
+    : '';
+}
+
+function editPasteThumbnail() {
+  pasteImageInto('edit-thumb-paste-btn', file => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      editThumbnailData = reader.result;
+      renderEditThumbPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function useThumbnailUrl() {
+  const url = document.getElementById('edit-thumb-url').value.trim();
+  if (!url) { toast('Paste an image URL first.'); return; }
+  editThumbnailData = url;
+  document.getElementById('edit-thumb-url').value = '';
+  renderEditThumbPreview();
+}
+
+function removeThumbnail() {
+  editThumbnailData = null;
+  renderEditThumbPreview();
+}
 
 function openEditModal(kitId) {
   const kit = data.kits.find(k => k.id === kitId);
   if (!kit) return;
   editKitId = kitId;
+  editThumbnailData = kit.thumbnail || null;
   document.getElementById('edit-kit-name').value = kit.name || '';
   document.getElementById('edit-kit-shape').value = kit.shape || 'Unknown';
-  document.getElementById('edit-kit-size').value = kit.size || '';
   document.getElementById('edit-kit-dmc').value = (kit.dmc || []).join(', ');
+  document.getElementById('edit-kit-skip').checked = !!kit.skipColors;
+  document.getElementById('edit-thumb-url').value = '';
+  renderEditThumbPreview();
   document.getElementById('edit-modal').style.display = 'flex';
 }
 
 function closeEditModal() {
   document.getElementById('edit-modal').style.display = 'none';
   editKitId = null;
+  editThumbnailData = null;
 }
 
 function submitEditKit() {
@@ -795,14 +934,15 @@ function submitEditKit() {
   if (!name) { toast('Enter a kit name.'); return; }
 
   const shape = document.getElementById('edit-kit-shape').value;
-  const size = document.getElementById('edit-kit-size').value.trim();
   const rawDMC = document.getElementById('edit-kit-dmc').value.trim();
   const dmc = rawDMC ? rawDMC.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const skipColors = document.getElementById('edit-kit-skip').checked;
 
   kit.name = name;
   kit.shape = shape || 'Unknown';
-  kit.size = size;
   kit.dmc = dmc;
+  kit.skipColors = skipColors;
+  kit.thumbnail = editThumbnailData || null;
 
   saveData(data);
   closeEditModal();
@@ -826,7 +966,6 @@ function onSSNameInput() {
   const note = document.getElementById('ss-existing-note');
   if (existing) {
     document.getElementById('ss-kit-shape').value = existing.shape && existing.shape !== 'Unknown' ? existing.shape : '';
-    document.getElementById('ss-kit-size').value = existing.size || '';
     note.style.display = 'block';
     note.textContent = existing.dmc && existing.dmc.length
       ? `This kit already has ${existing.dmc.length} colors saved. Extracting will replace them.`
@@ -855,37 +994,52 @@ dz.addEventListener('drop', e => {
 
 // Paste support
 document.addEventListener('paste', e => {
-  if (!document.getElementById('page-screenshot').classList.contains('active')) return;
   const items = e.clipboardData?.items;
   if (!items) return;
+  let imageFile = null;
   for (const item of items) {
     if (item.type.startsWith('image/')) {
-      const file = item.getAsFile();
-      if (file) loadImageFile(file);
+      imageFile = item.getAsFile();
       break;
     }
   }
+  if (!imageFile) return;
+
+  if (document.getElementById('manual-ss-modal').style.display === 'flex') {
+    loadManualImageFile(imageFile);
+  } else if (document.getElementById('edit-modal').style.display === 'flex') {
+    const reader = new FileReader();
+    reader.onload = () => {
+      editThumbnailData = reader.result;
+      renderEditThumbPreview();
+    };
+    reader.readAsDataURL(imageFile);
+  } else if (document.getElementById('page-screenshot').classList.contains('active')) {
+    loadImageFile(imageFile);
+  }
 });
 
-async function pasteFromClipboard() {
-  const btn = document.getElementById('paste-btn');
-  btn.disabled = true;
+async function getClipboardImageFile() {
+  const items = await navigator.clipboard.read();
+  for (const item of items) {
+    const imageType = item.types.find(t => t.startsWith('image/'));
+    if (imageType) {
+      const blob = await item.getType(imageType);
+      return new File([blob], 'clipboard-image', { type: imageType });
+    }
+  }
+  return null;
+}
+
+async function pasteImageInto(btnId, onFile) {
+  const btn = document.getElementById(btnId);
   const originalText = btn.textContent;
+  btn.disabled = true;
   btn.textContent = 'Reading clipboard...';
   try {
-    const items = await navigator.clipboard.read();
-    let found = false;
-    for (const item of items) {
-      const imageType = item.types.find(t => t.startsWith('image/'));
-      if (imageType) {
-        const blob = await item.getType(imageType);
-        const file = new File([blob], 'clipboard-image', { type: imageType });
-        loadImageFile(file);
-        found = true;
-        break;
-      }
-    }
-    if (!found) toast('No image on your clipboard. Copy a screenshot first, then hit Paste.');
+    const file = await getClipboardImageFile();
+    if (!file) { toast('No image on your clipboard. Copy a screenshot first, then hit Paste.'); return; }
+    onFile(file);
   } catch (err) {
     console.error(err);
     toast("Could not read clipboard — make sure you copied a screenshot, or check your browser's clipboard permission.");
@@ -893,6 +1047,10 @@ async function pasteFromClipboard() {
     btn.disabled = false;
     btn.textContent = originalText;
   }
+}
+
+function pasteFromClipboard() {
+  pasteImageInto('paste-btn', loadImageFile);
 }
 
 function handleFileInput(e) {
@@ -930,78 +1088,87 @@ Extract every value from every "Code" column across all groups on the sheet, lef
 
 Respond with ONLY a raw JSON array of strings, nothing else — no markdown fences, no explanation, no extra text. Example format: ["155","159","224","Z704","AB3348"]`;
 
+// Shared extraction call — returns an array of color codes or throws an Error with a useful message.
+async function callExtractionAPI(base64Data, mediaType) {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('Add your API key in the API Key tab first.');
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2000,
+      messages: [{
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
+          { type: "text", text: EXTRACTION_PROMPT }
+        ]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => null);
+    const errMsg = errBody?.error?.message || `API request failed (${response.status})`;
+    throw new Error(errMsg);
+  }
+  const result = await response.json();
+  const textBlock = result.content.find(b => b.type === 'text');
+  if (!textBlock) throw new Error('No text in response');
+
+  let cleaned = textBlock.text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+  let codes;
+  try {
+    codes = JSON.parse(cleaned);
+  } catch {
+    throw new Error('Could not parse extracted colors');
+  }
+  if (!Array.isArray(codes) || codes.length === 0) throw new Error('No colors found in screenshot');
+
+  return codes.map(c => String(c).trim()).filter(Boolean);
+}
+
+function friendlyExtractionError(err) {
+  const genericMsgs = ['No colors found in screenshot', 'Could not parse extracted colors', 'No text in response'];
+  return genericMsgs.includes(err.message)
+    ? 'Could not read that screenshot — try a clearer image or add colors manually.'
+    : `Error: ${err.message}`;
+}
+
 async function extractAndSave() {
   const name = document.getElementById('ss-kit-name').value.trim();
   const shapeInput = document.getElementById('ss-kit-shape').value;
-  const sizeInput = document.getElementById('ss-kit-size').value.trim();
 
   if (!name) { toast('Enter a kit name.'); return; }
   if (!ssImageBase64) { toast('Add a screenshot first.'); return; }
-
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    toast('Add your API key in the API Key tab first.');
-    return;
-  }
 
   const btn = document.getElementById('extract-btn');
   btn.disabled = true;
   btn.innerHTML = `<span class="spinner"></span> Reading colors...`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 2000,
-        messages: [{
-          role: "user",
-          content: [
-            { type: "image", source: { type: "base64", media_type: ssImageMediaType, data: ssImageBase64 } },
-            { type: "text", text: EXTRACTION_PROMPT }
-          ]
-        }]
-      })
-    });
-
-    if (!response.ok) {
-      const errBody = await response.json().catch(() => null);
-      const errMsg = errBody?.error?.message || `API request failed (${response.status})`;
-      throw new Error(errMsg);
-    }
-    const result = await response.json();
-    const textBlock = result.content.find(b => b.type === 'text');
-    if (!textBlock) throw new Error('No text in response');
-
-    let cleaned = textBlock.text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
-    let codes;
-    try {
-      codes = JSON.parse(cleaned);
-    } catch {
-      throw new Error('Could not parse extracted colors');
-    }
-    if (!Array.isArray(codes) || codes.length === 0) throw new Error('No colors found in screenshot');
-
-    codes = codes.map(c => String(c).trim()).filter(Boolean);
+    const codes = await callExtractionAPI(ssImageBase64, ssImageMediaType);
 
     const existing = data.kits.find(k => k.name.toLowerCase() === name.toLowerCase());
     let wasExisting = false;
     if (existing) {
       wasExisting = true;
       existing.dmc = codes;
+      existing.skipColors = false;
       if (shapeInput) existing.shape = shapeInput;
-      if (sizeInput) existing.size = sizeInput;
     } else {
-      data.kits.push({ id: Date.now(), name, shape: shapeInput || 'Unknown', size: sizeInput, dmc: codes });
+      data.kits.push({ id: Date.now(), name, shape: shapeInput || 'Unknown', dmc: codes, skipColors: false });
     }
     saveData(data);
     populateSSDatalist();
+    renderLibrary();
 
     document.getElementById('ss-result').innerHTML = `
       <div class="result-card">
@@ -1012,18 +1179,14 @@ async function extractAndSave() {
     `;
     toast(`✓ Saved ${codes.length} colors to ${name}`);
 
-    // Reset form for next screenshot, keep result visible
     document.getElementById('ss-kit-name').value = '';
     document.getElementById('ss-kit-shape').value = '';
-    document.getElementById('ss-kit-size').value = '';
     document.getElementById('ss-existing-note').style.display = 'none';
     clearImage();
 
   } catch (err) {
     console.error(err);
-    toast(err.message && err.message !== 'No colors found in screenshot' && err.message !== 'Could not parse extracted colors'
-      ? `Error: ${err.message}`
-      : 'Could not read that screenshot — try a clearer image or add colors manually.');
+    toast(friendlyExtractionError(err));
   } finally {
     btn.innerHTML = 'Extract Colors & Save';
     updateExtractBtnState();
@@ -1037,6 +1200,92 @@ function toast(msg) {
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2800);
 }
+
+// ── MANUAL-ADD SCREENSHOT MODAL ──────────────────────
+let manualSSImageBase64 = null;
+let manualSSImageMediaType = null;
+
+function openManualSSModal() {
+  document.getElementById('manual-ss-modal').style.display = 'flex';
+}
+
+function closeManualSSModal() {
+  document.getElementById('manual-ss-modal').style.display = 'none';
+  clearManualImage();
+}
+
+function manualPasteFromClipboard() {
+  pasteImageInto('manual-paste-btn', loadManualImageFile);
+}
+
+function handleManualFileInput(e) {
+  const file = e.target.files[0];
+  if (file) loadManualImageFile(file);
+}
+
+function loadManualImageFile(file) {
+  if (!file.type.startsWith('image/')) { toast('Please upload an image file.'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const result = reader.result;
+    manualSSImageMediaType = file.type;
+    manualSSImageBase64 = result.split(',')[1];
+    document.getElementById('manual-preview-img').src = result;
+    document.getElementById('manual-dropzone-empty').style.display = 'none';
+    document.getElementById('manual-dropzone-preview').style.display = 'block';
+    document.getElementById('manual-extract-btn').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearManualImage() {
+  manualSSImageBase64 = null;
+  manualSSImageMediaType = null;
+  document.getElementById('manual-ss-file-input').value = '';
+  document.getElementById('manual-dropzone-empty').style.display = 'block';
+  document.getElementById('manual-dropzone-preview').style.display = 'none';
+  document.getElementById('manual-extract-btn').disabled = true;
+}
+
+async function extractIntoManualForm() {
+  if (!manualSSImageBase64) { toast('Add a screenshot first.'); return; }
+
+  const btn = document.getElementById('manual-extract-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> Reading...`;
+
+  try {
+    const codes = await callExtractionAPI(manualSSImageBase64, manualSSImageMediaType);
+    document.getElementById('add-kit-dmc').value = codes.join(', ');
+    toast(`✓ ${codes.length} colors added to the form — review and hit Add Kit`);
+    closeManualSSModal();
+  } catch (err) {
+    console.error(err);
+    toast(friendlyExtractionError(err));
+  } finally {
+    btn.innerHTML = 'Extract Colors';
+    btn.disabled = !manualSSImageBase64;
+  }
+}
+
+// ── BACK TO TOP ───────────────────────────────────────
+function getScrollTop() {
+  return Math.max(
+    window.scrollY || 0,
+    document.documentElement.scrollTop || 0,
+    document.body.scrollTop || 0
+  );
+}
+function checkBackToTop() {
+  const btn = document.getElementById('back-to-top');
+  if (!btn) return;
+  btn.classList.toggle('show', getScrollTop() > 150);
+}
+// Capture phase so this also catches scroll on nested/inner scroll containers
+// (e.g. when the tool is embedded in a preview iframe that scrolls internally).
+document.addEventListener('scroll', checkBackToTop, true);
+window.addEventListener('scroll', checkBackToTop);
+setInterval(checkBackToTop, 800);
 
 // ── AUTOSAVE (every 3 seconds) ───────────────────────
 setInterval(() => { saveData(data); }, 3000);
