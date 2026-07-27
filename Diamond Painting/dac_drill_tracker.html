@@ -340,7 +340,6 @@
   <div class="nav-brand">💎 DAC Tracker</div>
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="showPage('library')">Kit Library</div>
-    <div class="nav-tab" onclick="showPage('screenshot')">📸 Add via Screenshot</div>
     <div class="nav-tab" onclick="showPage('apikey')">🔑 API Key</div>
   </div>
 </nav>
@@ -424,7 +423,7 @@
         <label>DMC Numbers — comma-separated</label>
         <textarea id="add-kit-dmc" placeholder="122, 129, 141, 152, 169, 223, 300, 310 ..."></textarea>
       </div>
-      <button class="btn btn-ghost btn-full" style="margin-bottom:10px;" onclick="openManualSSModal()">📸 Fill In From Screenshot</button>
+      <button class="btn btn-ghost btn-full" style="margin-bottom:10px;" onclick="openManualSSModal('add-kit-dmc')">📸 Fill In From Screenshot</button>
       <button class="btn btn-primary btn-full" onclick="addKit()">+ Add Kit</button>
     </div>
   </div>
@@ -433,64 +432,7 @@
 </div>
 
 <!-- ══════════════════════════════════════════
-     PAGE 2 — ADD VIA SCREENSHOT
-══════════════════════════════════════════ -->
-<div class="page" id="page-screenshot">
-  <div class="section-header">
-    <div class="gem-row">
-      <div class="gem" style="background:#b5c8f0"></div>
-      <div class="gem" style="background:#f0d4a0"></div>
-      <div class="gem" style="background:#e8a0b8"></div>
-    </div>
-    <h2>Add via <em>Screenshot</em></h2>
-    <p>Paste or upload the kit's color key. It reads the Code column and saves it straight to the kit.</p>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <div class="field">
-        <label>Kit Name</label>
-        <input type="text" id="ss-kit-name" placeholder="Start typing..." list="ss-kit-list" oninput="onSSNameInput()" />
-        <datalist id="ss-kit-list"></datalist>
-      </div>
-      <div class="field" style="max-width:140px">
-        <label>Shape</label>
-        <select id="ss-kit-shape">
-          <option value="">Select</option>
-          <option value="Round">Round</option>
-          <option value="Square">Square</option>
-        </select>
-      </div>
-    </div>
-    <div id="ss-existing-note" style="display:none;font-size:0.8rem;color:var(--accent-dark);background:var(--chip-bg);border-radius:8px;padding:8px 12px;margin-bottom:16px;"></div>
-
-    <div class="field">
-      <label>Color Key Screenshot</label>
-      <button class="btn btn-primary btn-full" id="paste-btn" onclick="pasteFromClipboard()" style="margin-bottom:10px;">📋 Paste from Clipboard</button>
-      <div class="dropzone" id="dropzone" onclick="document.getElementById('ss-file-input').click()">
-        <div id="dropzone-empty">
-          <div class="dropzone-icon">📸</div>
-          <div class="dropzone-text">Or click here to upload a file</div>
-          <div class="dropzone-sub">Works best with the Number / Symbol / Code key sheet</div>
-        </div>
-        <div id="dropzone-preview" style="display:none;">
-          <div class="preview-wrap">
-            <img id="preview-img" class="preview-img" />
-            <button class="preview-remove" onclick="event.stopPropagation(); clearImage();">✕</button>
-          </div>
-        </div>
-      </div>
-      <input type="file" id="ss-file-input" accept="image/*" style="display:none;" onchange="handleFileInput(event)" />
-    </div>
-
-    <button class="btn btn-primary btn-full" id="extract-btn" onclick="extractAndSave()" disabled>Extract Colors & Save</button>
-  </div>
-
-  <div id="ss-result"></div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     PAGE 3 — API KEY
+     PAGE 2 — API KEY
 ══════════════════════════════════════════ -->
 <div class="page" id="page-apikey">
   <div class="section-header">
@@ -545,6 +487,7 @@
       <label>DMC Numbers — comma-separated</label>
       <textarea id="edit-kit-dmc" placeholder="122, 129, 141, 152 ..."></textarea>
     </div>
+    <button class="btn btn-ghost btn-full" style="margin-bottom:16px;" onclick="openManualSSModal('edit-kit-dmc')">📸 Fill In From Screenshot</button>
     <div class="field" style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
       <input type="checkbox" id="edit-kit-skip" style="width:16px;height:16px;accent-color:var(--accent);" />
       <label for="edit-kit-skip" style="text-transform:none;font-size:0.85rem;letter-spacing:normal;font-weight:500;color:var(--text);margin-bottom:0;">This kit has no color key (skip colors)</label>
@@ -644,7 +587,6 @@ function showPage(id) {
   document.getElementById('page-' + id).classList.add('active');
   event.currentTarget.classList.add('active');
   if (id === 'library') renderLibrary();
-  if (id === 'screenshot') populateSSDatalist();
   if (id === 'apikey') loadApiKeyStatus();
 }
 
@@ -947,49 +889,9 @@ function submitEditKit() {
   toast(`✓ ${name} updated`);
 }
 
-// ── SCREENSHOT TAB ────────────────────────────────────
-let ssImageBase64 = null;
-let ssImageMediaType = null;
+// ── SCREENSHOT EXTRACTION (shared by Add and Edit) ───
 
-function populateSSDatalist() {
-  const dl = document.getElementById('ss-kit-list');
-  const sorted = [...data.kits].sort((a, b) => a.name.localeCompare(b.name));
-  dl.innerHTML = sorted.map(k => `<option value="${k.name}"></option>`).join('');
-}
-
-function onSSNameInput() {
-  const name = document.getElementById('ss-kit-name').value.trim();
-  const existing = data.kits.find(k => k.name.toLowerCase() === name.toLowerCase());
-  const note = document.getElementById('ss-existing-note');
-  if (existing) {
-    document.getElementById('ss-kit-shape').value = existing.shape && existing.shape !== 'Unknown' ? existing.shape : '';
-    note.style.display = 'block';
-    note.textContent = existing.dmc && existing.dmc.length
-      ? `This kit already has ${existing.dmc.length} colors saved. Extracting will replace them.`
-      : `Existing kit found — colors will be added to it.`;
-  } else {
-    note.style.display = 'none';
-  }
-  updateExtractBtnState();
-}
-
-function updateExtractBtnState() {
-  const name = document.getElementById('ss-kit-name').value.trim();
-  document.getElementById('extract-btn').disabled = !(name && ssImageBase64);
-}
-
-// Drag & drop
-const dz = document.getElementById('dropzone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
-dz.addEventListener('drop', e => {
-  e.preventDefault();
-  dz.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) loadImageFile(file);
-});
-
-// Paste support
+// Paste support (routes to the Fill In From Screenshot modal, wherever it was opened from)
 document.addEventListener('paste', e => {
   const items = e.clipboardData?.items;
   if (!items) return;
@@ -1004,8 +906,6 @@ document.addEventListener('paste', e => {
 
   if (document.getElementById('manual-ss-modal').style.display === 'flex') {
     loadManualImageFile(imageFile);
-  } else if (document.getElementById('page-screenshot').classList.contains('active')) {
-    loadImageFile(imageFile);
   }
 });
 
@@ -1037,39 +937,6 @@ async function pasteImageInto(btnId, onFile) {
     btn.disabled = false;
     btn.textContent = originalText;
   }
-}
-
-function pasteFromClipboard() {
-  pasteImageInto('paste-btn', loadImageFile);
-}
-
-function handleFileInput(e) {
-  const file = e.target.files[0];
-  if (file) loadImageFile(file);
-}
-
-function loadImageFile(file) {
-  if (!file.type.startsWith('image/')) { toast('Please upload an image file.'); return; }
-  const reader = new FileReader();
-  reader.onload = () => {
-    const result = reader.result;
-    ssImageMediaType = file.type;
-    ssImageBase64 = result.split(',')[1];
-    document.getElementById('preview-img').src = result;
-    document.getElementById('dropzone-empty').style.display = 'none';
-    document.getElementById('dropzone-preview').style.display = 'block';
-    updateExtractBtnState();
-  };
-  reader.readAsDataURL(file);
-}
-
-function clearImage() {
-  ssImageBase64 = null;
-  ssImageMediaType = null;
-  document.getElementById('ss-file-input').value = '';
-  document.getElementById('dropzone-empty').style.display = 'block';
-  document.getElementById('dropzone-preview').style.display = 'none';
-  updateExtractBtnState();
 }
 
 const EXTRACTION_PROMPT = `This image is a diamond painting color key / legend sheet from a kit's instruction sheet. It is laid out in repeated column groups, each with a "Number" column (a row index, ignore this), a "Symbol" column (ignore this), and a "Code" column (the actual drill/DMC color code — extract this).
@@ -1132,57 +999,6 @@ function friendlyExtractionError(err) {
     : `Error: ${err.message}`;
 }
 
-async function extractAndSave() {
-  const name = document.getElementById('ss-kit-name').value.trim();
-  const shapeInput = document.getElementById('ss-kit-shape').value;
-
-  if (!name) { toast('Enter a kit name.'); return; }
-  if (!ssImageBase64) { toast('Add a screenshot first.'); return; }
-
-  const btn = document.getElementById('extract-btn');
-  btn.disabled = true;
-  btn.innerHTML = `<span class="spinner"></span> Reading colors...`;
-
-  try {
-    const codes = await callExtractionAPI(ssImageBase64, ssImageMediaType);
-
-    const existing = data.kits.find(k => k.name.toLowerCase() === name.toLowerCase());
-    let wasExisting = false;
-    if (existing) {
-      wasExisting = true;
-      existing.dmc = codes;
-      existing.skipColors = false;
-      if (shapeInput) existing.shape = shapeInput;
-    } else {
-      data.kits.push({ id: Date.now(), name, shape: shapeInput || 'Unknown', dmc: codes, skipColors: false });
-    }
-    saveData(data);
-    populateSSDatalist();
-    renderLibrary();
-
-    document.getElementById('ss-result').innerHTML = `
-      <div class="result-card">
-        <div class="result-title">✓ ${codes.length} colors found for ${name}</div>
-        <div class="result-sub">${wasExisting ? 'Existing kit updated' : 'New kit created'} — double check the count against your sheet.</div>
-        <div class="chip-grid">${codes.map(c => `<span class="chip">${c}</span>`).join('')}</div>
-      </div>
-    `;
-    toast(`✓ Saved ${codes.length} colors to ${name}`);
-
-    document.getElementById('ss-kit-name').value = '';
-    document.getElementById('ss-kit-shape').value = '';
-    document.getElementById('ss-existing-note').style.display = 'none';
-    clearImage();
-
-  } catch (err) {
-    console.error(err);
-    toast(friendlyExtractionError(err));
-  } finally {
-    btn.innerHTML = 'Extract Colors & Save';
-    updateExtractBtnState();
-  }
-}
-
 // ── TOAST ────────────────────────────────────────────
 function toast(msg) {
   const el = document.getElementById('toast');
@@ -1191,11 +1007,13 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-// ── MANUAL-ADD SCREENSHOT MODAL ──────────────────────
+// ── SCREENSHOT-FILL MODAL (shared by Add Kit and Edit Kit) ──
 let manualSSImageBase64 = null;
 let manualSSImageMediaType = null;
+let manualSSTargetField = 'add-kit-dmc';
 
-function openManualSSModal() {
+function openManualSSModal(targetFieldId) {
+  manualSSTargetField = targetFieldId || 'add-kit-dmc';
   document.getElementById('manual-ss-modal').style.display = 'flex';
 }
 
@@ -1246,8 +1064,8 @@ async function extractIntoManualForm() {
 
   try {
     const codes = await callExtractionAPI(manualSSImageBase64, manualSSImageMediaType);
-    document.getElementById('add-kit-dmc').value = codes.join(', ');
-    toast(`✓ ${codes.length} colors added to the form — review and hit Add Kit`);
+    document.getElementById(manualSSTargetField).value = codes.join(', ');
+    toast(`✓ ${codes.length} colors added — review and save`);
     closeManualSSModal();
   } catch (err) {
     console.error(err);
