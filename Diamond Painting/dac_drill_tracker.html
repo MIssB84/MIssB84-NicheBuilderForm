@@ -528,9 +528,8 @@
     <div class="field">
       <label>Thumbnail (optional)</label>
       <div id="edit-thumb-preview-wrap"></div>
-      <button class="btn btn-ghost btn-full" id="edit-thumb-paste-btn" onclick="editPasteThumbnail()" style="margin-bottom:8px;">📋 Paste from Clipboard</button>
       <div class="row" style="gap:8px;margin-bottom:0;">
-        <input type="text" id="edit-thumb-url" placeholder="or paste an image URL..." style="flex:1;" />
+        <input type="text" id="edit-thumb-url" placeholder="paste an image URL..." style="flex:1;" />
         <button class="btn btn-ghost" onclick="useThumbnailUrl()">Use URL</button>
       </div>
     </div>
@@ -606,8 +605,13 @@ function loadData() {
 }
 
 function saveData(d) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
-  showSaveIndicator();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+    showSaveIndicator();
+  } catch (err) {
+    console.error(err);
+    toast('⚠ Could not save — your browser storage is full. Export a backup and remove some thumbnails.');
+  }
 }
 
 function showSaveIndicator() {
@@ -759,10 +763,14 @@ function renderLibrary() {
         </div>
       </div>
       <div class="kit-expand" id="expand-${kit.id}">
-        ${hasColors
-          ? `<div class="chip-grid">${kit.dmc.map(d => `<span class="chip">${d}</span>`).join('')}</div>`
-          : `<div style="font-size:0.82rem;color:var(--muted);">${skipped ? 'Marked as having no color key.' : 'No colors logged yet — add via the Screenshot tab or Edit Kit below.'}</div>`
-        }
+        <div style="font-size:0.82rem;color:var(--muted);">
+          ${skipped
+            ? 'Marked as having no color key.'
+            : hasColors
+              ? `${kit.dmc.length} colors saved — use Find a Color above to search.`
+              : 'No colors logged yet — add via the Screenshot tab or Edit Kit below.'
+          }
+        </div>
         <div class="kit-actions">
           <button class="btn btn-ghost" onclick="openEditModal(${kit.id})">Edit Kit</button>
           <button class="btn btn-danger" onclick="deleteKit(${kit.id})">Delete Kit</button>
@@ -882,17 +890,6 @@ function renderEditThumbPreview() {
     : '';
 }
 
-function editPasteThumbnail() {
-  pasteImageInto('edit-thumb-paste-btn', file => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      editThumbnailData = reader.result;
-      renderEditThumbPreview();
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
 function useThumbnailUrl() {
   const url = document.getElementById('edit-thumb-url').value.trim();
   if (!url) { toast('Paste an image URL first.'); return; }
@@ -1007,13 +1004,6 @@ document.addEventListener('paste', e => {
 
   if (document.getElementById('manual-ss-modal').style.display === 'flex') {
     loadManualImageFile(imageFile);
-  } else if (document.getElementById('edit-modal').style.display === 'flex') {
-    const reader = new FileReader();
-    reader.onload = () => {
-      editThumbnailData = reader.result;
-      renderEditThumbPreview();
-    };
-    reader.readAsDataURL(imageFile);
   } else if (document.getElementById('page-screenshot').classList.contains('active')) {
     loadImageFile(imageFile);
   }
