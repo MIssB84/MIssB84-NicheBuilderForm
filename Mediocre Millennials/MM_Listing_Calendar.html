@@ -127,7 +127,7 @@
   .cal-cell {
     background: #fff; border: 1px solid var(--border); border-radius: 8px;
     min-height: 92px; padding: 8px; cursor: pointer; display: flex; flex-direction: column;
-    gap: 4px; transition: border-color 0.15s ease;
+    gap: 4px; transition: border-color 0.15s ease; min-width: 0; overflow: hidden;
   }
   .cal-cell:hover { border-color: var(--rose); }
   .cal-cell.empty { background: transparent; border: none; cursor: default; }
