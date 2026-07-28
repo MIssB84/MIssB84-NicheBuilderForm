@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Listing Calendar — Mediocre Millennials</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
@@ -19,6 +19,7 @@
     --mid-text: #5a4a45;
     --muted: #998f89;
     --paste-sage: #b2c4b4;
+    --stats-tint: #eef1ec;
   }
 
   * { box-sizing: border-box; }
@@ -31,7 +32,18 @@
     padding: 28px 20px 50px;
   }
 
-  .wrap { max-width: 780px; margin: 0 auto; }
+  .wrap { max-width: 1160px; margin: 0 auto; }
+
+  .cal-layout { display: flex; gap: 20px; align-items: flex-start; }
+  .cal-main { flex: 1 1 640px; min-width: 0; }
+  .cal-side { flex: 0 0 300px; }
+  .cal-side .card { position: sticky; top: 20px; margin-bottom: 0; }
+
+  @media (max-width: 860px) {
+    .cal-layout { flex-direction: column; }
+    .cal-side { flex: 1 1 auto; width: 100%; }
+    .cal-side .card { position: static; }
+  }
 
   h1 {
     font-family: 'Playfair Display', serif;
@@ -100,19 +112,7 @@
 
   .streak-row {
     background: var(--rose); color: #fff; border-radius: 10px; padding: 10px 16px;
-    font-size: 13.5px; font-weight: 600; margin: 0 0 20px; display: inline-block;
-  }
-
-  .month-progress { margin: 0 0 20px; }
-  .month-progress-label { font-size: 13px; font-weight: 600; color: var(--bg); margin-bottom: 6px; }
-  .month-progress-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
-  .month-progress-fill { background: var(--rose); height: 100%; border-radius: 20px; transition: width 0.3s ease; }
-
-  .month-stats-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .month-stats-row .month-progress { flex: 1; min-width: 220px; }
-  .month-listings-count {
-    background: var(--paste-sage); color: var(--bg); font-weight: 700; font-size: 14px;
-    padding: 8px 16px; border-radius: 20px; white-space: nowrap;
+    font-size: 13.5px; font-weight: 600; margin: 14px 0 20px; display: inline-block;
   }
 
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
@@ -140,24 +140,32 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;
   }
 
-  .count-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-  .count-btn {
-    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border);
-    background: #fff; color: var(--mid-text); font-family: 'Jost', sans-serif;
-    font-weight: 600; cursor: pointer; font-size: 13.5px;
-  }
-  .count-btn:hover { border-color: var(--rose); }
-  .count-btn.active { background: var(--rose); border-color: var(--rose); color: #fff; }
+  .stats-total { font-size: 15px; font-weight: 700; color: var(--bg); margin-bottom: 16px; }
+  .stats-bars { display: flex; flex-direction: column; gap: 12px; }
+  .stats-bar-row { display: flex; flex-direction: column; gap: 4px; }
+  .stats-bar-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--mid-text); font-weight: 600; }
+  .stats-bar-track { background: var(--stats-tint); border-radius: 20px; height: 10px; overflow: hidden; }
+  .stats-bar-fill { height: 100%; border-radius: 20px; transition: width 0.3s ease; }
 
-  .type-multiselect { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-  .type-ms-chip {
-    padding: 9px 16px; border-radius: 20px; border: 1.5px solid var(--border);
-    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
-    font-family: 'Jost', sans-serif; color: var(--mid-text); display: flex;
-    align-items: center; gap: 7px; transition: all 0.15s ease;
+  .type-count-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+  .type-count-row { display: flex; align-items: center; gap: 10px; }
+  .type-count-row .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .type-count-row .type-name { flex: 1; font-size: 13.5px; color: var(--mid-text); font-weight: 500; }
+  .type-count-controls { display: flex; align-items: center; gap: 6px; }
+  .stepper-btn {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: #fff; color: var(--mid-text); font-size: 15px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
-  .type-ms-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-  .type-ms-chip.active { color: #fff; border-color: transparent; }
+  .stepper-btn:hover { border-color: var(--rose); background: var(--sage-tint); }
+  .type-count-value { width: 30px; text-align: center; font-size: 14px; font-weight: 700; color: var(--bg); }
+  .day-total { font-size: 13.5px; font-weight: 700; color: var(--bg); margin-top: 14px; }
+
+  .day-editor {
+    background: var(--light-bg); border: 1.5px solid var(--rose);
+    border-radius: 12px; padding: 18px; margin: 4px 0 18px;
+  }
+  .day-editor h2 { margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -165,43 +173,46 @@
   <h1>Listing Calendar</h1>
   <div class="subhead">Mediocre Millennials — log how many listings you added each day and which product types, so you can spot gaps and stay consistent.</div>
 
-  <div class="card">
-    <h2><span class="step-tag">Consistency</span> This Month</h2>
+  <div class="cal-layout">
+    <div class="cal-main">
+      <div class="card">
+        <h2><span class="step-tag">Consistency</span> This Month</h2>
+        <div class="hint">Saves automatically in this browser as you go.</div>
 
-    <div class="streak-row" id="streakRow"></div>
+        <div class="streak-row" id="streakRow"></div>
 
-    <div class="month-stats-row">
-      <div class="month-progress">
-        <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
-        <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
+        <div class="cal-header">
+          <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
+          <div class="cal-month-label" id="calMonthLabel"></div>
+          <button class="btn secondary small" id="calNextBtn">Next ›</button>
+        </div>
+
+        <div class="day-editor" id="dayEditorCard" style="display:none;">
+          <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
+
+          <label class="first">How many of each type did you add?</label>
+          <div class="type-count-list" id="typeCountList"></div>
+          <div class="day-total" id="dayTotal">Total: 0 listings</div>
+
+          <div class="copy-all-row">
+            <button class="btn" id="saveDayBtn">Save Day</button>
+            <button class="btn secondary" id="deleteDayBtn">Delete Entry</button>
+            <button class="btn secondary" id="closeDayEditorBtn">Close</button>
+          </div>
+        </div>
+
+        <div class="cal-legend" id="calLegend"></div>
+
+        <div class="cal-grid" id="calGrid"></div>
       </div>
-      <div class="month-listings-count" id="monthListingsCount">0 listings this month</div>
     </div>
 
-    <div class="cal-header">
-      <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
-      <div class="cal-month-label" id="calMonthLabel"></div>
-      <button class="btn secondary small" id="calNextBtn">Next ›</button>
-    </div>
-
-    <div class="cal-legend" id="calLegend"></div>
-
-    <div class="cal-grid" id="calGrid"></div>
-  </div>
-
-  <div class="card" id="dayEditorCard" style="display:none;">
-    <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
-
-    <label class="first">How many listings did you add?</label>
-    <div class="count-row" id="countRow"></div>
-
-    <label>Product type(s) added</label>
-    <div class="type-multiselect" id="typeMultiselect"></div>
-
-    <div class="copy-all-row">
-      <button class="btn" id="saveDayBtn">Save Day</button>
-      <button class="btn secondary" id="deleteDayBtn">Delete This Day</button>
-      <button class="btn secondary" id="closeDayEditorBtn">Close</button>
+    <div class="cal-side">
+      <div class="card">
+        <h2><span class="step-tag">Snapshot</span> <span id="statsMonthLabel"></span></h2>
+        <div class="stats-total" id="statsTotal"></div>
+        <div class="stats-bars" id="statsBars"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -219,8 +230,7 @@ let calendarEntries = {};
 let calViewDate = new Date();
 calViewDate.setDate(1);
 let selectedDayKey = null;
-let selectedCount = null;
-let selectedTypes = new Set();
+let dayTypeCounts = {};
 
 function dateKey(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -288,81 +298,128 @@ function renderCalendarMonth() {
     grid.appendChild(cell);
   }
 
-  renderMonthProgress(year, month, daysInMonth);
+  renderMonthlyStats(year, month);
 }
 
-const POST_GOAL_DAYS = 21;
-
-function renderMonthProgress(year, month, daysInMonth) {
-  let loggedDays = 0;
-  let totalListings = 0;
-  for (let d = 1; d <= daysInMonth; d++) {
-    const entry = calendarEntries[dateKey(year, month, d)];
-    if (entry && entry.count > 0) {
-      loggedDays++;
-      totalListings += entry.count;
+function computeMonthlyStats(year, month) {
+  const prefix = `${year}-${String(month + 1).padStart(2, '0')}-`;
+  const byType = {};
+  PRODUCT_TYPES.forEach(t => { byType[t.name] = 0; });
+  let total = 0;
+  Object.keys(calendarEntries).forEach((key) => {
+    if (!key.startsWith(prefix)) return;
+    const entry = calendarEntries[key];
+    if (!entry) return;
+    total += entry.count || 0;
+    if (entry.byType) {
+      PRODUCT_TYPES.forEach(t => { byType[t.name] += entry.byType[t.name] || 0; });
     }
-  }
-  const pct = Math.min(100, Math.round((loggedDays / POST_GOAL_DAYS) * 100));
-  document.getElementById('monthProgressLabel').textContent = `${loggedDays} / ${POST_GOAL_DAYS} days this month`;
-  document.getElementById('monthProgressFill').style.width = pct + '%';
-  document.getElementById('monthListingsCount').textContent = `${totalListings} listing${totalListings === 1 ? '' : 's'} this month`;
+  });
+  return { total, byType };
+}
+
+function renderMonthlyStats(year, month) {
+  const { total, byType } = computeMonthlyStats(year, month);
+  const monthLabel = new Date(year, month, 1).toLocaleDateString([], { month: 'long', year: 'numeric' });
+  document.getElementById('statsMonthLabel').textContent = monthLabel;
+  document.getElementById('statsTotal').textContent = `${total} listing${total === 1 ? '' : 's'} added so far`;
+
+  const maxCount = Math.max(1, ...PRODUCT_TYPES.map(t => byType[t.name]));
+  const bars = document.getElementById('statsBars');
+  bars.innerHTML = PRODUCT_TYPES.map(t => {
+    const count = byType[t.name];
+    const pct = count > 0 ? Math.max(4, Math.round((count / maxCount) * 100)) : 0;
+    return `
+      <div class="stats-bar-row">
+        <div class="stats-bar-label"><span>${t.name}</span><span>${count}</span></div>
+        <div class="stats-bar-track"><div class="stats-bar-fill" style="width:${pct}%; background:${t.color};"></div></div>
+      </div>`;
+  }).join('');
 }
 
 function openDayEditor(key, d, month, year) {
   selectedDayKey = key;
   const entry = calendarEntries[key];
-  selectedCount = entry ? entry.count : null;
-  selectedTypes = new Set(entry ? entry.types : []);
+  dayTypeCounts = {};
+  PRODUCT_TYPES.forEach(t => { dayTypeCounts[t.name] = (entry && entry.byType) ? (entry.byType[t.name] || 0) : 0; });
 
   const dateObj = new Date(year, month, d);
   document.getElementById('dayEditorDate').textContent = dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-  renderCountRow();
-  renderTypeMultiselect();
+  renderTypeCountList();
 
   const editorCard = document.getElementById('dayEditorCard');
   editorCard.style.display = 'block';
   editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function renderCountRow() {
-  const row = document.getElementById('countRow');
-  row.innerHTML = '';
-  for (let n = 1; n <= 10; n++) {
-    const btn = document.createElement('button');
-    btn.className = 'count-btn' + (selectedCount === n ? ' active' : '');
-    btn.textContent = n;
-    btn.addEventListener('click', () => {
-      selectedCount = (selectedCount === n) ? null : n;
-      renderCountRow();
+function renderTypeCountList() {
+  const list = document.getElementById('typeCountList');
+  list.innerHTML = '';
+  PRODUCT_TYPES.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'type-count-row';
+
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.style.background = t.color;
+    row.appendChild(dot);
+
+    const name = document.createElement('span');
+    name.className = 'type-name';
+    name.textContent = t.name;
+    row.appendChild(name);
+
+    const controls = document.createElement('div');
+    controls.className = 'type-count-controls';
+
+    const minusBtn = document.createElement('button');
+    minusBtn.className = 'stepper-btn';
+    minusBtn.textContent = '−';
+    minusBtn.addEventListener('click', () => {
+      dayTypeCounts[t.name] = Math.max(0, dayTypeCounts[t.name] - 1);
+      renderTypeCountList();
+      updateDayTotal();
     });
-    row.appendChild(btn);
-  }
+    controls.appendChild(minusBtn);
+
+    const value = document.createElement('span');
+    value.className = 'type-count-value';
+    value.textContent = dayTypeCounts[t.name];
+    controls.appendChild(value);
+
+    const plusBtn = document.createElement('button');
+    plusBtn.className = 'stepper-btn';
+    plusBtn.textContent = '+';
+    plusBtn.addEventListener('click', () => {
+      dayTypeCounts[t.name] += 1;
+      renderTypeCountList();
+      updateDayTotal();
+    });
+    controls.appendChild(plusBtn);
+
+    row.appendChild(controls);
+    list.appendChild(row);
+  });
+  updateDayTotal();
 }
 
-function renderTypeMultiselect() {
-  const wrap = document.getElementById('typeMultiselect');
-  wrap.innerHTML = '';
-  PRODUCT_TYPES.forEach(t => {
-    const isActive = selectedTypes.has(t.name);
-    const chip = document.createElement('button');
-    chip.className = 'type-ms-chip' + (isActive ? ' active' : '');
-    if (isActive) chip.style.background = t.color;
-    chip.innerHTML = `<span class="dot" style="background:${isActive ? '#fff' : t.color}"></span>${t.name}`;
-    chip.addEventListener('click', () => {
-      if (selectedTypes.has(t.name)) selectedTypes.delete(t.name);
-      else selectedTypes.add(t.name);
-      renderTypeMultiselect();
-    });
-    wrap.appendChild(chip);
-  });
+function updateDayTotal() {
+  const total = PRODUCT_TYPES.reduce((sum, t) => sum + dayTypeCounts[t.name], 0);
+  document.getElementById('dayTotal').textContent = `Total: ${total} listing${total === 1 ? '' : 's'}`;
 }
 
 document.getElementById('saveDayBtn').addEventListener('click', () => {
   if (!selectedDayKey) return;
-  if (!selectedCount) return;
-  calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
+  const total = PRODUCT_TYPES.reduce((sum, t) => sum + dayTypeCounts[t.name], 0);
+  if (!total) return;
+  const byType = {};
+  PRODUCT_TYPES.forEach(t => { if (dayTypeCounts[t.name] > 0) byType[t.name] = dayTypeCounts[t.name]; });
+  calendarEntries[selectedDayKey] = {
+    count: total,
+    types: Object.keys(byType),
+    byType
+  };
   saveCalendarEntries();
   renderCalendarMonth();
   renderStreak();
