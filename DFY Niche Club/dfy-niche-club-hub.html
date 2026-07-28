@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Niche Club Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#2a1f1c; --cream:#f5eddf; --gold:#c9a96e; --rose:#dea193;
+    --border:#ead9d5; --lightbg:#fdf7f2; --midtext:#5a4a45; --mutedtext:#c4b0a8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Jost',Arial,sans-serif;background:#f0e8df;color:var(--dark);}
+  .app{max-width:1100px;margin:0 auto;padding:0 0 60px;}
+  .app-header{background:var(--dark);padding:1.6rem 2rem 1.3rem;text-align:center;}
+  .app-header h1{font-family:'Playfair Display',Georgia,serif;color:var(--cream);font-size:1.9rem;margin:0 0 .2rem;}
+  .app-header p{color:var(--mutedtext);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;margin:0;}
+
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--dark);padding:0 1rem 1rem;justify-content:center;}
+  .tab-btn{font-family:'Jost',Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    background:transparent;color:var(--mutedtext);border:1.5px solid rgba(255,255,255,0.15);border-radius:999px;
+    padding:9px 16px;cursor:pointer;transition:all .15s;}
+  .tab-btn:hover{border-color:var(--rose);color:var(--cream);}
+  .tab-btn.active{background:var(--rose);color:var(--dark);border-color:var(--rose);}
+
+  .panel{display:none;background:#fff;border:1px solid var(--border);border-top:none;padding:2rem;margin-top:0;}
+  .panel.active{display:block;}
+  .panel h2{font-family:'Playfair Display',Georgia,serif;font-size:1.6rem;margin:0 0 .3rem;}
+  .panel .sub{color:var(--midtext);font-size:14px;margin:0 0 1.5rem;}
+
+  .field{margin-bottom:1rem;}
+  .field label{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--midtext);margin-bottom:.4rem;}
+  .field .hint{font-size:12px;color:#a98f87;margin-top:.3rem;font-weight:400;text-transform:none;letter-spacing:0;}
+  input[type=text],input[type=url],input[type=date],input[type=time],input[type=password],textarea,select{
+    width:100%;border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;font-family:'Jost',Arial,sans-serif;
+    font-size:15px;color:var(--dark);background:var(--lightbg);outline:none;}
+  textarea{resize:vertical;min-height:90px;}
+  input:focus,textarea:focus,select:focus{border-color:var(--rose);}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  @media(max-width:700px){.row2,.row3{grid-template-columns:1fr;}}
+
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin:1.3rem 0;}
+  .btn{font-family:'Jost',Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    padding:12px 22px;border-radius:999px;cursor:pointer;border:1.5px solid var(--dark);transition:all .15s;}
+  .btn-primary{background:var(--dark);color:var(--cream);}
+  .btn-primary:hover{background:#3d2e2a;}
+  .btn-secondary{background:var(--rose);color:var(--dark);border-color:var(--rose);}
+  .btn-secondary:hover{background:#bb7d72;color:#fff;}
+  .btn-ghost{background:transparent;color:var(--dark);}
+  .btn-ghost:hover{border-color:var(--rose);color:var(--rose);}
+  .btn-danger{background:transparent;color:#a33;border-color:#c99;}
+  .btn-danger:hover{background:#a33;color:#fff;}
+  .btn-sm{padding:7px 14px;font-size:11px;}
+
+  .output-wrap{margin-top:1.5rem;}
+  .output-wrap label{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--midtext);margin-bottom:.4rem;}
+  .output-wrap textarea{min-height:260px;font-family:'Courier New',monospace;font-size:12.5px;background:#fff;}
+  .status-msg{font-size:13px;color:#2d6a4f;font-weight:700;margin-left:6px;}
+  .status-err{font-size:13px;color:#a33;font-weight:700;margin-left:6px;}
+
+  .card-block{border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1rem;background:var(--lightbg);position:relative;}
+  .card-block .remove-x{position:absolute;top:10px;right:12px;background:none;border:none;color:#a98f87;font-size:18px;cursor:pointer;font-weight:700;}
+  .card-block .remove-x:hover{color:#a33;}
+
+  .divider{border:none;border-top:1px solid var(--border);margin:1.75rem 0;}
+  .small-note{font-size:12.5px;color:#a98f87;margin-top:.5rem;}
+  .preview-frame{border:1px solid var(--border);border-radius:12px;margin-top:1.5rem;overflow:hidden;}
+  .preview-frame iframe{width:100%;height:520px;border:0;background:#fff;}
+  .badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--gold);color:var(--dark);padding:4px 10px;border-radius:999px;margin-left:8px;vertical-align:middle;}
+  .api-banner{background:#fdf3ec;border:1px solid #ead9d5;border-radius:10px;padding:.9rem 1.1rem;font-size:13px;color:var(--midtext);margin-bottom:1.2rem;}
+  .api-banner b{color:var(--dark);}
+  .loading-dots::after{content:'...';}
+  .settings-key-display{font-family:monospace;background:var(--lightbg);border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;color:var(--midtext);}
+
+  /* ============ STICKY SAVE BAR + BACK TO TOP ============ */
+  body{padding-bottom:70px;}
+  .sticky-bar{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:2px solid var(--rose);
+    padding:10px 16px;display:none;align-items:center;justify-content:center;gap:12px;z-index:999;box-shadow:0 -4px 14px rgba(0,0,0,.18);}
+  .sticky-bar .btn{margin:0;padding:9px 18px;font-size:11px;}
+  .sticky-bar .btn-primary{background:var(--rose);color:var(--dark);border-color:var(--rose);}
+  .sticky-bar .btn-primary:hover{background:#c98a7d;}
+  .sticky-bar .btn-danger{background:transparent;color:#e8a3a3;border-color:#e8a3a3;}
+  .sticky-bar .btn-danger:hover{background:#a33;color:#fff;border-color:#a33;}
+  .sticky-flash{font-size:12px;font-weight:800;color:var(--gold);min-width:70px;}
+  .back-to-top{position:fixed;bottom:78px;right:20px;background:var(--rose);color:var(--dark);border:none;
+    width:44px;height:44px;border-radius:50%;font-size:19px;font-weight:700;cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,.22);z-index:998;display:none;align-items:center;justify-content:center;transition:opacity .15s;}
+  .back-to-top:hover{background:#c98a7d;}
+  .back-to-top.show{display:flex;}
+
+  /* ============ DIRECTORY STATS + SPOTLIGHT ============ */
+  .dir-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;}
+  .dir-stat{background:var(--dark);border-radius:12px;padding:1rem 1.2rem;text-align:center;}
+  .dir-stat .num{font-family:'Playfair Display',Georgia,serif;font-size:1.8rem;color:var(--cream);line-height:1;}
+  .dir-stat .lbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mutedtext);margin-top:.3rem;}
+  .dir-spotlight{background:var(--lightbg);border:1.5px solid var(--rose);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1.5rem;}
+  .dir-spotlight .sptitle{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--rose);margin-bottom:.5rem;}
+  .dir-live-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    background:#2d6a4f;color:#fff;padding:3px 9px;border-radius:999px;margin-left:8px;vertical-align:middle;}
+  .dir-draft-badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    background:#a98f87;color:#fff;padding:3px 9px;border-radius:999px;margin-left:8px;vertical-align:middle;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="app-header">
+    <h1>DFY Niche Club Hub</h1>
+    <p>Thrive With Dania — Internal Content Tools</p>
+  </div>
+
+  <div class="tabs" id="tabBar">
+    <button class="tab-btn active" data-tab="nichebuilder">Niche Builder</button>
+    <button class="tab-btn" data-tab="mm">Motivational Monday</button>
+    <button class="tab-btn" data-tab="tip">Weekly Tip</button>
+    <button class="tab-btn" data-tab="plr">PLR Resource</button>
+    <button class="tab-btn" data-tab="directory">Niche Directory</button>
+    <button class="tab-btn" data-tab="announce">Announcements</button>
+    <button class="tab-btn" data-tab="livecall">Monthly Live Call</button>
+    <button class="tab-btn" data-tab="recap">Live Call Recap</button>
+    <button class="tab-btn" data-tab="adhoc">Ad Hoc Post</button>
+    <button class="tab-btn" data-tab="keyword">Keyword Report</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+  </div>
+
+  <button class="back-to-top" id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+  <div class="sticky-bar" id="stickyBar">
+    <button class="btn btn-primary btn-sm" onclick="stickySaveNow()">💾 Save Now</button>
+    <button class="btn btn-danger btn-sm" onclick="stickyClearAll()">🗑 Clear All</button>
+    <span class="sticky-flash" id="stickyFlash"></span>
+  </div>
+
+  <!-- ============ NICHE BUILDER TAB (embedded) ============ -->
+  <div class="panel active" id="panel-nichebuilder">
+    <h2>Niche Builder</h2>
+    <p class="sub">Your existing niche builder tool, embedded here — runs independently with its own commands and storage.</p>
+    <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:1rem;">
+      <iframe src="https://missb84.github.io/MIssB84-NicheBuilderForm/niche-club-builder.html#section-2" style="width:100%;height:85vh;border:0;display:block;" title="Niche Builder"></iframe>
+    </div>
+  </div>
+
+  <!-- ============ MM TAB ============ -->
+  <div class="panel" id="panel-mm">
+    <h2>Motivational Monday</h2>
+    <p class="sub">Generates a warm, practical MM post for Etsy sellers. Image is fixed and always included.</p>
+
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
+        <input type="checkbox" id="mm_hastopic" onchange="mmToggleTopic()" style="width:auto;"> I have a topic in mind
+      </label>
+    </div>
+    <div class="field" id="mm_topicfield" style="display:none;">
+      <label>Topic</label>
+      <input type="text" id="mm_topic" placeholder="e.g. comparison, burnout, patience...">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="mmGenerateDraft()">Generate Draft (AI)<span id="mm_gen_status"></span></button>
+    </div>
+
+    <div class="field" id="mm_concepts_wrap" style="display:none;">
+      <label>Pick a Concept (scan, then generate the full post)</label>
+      <div id="mm_concepts_picker"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="mmGenerateFromConcept()">Generate Full Post From This Concept</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Post Body (edit freely — use **word** for bold)</label>
+      <textarea id="mm_body" rows="10" placeholder="AI draft will appear here, or write your own..."></textarea>
+    </div>
+    <div class="field">
+      <label>Title Options (AI gives you 5 — pick your favorite)</label>
+      <div id="mm_titles_picker" class="small-note">Generate a draft to see title options here.</div>
+    </div>
+    <div class="field">
+      <label>Feedback for AI (optional — then regenerate)</label>
+      <textarea id="mm_feedback" rows="2" placeholder="e.g. don't tell members to change their tags or titles, make it punchier..."></textarea>
+    </div>
+    <div class="field">
+      <label>Final Title</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="mm_finaltitle" placeholder="Nobody Felt Ready the First Time Either" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="copyMMTitle()" style="white-space:nowrap;">Copy Title</button>
+      </div>
+      <div class="hint">Copies as "Motivational Monday: [title]"</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="mmRegenerateWithFeedback()">Regenerate With Feedback</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewMM()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('mm')">Clear</button>
+    </div>
+    <div class="preview-frame" id="mm_preview_wrap" style="display:none;">
+      <iframe id="mm_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="mmGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('mm_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap">
+      <label>Plain Text Version (paste into builder, ** = bold)</label>
+      <textarea id="mm_plaintext" rows="8" readonly></textarea>
+    </div>
+    <div class="output-wrap">
+      <label>Generated HTML</label>
+      <textarea id="mm_output" rows="10"></textarea>
+    </div>
+  </div>
+
+  <!-- ============ TIP TAB ============ -->
+  <div class="panel" id="panel-tip">
+    <h2>Weekly Tip</h2>
+    <p class="sub">Plug-and-play weekly tip generator — plain text, markdown-bold, and HTML with copy/generate buttons.</p>
+
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
+        <input type="checkbox" id="tip_hastopic" onchange="tipToggleTopic()" style="width:auto;"> I have a topic in mind
+      </label>
+    </div>
+    <div class="field" id="tip_topicfield" style="display:none;">
+      <label>Topic</label>
+      <input type="text" id="tip_topic" placeholder="e.g. SEO, pricing, Canva, POD...">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="tipGenerateDraft()">Generate Draft (AI)<span id="tip_gen_status"></span></button>
+    </div>
+
+    <div class="field" id="tip_concepts_wrap" style="display:none;">
+      <label>Pick a Concept (scan, then generate the full post)</label>
+      <div id="tip_concepts_picker"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="tipGenerateFromConcept()">Generate Full Post From This Concept</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tip Body (edit freely — use **word** for bold)</label>
+      <textarea id="tip_body" rows="8"></textarea>
+    </div>
+    <div class="field">
+      <label>Title Options (AI gives you 5 — pick your favorite)</label>
+      <div id="tip_titles_picker" class="small-note">Generate a draft to see title options here.</div>
+    </div>
+    <div class="field">
+      <label>Feedback for AI (optional — then regenerate)</label>
+      <textarea id="tip_feedback" rows="2" placeholder="e.g. don't tell members to change their tags or titles..."></textarea>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Final Title</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="tip_finaltitle" placeholder="How to Shrink Your PNG Files Without Losing Quality" style="flex:1;">
+          <button class="btn btn-ghost btn-sm" onclick="copyField('tip_finaltitle')" style="white-space:nowrap;">Copy Title</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Eyebrow Label</label>
+        <input type="text" id="tip_eyebrow" value="DFY Niche Club Weekly Tip">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Button Link (optional)</label>
+        <input type="url" id="tip_link" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>Button Text</label>
+        <input type="text" id="tip_linktext" value="✨ Click Here to Access Site (Bookmark It!)">
+      </div>
+    </div>
+    <div class="field">
+      <label>Footer Note</label>
+      <input type="text" id="tip_footer" value="Use this tip as one simple action step for your shop this week.">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="tipRegenerateWithFeedback()">Regenerate With Feedback</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewTip()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('tip')">Clear</button>
+    </div>
+    <div class="preview-frame" id="tip_preview_wrap" style="display:none;">
+      <iframe id="tip_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="tipGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('tip_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap">
+      <label>Plain Text Version</label>
+      <textarea id="tip_plaintext" rows="8" readonly></textarea>
+    </div>
+    <div class="output-wrap">
+      <label>Generated HTML</label>
+      <textarea id="tip_output" rows="10"></textarea>
+    </div>
+  </div>
+
+  <!-- ============ PLR TAB ============ -->
+  <div class="panel" id="panel-plr">
+    <h2>PLR Resource Template</h2>
+    <p class="sub">Straightforward template — fill in the fields, generate HTML.</p>
+    <div class="btn-row" style="margin-bottom:1.5rem;">
+      <a href="https://www.canva.com/design/DAGhAsn4_Eo/aMZG6mZYNP3GceNXS12M_Q/edit" target="_blank" class="btn btn-primary" style="text-decoration:none;">📁 7,500 Canva Templates</a>
+      <a href="https://www.canva.com/design/DAGi-7ngIFk/yQJ-c7lov1DN4faM4bHjoQ/edit" target="_blank" class="btn btn-primary" style="text-decoration:none;">📁 115 Canva Templates</a>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Badge Text</label><input type="text" id="plr_badge" value="PLR Resource Template"></div>
+      <div class="field"><label>Title</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="plr_title" placeholder="Student Daily Planner" style="flex:1;">
+          <button class="btn btn-ghost btn-sm" onclick="copyPLRTitle()" style="white-space:nowrap;">Copy Title</button>
+        </div>
+        <div class="hint">Copies as "PLR: [title]"</div>
+      </div>
+    </div>
+    <div class="field"><label>Subtitle</label><input type="text" id="plr_subtitle" value="A done-for-you Canva template you can customize, rebrand, and turn into a polished digital product for your shop."></div>
+    <div class="field"><label>Canva Template Link</label><input type="url" id="plr_link" placeholder="https://canva.link/..."></div>
+    <div class="field"><label>Quick Start Steps (one per line)</label>
+      <textarea id="plr_steps" rows="5">Open the Canva template
+Make a copy before editing
+Update the fonts, colors, graphics, and wording
+Export your finished files
+Create your listing and add your own mockups/details</textarea>
+    </div>
+    <div class="field"><label>"What This Is" Text</label>
+      <textarea id="plr_whatisit" rows="3">This is a PLR, Private Label Rights, resource created to help you save time and fast-track your digital product creation process.
+
+Use it as a strong starting point, then make it your own before selling or sharing it.</textarea>
+    </div>
+    <div class="field"><label>Customize Checklist (one per line)</label>
+      <textarea id="plr_checklist" rows="5">Change the colors and fonts
+Swap or remove graphics
+Edit the layout or page order
+Add your own creative details
+Write your own listing description and use your own mockups</textarea>
+    </div>
+    <div class="field"><label>Friendly Reminder Text</label>
+      <textarea id="plr_reminder" rows="3">These templates are meant to give you a head start, not replace your creative direction. The more you tailor the design to a specific audience, style, or use case, the stronger your final product will be.</textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewPlr()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('plr')">Clear</button>
+    </div>
+    <div class="preview-frame" id="plr_preview_wrap" style="display:none;">
+      <iframe id="plr_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="plrGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('plr_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="plr_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ DIRECTORY TAB ============ -->
+  <div class="panel" id="panel-directory">
+    <h2>Niche Club Directory</h2>
+    <p class="sub">Add each week's drop below. Weeks are saved permanently until you clear all data. Generate HTML rebuilds the full searchable directory.</p>
+
+    <div class="dir-stats" id="dir_stats">
+      <div class="dir-stat"><div class="num" id="dir_stat_niches">0</div><div class="lbl">Total Niches</div></div>
+      <div class="dir-stat"><div class="num" id="dir_stat_weeks">0</div><div class="lbl">Weeks Tracked</div></div>
+    </div>
+
+    <div class="dir-spotlight" id="dir_spotlight" style="display:none;">
+      <div class="sptitle">This Week's Niches</div>
+      <div id="dir_spotlight_body"></div>
+    </div>
+
+    <div class="card-block" style="background:#fff;">
+      <label style="display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--midtext);margin-bottom:.4rem;">Bulk Paste This Week's Niches</label>
+      <p class="small-note" style="margin-top:0;">Paste this week's niche list below, one per line. It fills in the rows below with a best-guess product type for each — double check them, then save the week as usual.</p>
+      <textarea id="dir_bulk_input" rows="5" placeholder="Vintage Halloween Geese Printable Wall Art&#10;Wait For Me I Have Little Legs PNG&#10;Maximalist Floral Frame TV Art"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="dirLoadBulkPaste()">Load Into Rows Below</button>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="card-block">
+      <div class="row2">
+        <div class="field"><label>Week Date</label><input type="date" id="dir_weekdate"></div>
+        <div class="field"><label>Weekly Drop Link</label><input type="url" id="dir_weeklink" placeholder="https://www.thrivewithdania.com/school/course/..."></div>
+      </div>
+      <div id="dir_niche_rows"></div>
+      <div class="field">
+        <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
+          <input type="checkbox" id="dir_islive" checked style="width:auto;"> Publish live (uncheck to save as draft — draft weeks stay out of the generated HTML until you flip them live)
+        </label>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-ghost btn-sm" onclick="dirAddNicheRow()">+ Add Niche</button>
+        <button class="btn btn-primary btn-sm" onclick="dirSaveWeek()">Save This Week</button>
+      </div>
+    </div>
+    <hr class="divider">
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="dirGenerateHTML()">Generate HTML (All Live Weeks)</button>
+      <button class="btn btn-ghost" onclick="copyOutput('dir_output')">Copy HTML</button>
+      <button class="btn btn-danger" onclick="dirClearAll()">Clear All Data</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="dir_output" rows="10"></textarea></div>
+    <hr class="divider">
+    <div id="dir_weeks_list"></div>
+  </div>
+
+  <!-- ============ ANNOUNCEMENTS TAB ============ -->
+  <div class="panel" id="panel-announce">
+    <h2>Announcements &amp; FYIs</h2>
+    <p class="sub">Expandable cards for weekly updates.</p>
+    <div class="field"><label>Week Of</label><input type="date" id="ann_weekdate"></div>
+    <div id="ann_cards"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="annAddCard()">+ Add Card</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewAnn()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('ann')">Clear</button>
+    </div>
+    <div class="preview-frame" id="ann_preview_wrap" style="display:none;">
+      <iframe id="ann_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="annGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('ann_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="ann_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ LIVE CALL TAB ============ -->
+  <div class="panel" id="panel-livecall">
+    <h2>Monthly Live Call</h2>
+    <p class="sub">Countdown timer, call details, and calendar links.</p>
+    <div class="row3">
+      <div class="field"><label>Call Date</label><input type="date" id="lc_date"></div>
+      <div class="field"><label>Start Time</label><input type="time" id="lc_start" value="09:15"></div>
+      <div class="field"><label>End Time</label><input type="time" id="lc_end" value="11:15"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Timezone Label</label><input type="text" id="lc_tz" value="PST"></div>
+      <div class="field"><label>Platform</label><input type="text" id="lc_platform" value="Google Meet"></div>
+    </div>
+    <div class="field"><label>What to Expect</label>
+      <textarea id="lc_expect" rows="4">Every month we hop on live to dig into your Etsy questions, talk trending niches, and get some real strategy time together. Bring your wins, your stuck points, or just come to listen. Submit your questions ahead of time using the form below so we can make sure your topic gets covered first. These calls are recorded, so if you cannot make it live, the replay will be waiting for you inside the group.</textarea>
+    </div>
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
+        <input type="checkbox" id="lc_islive" onchange="lcToggleLive()" style="width:auto;"> 🔴 Make this call live now (shows the live banner + join button)
+      </label>
+      <div class="hint">Leave unchecked while the link is just pending. You can enter the Meet link ahead of time and flip this on the week of the call.</div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Google Meet Link</label><input type="url" id="lc_meetlink" placeholder="https://meet.google.com/..."></div>
+      <div class="field"><label>Submit Questions Form Link</label><input type="url" id="lc_formlink" placeholder="https://docs.google.com/forms/..."></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Next Month's Call Date</label><input type="date" id="lc_nextdate"></div>
+      <div class="field"><label>Next Month's Time (same start/end assumed)</label><input type="text" id="lc_nexttime" value="9:15 am PST - 11:15 am PST" readonly style="background:#fff;color:#a98f87;"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewLc()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('lc')">Clear</button>
+    </div>
+    <div class="preview-frame" id="lc_preview_wrap" style="display:none;">
+      <iframe id="lc_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="lcGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('lc_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="lc_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ RECAP TAB ============ -->
+  <div class="panel" id="panel-recap">
+    <h2>Live Call Recap</h2>
+    <p class="sub">Paste raw Google Meet notes — AI turns them into a scannable recap, grouped by topic.</p>
+    <div class="row2">
+      <div class="field"><label>Month / Year</label><input type="month" id="recap_month"></div>
+      <div class="field"><label>YouTube Embed URL</label><input type="url" id="recap_video" placeholder="https://www.youtube.com/embed/..."></div>
+    </div>
+    <div class="field"><label>Raw Meeting Notes</label>
+      <textarea id="recap_notes" rows="10" placeholder="Paste raw Google Meet summary notes here..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="recapGenerateDraft()">Generate Recap (AI)<span id="recap_gen_status"></span></button>
+    </div>
+    <div class="field">
+      <label>Recap Content (editable — bold sections are ## Header, bullets are - line)</label>
+      <textarea id="recap_body" rows="14"></textarea>
+      <div class="hint">Format: a line starting with ## is a section header. Lines starting with - are bullets under it.</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewRecap()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('recap')">Clear</button>
+    </div>
+    <div class="preview-frame" id="recap_preview_wrap" style="display:none;">
+      <iframe id="recap_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="recapGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('recap_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="recap_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ AD HOC TAB ============ -->
+  <div class="panel" id="panel-adhoc">
+    <h2>Ad Hoc Post</h2>
+    <p class="sub">Freeform one-off post — video or image header, title, body, optional buttons.</p>
+    <div class="row2">
+      <div class="field"><label>Media Type</label>
+        <select id="adhoc_mediatype"><option value="video">Video</option><option value="image">Image</option><option value="none">None</option></select>
+      </div>
+      <div class="field"><label>Media URL</label><input type="url" id="adhoc_mediaurl" placeholder="https://..."></div>
+    </div>
+    <div class="field"><label>Title</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="adhoc_title" placeholder="New AI Law & Etsy Feature!" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="copyField('adhoc_title')" style="white-space:nowrap;">Copy Title</button>
+      </div>
+    </div>
+    <div class="field"><label>Body (blank line = new paragraph, **word** = bold)</label>
+      <textarea id="adhoc_body" rows="8" placeholder="Write clean, or just brain-dump messy notes here and click Clean Up With AI below..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-sm" onclick="adhocCleanUp()">✨ Clean Up With AI (Brain Dump → Post)<span id="adhoc_gen_status"></span></button>
+    </div>
+    <div id="adhoc_buttons"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="adhocAddButton()">+ Add Button</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewAdhoc()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('adhoc')">Clear</button>
+    </div>
+    <div class="preview-frame" id="adhoc_preview_wrap" style="display:none;">
+      <iframe id="adhoc_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="adhocGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('adhoc_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="adhoc_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ KEYWORD REPORT TAB ============ -->
+  <div class="panel" id="panel-keyword">
+    <h2>Monthly Keyword Report</h2>
+    <p class="sub">eRank data table — searchable, sortable, with market movement tags.</p>
+    <div class="row2">
+      <div class="field"><label>Month / Year</label><input type="month" id="kw_month"></div>
+      <div class="field"><label>Group Photo URL</label><input type="url" id="kw_photo" placeholder="https://..."></div>
+    </div>
+    <div id="kw_rows"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="kwAddRow()">+ Add Keyword</button>
+      <button class="btn btn-ghost btn-sm" onclick="kwLoadStandardList()">Load Standard Keyword List</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewKw()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('kw')">Clear</button>
+    </div>
+    <div class="preview-frame" id="kw_preview_wrap" style="display:none;">
+      <iframe id="kw_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="kwGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('kw_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="kw_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ SETTINGS TAB ============ -->
+  <div class="panel" id="panel-settings">
+    <h2>Settings</h2>
+    <p class="sub">Your Anthropic API key powers the AI-generated tools (Motivational Monday, Weekly Tip, Live Call Recap).</p>
+    <div class="api-banner">Your key is stored only in this browser's local storage. It never gets sent anywhere except directly to Anthropic's API when you click a Generate (AI) button.</div>
+    <div id="settings_key_area"></div>
+  </div>
+
+</div>
+
+<script>
+/* ============ CORE: TABS ============ */
+document.getElementById('tabBar').addEventListener('click', function(e){
+  if(!e.target.classList.contains('tab-btn')) return;
+  var tab = e.target.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  e.target.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+  updateStickyBarForTab(tab);
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ============ CORE: STICKY SAVE BAR + BACK TO TOP ============ */
+var TAB_TOOL_MAP = {mm:'mm', tip:'tip', plr:'plr', directory:'directory', announce:'ann', livecall:'lc', recap:'recap', adhoc:'adhoc', keyword:'kw'};
+var currentTab = 'nichebuilder';
+function updateStickyBarForTab(tab){
+  currentTab = tab;
+  var bar = document.getElementById('stickyBar');
+  bar.style.display = TAB_TOOL_MAP[tab] ? 'flex' : 'none';
+}
+function stickySaveNow(){
+  var tool = TAB_TOOL_MAP[currentTab];
+  if(!tool) return;
+  if(tool !== 'directory') saveDraft(tool);
+  stickyFlash('✓ Saved');
+}
+function stickyClearAll(){
+  var tool = TAB_TOOL_MAP[currentTab];
+  if(!tool) return;
+  if(tool === 'directory'){ dirClearAll(); }
+  else { clearTool(tool); }
+}
+function stickyFlash(msg){
+  var el = document.getElementById('stickyFlash');
+  el.textContent = msg;
+  setTimeout(function(){ el.textContent=''; }, 1800);
+}
+window.addEventListener('scroll', function(){
+  var btn = document.getElementById('backToTopBtn');
+  if(window.scrollY > 300) btn.classList.add('show'); else btn.classList.remove('show');
+});
+
+/* ============ CORE: API KEY ============ */
+function getApiKey(){ return localStorage.getItem('dfyhub_apikey') || ''; }
+function setApiKey(k){ localStorage.setItem('dfyhub_apikey', k); }
+function renderSettings(){
+  var area = document.getElementById('settings_key_area');
+  var key = getApiKey();
+  if(key){
+    area.innerHTML = '<div class="field"><label>API Key</label>'+
+      '<div class="settings-key-display">sk-ant-••••••••••••••••'+key.slice(-4)+'</div></div>'+
+      '<button class="btn btn-ghost btn-sm" onclick="showKeyInput()">Change Key</button>';
+  } else {
+    area.innerHTML = '<div class="field"><label>Anthropic API Key</label>'+
+      '<input type="password" id="settings_key_input" placeholder="sk-ant-..."></div>'+
+      '<button class="btn btn-primary btn-sm" onclick="saveKeyFromInput()">Save Key</button>';
+  }
+}
+function showKeyInput(){
+  var area = document.getElementById('settings_key_area');
+  area.innerHTML = '<div class="field"><label>New Anthropic API Key</label>'+
+    '<input type="password" id="settings_key_input" placeholder="sk-ant-..."></div>'+
+    '<button class="btn btn-primary btn-sm" onclick="saveKeyFromInput()">Save Key</button> '+
+    '<button class="btn btn-ghost btn-sm" onclick="renderSettings()">Cancel</button>';
+}
+function saveKeyFromInput(){
+  var v = document.getElementById('settings_key_input').value.trim();
+  if(!v){ alert('Enter a key first.'); return; }
+  setApiKey(v);
+  renderSettings();
+}
+renderSettings();
+
+/* ============ CORE: CLAUDE API CALL ============ */
+async function callClaude(systemPrompt, userPrompt, maxTokens){
+  var key = getApiKey();
+  if(!key){ alert('Add your Anthropic API key in the Settings tab first.'); throw new Error('no key'); }
+  var res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': key,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body: JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens: maxTokens || 1500,
+      system: systemPrompt,
+      messages:[{role:'user', content: userPrompt}]
+    })
+  });
+  var data = await res.json();
+  if(data.error){ throw new Error(data.error.message || 'API error'); }
+  return (data.content||[]).map(function(b){return b.text||'';}).join('\n');
+}
+
+/* ============ CORE: HELPERS ============ */
+function escapeHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function boldify(s){
+  // convert **text** to <strong>text</strong>, escaping everything else
+  var escaped = escapeHtml(s);
+  return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+function paragraphsToHtml(text, pStyle){
+  var parts = (text||'').split(/\n\s*\n/).map(function(p){return p.trim();}).filter(Boolean);
+  return parts.map(function(p){
+    return '<p style="'+pStyle+'">'+boldify(p)+'</p>';
+  }).join('');
+}
+function copyOutput(id){
+  var el = document.getElementById(id);
+  el.select();
+  el.setSelectionRange(0, 999999);
+  navigator.clipboard.writeText(el.value).then(function(){
+    flashCopied(id);
+  }).catch(function(){
+    document.execCommand('copy');
+    flashCopied(id);
+  });
+}
+function showPreview(tool){
+  var outputEl = document.getElementById(tool+'_output');
+  var output = outputEl ? outputEl.value : '';
+  if(!output.trim()){ alert('Nothing to preview yet — fill in the fields first.'); return; }
+  var wrap = document.getElementById(tool+'_preview_wrap');
+  var iframe = document.getElementById(tool+'_preview_iframe');
+  var wrapped = '<!DOCTYPE html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>body{margin:0;padding:20px;background:#f0e8df;}</style></head><body>'+output+'</body></html>';
+  iframe.srcdoc = wrapped;
+  wrap.style.display = 'block';
+  if(wrap.scrollIntoView) wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function previewMM(){ mmGenerateHTML(); showPreview('mm'); }
+function previewTip(){ tipGenerateHTML(); showPreview('tip'); }
+function previewPlr(){ plrGenerateHTML(); showPreview('plr'); }
+function previewAnn(){ annGenerateHTML(); showPreview('ann'); }
+function previewLc(){ lcGenerateHTML(); showPreview('lc'); }
+function previewRecap(){ recapGenerateHTML(); showPreview('recap'); }
+function previewAdhoc(){ adhocGenerateHTML(); showPreview('adhoc'); }
+function previewKw(){ kwGenerateHTML(); showPreview('kw'); }
+function flashCopied(id){
+  var el = document.getElementById(id);
+  var orig = el.style.borderColor;
+  el.style.borderColor = '#2d6a4f';
+  setTimeout(function(){ el.style.borderColor = orig; }, 600);
+}
+function copyField(id){
+  var el = document.getElementById(id);
+  var text = el.value;
+  navigator.clipboard.writeText(text).then(function(){
+    flashCopied(id);
+  }).catch(function(){
+    el.select();
+    document.execCommand('copy');
+    flashCopied(id);
+  });
+}
+function escapeAttr(s){
+  return escapeHtml(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function renderTitlePicker(containerId, finalFieldId, toolName, titles, favoriteIdx){
+  var container = document.getElementById(containerId);
+  if(!titles || !titles.length){ container.innerHTML = '<span class="small-note">No titles yet.</span>'; return; }
+  var pickerName = containerId+'_radio';
+  container.innerHTML = titles.map(function(t, i){
+    var checked = (i===favoriteIdx) ? ' checked' : '';
+    var star = (i===favoriteIdx) ? ' <span style="color:#c9a96e;">★ AI favorite</span>' : '';
+    return '<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--lightbg);cursor:pointer;font-weight:400;text-transform:none;font-size:14px;color:var(--dark);">'+
+      '<input type="radio" name="'+pickerName+'" class="title-pick-radio" data-title="'+escapeAttr(t)+'" style="width:auto;margin-top:3px;"'+checked+'>'+
+      '<span>'+escapeHtml(t)+star+'</span></label>';
+  }).join('');
+  container.querySelectorAll('.title-pick-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.getElementById(finalFieldId).value = radio.dataset.title;
+      saveDraft(toolName);
+    });
+  });
+  // auto-fill final title with the favorite on first render
+  if(favoriteIdx!==undefined && favoriteIdx>=0 && titles[favoriteIdx]){
+    document.getElementById(finalFieldId).value = titles[favoriteIdx];
+  }
+}
+function parseTitlesBlock(titlesRaw){
+  var titles = [];
+  var lines = (titlesRaw||'').split('\n');
+  lines.forEach(function(line){
+    var m = line.match(/^\d+\.\s*(.+)$/);
+    if(m) titles.push(m[1].trim());
+  });
+  var favMatch = (titlesRaw||'').match(/FAVORITE:\s*(\d+)/i);
+  var favIdx = favMatch ? (parseInt(favMatch[1],10)-1) : 0;
+  return {titles:titles, favIdx: favIdx};
+}
+
+/* ============ CORE: AUTOSAVE PER TOOL ============ */
+var TOOL_FIELDS = {
+  mm: ['mm_hastopic','mm_topic','mm_body','mm_finaltitle','mm_plaintext','mm_output','mm_feedback'],
+  tip: ['tip_hastopic','tip_topic','tip_body','tip_finaltitle','tip_eyebrow','tip_link','tip_linktext','tip_footer','tip_plaintext','tip_output','tip_feedback'],
+  plr: ['plr_badge','plr_title','plr_subtitle','plr_link','plr_steps','plr_whatisit','plr_checklist','plr_reminder','plr_output'],
+  ann: ['ann_weekdate','ann_output'],
+  lc: ['lc_date','lc_start','lc_end','lc_tz','lc_platform','lc_expect','lc_islive','lc_meetlink','lc_formlink','lc_nextdate','lc_output'],
+  recap: ['recap_month','recap_video','recap_notes','recap_body','recap_output'],
+  adhoc: ['adhoc_mediatype','adhoc_mediaurl','adhoc_title','adhoc_body','adhoc_output'],
+  kw: ['kw_month','kw_photo','kw_output']
+};
+function isCheckboxField(el){ return el && el.type==='checkbox'; }
+function saveDraft(tool){
+  var data = {};
+  (TOOL_FIELDS[tool]||[]).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) data[id] = isCheckboxField(el) ? el.checked : el.value;
+  });
+  localStorage.setItem('dfyhub_draft_'+tool, JSON.stringify(data));
+}
+function loadDraft(tool){
+  var raw = localStorage.getItem('dfyhub_draft_'+tool);
+  if(!raw) return;
+  try{
+    var data = JSON.parse(raw);
+    Object.keys(data).forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){ if(isCheckboxField(el)){ el.checked = !!data[id]; } else { el.value = data[id]; } }
+    });
+  }catch(e){}
+}
+function attachAutosave(tool){
+  (TOOL_FIELDS[tool]||[]).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener(isCheckboxField(el)?'change':'input', function(){ saveDraft(tool); });
+  });
+}
+function clearTool(tool){
+  if(!confirm('Clear this tool\'s fields? This cannot be undone.')) return;
+  (TOOL_FIELDS[tool]||[]).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){
+      if(el.tagName==='SELECT'){el.selectedIndex=0;}
+      else if(isCheckboxField(el)){el.checked=false;}
+      else {el.value='';}
+    }
+  });
+  localStorage.removeItem('dfyhub_draft_'+tool);
+  if(tool==='mm'){
+    mmToggleTopic();
+    document.getElementById('mm_titles_picker').innerHTML='Generate a draft to see title options here.';
+    document.getElementById('mm_concepts_wrap').style.display='none';
+    document.getElementById('mm_concepts_picker').innerHTML='';
+  }
+  if(tool==='tip'){
+    tipToggleTopic();
+    document.getElementById('tip_titles_picker').innerHTML='Generate a draft to see title options here.';
+    document.getElementById('tip_concepts_wrap').style.display='none';
+    document.getElementById('tip_concepts_picker').innerHTML='';
+  }
+  if(tool==='ann'){ document.getElementById('ann_cards').innerHTML=''; annAddCard(); }
+  if(tool==='adhoc'){ document.getElementById('adhoc_buttons').innerHTML=''; }
+  if(tool==='kw'){
+    document.getElementById('kw_rows').innerHTML='';
+    KW_STANDARD_KEYWORDS.forEach(function(k){ document.getElementById('kw_rows').insertAdjacentHTML('beforeend', kwRowHtml(k)); });
+    kwSaveRows();
+  }
+  if(tool==='lc'){ lcToggleLive(); }
+  var previewWrap = document.getElementById(tool+'_preview_wrap');
+  if(previewWrap) previewWrap.style.display='none';
+}
+
+/* ============ MM TAB LOGIC ============ */
+function mmToggleTopic(){
+  document.getElementById('mm_topicfield').style.display = document.getElementById('mm_hastopic').checked ? 'block':'none';
+}
+var MM_IMAGE_URL = "https://d1yei2z3i6k35z.cloudfront.net/10270628/695a7e36e4a11_DFYCourseImages1.png";
+var NO_TAG_TITLE_ADVICE_RULE = "NEVER advise Etsy sellers to change, tweak, edit, or update their existing/live product titles or tags to try to improve SEO or ranking. Changing live listing titles/tags resets their search ranking history, so this advice is harmful and must never be given, even indirectly or as one option among others.";
+var NO_EMDASH_RULE = "NEVER use an em dash (—) anywhere in the output. Use a period, comma, or separate sentence instead.";
+var MM_SYSTEM = "You write Motivational Monday posts for Etsy sellers and digital product entrepreneurs. Warm, practical, conversational, no cliches. 2-5 short paragraphs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the post body, use **word** for anything that should be bolded]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var MM_CONCEPT_SYSTEM = "You brainstorm fresh Motivational Monday post concepts for Etsy sellers and digital product entrepreneurs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full post.";
+function stripEmDash(s){ return (s||'').replace(/\s*—\s*/g, ', ').replace(/,\s*,/g, ','); }
+function renderConceptPicker(containerId, concepts){
+  var container = document.getElementById(containerId);
+  if(!concepts || !concepts.length){ container.innerHTML = '<span class="small-note">No concepts yet.</span>'; return; }
+  var name = containerId+'_radio';
+  container.innerHTML = concepts.map(function(c, i){
+    var checked = (i===0) ? ' checked' : '';
+    return '<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:var(--lightbg);cursor:pointer;font-weight:400;text-transform:none;font-size:14px;color:var(--dark);">'+
+      '<input type="radio" name="'+name+'" class="concept-pick-radio" data-concept="'+escapeAttr(c)+'" style="width:auto;margin-top:3px;"'+checked+'>'+
+      '<span>'+escapeHtml(c)+'</span></label>';
+  }).join('');
+}
+function getSelectedConcept(containerId){
+  var checked = document.querySelector('#'+containerId+' input:checked');
+  return checked ? checked.dataset.concept : '';
+}
+async function mmGenerateDraft(){
+  var status = document.getElementById('mm_gen_status');
+  var hasTopic = document.getElementById('mm_hastopic').checked;
+  if(hasTopic){
+    document.getElementById('mm_concepts_wrap').style.display='none';
+    var topic = document.getElementById('mm_topic').value;
+    await mmGenerateFullPostFor('Write a Motivational Monday post about this topic: '+topic, status);
+  } else {
+    status.className='status-msg'; status.textContent=' getting concepts...';
+    try{
+      var result = await callClaude(MM_CONCEPT_SYSTEM, 'Give me 5 fresh Motivational Monday concept ideas.', 300);
+      var concepts = result.split('\n').map(function(l){return l.replace(/^[-*\d.\s]+/,'').trim();}).filter(Boolean).slice(0,5);
+      renderConceptPicker('mm_concepts_picker', concepts);
+      document.getElementById('mm_concepts_wrap').style.display='block';
+      status.textContent=' pick a concept below ✓';
+    }catch(e){
+      status.className='status-err'; status.textContent=' error: '+e.message;
+    }
+  }
+}
+async function mmGenerateFromConcept(){
+  var concept = getSelectedConcept('mm_concepts_picker');
+  if(!concept){ alert('Pick a concept first.'); return; }
+  var status = document.getElementById('mm_gen_status');
+  await mmGenerateFullPostFor('Write a Motivational Monday post based on this concept: '+concept, status);
+}
+async function mmGenerateFullPostFor(userMsg, status){
+  status.className='status-msg'; status.textContent=' generating...';
+  try{
+    var result = await callClaude(MM_SYSTEM, userMsg, 1200);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
+    var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
+    document.getElementById('mm_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
+    renderTitlePicker('mm_titles_picker', 'mm_finaltitle', 'mm', parsed.titles, parsed.favIdx);
+    status.textContent=' done ✓';
+    saveDraft('mm');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+async function mmRegenerateWithFeedback(){
+  var feedback = document.getElementById('mm_feedback').value;
+  if(!feedback.trim()){ alert('Add feedback first.'); return; }
+  var status = document.getElementById('mm_gen_status');
+  status.className='status-msg'; status.textContent=' revising...';
+  try{
+    var currentBody = document.getElementById('mm_body').value;
+    var userMsg = "Here is the current draft:\n\n"+currentBody+"\n\nPlease revise it based on this feedback: "+feedback+"\n\nOutput ONLY in this format:\n\nBODY:\n[revised post]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number]";
+    var result = await callClaude(MM_SYSTEM, userMsg, 1200);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
+    var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
+    document.getElementById('mm_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
+    renderTitlePicker('mm_titles_picker', 'mm_finaltitle', 'mm', parsed.titles, parsed.favIdx);
+    document.getElementById('mm_feedback').value='';
+    status.textContent=' revised ✓';
+    saveDraft('mm');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+function copyMMTitle(){
+  var el = document.getElementById('mm_finaltitle');
+  var text = 'Motivational Monday: ' + el.value;
+  navigator.clipboard.writeText(text).then(function(){ flashCopied('mm_finaltitle'); }).catch(function(){
+    var temp = document.createElement('textarea'); temp.value=text; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); flashCopied('mm_finaltitle');
+  });
+}
+function copyPLRTitle(){
+  var el = document.getElementById('plr_title');
+  var text = 'PLR: ' + el.value;
+  navigator.clipboard.writeText(text).then(function(){ flashCopied('plr_title'); }).catch(function(){
+    var temp = document.createElement('textarea'); temp.value=text; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); flashCopied('plr_title');
+  });
+}
+function mmGenerateHTML(){
+  var body = document.getElementById('mm_body').value;
+  var title = document.getElementById('mm_finaltitle').value || 'Motivational Monday';
+  var plain = "**"+title+"**\n\n"+body;
+  document.getElementById('mm_plaintext').value = plain;
+  var bodyHtml = paragraphsToHtml(body, "font-family:Jost,sans-serif;font-size:16px;color:#5a4a45;line-height:1.8;margin:0 0 1.2rem;");
+  var html = '<div style="font-family:Jost,sans-serif;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
+    '<div style="background:#2a1f1c;padding:1.8rem 2rem;text-align:center;border-bottom:3px solid #fff;">'+
+    '<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin:0 0 0.5rem;">Motivational Monday</p>'+
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#f5eddf;line-height:1.3;margin:0;">'+escapeHtml(title)+'</h2></div>'+
+    '<div style="width:100%;"><img src="'+MM_IMAGE_URL+'" alt="Motivational Monday" style="width:100%;display:block;"></div>'+
+    '<div style="padding:2rem 2rem 1.5rem;">'+bodyHtml+
+    '<div style="border-top:1px solid #ead9d5;padding-top:1.4rem;margin-top:1rem;">'+
+    '<p style="font-family:Playfair Display,serif;font-size:22px;font-style:italic;color:#dea193;margin:0 0 0.3rem;">Have a great week! 🧡</p>'+
+    '<p style="font-family:Playfair Display,serif;font-size:22px;font-style:italic;color:#dea193;margin:0;">Dania</p></div></div></div>';
+  document.getElementById('mm_output').value = html;
+  saveDraft('mm');
+}
+
+/* ============ TIP TAB LOGIC ============ */
+function tipToggleTopic(){
+  document.getElementById('tip_topicfield').style.display = document.getElementById('tip_hastopic').checked ? 'block':'none';
+}
+var TIP_SYSTEM = "You write weekly tips for Etsy sellers and digital product creators. Practical, conversational, no fluff. 2-4 short paragraphs, one clear takeaway, bold used sparingly on the most important lines. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the tip body, use **word** for bold]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var TIP_CONCEPT_SYSTEM = "You brainstorm fresh weekly tip concepts for Etsy sellers and digital product creators. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full tip.";
+async function tipGenerateDraft(){
+  var status = document.getElementById('tip_gen_status');
+  var hasTopic = document.getElementById('tip_hastopic').checked;
+  if(hasTopic){
+    document.getElementById('tip_concepts_wrap').style.display='none';
+    var topic = document.getElementById('tip_topic').value;
+    await tipGenerateFullPostFor('Write a weekly tip about this topic: '+topic, status);
+  } else {
+    status.className='status-msg'; status.textContent=' getting concepts...';
+    try{
+      var result = await callClaude(TIP_CONCEPT_SYSTEM, 'Give me 5 fresh weekly tip concept ideas.', 300);
+      var concepts = result.split('\n').map(function(l){return l.replace(/^[-*\d.\s]+/,'').trim();}).filter(Boolean).slice(0,5);
+      renderConceptPicker('tip_concepts_picker', concepts);
+      document.getElementById('tip_concepts_wrap').style.display='block';
+      status.textContent=' pick a concept below ✓';
+    }catch(e){
+      status.className='status-err'; status.textContent=' error: '+e.message;
+    }
+  }
+}
+async function tipGenerateFromConcept(){
+  var concept = getSelectedConcept('tip_concepts_picker');
+  if(!concept){ alert('Pick a concept first.'); return; }
+  var status = document.getElementById('tip_gen_status');
+  await tipGenerateFullPostFor('Write a weekly tip based on this concept: '+concept, status);
+}
+async function tipGenerateFullPostFor(userMsg, status){
+  status.className='status-msg'; status.textContent=' generating...';
+  try{
+    var result = await callClaude(TIP_SYSTEM, userMsg, 1000);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
+    var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
+    document.getElementById('tip_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
+    renderTitlePicker('tip_titles_picker', 'tip_finaltitle', 'tip', parsed.titles, parsed.favIdx);
+    status.textContent=' done ✓';
+    saveDraft('tip');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+async function tipRegenerateWithFeedback(){
+  var feedback = document.getElementById('tip_feedback').value;
+  if(!feedback.trim()){ alert('Add feedback first.'); return; }
+  var status = document.getElementById('tip_gen_status');
+  status.className='status-msg'; status.textContent=' revising...';
+  try{
+    var currentBody = document.getElementById('tip_body').value;
+    var userMsg = "Here is the current draft:\n\n"+currentBody+"\n\nPlease revise it based on this feedback: "+feedback+"\n\nOutput ONLY in this format:\n\nBODY:\n[revised tip]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number]";
+    var result = await callClaude(TIP_SYSTEM, userMsg, 1000);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*TITLES:/i);
+    var titlesMatch = result.match(/TITLES:\s*([\s\S]*)/i);
+    document.getElementById('tip_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(titlesMatch ? titlesMatch[1] : '');
+    renderTitlePicker('tip_titles_picker', 'tip_finaltitle', 'tip', parsed.titles, parsed.favIdx);
+    document.getElementById('tip_feedback').value='';
+    status.textContent=' revised ✓';
+    saveDraft('tip');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+function tipGenerateHTML(){
+  var body = document.getElementById('tip_body').value;
+  var title = document.getElementById('tip_finaltitle').value || 'Weekly Tip';
+  var eyebrow = document.getElementById('tip_eyebrow').value || 'DFY Niche Club Weekly Tip';
+  var link = document.getElementById('tip_link').value;
+  var linktext = document.getElementById('tip_linktext').value || '✨ Click Here to Access Site (Bookmark It!)';
+  var footer = document.getElementById('tip_footer').value;
+  var plain = "**"+title+"**\n\n"+body;
+  document.getElementById('tip_plaintext').value = plain;
+  var bodyHtml = paragraphsToHtml(body, "font-family:Jost,Arial,sans-serif;font-size:17px;color:#5a4a45;line-height:1.85;margin:0 0 1rem;");
+  var buttonHtml = link ? ('<div style="text-align:center;margin:1.4rem 0 .25rem;"><a href="'+escapeHtml(link)+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:13px 30px;border-radius:999px;text-decoration:none;display:inline-block;">'+escapeHtml(linktext)+'</a></div>') : '';
+  var footerHtml = footer ? ('<div style="background:#fdf7f2;border-top:1px solid #ead9d5;padding:1.25rem 2rem;text-align:center;"><p style="font-size:14px;color:#8b746d;line-height:1.65;margin:0;">'+escapeHtml(footer)+'</p></div>') : '';
+  var html = '<div style="font-family:Jost,Arial,sans-serif;font-size:115%;max-width:920px;margin:0 auto;color:#2a1f1c;background:#fff;border:1px solid #ead9d5;border-radius:16px;overflow:hidden;">'+
+    '<div style="background:#2a1f1c;padding:2rem 2.25rem;text-align:center;">'+
+    '<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .65rem;">'+escapeHtml(eyebrow)+'</p>'+
+    '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;font-weight:700;color:#f5eddf;margin:0;line-height:1.15;">'+escapeHtml(title)+'</h2></div>'+
+    '<div style="padding:2rem 2.25rem;background:#fff;">'+bodyHtml+buttonHtml+'</div>'+footerHtml+'</div>';
+  document.getElementById('tip_output').value = html;
+  saveDraft('tip');
+}
+
+/* ============ PLR TAB LOGIC ============ */
+function plrGenerateHTML(){
+  var badge = document.getElementById('plr_badge').value;
+  var title = document.getElementById('plr_title').value;
+  var subtitle = document.getElementById('plr_subtitle').value;
+  var link = document.getElementById('plr_link').value;
+  var steps = document.getElementById('plr_steps').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  var whatisit = paragraphsToHtml(document.getElementById('plr_whatisit').value, "font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0 0 0 0;");
+  var checklist = document.getElementById('plr_checklist').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  var reminder = document.getElementById('plr_reminder').value;
+
+  var stepsHtml = steps.map(function(s,i){
+    return '<div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;"><span style="font-size:14px;font-weight:800;color:#dea193;">'+(i+1)+'.</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">'+escapeHtml(s)+'</span></div>';
+  }).join('');
+  var checklistHtml = checklist.map(function(c){
+    return '<div style="display:grid;grid-template-columns:24px 1fr;gap:.6rem;align-items:start;"><span style="color:#dea193;font-weight:800;">✓</span><span style="font-size:15.5px;color:#5a4a45;line-height:1.55;">'+escapeHtml(c)+'</span></div>';
+  }).join('');
+
+  var html = '<div style="font-family:Jost,Arial,sans-serif;background:#f0e8df;color:#2a1f1c;padding:2rem 1rem;">'+
+    '<div style="max-width:880px;margin:0 auto;">'+
+    '<div style="background:#2a1f1c;border-radius:18px 18px 0 0;padding:2.4rem 2rem;text-align:center;">'+
+    '<div style="display:inline-block;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#dea193;background:rgba(222,161,147,.1);border:1px solid rgba(222,161,147,.35);padding:7px 18px;border-radius:999px;margin-bottom:1rem;">'+escapeHtml(badge)+'</div>'+
+    '<h1 style="font-family:Playfair Display,Georgia,serif;font-size:2.7rem;line-height:1.1;color:#f5eddf;margin:0 0 .5rem;">PLR: '+escapeHtml(title)+'</h1>'+
+    '<p style="font-size:18px;color:#c4b0a8;line-height:1.6;max-width:650px;margin:0 auto;">'+escapeHtml(subtitle)+'</p></div>'+
+    '<div style="background:#fff;border:1px solid #ead9d5;border-top:none;border-radius:0 0 18px 18px;padding:2rem;box-shadow:0 12px 36px rgba(42,31,28,.06);">'+
+    '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.6rem;text-align:center;margin-bottom:1.5rem;">'+
+    '<p style="font-family:Playfair Display,Georgia,serif;font-size:1.5rem;font-weight:700;margin:0 0 .5rem;color:#2a1f1c;">Access Your Canva Template</p>'+
+    '<p style="font-size:16px;color:#5a4a45;line-height:1.7;margin:0 0 1.25rem;">Click below to open the template. Make a copy first, then customize it to fit your brand, audience, and product style.</p>'+
+    '<a href="'+escapeHtml(link)+'" target="_blank" style="display:inline-block;font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;background:#dea193;color:#2a1f1c;padding:13px 30px;border-radius:999px;border:1.5px solid #dea193;">✨ Access Canva Template</a></div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem;">'+
+    '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;padding:1.5rem;text-align:left;">'+
+    '<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 1rem;color:#2a1f1c;text-align:left;">Quick Start</p>'+
+    '<div style="display:grid;gap:.65rem;">'+stepsHtml+'</div></div>'+
+    '<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.5rem;text-align:left;">'+
+    '<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 1rem;color:#2a1f1c;text-align:left;">What This Is</p>'+whatisit+'</div></div>'+
+    '<div style="background:#fff;border:1px solid #ead9d5;border-radius:16px;padding:1.6rem;text-align:left;">'+
+    '<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;font-weight:700;margin:0 0 .75rem;color:#2a1f1c;text-align:left;">Customize Before You List</p>'+
+    '<p style="font-size:15.5px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">To comply with Etsy guidelines and stand out in the marketplace, do not upload the template exactly as-is. Simple edits can make a big difference.</p>'+
+    '<div style="display:grid;grid-template-columns:1fr;gap:.7rem;">'+checklistHtml+'</div></div>'+
+    '<div style="background:#2a1f1c;border-radius:16px;padding:1.5rem;margin-top:1rem;">'+
+    '<p style="font-family:Playfair Display,Georgia,serif;font-size:1.35rem;color:#f5eddf;margin:0 0 .6rem;">Friendly Reminder</p>'+
+    '<p style="font-size:15.5px;color:#c4b0a8;line-height:1.8;margin:0;">'+escapeHtml(reminder)+'</p></div></div></div></div>';
+  document.getElementById('plr_output').value = html;
+  saveDraft('plr');
+}
+
+/* ============ DIRECTORY TAB LOGIC ============ */
+var DIR_TYPES = ["PNG","Printable Wall Art","Printable","Frame TV Art","Tumbler Wrap","Tumbler Wrap PNG","Template","Checklist","Invitation","Planner","Journal","POD","Other"];
+function dirNicheRowHtml(name, type){
+  var opts = DIR_TYPES.map(function(t){return '<option value="'+t+'"'+(t===type?' selected':'')+'>'+t+'</option>';}).join('');
+  return '<div class="card-block" style="display:grid;grid-template-columns:1fr 200px;gap:10px;padding:.8rem 1rem;">'+
+    '<input type="text" class="dir-niche-name" placeholder="Niche name" value="'+escapeHtml(name||'')+'">'+
+    '<select class="dir-niche-type">'+opts+'</select>'+
+    '<button class="remove-x" onclick="this.closest(\'.card-block\').remove()">&times;</button></div>';
+}
+function dirAddNicheRow(){
+  document.getElementById('dir_niche_rows').insertAdjacentHTML('beforeend', dirNicheRowHtml('',''));
+}
+function dirGuessType(name){
+  var n = name.toLowerCase();
+  if(n.indexOf('tumbler wrap png') > -1) return 'Tumbler Wrap PNG';
+  if(n.indexOf('tumbler wrap') > -1) return 'Tumbler Wrap';
+  if(n.indexOf('frame tv') > -1) return 'Frame TV Art';
+  if(n.indexOf('printable wall art') > -1) return 'Printable Wall Art';
+  if(n.indexOf('invitation') > -1 || n.indexOf('invite') > -1) return 'Invitation';
+  if(n.indexOf('checklist') > -1) return 'Checklist';
+  if(n.indexOf('planner') > -1) return 'Planner';
+  if(n.indexOf('journal') > -1) return 'Journal';
+  if(n.indexOf('template') > -1) return 'Template';
+  if(n.indexOf('pod') > -1 || n.indexOf('tshirt') > -1 || n.indexOf('t-shirt') > -1 || n.indexOf(' shirt') > -1 || n.indexOf('hoodie') > -1 || n.indexOf('sweatshirt') > -1) return 'POD';
+  if(n.indexOf('png') > -1) return 'PNG';
+  if(n.indexOf('printable') > -1) return 'Printable';
+  return 'Other';
+}
+function dirLoadBulkPaste(){
+  var raw = document.getElementById('dir_bulk_input').value;
+  var lines = raw.split('\n').map(function(l){ return l.replace(/^(niche\s*\d+\s*[:.\-]?\s*)/i,'').trim(); }).filter(Boolean);
+  if(!lines.length){ alert("Paste this week's niches first."); return; }
+  document.getElementById('dir_niche_rows').innerHTML='';
+  lines.forEach(function(name){
+    document.getElementById('dir_niche_rows').insertAdjacentHTML('beforeend', dirNicheRowHtml(name, dirGuessType(name)));
+  });
+  document.getElementById('dir_bulk_input').value='';
+}
+var DIR_SEED_DATA = [{"date":"July 13, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10441671","niches":[{"name":"Vintage Halloween Geese Printable Wall Art","type":"Printable Wall Art"},{"name":"Wait For Me I Have Little Legs PNG","type":"PNG"},{"name":"Maximalist Floral Frame Tv Art","type":"Frame TV Art"},{"name":"Rhinestone Strawberry Coquette Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Golden Retriever In Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"First Of All Jesus Thinks Im A Delight PNG","type":"PNG"},{"name":"Cat Stained Glass Frame TV Art","type":"Frame TV Art"}]},{"date":"July 6, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10368989","niches":[{"name":"Booked And Busy Cat Printable Wall Art","type":"Printable Wall Art"},{"name":"Striped Halloween Bats Shirt PNG","type":"PNG"},{"name":"Coastal Fall Frame TV Art","type":"Frame TV Art"},{"name":"Gothic Mermaid Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Sunset Window Shadow Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Fruit Market PNG","type":"PNG"},{"name":"Dopamine Frame TV Art","type":"Frame TV Art"}]},{"date":"June 29, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10328446","niches":[{"name":"Minimalist Vinyl Record Printable Wall Art","type":"Printable Wall Art"},{"name":"Booked And Caffeinated PNG","type":"PNG"},{"name":"Mushroom Frame TV Art","type":"Frame TV Art"},{"name":"Cowhide Turquoise Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Whimsical Nursery Mouse Printable Wall Art","type":"Printable Wall Art"},{"name":"Unicorn Academy Digital Birthday Invitation","type":"Invitation"},{"name":"Toile Frame TV Art","type":"Frame TV Art"}]},{"date":"June 22, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10272207","niches":[{"name":"Black Woman Floral Portrait Modern Printable Wall Art","type":"Printable Wall Art"},{"name":"Mentally Somewhere Expensive PNG","type":"PNG"},{"name":"Antique Dark Green Frame TV Art","type":"Frame TV Art"},{"name":"Black Gothic Hearts Bookish Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Retro Mustard Yellow Printable Wall Art","type":"Printable Wall Art"},{"name":"Cuff Em PNG","type":"PNG"},{"name":"Golden Countryside Landscape Frame TV Art","type":"Frame TV Art"}]},{"date":"June 15, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10153103","niches":[{"name":"Tulips In A Checkered Vase Printable Wall Art","type":"Printable Wall Art"},{"name":"Off To Regulate Emotions PNG","type":"PNG"},{"name":"Lake Life Frame Tv Art","type":"Frame TV Art"},{"name":"Afro Strawberry Baby Shower Invitation","type":"Invitation"},{"name":"Dancing Frogs Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Floral Stethoscope PNG","type":"PNG"},{"name":"Fly Fishing Frame TV Art","type":"Frame TV Art"},{"name":"Bonus: Inflated Chicken Tumbler Wrap PNG","type":"Tumbler Wrap PNG"}]},{"date":"June 8, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10147357","niches":[{"name":"Disco Ball Head Printable Wall Art","type":"Printable Wall Art"},{"name":"Gotta Go Vibes Are Off PNG","type":"PNG"},{"name":"Badly Drawn Horse Frame TV Art","type":"Frame TV Art"},{"name":"Trash Truck Show Birthday Invitation","type":"Invitation"},{"name":"Frog in the Shower Printable Wall Art","type":"Printable Wall Art"},{"name":"Thats Bananas PNG","type":"PNG"},{"name":"Black Ink Flowers Frame Tv Art","type":"Frame TV Art"}]},{"date":"June 1, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/10052625","niches":[{"name":"Cat Eating Ramen Printable Wall Art","type":"Printable Wall Art"},{"name":"Boho Floral Sun PNG","type":"PNG"},{"name":"Forest Stream Frame TV Art","type":"Frame TV Art"},{"name":"Working Mom Cleaning Schedule","type":"Printable"},{"name":"Orange Poppy Folk Printable Wall Art","type":"Printable Wall Art"},{"name":"Downward Spiral PNG","type":"PNG"},{"name":"Rodeo Frame TV Art","type":"Frame TV Art"},{"name":"Bonus Opal and Gold Tumbler Wrap PNG","type":"Tumbler Wrap PNG"}]},{"date":"May 25, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9993355","niches":[{"name":"Funny Goose Bathroom Printable Wall Art","type":"Printable Wall Art"},{"name":"There is Sunshine in My Soul PNG","type":"PNG"},{"name":"Colorful Butterfly Frame TV Art","type":"Frame TV Art"},{"name":"Home Health Caregiver Activity Report","type":"Printable"},{"name":"Vintage Black Cat Smoking Printable Wall Art","type":"Printable Wall Art"},{"name":"Gentle Parenting Dropout PNG","type":"PNG"},{"name":"Fourth of July Frame TV Art","type":"Frame TV Art"}]},{"date":"May 18, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9926718","niches":[{"name":"Smoking Raccoon Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Flying Mallard Duck PNG","type":"PNG"},{"name":"Vintage Horse Landscape Frame TV Art","type":"Frame TV Art"},{"name":"Taco About A Baby Shower Invite","type":"Invitation"},{"name":"Rustic Floral Toilet Paper Printable Wall Art","type":"Printable Wall Art"},{"name":"Baseball Moms Club Doodle PNG","type":"PNG"},{"name":"Retro Television Photo Frame TV Art","type":"Frame TV Art"}]},{"date":"May 11, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9921182","niches":[{"name":"Pigeon Reading Printable Wall Art","type":"Printable Wall Art"},{"name":"Funny Cowboy Goat PNG","type":"PNG"},{"name":"First Birthday Frame TV Art","type":"Frame TV Art"},{"name":"Lawnmower Birthday Invitation","type":"Invitation"},{"name":"Towels in Laundry Basket Printable Wall Art","type":"Printable Wall Art"},{"name":"Watercolor Highland Cow Tumbler PNG","type":"Tumbler Wrap"},{"name":"Cherry Blossom Landscape Frame TV Art","type":"Frame TV Art"}]},{"date":"May 4, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9823662","niches":[{"name":"Afrocentric Vinyl Records Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Bass Fish PNG","type":"PNG"},{"name":"Paris Blossom Frame TV Art","type":"Frame TV Art"},{"name":"Citrus Orange Bridal Brunch Invitation","type":"Invitation"},{"name":"Minimalist Japanese Koi Fish Printable Wall Art","type":"Printable Wall Art"},{"name":"Hot Mess Highland Cow PNG","type":"PNG"},{"name":"Moody Waves Frame TV Art","type":"Frame TV Art"}]},{"date":"April 27, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9756565","niches":[{"name":"Romantic Cafe Window Printable Wall Art","type":"Printable Wall Art"},{"name":"Spoiled Leopard PNG","type":"PNG"},{"name":"Chickens Frame TV Art","type":"Frame TV Art"},{"name":"Activity Sheets on God's Love Printable","type":"Printable"},{"name":"Retro Bubblegum Doll Printable Wall Art","type":"Printable Wall Art"},{"name":"Trendy Western American PNG","type":"PNG"},{"name":"Airplane Frame TV Art","type":"Frame TV Art"}]},{"date":"April 20, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9676060","niches":[{"name":"Woman on Couch with Martini Printable Wall Art","type":"Printable Wall Art"},{"name":"Wild and Feral Raccoon PNG","type":"PNG"},{"name":"Bluebonnet Frame TV Art","type":"Frame TV Art"},{"name":"Fun Facts Wedding Printable","type":"Printable"},{"name":"Japanese Frog in a Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Alligator PNG","type":"PNG"},{"name":"Stained Glass Mountain Frame TV Art","type":"Frame TV Art"}]},{"date":"April 13, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9676060","niches":[{"name":"Axolotl Printable Wall Art","type":"Printable Wall Art"},{"name":"Pink Crab PNG","type":"PNG"},{"name":"Golden Countryside Frame TV Art","type":"Frame TV Art"},{"name":"Quinceanera Checklist","type":"Checklist"},{"name":"Colorful Mountain Floral Printable Wall Art","type":"Printable Wall Art"},{"name":"Cherry America Coquette PNG","type":"PNG"},{"name":"Vintage Golf Course Frame TV Art","type":"Frame TV Art"}]},{"date":"April 6, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9568810","niches":[{"name":"Abstract Landscape Grandmillennial Printable Wall Art","type":"Printable Wall Art"},{"name":"Patchwork Strawberry PNG","type":"PNG"},{"name":"Earthy Neutral Landscape Frame TV Art","type":"Frame TV Art"},{"name":"Restaurant Cleaning Checklist Printable","type":"Printable"},{"name":"Aerial Surfers Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Fish PNG","type":"PNG"},{"name":"Tulip Cottage Frame TV Art","type":"Frame TV Art"}]},{"date":"March 30, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9503300","niches":[{"name":"Moody Pink Peonies Printable Wall Art","type":"Printable Wall Art"},{"name":"Margarita Weather PNG","type":"PNG"},{"name":"Abstract Marsh Frame TV Art","type":"Frame TV Art"},{"name":"A Little Pearl Is On The Way Baby Shower Invitation","type":"Invitation"},{"name":"Tiger Pizza Printable Wall Art","type":"Printable Wall Art"},{"name":"Whimsical Coquette Goose PNG","type":"PNG"},{"name":"Ducks by a Pond Frame TV Art","type":"Frame TV Art"}]},{"date":"March 23, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9455842","niches":[{"name":"Coastal White Sailboat Printable Wall Art","type":"Printable Wall Art"},{"name":"Salty Moms Beach Club PNG","type":"PNG"},{"name":"Antique French Forest Frame TV Art","type":"Frame TV Art"},{"name":"Lash Tech Client Record Digital Planner","type":"Planner"},{"name":"Waterlily Cat Printable Wall Art","type":"Printable Wall Art"},{"name":"Inflated Rhinestone Cherry Bow Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Vintage Lake Ducks Frame TV Art","type":"Frame TV Art"}]},{"date":"March 16, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9380211","niches":[{"name":"Cottagecore Robin with Blossoms Printable Wall Art","type":"Printable Wall Art"},{"name":"Camo Dripping Baseball PNG","type":"PNG"},{"name":"Navy Blue Flowers Frame TV Art","type":"Frame TV Art"},{"name":"Princess Tea Party Digital Birthday Invitation","type":"Invitation"},{"name":"Western Horseshoe Printable Wall Art","type":"Printable Wall Art"},{"name":"Western Leopard Wildcard PNG","type":"PNG"},{"name":"Rustic Mason Jar Frame TV Art","type":"Frame TV Art"}]},{"date":"March 9, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9317918","niches":[{"name":"Funky Western Cowgirl Printable Wall Art","type":"Printable Wall Art"},{"name":"Bleacher Creature PNG","type":"PNG"},{"name":"Cottage Rose Garden Frame TV Art","type":"Frame TV Art"},{"name":"Impulse Control Worksheets for Kids","type":"Template"},{"name":"Modern Colorful Feminine Printable Wall Art","type":"Printable Wall Art"},{"name":"Literally Born to Dilly Dally PNG","type":"PNG"},{"name":"Spring Tulips Oil Painting Frame TV Art","type":"Frame TV Art"}]},{"date":"March 2, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9231867","niches":[{"name":"Vintage Pink Ballerina Printable Wall Art","type":"Printable Wall Art"},{"name":"Hit the Dang Ball PNG","type":"PNG"},{"name":"Jesus in a Flower Field Frame TV Art","type":"Frame TV Art"},{"name":"Threenager Digital Birthday Invitation","type":"Invitation"},{"name":"Country Geese Hydrangeas Printable Wall Art","type":"Printable Wall Art"},{"name":"Preppy Coquette Iced Coffee PNG","type":"PNG"},{"name":"Dogs with Sunglasses Frame TV Art","type":"Frame TV Art"}]},{"date":"February 23, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9155773","niches":[{"name":"Pink Coastal Seascape Printable Wall Art","type":"Printable Wall Art"},{"name":"Faux Cross Stitch Floral PNG","type":"PNG"},{"name":"Lemons and Daisies Frame TV Art","type":"Frame TV Art"},{"name":"Weight Loss Injection Tracker Printable","type":"Printable"},{"name":"Modern Cactus Flowers Printable Wall Art","type":"Printable Wall Art"},{"name":"Bunnies are Overrated Stay Feral PNG","type":"PNG"},{"name":"Olive Branches Frame TV Art","type":"Frame TV Art"}]},{"date":"February 16, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/9055199","niches":[{"name":"Abstract Whimsical Cat Printable Wall Art","type":"Printable Wall Art"},{"name":"Retro Howdy Easter PNG","type":"PNG"},{"name":"Italian Lemon Tree Frame TV Art","type":"Frame TV Art"},{"name":"Rumination Worksheet","type":"Template"},{"name":"Minimalist Woman Reading Book Printable Wall Art","type":"Printable Wall Art"},{"name":"Leopard Print Star PNG","type":"PNG"},{"name":"Hot Air Balloon Frame TV Art","type":"Frame TV Art"}]},{"date":"February 9, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8920888","niches":[{"name":"Vintage Pink Butterfly Printable Wall Art","type":"Printable Wall Art"},{"name":"Easter Faux Patchwork PNG","type":"PNG"},{"name":"Stained Glass Frame TV Art","type":"Frame TV Art"},{"name":"Ancient Greece Coloring Pages","type":"Other"},{"name":"Sleepy Leopard Printable Wall Art","type":"Printable Wall Art"},{"name":"Vintage Floral Dragonfly PNG","type":"PNG"},{"name":"Abstract Spring Oil Painting Frame TV Art","type":"Frame TV Art"},{"name":"Bonus Niche: Leopard Cherry Tumbler Wrap","type":"Tumbler Wrap"}]},{"date":"February 2, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8920888","niches":[{"name":"Come As You Are Printable Wall Art","type":"Printable Wall Art"},{"name":"Vintage Hen in Nest PNG","type":"PNG"},{"name":"Eight is Great Birthday Invitation","type":"Invitation"},{"name":"Flowers on Trendy Vase Frame TV Art","type":"Frame TV Art"},{"name":"Raccoon Shamrock PNG","type":"PNG"},{"name":"These Are the Good Old Days Printable Wall Art","type":"Printable Wall Art"},{"name":"Parts of the Brain Worksheet","type":"Template"},{"name":"Bonus Niche: Vintage Cloud Frame TV Art","type":"Frame TV Art"}]},{"date":"January 26, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8846625","niches":[{"name":"Woman Reading Newspaper Printable Wall Art","type":"Printable Wall Art"},{"name":"Western Longhorn Bull PNG","type":"PNG"},{"name":"Wildflower is on Her Way Baby Shower Digital Invitation","type":"Invitation"},{"name":"Swan Frame TV Art","type":"Frame TV Art"},{"name":"Coffee Addict Highland Cow PNG","type":"PNG"},{"name":"Halftone Cowgirl Printable Wall Art","type":"Printable Wall Art"},{"name":"Hospice Admission Checklist","type":"Checklist"}]},{"date":"January 19, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8781495","niches":[{"name":"Florence Printable Wall Art","type":"Printable Wall Art"},{"name":"Slow Mornings Club PNG","type":"PNG"},{"name":"That's Amore Bridal Shower Digital Invitation","type":"Invitation"},{"name":"Mexican Frame TV Art","type":"Frame TV Art"},{"name":"Dogtrovert PNG","type":"PNG"},{"name":"Extra Dirty Martini Printable Wall Art","type":"Printable Wall Art"},{"name":"Weekly Daycare Menu","type":"Printable"}]},{"date":"January 12, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8717485","niches":[{"name":"So Glad You're Here Printable Wall Art","type":"Printable Wall Art"},{"name":"Floral Watercolor Coquette Bow Shirt PNG","type":"PNG"},{"name":"Golf Theme Gender Reveal Digital Invitation","type":"Invitation"},{"name":"Swimmer Frame TV Art","type":"Frame TV Art"},{"name":"Valentine Raccoon Shirt PNG","type":"PNG"},{"name":"Vintage White Tulips Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Affirmation Cards for Teens","type":"Printable"}]},{"date":"January 5, 2026","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8662055","niches":[{"name":"Retro Skateboarding Bear Printable Wall Art","type":"Printable Wall Art"},{"name":"Life is Better With My Dogs PNG","type":"PNG"},{"name":"Sage Green 60th Birthday Invitation","type":"Invitation"},{"name":"Turquoise Frame TV Art","type":"Frame TV Art"},{"name":"Chiropractic Shirt PNG","type":"PNG"},{"name":"Pastel Coquette Coastal Printable Wall Art","type":"Printable Wall Art"},{"name":"Wedding Planner Emergency Kit Checklist","type":"Checklist"}]},{"date":"December 29, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8635992","niches":[{"name":"Black Woman Holding Elegant Glass Printable Wall Art","type":"Printable Wall Art"},{"name":"Some Things are Better Left Alone PNG","type":"PNG"},{"name":"LPN Pinning Ceremony Invitation","type":"Invitation"},{"name":"Coquette Bow Frame TV Art","type":"Frame TV Art"},{"name":"Humble But I'm Still That Girl PNG","type":"PNG"},{"name":"Tomato Printable Wall Art","type":"Printable Wall Art"},{"name":"90th Birthday Party Activities Printable","type":"Printable"}]},{"date":"December 22, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8598730","niches":[{"name":"What's the Best That Could Happen Printable Wall Art","type":"Printable Wall Art"},{"name":"Valentine's Day Leopard Coquette Bow PNG","type":"PNG"},{"name":"Sock Hop Digital Invitation","type":"Invitation"},{"name":"Southwestern Frame TV Art","type":"Frame TV Art"},{"name":"Sorry for What My Face Said PNG","type":"PNG"},{"name":"Cozy Stack of Books Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Homeschool Portfolio","type":"Printable"}]},{"date":"December 15, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8504045","niches":[{"name":"Vintage Cowboy Golf Printable Wall Art","type":"Printable Wall Art"},{"name":"I Could be Meaner PNG","type":"PNG"},{"name":"Skincare Birthday Invitation","type":"Invitation"},{"name":"Greece Frame TV Art","type":"Frame TV Art"},{"name":"Soccer Ball Pink Bow PNG","type":"PNG"},{"name":"Funny Duck Wine Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Backpack Checklist","type":"Printable"}]},{"date":"December 8, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8480394","niches":[{"name":"Pink Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"Adulting is a Scam PNG","type":"PNG"},{"name":"Pink and Purple Butterfly Baby Shower Digital Invitation","type":"Invitation"},{"name":"Alpine Meadow Frame TV Art","type":"Frame TV Art"},{"name":"Make Heaven Crowded PNG","type":"PNG"},{"name":"Pink Disco Strawberries Printable Wall Art","type":"Printable Wall Art"},{"name":"Intrusive Thoughts Worksheet for Kids","type":"Template"}]},{"date":"December 1, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8418984","niches":[{"name":"Aurora Borealis Printable Wall Art","type":"Printable Wall Art"},{"name":"XOXO Knit PNG","type":"PNG"},{"name":"Cafe Bebe Digital Invitation","type":"Invitation"},{"name":"Bride Frame TV Art","type":"Frame TV Art"},{"name":"Reading is My Favorite Sport PNG","type":"PNG"},{"name":"Skeleton Lovers Printable Wall Art","type":"Printable Wall Art"},{"name":"Looking for Models Flyer","type":"Template"}]},{"date":"November 24, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8333606","niches":[{"name":"Dusty Blue and Sage Wall Art Printable Wall Art","type":"Printable Wall Art"},{"name":"Axolotl Birthday Shirt PNG","type":"PNG"},{"name":"Her Royal Threeness Princess Birthday Invitation","type":"Invitation"},{"name":"Highland Cow Frame TV Art","type":"Frame TV Art"},{"name":"Dominican Republic T-Shirt Sublimation PNG","type":"PNG"},{"name":"Flowering in Garden Printable Wall Art","type":"Printable Wall Art"},{"name":"Bar Inventory Checklist","type":"Checklist"}]},{"date":"November 17, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8142033","niches":[{"name":"Boho Olive Printable Wall Art","type":"Printable Wall Art"},{"name":"Hands Ripping a Shirt PNG","type":"PNG"},{"name":"Military Send Off Digital Invitation","type":"Invitation"},{"name":"Paris Cafe Frame TV Art","type":"Frame TV Art"},{"name":"I Require Snacks Shirt PNG","type":"PNG"},{"name":"Abstract Terracotta Flower Printable Wall Art","type":"Printable Wall Art"},{"name":"Days of the Week Printable Worksheet","type":"Printable"}]},{"date":"November 10, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8142033","niches":[{"name":"Bison Printable Wall Art","type":"Printable Wall Art"},{"name":"Mom Dad Est 2026 PNG","type":"PNG"},{"name":"Hunting Fishing Baby Shower Invitation","type":"Invitation"},{"name":"Burgundy Floral TV Art","type":"Frame TV Art"},{"name":"Having a Meltdown Shirt PNG","type":"PNG"},{"name":"Navy Old Money Printable Wall Art","type":"Printable Wall Art"},{"name":"Salon Cleaning Checklist","type":"Checklist"}]},{"date":"November 3, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8130811","niches":[{"name":"Floral Crown Leopard Wall Art","type":"Printable Wall Art"},{"name":"Psalm 23 T-Shirt PNG","type":"PNG"},{"name":"Burgundy Rose Gold 70th Birthday Invitation","type":"Invitation"},{"name":"Strawberries Frame TV Art","type":"Frame TV Art"},{"name":"Feeling Lucky Gambling T-Shirt PNG","type":"PNG"},{"name":"Palm Springs Travel Printable Wall Art","type":"Printable Wall Art"},{"name":"Anger Management Worksheet for Adults","type":"Template"}]},{"date":"October 27, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/8027677","niches":[{"name":"Romantic Coffee Shop Printable Art","type":"Printable Wall Art"},{"name":"Proud Army Wife Shirt PNG","type":"PNG"},{"name":"Pink Bow Sleepover Birthday Invitation","type":"Invitation"},{"name":"Fig Frame TV Art","type":"Frame TV Art"},{"name":"All Booked for Christmas Shirt PNG","type":"PNG"},{"name":"Leopard Skateboard Wall Art","type":"Printable Wall Art"},{"name":"Nail Business Coupon Card","type":"Other"},{"name":"Bonus Niche: Aquarium Frame TV Art","type":"Frame TV Art"}]},{"date":"October 20, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7959964","niches":[{"name":"Teal Pink and Yellow Printable Wall Art","type":"Printable Wall Art"},{"name":"Postal Worker Tshirt PNG Design","type":"PNG"},{"name":"Cowboy Dinosaur Birthday Invitation","type":"Invitation"},{"name":"Tennis Frame TV Art","type":"Frame TV Art"},{"name":"Sunflower Cow T-Shirt PNG","type":"PNG"},{"name":"Woman at the Well Modern Christian Printable Wall Art","type":"Printable Wall Art"},{"name":"Pink Row and Ribbons Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Bonus Niche: Home Health Nurse Planner","type":"Planner"}]},{"date":"October 13, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7897041","niches":[{"name":"Ranunculus Printable Wall Art","type":"Printable Wall Art"},{"name":"Treat Dealer Shirt PNG","type":"PNG"},{"name":"Mob Wife Birthday Invitation","type":"Invitation"},{"name":"Hunting Frame TV Art","type":"Frame TV Art"},{"name":"Bowling Tshirt PNG","type":"PNG"},{"name":"Bluebird Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable and Editable Hospital Bag Checklist","type":"Printable"}]},{"date":"October 6, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7870813","niches":[{"name":"Whale Shark Printable Wall Art","type":"Printable Wall Art"},{"name":"Car Show T-shirt PNG","type":"PNG"},{"name":"Large Sunflower Printable Wall Art","type":"Printable Wall Art"},{"name":"Monarch Butterfly Baby Shower Invitation","type":"Invitation"},{"name":"He Left the 99 Shirt PNG","type":"PNG"},{"name":"Auto Detailing Checklist","type":"Checklist"},{"name":"Banana Leaves Frame TV Art","type":"Frame TV Art"},{"name":"Bonus Niche: Kawaii Kitty Tumbler Wrap PNG","type":"Tumbler Wrap PNG"}]},{"date":"September 29, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7959964","niches":[{"name":"Vintage Golf Printable Wall Art","type":"Printable Wall Art"},{"name":"Trophy Husband Shirt PNG","type":"PNG"},{"name":"Pelican Printable Wall Art","type":"Printable Wall Art"},{"name":"Time Two Take Off Invitation","type":"Invitation"},{"name":"Floral Highland Cow Santa PNG","type":"PNG"},{"name":"Christian Teacher Printable Planner","type":"Printable"},{"name":"Goose Frame TV Art","type":"Frame TV Art"}]},{"date":"September 22, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7707775","niches":[{"name":"Autumn Fig Printable Wall Art","type":"Printable Wall Art"},{"name":"All Booked for Fall PNG","type":"PNG"},{"name":"Green Marble Printable Wall Art","type":"Printable Wall Art"},{"name":"Pink Disco Bow Ball Digital Invitation","type":"Invitation"},{"name":"Cozy Christmas Goose PNG","type":"PNG"},{"name":"Burnt Orange Frame TV Art","type":"Frame TV Art"},{"name":"Homeschool Student Checklist","type":"Checklist"},{"name":"Bonus Niche: Heron Frame TV Art","type":"Frame TV Art"}]},{"date":"September 15, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7638699","niches":[{"name":"Animals Reading Books Printable Wall Art","type":"Printable Wall Art"},{"name":"Out Here Ballin Santa PNG","type":"PNG"},{"name":"Preppy Cheetah Printable Wall Art","type":"Printable Wall Art"},{"name":"Denim Jacket Birthday Invitation","type":"Invitation"},{"name":"Girls Gone Mild Shirt PNG","type":"PNG"},{"name":"Real Estate Transaction Printable Checklist","type":"Printable"},{"name":"Olive Green Leaf Printable Wall Art","type":"Printable Wall Art"}]},{"date":"September 8, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7602516","niches":[{"name":"Pink and Sage Cat Wall Art","type":"Printable Wall Art"},{"name":"Cool Moms Love Jesus PNG","type":"PNG"},{"name":"Spaghetti Dinner Invitation","type":"Invitation"},{"name":"Bonjour Madame Wall Art","type":"Printable Wall Art"},{"name":"My Husband's Problem Snarky Humor PNG","type":"PNG"},{"name":"Fall Apple Cider Printable Wall Art","type":"Printable Wall Art"},{"name":"Teacher Digital Planner 2025-2026 Google Sheets","type":"Planner"},{"name":"Bonus Niche: Golf Frame TV Art","type":"Frame TV Art"}]},{"date":"September 1, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7529410","niches":[{"name":"Shark in the Bathtub Printable Wall Art","type":"Printable Wall Art"},{"name":"German Shepherd Ghost PNG","type":"PNG"},{"name":"Bad Witches Only Invitation","type":"Invitation"},{"name":"Nantucket Frame TV Art","type":"Frame TV Art"},{"name":"Book Lovers Fall Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Developmental Milestone Checklist","type":"Checklist"},{"name":"Castlecore Printable Wall Art","type":"Printable Wall Art"}]},{"date":"August 25, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7437806","niches":[{"name":"Light Pink And Gold Printable Wall Art","type":"Printable Wall Art"},{"name":"Lion Blowing Bubble PNG","type":"PNG"},{"name":"Whale Frame TV Art","type":"Frame TV Art"},{"name":"21st Birthday Champagne Bottle Invitation","type":"Invitation"},{"name":"Fall Sweater Weather Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Cheetah Print Girls Night Flyer","type":"Template"},{"name":"Mexican Flowers Tshirt PNG","type":"PNG"},{"name":"Bonus Niche: Coquette Halloween Ghost Printable Wall Art","type":"Printable Wall Art"}]},{"date":"August 18, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7327354","niches":[{"name":"Family Medical History Checklist","type":"Checklist"},{"name":"Victorian Disco Printable Art","type":"Printable Wall Art"},{"name":"Coquette Bow Donut Shirt PNG","type":"PNG"},{"name":"Elder Emo Birthday Invite","type":"Invitation"},{"name":"Pink Camo Hunting Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Its A Good Day To Read A Book Wall Art","type":"Printable Wall Art"},{"name":"Just A Girl Who Loves Fall Shirt Sublimation PNG","type":"PNG"},{"name":"Bonus POD Niche: We Can Do Hard Things T Shirt","type":"POD"}]},{"date":"August 11, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7297304","niches":[{"name":"Pelican Printable Wall Art","type":"Printable Wall Art"},{"name":"Let's Get Rowdy Bachelorette PNG","type":"PNG"},{"name":"How Old Were They Canva Template","type":"Template"},{"name":"Manatee Nursery Wall Art","type":"Printable Wall Art"},{"name":"I Teach The Cutest Bees PNG","type":"PNG"},{"name":"Weekly Daycare Lunch Menu","type":"Printable"},{"name":"Leopard Print Sunflower Cow 20oz Sublimation Tumbler Design","type":"Tumbler Wrap"}]},{"date":"August 4, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7263838","niches":[{"name":"Aerial Beach View Printable Wall Art","type":"Printable Wall Art"},{"name":"Margaritas and Matrimony Shirt PNG","type":"PNG"},{"name":"Aperol Spritz Dinner Party Invitation Template","type":"Invitation"},{"name":"Green Marble Printable Wall Art","type":"Printable Wall Art"},{"name":"Travel Agent Shirt PNG","type":"PNG"},{"name":"Trauma Bond Worksheets","type":"Template"},{"name":"Police Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Bonus POD Niche: Better Late than Ugly Tshirt","type":"POD"}]},{"date":"July 28, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7229789","niches":[{"name":"Love On The Lake Bachelorette Party Digital Invite","type":"Invitation"},{"name":"Vintage Nest Printable Wall Art","type":"Printable Wall Art"},{"name":"Seashore Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Barbershop Printable Wall Art","type":"Printable Wall Art"},{"name":"Quincea\u00f1era Checklist","type":"Checklist"},{"name":"80s Theme Shirt PNG","type":"PNG"},{"name":"Put It On My Dads Tab PNG","type":"PNG"},{"name":"Bonus POD Niche: I Dont Know I Just Work Here Shirt","type":"POD"}]},{"date":"July 21, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7189295","niches":[{"name":"Graffiti Printable Wall Art","type":"Printable Wall Art"},{"name":"Firefly Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Rustic Western 40th Birthday Invitation","type":"Invitation"},{"name":"Chic Doberman Wall Art","type":"Printable Wall Art"},{"name":"Audiobook Shirt PNG","type":"PNG"},{"name":"Sprinkled With Love Ice Cream Baby Shower Invitation","type":"Invitation"},{"name":"We Be Trippin PNG","type":"PNG"},{"name":"Bonus POD Niche: Everything Hurts And I'm Tired Shirt","type":"POD"}]},{"date":"July 14, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7171040","niches":[{"name":"How Lucky Are We Printable Wall Art","type":"Printable Wall Art"},{"name":"Thrifting Tumbler PNG","type":"Tumbler Wrap"},{"name":"Retro Cowboy Baby Shower Invite","type":"Invitation"},{"name":"Tranquilo Wall Art","type":"Printable Wall Art"},{"name":"Lets Go Bananas T-Shirt PNG","type":"PNG"},{"name":"Pink Floral and Bow Oil Painting Wall Art","type":"Printable Wall Art"},{"name":"Limoncello Tshirt PNG","type":"PNG"}]},{"date":"July 7, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7171041","niches":[{"name":"Bear Playing Sports Nursery Wall Art","type":"Printable Wall Art"},{"name":"Hunting Dog Cooler PNG","type":"PNG"},{"name":"One Cute Chick Birthday Invitation","type":"Invitation"},{"name":"Minimalistic Magnolia Wall Art","type":"Printable Wall Art"},{"name":"Puerto Rico Vacation Shirt PNG","type":"PNG"},{"name":"Minimalistic Fruits Printable Wall Art","type":"Printable Wall Art"},{"name":"Boo Ghost Goose PNG","type":"PNG"},{"name":"Bonus Evergreen Niche: Moody Wall Art","type":"Printable Wall Art"}]},{"date":"June 30, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7180433","niches":[{"name":"Cat Loaf PNG","type":"PNG"},{"name":"Halloween Pregnancy Announcement Canva Template","type":"Template"},{"name":"Boho Unicorn Printable Wall Art","type":"Printable Wall Art"},{"name":"Rubber Duck Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Espresso Martini Wall Art Cheetah Print","type":"Printable Wall Art"},{"name":"Teacher Digital Planner 2025-2026 Google Sheets","type":"Planner"},{"name":"Vintage Airplane Nursery Wall Art","type":"Printable Wall Art"},{"name":"Bonus Evergreen Niche: Homebody Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Sips About to Go Down Tshirt","type":"POD"}]},{"date":"June 23, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7185714","niches":[{"name":"Cowboy Boots and Sunflowers Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Surfboard and Dogs Wall Art","type":"Printable Wall Art"},{"name":"Spooky and Feral Raccoon PNG","type":"PNG"},{"name":"Daily Niche - Speed Limit Birthday Invitation","type":"Invitation"},{"name":"Its So Good To Be Home Wall Art","type":"Printable Wall Art"},{"name":"At Least My Trauma Made Me Funny PNG","type":"PNG"},{"name":"New Location Flyer Canva Editable Template","type":"Template"},{"name":"Bonus Evergreen Niche: Coquette Nurse PNG","type":"PNG"},{"name":"Bonus POD Niche: Sorry About My Husband Shirt","type":"POD"}]},{"date":"June 16, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7205923","niches":[{"name":"Light Pink Cheetah Wall Art","type":"Printable Wall Art"},{"name":"Manatee Shirt PNG","type":"PNG"},{"name":"Who Has The Groom Canva Template","type":"Template"},{"name":"Antique Books and Roses Printable Wall Art","type":"Printable Wall Art"},{"name":"Tombstone Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Four Ever Spooky Invitation Template","type":"Invitation"},{"name":"Coastal Grandma Printable Wall Art","type":"Printable Wall Art"}]},{"date":"June 9, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7206388","niches":[{"name":"This Grandma Prays Shirt PNG","type":"PNG"},{"name":"Labradoodle and Flowers Printable Wall Art","type":"Printable Wall Art"},{"name":"Love My Pet Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Boots And Brunch Thank You Card","type":"Other"},{"name":"Every Dog Needs A Baby Wall Art","type":"Printable Wall Art"},{"name":"Feral Mom T-Shirt PNG","type":"PNG"},{"name":"Italian Summer Dinner Party Template","type":"Template"},{"name":"Bonus POD Niche: I Yell Because I Care Baseball Shirt","type":"POD"}]},{"date":"June 2, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7206975","niches":[{"name":"Disco Bow Printable Wall Art","type":"Printable Wall Art"},{"name":"Birthday Dinner Menu Template","type":"Template"},{"name":"Whatever Floats Your Boat PNG","type":"PNG"},{"name":"Boston Terrier Printable Wall Art","type":"Printable Wall Art"},{"name":"Let's Roll Girls PNG","type":"PNG"},{"name":"Preppy Chicago Wall Art","type":"Printable Wall Art"},{"name":"Rookie Trading Card Template","type":"Template"}]},{"date":"May 26, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7222258","niches":[{"name":"Venezuela Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Niche 2 Vintage Stamp State PNG","type":"PNG"},{"name":"Back to School Giveaway Flyers","type":"Template"},{"name":"Watercolor Lemon Printable Wall Art","type":"Printable Wall Art"},{"name":"Memorial Birthday Flyer Editable Canva Template","type":"Template"},{"name":"Lets Do This Field Day Thing PNG","type":"PNG"},{"name":"I See London I See France Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Everything Is Going to Be OK TShirt","type":"POD"}]},{"date":"May 19, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7252626","niches":[{"name":"Carnation Printable Wall Art","type":"Printable Wall Art"},{"name":"Four Ever Sweet PNG","type":"PNG"},{"name":"Travel Itinerary Canva Template","type":"Template"},{"name":"Mountain Biking Printable Wall Art","type":"Printable Wall Art"},{"name":"Jesus Saves I Spend PNG","type":"PNG"},{"name":"Middle School Survival Kit","type":"Printable"},{"name":"Abstract Flamingo Printable Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: School Bus Tote Bag","type":"POD"}]},{"date":"May 12, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7255506","niches":[{"name":"Wild And Three Birthday PNG","type":"PNG"},{"name":"Shout Out Template","type":"Template"},{"name":"Cowgirl In Bathtub Wall Art","type":"Printable Wall Art"},{"name":"Feral but Free Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Baseball Drip Birthday Invite","type":"Invitation"},{"name":"Meet Me At The Lake Wall Art","type":"Printable Wall Art"},{"name":"Principal Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Bonus POD Niche: I Survived My Wife Nursing School Tshirt","type":"POD"}]},{"date":"May 5, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7270161","niches":[{"name":"Pancake Printable Wall Art","type":"Printable Wall Art"},{"name":"Digital Prayer Journal For Men","type":"Journal"},{"name":"Teach Love Inspire Boho PNG","type":"PNG"},{"name":"Black Lab Cowgirl Wall Art","type":"Printable Wall Art"},{"name":"Stock The Bar Invitation Template","type":"Invitation"},{"name":"Perimenopause PNG","type":"PNG"},{"name":"Pool Floats Wall Art","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Summer Reading 2025 Shirt","type":"POD"}]},{"date":"April 28, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7273803","niches":[{"name":"Bioluminescent Printable Wall Art","type":"Printable Wall Art"},{"name":"Hospital Activity Book For Kids","type":"Printable"},{"name":"Arizona Tshirt PNG","type":"PNG"},{"name":"Pink Lotus Printable Wall Art","type":"Printable Wall Art"},{"name":"Heifer 4th of July PNG","type":"PNG"},{"name":"Lobster Printable Wall Art","type":"Printable Wall Art"},{"name":"Hot Mess Express Tumbler PNG","type":"Tumbler Wrap"},{"name":"Bonus POD Niche: Funny Raccoon Rodeo Shirt","type":"POD"}]},{"date":"April 21, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7277249","niches":[{"name":"Whatever Life Throws At You Funny PNG","type":"PNG"},{"name":"Fitness Instructor Planner","type":"Planner"},{"name":"Hot Pink And Orange Graduation Invitation","type":"Invitation"},{"name":"Lemon Drop Martini Wall Art","type":"Printable Wall Art"},{"name":"Just A Girl Who Loves To Dance Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Girl Reading A Magazine Wall Art","type":"Printable Wall Art"},{"name":"Wedding Photographer Social Media Kit","type":"Other"},{"name":"Bonus POD Niche: Ballpark Auntie Shirt","type":"POD"}]},{"date":"April 14, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7286037","niches":[{"name":"Lofi Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Custom Wedding Checklist","type":"Printable"},{"name":"Pink Disco Ball Leopard Wall Art","type":"Printable Wall Art"},{"name":"Coming Soon Social Media Flyer Templates","type":"Template"},{"name":"Feral Girl Summer Raccoon PNG","type":"PNG"},{"name":"Who Am I Digital Journal","type":"Journal"},{"name":"Silliest Goose Around Wall Art","type":"Printable Wall Art"}]},{"date":"April 7, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7286682","niches":[{"name":"Book Shop Printable Wall Art","type":"Printable Wall Art"},{"name":"Printable Kids Cruise Journal","type":"Printable"},{"name":"Cowgirl In Martini Glass PNG","type":"PNG"},{"name":"Manifest Your Love Journal","type":"Journal"},{"name":"Country Club Baby Shower Invitation","type":"Invitation"},{"name":"Shih Tzu Dog Printable Wall Art","type":"Printable Wall Art"},{"name":"Vision Board Template For Teens","type":"Template"}]},{"date":"March 31, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7312156","niches":[{"name":"Drippy Baseball With Glove PNG","type":"PNG"},{"name":"Babysitter Binder","type":"Other"},{"name":"Goldendoodle Golf Nursery Wall Art","type":"Printable Wall Art"},{"name":"Meatball Birthday Invite","type":"Invitation"},{"name":"Cowgirl Coloring Sheet","type":"Printable"},{"name":"Kitesurfing Printable Wall Art","type":"Printable Wall Art"},{"name":"Coquette Bows Thank You Card Template","type":"Template"}]},{"date":"March 24, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7312616","niches":[{"name":"Weight Loss Tracker 50 Lbs","type":"Template"},{"name":"Grown With Love Baby Shower Games","type":"Printable"},{"name":"Wash Your Paws Printable Wall Art","type":"Printable Wall Art"},{"name":"Editable Wedding Signature Drinks Menu Sign","type":"Template"},{"name":"Happy Retirement Tumbler Wrap PNG","type":"Tumbler Wrap PNG"},{"name":"Kitchen Conversion Chart Wall Art","type":"Printable Wall Art"},{"name":"Who Knows The Birthday Girl Best Editable Template","type":"Template"},{"name":"Bonus POD Niche: Cute Kawaii Strawberry Cat Tshirt","type":"POD"}]},{"date":"March 17, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7318561","niches":[{"name":"Birth Plan Template","type":"Template"},{"name":"Anxiety Journal","type":"Journal"},{"name":"This is a High Class Joint Wall Art","type":"Printable Wall Art"},{"name":"Here Comes the Son Sublimation","type":"PNG"},{"name":"Social Media Template","type":"Template"},{"name":"Printable Homeschool Transcript","type":"Printable"},{"name":"Sage Green Wall Art Bow and Boots","type":"Printable Wall Art"},{"name":"Bonus POD Niche: Soccer Mom Tarot Card Shirt","type":"POD"}]},{"date":"March 10, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7321895","niches":[{"name":"Peace Out Single Digits Birthday Invitation","type":"Invitation"},{"name":"Flock of Birds Wall Art","type":"Printable Wall Art"},{"name":"Self Care Checklist","type":"Checklist"},{"name":"Duck Towel Wall Art","type":"Printable Wall Art"},{"name":"Girl Coloring Pages","type":"Printable"},{"name":"IVF PNG","type":"PNG"},{"name":"Sterile and Feral PNG","type":"PNG"}]},{"date":"March 3, 2025","link":"https://www.thrivewithdania.com/school/course/thedfynicheclub/lecture/7322271","niches":[{"name":"Boho Desert Highland Cow Tumbler Wrap","type":"Tumbler Wrap"},{"name":"Head to Toe Checklist","type":"Checklist"},{"name":"2025 Digital Planner Dark Theme","type":"Planner"},{"name":"Real Estate Listing Performance Template","type":"Template"},{"name":"Tiger In the Tub Wall Art","type":"Printable Wall Art"},{"name":"Girls Trip Cheaper Than Therapy 2025 PNG SVG","type":"PNG"},{"name":"What's for Dinner Wall Art","type":"Printable Wall Art"}]}];
+function dirGetWeeks(){
+  var raw = localStorage.getItem('dfyhub_directory_weeks');
+  if(raw) return JSON.parse(raw);
+  // First time opening the hub: seed with the pre-loaded historical directory data
+  localStorage.setItem('dfyhub_directory_weeks', JSON.stringify(DIR_SEED_DATA));
+  return DIR_SEED_DATA.slice();
+}
+function dirSetWeeks(weeks){
+  localStorage.setItem('dfyhub_directory_weeks', JSON.stringify(weeks));
+}
+function dirSaveWeek(){
+  var dateVal = document.getElementById('dir_weekdate').value;
+  if(!dateVal){ alert('Pick a week date.'); return; }
+  var dObj = new Date(dateVal+'T00:00:00');
+  var date = dObj.toLocaleDateString('en-US',{month:'long', day:'numeric', year:'numeric'});
+  var link = document.getElementById('dir_weeklink').value.trim();
+  var rows = document.querySelectorAll('#dir_niche_rows .card-block');
+  var niches = [];
+  rows.forEach(function(r){
+    var name = r.querySelector('.dir-niche-name').value.trim();
+    var type = r.querySelector('.dir-niche-type').value;
+    if(name) niches.push({name:name, type:type});
+  });
+  if(niches.length===0){ alert('Add at least one niche.'); return; }
+  var isLive = document.getElementById('dir_islive').checked;
+  var weeks = dirGetWeeks();
+  weeks.unshift({date:date, link:link, niches:niches, live:isLive});
+  dirSetWeeks(weeks);
+  document.getElementById('dir_weekdate').value='';
+  document.getElementById('dir_weeklink').value='';
+  document.getElementById('dir_niche_rows').innerHTML='';
+  document.getElementById('dir_islive').checked = true;
+  dirAddNicheRow();
+  dirRenderWeeksList();
+}
+function dirImportHTML(){
+  var raw = document.getElementById('dir_import_input').value;
+  if(!raw.trim()){ alert('Paste your directory HTML first.'); return; }
+  var parser = new DOMParser();
+  var docParsed = parser.parseFromString(raw, 'text/html');
+  var weekHeaders = docParsed.querySelectorAll('.dwh');
+  if(!weekHeaders.length){ alert('Could not find any weeks in that HTML. Make sure you pasted the full directory export.'); return; }
+  var weeks = dirGetWeeks();
+  var existingDates = weeks.map(function(w){return (w.date||'').toLowerCase().trim();});
+  var added = 0, skipped = 0;
+  weekHeaders.forEach(function(dwh){
+    var dateEl = dwh.querySelector('.dwt');
+    if(!dateEl) return;
+    var date = dateEl.textContent.trim();
+    if(existingDates.indexOf(date.toLowerCase()) > -1){ skipped++; return; }
+    var body = dwh.nextElementSibling;
+    if(!body) return;
+    var niches = [];
+    body.querySelectorAll('.dn').forEach(function(dn){
+      var nameEl = dn.querySelector('.dnn');
+      var typeEl = dn.querySelector('.dp');
+      if(nameEl) niches.push({name: nameEl.textContent.trim(), type: typeEl ? typeEl.textContent.trim() : 'Other'});
+    });
+    var linkEl = body.querySelector('.dl');
+    var link = linkEl ? (linkEl.getAttribute('href')||'') : '';
+    if(niches.length){
+      weeks.push({date:date, link:link, niches:niches, live:true});
+      existingDates.push(date.toLowerCase());
+      added++;
+    }
+  });
+  dirSetWeeks(weeks);
+  dirRenderWeeksList();
+  document.getElementById('dir_import_input').value='';
+  alert('Imported '+added+' week(s).'+(skipped ? (' Skipped '+skipped+' duplicate week(s) already saved.') : ''));
+}
+function dirIsLive(w){ return w.live !== false; }
+function dirRenderWeeksList(){
+  var weeks = dirGetWeeks();
+  var el = document.getElementById('dir_weeks_list');
+  dirUpdateStats(weeks);
+  dirRenderSpotlight(weeks);
+  if(weeks.length===0){ el.innerHTML = '<p class="small-note">No weeks saved yet.</p>'; return; }
+  el.innerHTML = '<p class="small-note">'+weeks.length+' week(s) saved</p>' + weeks.map(function(w, idx){
+    var live = dirIsLive(w);
+    var badge = live ? '<span class="dir-live-badge">Live</span>' : '<span class="dir-draft-badge">Draft</span>';
+    return '<div class="card-block"><b>'+escapeHtml(w.date)+'</b>'+badge+' — '+w.niches.length+' niches'+
+      '<button class="btn btn-danger btn-sm" style="float:right;margin-left:8px;" onclick="dirDeleteWeek('+idx+')">Delete</button>'+
+      '<button class="btn btn-ghost btn-sm" style="float:right;" onclick="dirToggleLive('+idx+')">Mark '+(live?'Draft':'Live')+'</button></div>';
+  }).join('');
+}
+function dirToggleLive(idx){
+  var weeks = dirGetWeeks();
+  if(!weeks[idx]) return;
+  weeks[idx].live = !dirIsLive(weeks[idx]);
+  dirSetWeeks(weeks);
+  dirRenderWeeksList();
+}
+function dirDeleteWeek(idx){
+  if(!confirm('Delete this week?')) return;
+  var weeks = dirGetWeeks();
+  weeks.splice(idx,1);
+  dirSetWeeks(weeks);
+  dirRenderWeeksList();
+}
+function dirClearAll(){
+  if(!confirm('Delete ALL saved directory weeks? This cannot be undone.')) return;
+  localStorage.removeItem('dfyhub_directory_weeks');
+  dirRenderWeeksList();
+  document.getElementById('dir_output').value='';
+}
+function dirUpdateStats(weeks){
+  weeks = weeks || dirGetWeeks();
+  var totalNiches = weeks.reduce(function(sum,w){ return sum + w.niches.length; }, 0);
+  document.getElementById('dir_stat_niches').textContent = totalNiches;
+  document.getElementById('dir_stat_weeks').textContent = weeks.length;
+}
+function dirRenderSpotlight(weeks){
+  weeks = weeks || dirGetWeeks();
+  var wrap = document.getElementById('dir_spotlight');
+  var body = document.getElementById('dir_spotlight_body');
+  if(!weeks.length){ wrap.style.display='none'; return; }
+  var w = weeks[0];
+  var live = dirIsLive(w);
+  var badge = live ? '<span class="dir-live-badge">Live</span>' : '<span class="dir-draft-badge">Draft</span>';
+  var nichesHtml = w.niches.map(function(n){
+    return '<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--border);font-size:14px;">'+
+      '<span>'+escapeHtml(n.name)+'</span><span style="color:#a98f87;font-size:11px;text-transform:uppercase;font-weight:700;">'+escapeHtml(n.type)+'</span></div>';
+  }).join('');
+  body.innerHTML = '<div style="font-weight:700;margin-bottom:.4rem;">'+escapeHtml(w.date)+badge+' — '+w.niches.length+' niches</div>'+nichesHtml;
+  wrap.style.display='block';
+}
+function dirMonthYear(dateStr){
+  var d = new Date(dateStr);
+  if(isNaN(d)) return dateStr;
+  return d.toLocaleString('en-US',{month:'long',year:'numeric'});
+}
+function dirGenerateHTML(){
+  var weeks = dirGetWeeks().filter(dirIsLive);
+  if(!weeks.length){ alert('No live weeks to export yet — mark at least one week Live first, or save a new week as live.'); return; }
+  var totalNiches = 0;
+  var months = {};
+  weeks.forEach(function(w){
+    totalNiches += w.niches.length;
+    var my = dirMonthYear(w.date);
+    if(!months[my]) months[my] = [];
+    months[my].push(w);
+  });
+  var monthKeys = Object.keys(months);
+  var uid = 'dir_'+Math.random().toString(36).slice(2,9);
+
+  var monthsHtml = monthKeys.map(function(my, mi){
+    var weeksHtml = months[my].map(function(w, wi){
+      var nichesHtml = w.niches.map(function(n){
+        return '<div class="dn di" data-name="'+escapeHtml(n.name.toLowerCase())+'" data-type="'+escapeHtml(n.type.toLowerCase())+'"><span class="dnn">'+escapeHtml(n.name)+'</span><span class="dp">'+escapeHtml(n.type)+'</span></div>';
+      }).join('');
+      return '<div id="'+uid+'_m'+mi+'_w'+wi+'"><div class="dwh" onclick="'+uid+'_toggleW(\''+uid+'_m'+mi+'_w'+wi+'\')"><span class="dwt">'+escapeHtml(w.date)+'</span><span class="dwm"><span>'+w.niches.length+' niches</span><span id="'+uid+'_m'+mi+'_w'+wi+'_c">▼</span></span></div>'+
+        '<div class="dwb" id="'+uid+'_m'+mi+'_w'+wi+'_b" style="display:none;">'+nichesHtml+
+        (w.link ? '<a class="dl" href="'+escapeHtml(w.link)+'" target="_blank">View Weekly Drop</a>' : '')+'</div></div>';
+    }).join('');
+    return '<div class="dmc dm" id="'+uid+'_m'+mi+'" data-month="'+escapeHtml(my.toLowerCase())+'">'+
+      '<button class="dmb'+(mi===0?' open':'')+'" onclick="'+uid+'_toggleM(\''+uid+'_m'+mi+'\')"><span>'+escapeHtml(my)+'</span><span class="dmv">▼</span></button>'+
+      '<div class="dmc-body" style="display:'+(mi===0?'block':'none')+';">'+weeksHtml+'</div></div>';
+  }).join('');
+
+  var pills = monthKeys.map(function(my,mi){
+    return '<button class="djb'+(mi===0?' active':'')+'" id="'+uid+'_m'+mi+'_pill" onclick="'+uid+'_jump(\''+uid+'_m'+mi+'\')">'+escapeHtml(my)+'</button>';
+  }).join('');
+
+  var css = '<style>#'+uid+' *{box-sizing:border-box;}#'+uid+' .ds{width:100%;border:1.5px solid #ead9d5;border-radius:12px;padding:13px 15px;font-family:Jost,Arial,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;outline:none;}#'+uid+' .dc{display:grid;grid-template-columns:1fr 220px;gap:12px;margin:0 0 10px;}#'+uid+' .djn{padding:0 0 14px;}#'+uid+' .djl{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#a98f87;margin-bottom:8px;}#'+uid+' .djp{display:flex;flex-wrap:wrap;gap:7px;}#'+uid+' .djb{font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:700;background:#f5eddf;color:#5a4a45;border:1.5px solid #ead9d5;border-radius:999px;padding:7px 14px;cursor:pointer;}#'+uid+' .djb.active{background:#2a1f1c;border-color:#2a1f1c;color:#f5eddf;}#'+uid+' .dmc{background:#fff;border:1px solid #ead9d5;border-radius:14px;margin-bottom:14px;overflow:hidden;}#'+uid+' .dmb{width:100%;background:#2a1f1c;color:#f5eddf;border:none;padding:12px 18px;font-family:Jost,Arial,sans-serif;font-size:1rem;font-weight:700;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;letter-spacing:.04em;text-transform:uppercase;}#'+uid+' .dwh{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:14px 18px;border-top:1px solid #ead9d5;background:#fdf7f2;}#'+uid+' .dwt{font-size:.95rem;font-weight:700;color:#2a1f1c;}#'+uid+' .dwm{font-size:12px;color:#8b746d;display:flex;align-items:center;gap:10px;}#'+uid+' .dwb{padding:0 18px 16px;background:#fff;}#'+uid+' .dn{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #ead9d5;padding:10px 0;}#'+uid+' .dnn{font-size:15px;font-weight:600;}#'+uid+' .dp{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#f5eddf;color:#8b746d;border:1px solid #ead9d5;border-radius:999px;padding:6px 10px;white-space:nowrap;}#'+uid+' .dl{font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:10px 18px;border-radius:999px;text-decoration:none;display:inline-block;margin-top:12px;}#'+uid+' .dem{display:none;background:#fff;border:1px solid #ead9d5;border-radius:14px;padding:18px;text-align:center;color:#5a4a45;}</style>';
+
+  var html = '<div id="'+uid+'" style="font-family:Jost,Arial,sans-serif;max-width:920px;margin:0 auto;color:#2a1f1c;">'+css+
+    '<div style="background:#2a1f1c;border-radius:16px 16px 0 0;padding:2rem 2rem 1.75rem;text-align:center;">'+
+    '<p style="font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 .55rem;">DFY Niche Club</p>'+
+    '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.4rem;font-weight:700;color:#f5eddf;margin:0 0 .45rem;line-height:1.15;">The DFY Niche Club Directory</h2>'+
+    '<p style="font-size:16px;color:#dea193;margin:0;line-height:1.5;font-weight:600;">Search, browse, and jump back to past weekly drops.</p></div>'+
+    '<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2.25rem;">'+
+    '<div class="dc"><input class="ds" id="'+uid+'_search" placeholder="Search niches..." oninput="'+uid+'_filter()">'+
+    '<select class="ds" id="'+uid+'_type" onchange="'+uid+'_filter()"><option value="all">All Product Types</option>'+
+    DIR_TYPES.map(function(t){return '<option value="'+t.toLowerCase()+'">'+t+'</option>';}).join('')+'</select></div>'+
+    '<div class="djn"><div class="djl">Jump to Month</div><div class="djp">'+pills+'</div></div>'+
+    '<div id="'+uid+'_results">'+monthsHtml+'</div></div>'+
+    '<div id="'+uid+'_empty" class="dem">No niches match your search.</div>'+
+    '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 16px 16px;padding:1.2rem 2rem;text-align:center;">'+
+    '<p style="font-size:13px;color:#a98f87;margin:0;">DFY Niche Club Member Directory</p></div>'+
+    '<script>function '+uid+'_filter(){var q=(document.getElementById("'+uid+'_search").value||"").toLowerCase();var t=document.getElementById("'+uid+'_type").value;var ms=document.querySelectorAll("#'+uid+' .dm"),total=0;ms.forEach(function(m){var items=m.querySelectorAll(".di"),vis=0;items.forEach(function(i){var show=i.dataset.name.indexOf(q)>-1&&(t==="all"||i.dataset.type===t);i.style.display=show?"flex":"none";if(show){vis++;total++;}});m.style.display=vis?"block":"none";if(q||t!=="all"){var b=m.querySelector(".dmc-body");if(b)b.style.display="block";}});document.getElementById("'+uid+'_empty").style.display=total?"none":"block";}'+
+    'function '+uid+'_toggleM(id){var c=document.getElementById(id);if(!c)return;var b=c.querySelector(".dmb"),bd=c.querySelector(".dmc-body"),open=bd.style.display!=="none";bd.style.display=open?"none":"block";}'+
+    'function '+uid+'_toggleW(id){var b=document.getElementById(id+"_b"),ch=document.getElementById(id+"_c");if(!b)return;var o=b.style.display!=="none";b.style.display=o?"none":"block";if(ch)ch.textContent=o?"▼":"▲";}'+
+    'function '+uid+'_jump(mid){var c=document.getElementById(mid);if(!c)return;var bd=c.querySelector(".dmc-body");if(bd)bd.style.display="block";document.querySelectorAll("#'+uid+' .djb").forEach(function(p){p.classList.remove("active");});var pill=document.getElementById(mid+"_pill");if(pill)pill.classList.add("active");setTimeout(function(){c.scrollIntoView({behavior:"smooth",block:"start"});},60);}<\/script></div>';
+
+  document.getElementById('dir_output').value = html;
+}
+
+/* ============ ANNOUNCEMENTS TAB LOGIC ============ */
+function annCardHtml(){
+  return '<div class="card-block">'+
+    '<div class="field"><label>Card Title</label><input type="text" class="ann-card-title" placeholder="Quick question — I\'d love your feedback"></div>'+
+    '<div class="field"><label>Card Body (blank line = new paragraph)</label><textarea class="ann-card-body" rows="4"></textarea></div>'+
+    '<div class="row2"><div class="field"><label>Button Text (optional)</label><input type="text" class="ann-card-btntext"></div>'+
+    '<div class="field"><label>Button Link (optional)</label><input type="url" class="ann-card-btnlink"></div></div>'+
+    '<button class="remove-x" onclick="this.closest(\'.card-block\').remove()">&times;</button></div>';
+}
+function annAddCard(){
+  document.getElementById('ann_cards').insertAdjacentHTML('beforeend', annCardHtml());
+}
+function annGenerateHTML(){
+  var weekDateVal = document.getElementById('ann_weekdate').value;
+  var week = '';
+  if(weekDateVal){
+    var wd = new Date(weekDateVal+'T00:00:00');
+    week = 'Week of '+wd.toLocaleDateString('en-US',{month:'long', day:'numeric', year:'numeric'});
+  }
+  var cards = document.querySelectorAll('#ann_cards .card-block');
+  var uid = 'ann_'+Math.random().toString(36).slice(2,9);
+  var cardsHtml = Array.prototype.map.call(cards, function(c, i){
+    var title = c.querySelector('.ann-card-title').value;
+    var body = paragraphsToHtml(c.querySelector('.ann-card-body').value, "");
+    var btntext = c.querySelector('.ann-card-btntext').value;
+    var btnlink = c.querySelector('.ann-card-btnlink').value;
+    var btnHtml = (btntext && btnlink) ? ('<div style="margin-top:1.1rem;"><a class="dfy-btn" href="'+escapeHtml(btnlink)+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:11px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+escapeHtml(btntext)+'</a></div>') : '';
+    return '<div class="dfy-card"><button class="dfy-toggle" onclick="'+uid+'_toggle('+i+')"><span class="dfy-title">'+escapeHtml(title)+'</span><span class="dfy-icon" id="'+uid+'_icon_'+i+'">+</span></button>'+
+      '<div class="dfy-panel" id="'+uid+'_panel_'+i+'"><div class="dfy-body">'+body+'</div>'+btnHtml+'</div></div>';
+  }).join('');
+
+  var css = '<style>#'+uid+' *{box-sizing:border-box;}#'+uid+' .dfy-toggle{width:100%;background:#fff;border:0;text-align:left;padding:1.15rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:14px;cursor:pointer;}#'+uid+' .dfy-title{font-family:Playfair Display,Georgia,serif;font-size:1.25rem;font-weight:700;color:#2a1f1c;}#'+uid+' .dfy-icon{width:30px;height:30px;border-radius:999px;background:#f5eddf;border:1px solid #ead9d5;color:#2a1f1c;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;}#'+uid+' .dfy-panel{display:none;padding:0 1.25rem 1.25rem;background:#fff;border-top:1px solid #f0e8df;}#'+uid+' .dfy-card{border:1px solid #ead9d5;border-radius:14px;overflow:hidden;margin-bottom:12px;background:#fff;}#'+uid+' .dfy-body p{font-size:16px;color:#5a4a45;line-height:1.75;margin:0 0 .85rem;}</style>';
+
+  var html = '<div id="'+uid+'" style="font-family:Jost,Arial,sans-serif;max-width:920px;margin:0 auto;color:#2a1f1c;">'+css+
+    '<div style="background:#2a1f1c;border-radius:16px 16px 0 0;padding:2rem 2.25rem;text-align:center;">'+
+    '<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .5rem;">DFY Niche Club Updates</p>'+
+    '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;font-weight:700;color:#f5eddf;margin:0 0 .35rem;line-height:1.15;">Announcements &amp; FYIs</h2>'+
+    '<p style="font-size:1.05rem;font-weight:700;color:#c4b0a8;margin:0;letter-spacing:.03em;">'+escapeHtml(week)+'</p></div>'+
+    '<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.75rem 2.25rem;">'+
+    '<p style="font-size:16px;color:#5a4a45;line-height:1.75;margin:0 0 1.25rem;">I\'ll be posting quick weekly updates here as needed, not every single week, but whenever there\'s something important to share.</p>'+
+    cardsHtml+'</div>'+
+    '<div style="background:#2a1f1c;border-radius:0 0 16px 16px;padding:1rem 1.5rem;text-align:center;"><p style="font-size:13px;color:#c4b0a8;margin:0;letter-spacing:.04em;">Check back here for quick updates as needed.</p></div>'+
+    '<script>function '+uid+'_toggle(i){var p=document.getElementById("'+uid+'_panel_"+i),ic=document.getElementById("'+uid+'_icon_"+i),open=p.style.display==="block";p.style.display=open?"none":"block";ic.textContent=open?"+":"–";}<\/script></div>';
+
+  document.getElementById('ann_output').value = html;
+  saveDraft('ann');
+}
+
+/* ============ LIVE CALL TAB LOGIC ============ */
+function lcToggleLive(){ /* visual-only checkbox state, read at generate time */ }
+function lcGenerateHTML(){
+  var date = document.getElementById('lc_date').value; // yyyy-mm-dd
+  var start = document.getElementById('lc_start').value; // HH:MM
+  var end = document.getElementById('lc_end').value;
+  var tz = document.getElementById('lc_tz').value || 'PST';
+  var platform = document.getElementById('lc_platform').value || 'Google Meet';
+  var expect = document.getElementById('lc_expect').value;
+  var meetlink = document.getElementById('lc_meetlink').value;
+  var formlink = document.getElementById('lc_formlink').value;
+  var nextdate = document.getElementById('lc_nextdate').value;
+
+  if(!date){ alert('Pick a call date.'); return; }
+  var d = new Date(date+'T'+(start||'09:00')+':00');
+  var dateLabel = d.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+  function to12(t){ if(!t) return ''; var p=t.split(':'); var h=parseInt(p[0],10); var m=p[1]; var ap=h>=12?'pm':'am'; var hh=h%12; if(hh===0)hh=12; return hh+':'+m+' '+ap; }
+  var timeLabel = to12(start)+' '+tz+' - '+to12(end)+' '+tz;
+  function gcalStamp(dateStr,timeStr){ return (dateStr||'').replace(/-/g,'') + 'T' + (timeStr||'00:00').replace(':','') + '00'; }
+  var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=DFY%20Niche%20Club%20Monthly%20Live%20Call&dates='+gcalStamp(date,start)+'/'+gcalStamp(date,end)+'&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet';
+  var nextLabel='', nextGcalUrl='';
+  if(nextdate){
+    var nd = new Date(nextdate+'T'+(start||'09:00')+':00');
+    nextLabel = nd.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric', year:'numeric'})+' at '+timeLabel;
+    nextGcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=DFY%20Niche%20Club%20Monthly%20Live%20Call&dates='+gcalStamp(nextdate,start)+'/'+gcalStamp(nextdate,end)+'&details=Monthly%20live%20Q%26A%20call%20for%20DFY%20Niche%20Club%20members.&location=Google%20Meet';
+  }
+  var isLive = document.getElementById('lc_islive').checked;
+  var uid = 'lc_'+Math.random().toString(36).slice(2,9);
+  var meetSection = (isLive && meetlink) ?
+    ('<div style="margin-bottom:28px;"><a href="'+escapeHtml(meetlink)+'" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#34a853;color:#fff;font-family:Jost,sans-serif;font-weight:700;font-size:1rem;text-decoration:none;border-radius:10px;">Join on Google Meet</a></div>') :
+    ('<div style="background:#f8f3ec;border:1.5px dashed #c9a96e;border-radius:10px;padding:16px 20px;font-size:.88rem;color:#7a6350;text-align:center;font-style:italic;margin-bottom:28px;">The '+escapeHtml(platform)+' link will be added the week of the call. Check back soon!</div>');
+  var liveBanner = (isLive && meetlink) ?
+    ('<div style="display:flex;align-items:center;justify-content:center;gap:8px;background:#e05252;color:#fff;font-family:Jost,sans-serif;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:10px 24px;"><span style="width:8px;height:8px;border-radius:50%;background:#fff;"></span> The link is live — join below!</div>') : '';
+
+  var html = '<div id="'+uid+'" style="background:#f5eddf;font-family:Jost,sans-serif;color:#2a1f1c;padding:0 0 40px;">'+
+    '<div style="background:#2a1f1c;padding:28px 24px 22px;text-align:center;"><h1 style="font-family:Playfair Display,serif;color:#c9a96e;font-size:2rem;letter-spacing:.04em;margin:0;">Monthly Live Call Info</h1><p style="color:#f5eddf;font-size:.82rem;font-weight:300;margin:4px 0 0;letter-spacing:.1em;text-transform:uppercase;">DFY Niche Club</p></div>'+
+    '<div style="max-width:640px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(42,31,28,.13);">'+
+    liveBanner+
+    '<div style="padding:36px 40px 40px;">'+
+    '<div style="font-family:Playfair Display,serif;font-size:1.2rem;color:#2a1f1c;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #c9a96e;">This Month\'s Call Details</div>'+
+    '<div style="margin-bottom:28px;"><div style="display:flex;gap:12px;font-size:.93rem;line-height:1.6;margin-bottom:8px;"><b style="min-width:52px;">Date</b> <span>'+escapeHtml(dateLabel)+'</span></div>'+
+    '<div style="display:flex;gap:12px;font-size:.93rem;line-height:1.6;margin-bottom:8px;"><b style="min-width:52px;">Time</b> <span>'+escapeHtml(timeLabel)+'</span></div>'+
+    '<div style="display:flex;gap:12px;font-size:.93rem;line-height:1.6;margin-bottom:8px;"><b style="min-width:52px;">Via</b> <span>'+escapeHtml(platform)+'</span></div></div>'+
+    '<div style="background:#2a1f1c;border-radius:12px;padding:22px 20px;margin-bottom:28px;text-align:center;">'+
+    '<div style="color:#c9a96e;font-family:Playfair Display,serif;font-size:1rem;margin-bottom:16px;">Call starts in...</div>'+
+    '<div class="'+uid+'_cd-grid" id="'+uid+'_cd_grid" style="display:flex;justify-content:center;align-items:flex-start;gap:12px;">'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center;" id="'+uid+'_days">--</span><span style="font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193;">Days</span></div>'+
+    '<span style="font-size:1.8rem;color:#c9a96e;line-height:1;padding-top:2px;">:</span>'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center;" id="'+uid+'_hrs">--</span><span style="font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193;">Hours</span></div>'+
+    '<span style="font-size:1.8rem;color:#c9a96e;line-height:1;padding-top:2px;">:</span>'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center;" id="'+uid+'_mins">--</span><span style="font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193;">Mins</span></div>'+
+    '<span style="font-size:1.8rem;color:#c9a96e;line-height:1;padding-top:2px;">:</span>'+
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;line-height:1;min-width:52px;text-align:center;" id="'+uid+'_secs">--</span><span style="font-size:.62rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#dea193;">Secs</span></div></div>'+
+    '<div style="display:none;color:#dea193;font-family:Playfair Display,serif;font-style:italic;font-size:1.1rem;" id="'+uid+'_cd_done">We are live! Join us now!</div></div>'+
+    '<div style="font-family:Playfair Display,serif;font-size:1.2rem;color:#2a1f1c;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #c9a96e;">What to Expect</div>'+
+    '<div style="background:#fdf7f0;border-left:4px solid #c9a96e;border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:28px;font-size:.92rem;line-height:1.75;color:#3a2e2b;">'+escapeHtml(expect)+'</div>'+
+    '<div style="font-family:Playfair Display,serif;font-size:1.2rem;color:#2a1f1c;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #c9a96e;">Join the Call</div>'+
+    meetSection+
+    '<div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px;">'+
+    (formlink ? '<a href="'+escapeHtml(formlink)+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-family:Jost,sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.04em;text-decoration:none;background:#dea193;color:#ffffff;">Submit Your Questions</a>' : '')+
+    '<a href="'+gcalUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font-family:Jost,sans-serif;font-weight:600;font-size:.88rem;letter-spacing:.04em;text-decoration:none;background:#2a1f1c;color:#f5eddf;">Add to Calendar</a></div>'+
+    (nextLabel ? ('<div style="text-align:center;font-size:.82rem;color:#999;padding-top:22px;border-top:1px solid #ede5d8;">Next month\'s call will be: <a href="'+nextGcalUrl+'" target="_blank" rel="noopener" style="color:#dea193;font-style:italic;font-weight:600;text-decoration:none;">'+escapeHtml(nextLabel)+'</a></div>') : '')+
+    '</div></div></div>'+
+    '<script>(function(){var callDate=new Date("'+date+'T'+(start||'09:00')+':00");function pad2(n){return n<10?"0"+n:""+n;}function tick(){var now=new Date();var diff=callDate-now;if(diff<=0){document.getElementById("'+uid+'_cd_grid").style.display="none";document.getElementById("'+uid+'_cd_done").style.display="block";return;}document.getElementById("'+uid+'_days").innerHTML=pad2(Math.floor(diff/86400000));document.getElementById("'+uid+'_hrs").innerHTML=pad2(Math.floor((diff%86400000)/3600000));document.getElementById("'+uid+'_mins").innerHTML=pad2(Math.floor((diff%3600000)/60000));document.getElementById("'+uid+'_secs").innerHTML=pad2(Math.floor((diff%60000)/1000));}tick();setInterval(tick,1000);})();<\/script>';
+
+  document.getElementById('lc_output').value = html;
+  saveDraft('lc');
+}
+
+/* ============ RECAP TAB LOGIC ============ */
+var RECAP_SYSTEM = "You turn raw Google Meet summary notes from a monthly live call into a clean, scannable recap for members who could not attend. Format rules: bold section headers based on topics discussed (these vary), 4-6 bullet points per section, each a complete standalone actionable takeaway in plain direct language, no vague or fluffy language, no member names ever, no intro fluff, no closing summary, logical flow grouping related topics together. Tone: warm but direct, written for busy Etsy sellers who want to scan fast. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact plain format (no extra commentary, no markdown symbols besides what's shown):\n\n## Section Header One\n- bullet\n- bullet\n- bullet\n\n## Section Header Two\n- bullet\n- bullet";
+async function recapGenerateDraft(){
+  var status = document.getElementById('recap_gen_status');
+  status.className='status-msg'; status.textContent=' generating...';
+  try{
+    var notes = document.getElementById('recap_notes').value;
+    if(!notes.trim()){ alert('Paste the raw meeting notes first.'); status.textContent=''; return; }
+    var result = await callClaude(RECAP_SYSTEM, "Here are the raw meeting notes:\n\n"+notes, 2000);
+    document.getElementById('recap_body').value = stripEmDash(result.trim());
+    status.textContent=' done ✓';
+    saveDraft('recap');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+function recapGenerateHTML(){
+  var monthVal = document.getElementById('recap_month').value;
+  var month = '';
+  if(monthVal){
+    var mParts = monthVal.split('-');
+    var mDate = new Date(parseInt(mParts[0],10), parseInt(mParts[1],10)-1, 1);
+    month = mDate.toLocaleDateString('en-US',{month:'long', year:'numeric'});
+  }
+  var video = document.getElementById('recap_video').value || '';
+  var body = document.getElementById('recap_body').value;
+
+  var lines = body.split('\n');
+  var sectionsHtml = '';
+  var currentBullets = [];
+  var currentHeader = null;
+  function flush(){
+    if(currentHeader===null) return;
+    sectionsHtml += '<p style="font-family:Jost,Arial,sans-serif;font-size:16px;font-weight:700;text-decoration:underline;color:#2a1f1c;margin-bottom:.6rem;border-top:1px solid #ead9d5;padding-top:1.15rem;margin-top:1.75rem;">'+escapeHtml(currentHeader)+'</p><ul style="margin:0 0 .5rem 1.2rem;padding:0;">'+
+      currentBullets.map(function(b){return '<li style="font-size:16px;color:#5a4a45;line-height:1.65;margin:0 0 .45rem;padding-left:.2rem;">'+boldify(b)+'</li>';}).join('')+'</ul>';
+    currentBullets=[];
+  }
+  lines.forEach(function(line){
+    var t = line.trim();
+    if(!t) return;
+    if(t.indexOf('##')===0){
+      flush();
+      currentHeader = t.replace(/^##\s*/,'');
+    } else if(t.indexOf('-')===0){
+      currentBullets.push(t.replace(/^-\s*/,''));
+    }
+  });
+  flush();
+  // remove the first border-top since it's the first section
+  sectionsHtml = sectionsHtml.replace('border-top:1px solid #ead9d5;padding-top:1.15rem;margin-top:1.75rem;', '');
+
+  var videoHtml = video ? ('<div style="background:#fdf7f2;border-top:1px solid #ead9d5;border-bottom:1px solid #ead9d5;padding:1.5rem 2.25rem;"><div style="position:relative;width:100%;padding-top:56.25%;border-radius:14px;overflow:hidden;background:#2a1f1c;border:1px solid #ead9d5;"><iframe src="'+escapeHtml(video)+'" title="Live Call Replay" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div>') : '';
+
+  var html = '<div style="font-family:Jost,Arial,sans-serif;max-width:920px;margin:0 auto;color:#2a1f1c;background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;overflow:hidden;">'+
+    '<div style="background:#2a1f1c;padding:2rem 2.25rem;text-align:center;">'+
+    '<p style="font-size:13px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#dea193;margin:0 0 .6rem;">Live Call Replay</p>'+
+    '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;line-height:1.15;color:#f5eddf;margin:0;font-weight:700;">'+escapeHtml(month)+' Live Call Recap</h2>'+
+    '<p style="font-size:1.1rem;font-weight:700;color:#c4b0a8;margin:.55rem 0 0;">'+escapeHtml(month)+'</p></div>'+
+    '<div style="background:#fff;padding:1.75rem 2.25rem;"><p style="font-size:16px;color:#5a4a45;line-height:1.75;margin:0;text-align:center;">This recap covers the key takeaways from the live call in case you missed it, in case you missed it or want to revisit the main points.</p></div>'+
+    videoHtml+
+    '<div style="background:#fff;padding:2rem 2.25rem;"><h3 style="font-family:Playfair Display,Georgia,serif;font-size:1.65rem;font-weight:700;color:#2a1f1c;margin:0 0 1rem;text-align:center;">Key Takeaways</h3><div style="max-width:760px;margin:0 auto;">'+sectionsHtml+'</div></div></div>';
+
+  document.getElementById('recap_output').value = html;
+  saveDraft('recap');
+}
+
+/* ============ AD HOC TAB LOGIC ============ */
+var ADHOC_SYSTEM = "You clean up messy notes or brain dumps into a clear, readable post for Etsy sellers and digital product creators. Keep the person's original meaning and information exactly as given, just organize it into clean short paragraphs, fix grammar and flow, add **bold** to the most important lines sparingly. No cliches, no added information, no assumptions beyond what's given, no HTML tags, no headers, just plain paragraphs separated by a blank line. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY the cleaned-up post text with no extra commentary.";
+async function adhocCleanUp(){
+  var status = document.getElementById('adhoc_gen_status');
+  var raw = document.getElementById('adhoc_body').value;
+  if(!raw.trim()){ alert('Add your notes first.'); return; }
+  status.className='status-msg'; status.textContent=' cleaning up...';
+  try{
+    var result = await callClaude(ADHOC_SYSTEM, "Clean up these messy notes into a readable post:\n\n"+raw, 1200);
+    document.getElementById('adhoc_body').value = stripEmDash(result.trim());
+    status.textContent=' done ✓';
+    saveDraft('adhoc');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+function adhocButtonHtml(){
+  return '<div class="card-block" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:.8rem 1rem;">'+
+    '<input type="text" class="adhoc-btn-text" placeholder="Button text">'+
+    '<input type="url" class="adhoc-btn-link" placeholder="https://...">'+
+    '<button class="remove-x" onclick="this.closest(\'.card-block\').remove()">&times;</button></div>';
+}
+function adhocAddButton(){
+  document.getElementById('adhoc_buttons').insertAdjacentHTML('beforeend', adhocButtonHtml());
+}
+function adhocGenerateHTML(){
+  var mediaType = document.getElementById('adhoc_mediatype').value;
+  var mediaUrl = document.getElementById('adhoc_mediaurl').value;
+  var title = document.getElementById('adhoc_title').value;
+  var body = document.getElementById('adhoc_body').value;
+  var buttons = document.querySelectorAll('#adhoc_buttons .card-block');
+
+  var mediaHtml = '';
+  if(mediaType==='video' && mediaUrl){
+    mediaHtml = '<div><video src="'+escapeHtml(mediaUrl)+'" autoplay loop muted playsinline style="width:100%;display:block;"></video></div>';
+  } else if(mediaType==='image' && mediaUrl){
+    mediaHtml = '<div><img src="'+escapeHtml(mediaUrl)+'" style="width:100%;display:block;"></div>';
+  }
+  var bodyHtml = paragraphsToHtml(body, "font-size:15px;color:#5a4a45;line-height:1.75;margin:0 0 .75rem;");
+  var buttonsHtml = buttons.length ? ('<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;justify-content:center;">'+
+    Array.prototype.map.call(buttons, function(b){
+      var text = b.querySelector('.adhoc-btn-text').value;
+      var link = b.querySelector('.adhoc-btn-link').value;
+      if(!text || !link) return '';
+      return '<a href="'+escapeHtml(link)+'" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;border:1.5px solid #dea193;padding:10px 22px;border-radius:999px;text-decoration:none;display:inline-block;">'+escapeHtml(text)+'</a>';
+    }).join('')+'</div>') : '';
+
+  var html = '<div style="font-family:Jost,Arial,sans-serif;max-width:680px;margin:0 auto;color:#2a1f1c;">'+mediaHtml+
+    '<div style="background:#2a1f1c;padding:1.75rem 2rem;">'+
+    '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:1.9rem;font-weight:700;color:#f5eddf;margin:0;line-height:1.2;">'+escapeHtml(title)+'</h2></div>'+
+    '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:0;border-radius:0 0 16px 16px;padding:1.5rem 2rem;">'+bodyHtml+buttonsHtml+'</div></div>';
+
+  document.getElementById('adhoc_output').value = html;
+  saveDraft('adhoc');
+}
+
+/* ============ KEYWORD REPORT TAB LOGIC ============ */
+var KW_STANDARD_KEYWORDS = [
+  "Shirt (POD)","Tshirt (POD)","Mug (POD)","PNG","Sweatshirt (POD)","Digital Planner",
+  "Hoodie (POD)","Tote Bag (POD)","SVG","Clipart","Printable Wall Art","Canva Template",
+  "Printables","Digital Wall Art","Social Media Templates","Sublimation Designs",
+  "Tumbler Wrap","Digital Paper","Frame TV Art","Digital Journal","Tshirt PNG","Shirt PNG",
+  "Digital Invitation","Tumbler Wrap PNG","Sublimation PNG","40 Oz Tumbler Wrap",
+  "40oz Tumbler Wrap","20oz Tumbler Wrap","20 Oz Tumbler Wrap"
+].sort(function(a,b){ return a.localeCompare(b); });
+function kwRowHtml(name){
+  return '<div class="card-block" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr;gap:10px;padding:.8rem 1rem;">'+
+    '<input type="text" class="kw-name" placeholder="Keyword" value="'+escapeAttr(name||'')+'">'+
+    '<input type="text" class="kw-month" placeholder="Month searches">'+
+    '<input type="text" class="kw-avg" placeholder="15-mo avg">'+
+    '<select class="kw-movement"><option value="🌿 Steady Demand">🌿 Steady Demand</option><option value="🔥 Growing Interest">🔥 Growing Interest</option><option value="⬇️ Cooling Interest">⬇️ Cooling Interest</option></select>'+
+    '<button class="remove-x" onclick="this.closest(\'.card-block\').remove()">&times;</button></div>';
+}
+function kwAddRow(name){
+  document.getElementById('kw_rows').insertAdjacentHTML('beforeend', kwRowHtml(name));
+  kwSaveRows();
+}
+function kwLoadStandardList(){
+  if(document.getElementById('kw_rows').children.length > 0 && !confirm('This adds your standard keyword list. If you already have rows, they\'ll stay and these get added below. Continue?')) return;
+  KW_STANDARD_KEYWORDS.forEach(function(k){
+    document.getElementById('kw_rows').insertAdjacentHTML('beforeend', kwRowHtml(k));
+  });
+  kwSaveRows();
+}
+function kwSaveRows(){
+  var rows = document.querySelectorAll('#kw_rows .card-block');
+  var data = Array.prototype.map.call(rows, function(r){
+    return {
+      name: r.querySelector('.kw-name').value,
+      month: r.querySelector('.kw-month').value,
+      avg: r.querySelector('.kw-avg').value,
+      movement: r.querySelector('.kw-movement').value
+    };
+  });
+  localStorage.setItem('dfyhub_kw_rows', JSON.stringify(data));
+}
+function kwLoadSavedRows(){
+  var raw = localStorage.getItem('dfyhub_kw_rows');
+  if(!raw) return false;
+  try{
+    var data = JSON.parse(raw);
+    if(!data.length) return false;
+    document.getElementById('kw_rows').innerHTML = data.map(function(d){
+      return kwRowHtml(d.name);
+    }).join('');
+    var rows = document.querySelectorAll('#kw_rows .card-block');
+    rows.forEach(function(r, i){
+      r.querySelector('.kw-month').value = data[i].month||'';
+      r.querySelector('.kw-avg').value = data[i].avg||'';
+      r.querySelector('.kw-movement').value = data[i].movement||'🌿 Steady Demand';
+    });
+    return true;
+  }catch(e){ return false; }
+}
+function kwAttachRowAutosave(){
+  document.getElementById('kw_rows').addEventListener('input', function(){ kwSaveRows(); });
+  document.getElementById('kw_rows').addEventListener('change', function(){ kwSaveRows(); });
+}
+function kwGenerateHTML(){
+  var kwMonthVal = document.getElementById('kw_month').value;
+  var month = '';
+  if(kwMonthVal){
+    var kmParts = kwMonthVal.split('-');
+    var kmDate = new Date(parseInt(kmParts[0],10), parseInt(kmParts[1],10)-1, 1);
+    month = kmDate.toLocaleDateString('en-US',{month:'long', year:'numeric'});
+  }
+  var photo = document.getElementById('kw_photo').value || '';
+  var rows = document.querySelectorAll('#kw_rows .card-block');
+  var uid = 'kw_'+Math.random().toString(36).slice(2,9);
+  var data = Array.prototype.map.call(rows, function(r){
+    return {
+      name: r.querySelector('.kw-name').value,
+      month: parseInt(r.querySelector('.kw-month').value.replace(/,/g,''))||0,
+      avg: parseInt(r.querySelector('.kw-avg').value.replace(/,/g,''))||0,
+      movement: r.querySelector('.kw-movement').value
+    };
+  }).filter(function(d){return d.name;});
+  var maxAvg = Math.max.apply(null, data.map(function(d){return d.avg;}).concat([1]));
+
+  var rowsHtml = data.map(function(d, i){
+    var pct = Math.round((d.avg/maxAvg)*100);
+    var barColor = pct>=40 ? '#1b4332' : (pct>=15 ? '#2d6a4f' : (pct>=6 ? '#40916c' : '#52b788'));
+    var bg = i%2===0 ? '#fff' : '#fdf7f2';
+    return '<div class="'+uid+'-row '+uid+'-data" data-name="'+escapeHtml(d.name.toLowerCase())+'" data-month="'+d.month+'" data-avg="'+d.avg+'" style="background:'+bg+';display:grid;grid-template-columns:1.15fr 140px 205px 200px;padding:14px 18px;align-items:center;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;gap:10px;">'+
+      '<span style="font-family:Jost,Arial,sans-serif;font-size:16px;color:#2a1f1c;font-weight:600;">'+escapeHtml(d.name)+'</span>'+
+      '<span style="text-align:center;font-family:Jost,Arial,sans-serif;font-size:16px;color:#5a4a45;">'+d.month.toLocaleString()+'</span>'+
+      '<span style="display:flex;align-items:center;gap:9px;justify-content:flex-end;"><div style="flex:1;background:#e8e0d8;border-radius:5px;height:24px;overflow:hidden;max-width:120px;min-width:70px;"><div style="width:'+pct+'%;height:100%;background:'+barColor+';border-radius:5px;"></div></div><span style="font-family:Jost,Arial,sans-serif;font-size:15px;font-weight:800;color:#5a4a45;white-space:nowrap;min-width:60px;text-align:right;">'+d.avg.toLocaleString()+'</span></span>'+
+      '<span style="text-align:center;"><span style="font-size:14px;font-weight:800;color:#2a1f1c;background:#f5eddf;border:1px solid #ead9d5;border-radius:999px;padding:8px 12px;display:inline-block;white-space:nowrap;">'+escapeHtml(d.movement)+'</span></span></div>';
+  }).join('');
+
+  var photoHtml = photo ? ('<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.35rem;text-align:center;"><img src="'+escapeHtml(photo)+'" alt="'+escapeHtml(month)+'" style="width:100%;max-width:540px;border-radius:12px;border:1px solid #ead9d5;display:inline-block;"></div>') : '';
+
+  var css = '<style>#'+uid+' *{box-sizing:border-box;}#'+uid+'-controls{display:grid;grid-template-columns:1fr 260px;gap:12px;margin:0 0 16px;}#'+uid+' .'+uid+'-control{width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:12px 14px;font-family:Jost,Arial,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;outline:none;}</style>';
+
+  var html = '<div id="'+uid+'" style="font-family:Jost,Arial,sans-serif;font-size:115%;max-width:920px;margin:0 auto;color:#2a1f1c;">'+css+
+    '<div style="background:#2a1f1c;border-radius:14px 14px 0 0;padding:2rem 2.25rem 1.75rem;text-align:center;">'+
+    '<p style="font-size:13px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.5rem;">eRank Data</p>'+
+    '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.45rem;font-weight:700;color:#f5eddf;margin:0 0 0.35rem;line-height:1.15;">Top Searched Products</h2>'+
+    '<p style="font-size:1.25rem;font-weight:700;color:#dea193;margin:0;letter-spacing:0.04em;">'+escapeHtml(month)+'</p></div>'+
+    photoHtml+
+    '<div style="background:#fff;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:16px 18px;border-top:1px solid #ead9d5;">'+
+    '<div id="'+uid+'-controls" style="display:grid;grid-template-columns:1fr 260px;gap:12px;">'+
+    '<input class="'+uid+'-control" id="'+uid+'_search" placeholder="Search keyword..." oninput="'+uid+'_filterSort()" style="width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:12px 14px;font-family:Jost,Arial,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;outline:none;">'+
+    '<select class="'+uid+'-control" id="'+uid+'_sort" onchange="'+uid+'_filterSort()" style="width:100%;border:1.5px solid #ead9d5;border-radius:10px;padding:12px 14px;font-family:Jost,Arial,sans-serif;font-size:15px;color:#2a1f1c;background:#fdf7f2;outline:none;"><option value="avg-desc">Sort: 15-Mo Avg High to Low</option><option value="avg-asc">Sort: 15-Mo Avg Low to High</option><option value="month-desc">Sort: Monthly Searches High to Low</option><option value="month-asc">Sort: Monthly Searches Low to High</option><option value="name-asc">Sort: Keyword A to Z</option><option value="name-desc">Sort: Keyword Z to A</option></select></div></div>'+
+    '<div style="display:grid;grid-template-columns:1.15fr 140px 205px 200px;padding:14px 18px;align-items:center;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;border-bottom:1px solid #ead9d5;gap:10px;background:#f5eddf;font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#5a4a45;"><span>Keywords</span><span style="text-align:center;">Month Searches</span><span style="text-align:right;">15-Mo Avg Searches</span><span style="text-align:center;">Market Movement</span></div>'+
+    '<div id="'+uid+'_rows">'+rowsHtml+'</div>'+
+    '<div id="'+uid+'_empty" style="display:none;background:#fff;border:1px solid #ead9d5;border-top:none;padding:18px;text-align:center;color:#5a4a45;">No keywords match your search.</div>'+
+    '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-top:none;border-radius:0 0 14px 14px;padding:1.6rem 2rem;text-align:center;">'+
+    '<p style="font-size:16px;color:#5a4a45;margin:0 0 0.85rem;line-height:1.7;">Want to research keywords yourself? I pull this data from <strong style="color:#2a1f1c;">eRank</strong> every month.</p>'+
+    '<a href="https://erank.com" target="_blank" style="font-family:Jost,Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:11px 28px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;display:inline-block;">Visit eRank ↗</a></div>'+
+    '<script>function '+uid+'_filterSort(){var q=(document.getElementById("'+uid+'_search").value||"").toLowerCase();var sort=document.getElementById("'+uid+'_sort").value;var wrap=document.getElementById("'+uid+'_rows");var rows=Array.prototype.slice.call(wrap.querySelectorAll("."+"'+uid+'-data"));rows.sort(function(a,b){var an=a.dataset.name,bn=b.dataset.name,am=parseInt(a.dataset.month||0),bm=parseInt(b.dataset.month||0),aa=parseInt(a.dataset.avg||0),ba=parseInt(b.dataset.avg||0);if(sort==="name-asc")return an.localeCompare(bn);if(sort==="name-desc")return bn.localeCompare(an);if(sort==="month-asc")return am-bm;if(sort==="month-desc")return bm-am;if(sort==="avg-asc")return aa-ba;return ba-aa;});var visible=0;rows.forEach(function(r,i){var show=r.dataset.name.indexOf(q)>-1;r.style.display=show?"grid":"none";if(show){r.style.background=(visible%2===0)?"#fff":"#fdf7f2";visible++;}wrap.appendChild(r);});document.getElementById("'+uid+'_empty").style.display=visible?"none":"block";}<\/script></div>';
+
+  document.getElementById('kw_output').value = html;
+  saveDraft('kw');
+}
+
+/* ============ INIT ============ */
+window.addEventListener('DOMContentLoaded', function(){
+  Object.keys(TOOL_FIELDS).forEach(function(tool){
+    loadDraft(tool);
+    attachAutosave(tool);
+  });
+  mmToggleTopic(); tipToggleTopic();
+  if(document.getElementById('dir_niche_rows').children.length===0) dirAddNicheRow();
+  dirRenderWeeksList();
+  if(!kwLoadSavedRows()){
+    KW_STANDARD_KEYWORDS.forEach(function(k){ document.getElementById('kw_rows').insertAdjacentHTML('beforeend', kwRowHtml(k)); });
+  }
+  kwAttachRowAutosave();
+  if(document.getElementById('ann_cards').children.length===0) annAddCard();
+});
+</script>
+</body>
+</html>
