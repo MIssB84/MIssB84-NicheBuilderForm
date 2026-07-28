@@ -1355,7 +1355,15 @@ function dirGenerateHTML(){
     '<div style="background:#2a1f1c;border-radius:16px 16px 0 0;padding:2rem 2rem 1.75rem;text-align:center;">'+
     '<p style="font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 .55rem;">DFY Niche Club</p>'+
     '<h2 style="font-family:Playfair Display,Georgia,serif;font-size:2.4rem;font-weight:700;color:#f5eddf;margin:0 0 .45rem;line-height:1.15;">The DFY Niche Club Directory</h2>'+
-    '<p style="font-size:16px;color:#dea193;margin:0;line-height:1.5;font-weight:600;">Search, browse, and jump back to past weekly drops.</p></div>'+
+    '<p style="font-size:16px;color:#dea193;margin:0;line-height:1.5;font-weight:600;">Search, browse, and jump back to past weekly drops.</p>'+
+    '<div style="display:flex;justify-content:center;gap:14px;margin-top:1.5rem;">'+
+    '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(222,161,147,0.35);border-radius:12px;padding:.85rem 1.6rem;text-align:center;">'+
+    '<div style="font-family:Playfair Display,Georgia,serif;font-size:1.7rem;color:#f5eddf;line-height:1;">'+totalNiches+'</div>'+
+    '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#c4b0a8;margin-top:.3rem;">Total Niches</div></div>'+
+    '<div style="background:rgba(255,255,255,0.06);border:1px solid rgba(222,161,147,0.35);border-radius:12px;padding:.85rem 1.6rem;text-align:center;">'+
+    '<div style="font-family:Playfair Display,Georgia,serif;font-size:1.7rem;color:#f5eddf;line-height:1;">'+weeks.length+'</div>'+
+    '<div style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#c4b0a8;margin-top:.3rem;">Weeks</div></div>'+
+    '</div></div>'+
     '<div style="background:#fdf7f2;border-left:1px solid #ead9d5;border-right:1px solid #ead9d5;padding:1.5rem 2.25rem;">'+
     '<div class="dc"><input class="ds" id="'+uid+'_search" placeholder="Search niches..." oninput="'+uid+'_filter()">'+
     '<select class="ds" id="'+uid+'_type" onchange="'+uid+'_filter()"><option value="all">All Product Types</option>'+
