@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Calendar — Mediocre Millennials</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #292320;
+    --cream: #faf7f3;
+    --sage: #b7879f;
+    --sage-dark: #966780;
+    --sage-tint: #f4eef3;
+    --rose: #b7879f;
+    --border: #e7e0d9;
+    --light-bg: #ffffff;
+    --mid-text: #5a4a45;
+    --muted: #998f89;
+    --paste-sage: #b2c4b4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #000000;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    padding: 28px 20px 50px;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--cream);
+    margin: 0 0 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .subhead { color: var(--muted); font-size: 13.5px; margin-bottom: 24px; }
+
+  .card {
+    position: relative;
+    overflow: hidden;
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    color: var(--mid-text);
+    box-shadow: 0 3px 16px rgba(42,31,28,0.06);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 60px; height: 4px;
+    background: var(--rose);
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--bg);
+    font-size: 19px;
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .step-tag {
+    font-size: 11px; background: var(--sage); color: #fff;
+    padding: 2px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px;
+  }
+
+  .hint { font-size: 12px; color: var(--muted); margin-top: -6px; margin-bottom: 6px; }
+
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--bg); margin: 16px 0 6px; }
+  label.first { margin-top: 0; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--sage); color: #fff; border: none;
+    padding: 11px 22px; border-radius: 8px; font-family: 'Jost', sans-serif;
+    font-weight: 600; font-size: 14px; cursor: pointer;
+  }
+  .btn:hover { background: var(--sage-dark); }
+
+  .btn.secondary {
+    background: transparent; color: var(--bg); border: 1.5px solid var(--border);
+    padding: 7px 14px; font-size: 12px;
+  }
+  .btn.secondary:hover { border-color: var(--sage); background: var(--sage-tint); }
+  .btn.small { padding: 8px 14px; font-size: 12.5px; }
+
+  .copy-all-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+  .streak-row {
+    background: var(--rose); color: #fff; border-radius: 10px; padding: 10px 16px;
+    font-size: 13.5px; font-weight: 600; margin: 0 0 20px; display: inline-block;
+  }
+
+  .month-progress { margin: 0 0 20px; }
+  .month-progress-label { font-size: 13px; font-weight: 600; color: var(--bg); margin-bottom: 6px; }
+  .month-progress-track { background: var(--border); border-radius: 20px; height: 10px; overflow: hidden; }
+  .month-progress-fill { background: var(--rose); height: 100%; border-radius: 20px; transition: width 0.3s ease; }
+
+  .month-stats-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .month-stats-row .month-progress { flex: 1; min-width: 220px; }
+  .month-listings-count {
+    background: var(--paste-sage); color: var(--bg); font-weight: 700; font-size: 14px;
+    padding: 8px 16px; border-radius: 20px; white-space: nowrap;
+  }
+
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 14px; }
+  .cal-month-label { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--bg); font-weight: 700; }
+
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; font-size: 12px; color: var(--mid-text); }
+  .cal-legend-item { display: flex; align-items: center; gap: 6px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .cal-daylabel { text-align: center; font-size: 11px; color: var(--muted); font-weight: 600; padding-bottom: 4px; }
+  .cal-cell {
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    min-height: 92px; padding: 8px; cursor: pointer; display: flex; flex-direction: column;
+    gap: 4px; transition: border-color 0.15s ease;
+  }
+  .cal-cell:hover { border-color: var(--rose); }
+  .cal-cell.empty { background: transparent; border: none; cursor: default; }
+  .cal-cell.today { border-color: var(--rose); border-width: 2px; }
+  .cal-cell .cal-date { font-size: 12.5px; font-weight: 600; color: var(--mid-text); }
+  .cal-cell .cal-count { font-size: 10.5px; color: #9a877f; }
+  .cal-cell .cal-types { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; }
+  .cal-type-label {
+    font-size: 10px; font-weight: 600; color: #fff; padding: 2px 6px; border-radius: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;
+  }
+
+  .count-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .count-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: #fff; color: var(--mid-text); font-family: 'Jost', sans-serif;
+    font-weight: 600; cursor: pointer; font-size: 13.5px;
+  }
+  .count-btn:hover { border-color: var(--rose); }
+  .count-btn.active { background: var(--rose); border-color: var(--rose); color: #fff; }
+
+  .type-multiselect { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .type-ms-chip {
+    padding: 9px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+    font-family: 'Jost', sans-serif; color: var(--mid-text); display: flex;
+    align-items: center; gap: 7px; transition: all 0.15s ease;
+  }
+  .type-ms-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .type-ms-chip.active { color: #fff; border-color: transparent; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Listing Calendar</h1>
+  <div class="subhead">Mediocre Millennials — log how many listings you added each day and which product types, so you can spot gaps and stay consistent.</div>
+
+  <div class="card">
+    <h2><span class="step-tag">Consistency</span> This Month</h2>
+
+    <div class="streak-row" id="streakRow"></div>
+
+    <div class="month-stats-row">
+      <div class="month-progress">
+        <div class="month-progress-label" id="monthProgressLabel">0 / 21 days this month</div>
+        <div class="month-progress-track"><div class="month-progress-fill" id="monthProgressFill" style="width:0%;"></div></div>
+      </div>
+      <div class="month-listings-count" id="monthListingsCount">0 listings this month</div>
+    </div>
+
+    <div class="cal-header">
+      <button class="btn secondary small" id="calPrevBtn">‹ Prev</button>
+      <div class="cal-month-label" id="calMonthLabel"></div>
+      <button class="btn secondary small" id="calNextBtn">Next ›</button>
+    </div>
+
+    <div class="cal-legend" id="calLegend"></div>
+
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <div class="card" id="dayEditorCard" style="display:none;">
+    <h2><span class="step-tag">Edit Day</span> <span id="dayEditorDate"></span></h2>
+
+    <label class="first">How many listings did you add?</label>
+    <div class="count-row" id="countRow"></div>
+
+    <label>Product type(s) added</label>
+    <div class="type-multiselect" id="typeMultiselect"></div>
+
+    <div class="copy-all-row">
+      <button class="btn" id="saveDayBtn">Save Day</button>
+      <button class="btn secondary" id="deleteDayBtn">Delete This Day</button>
+      <button class="btn secondary" id="closeDayEditorBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'mm_listing_calendar_entries_v1';
+
+const PRODUCT_TYPES = [
+  { name: 'Baby Tee', color: '#dea193' },
+  { name: 'Comfort Colors', color: '#c9a96e' },
+  { name: 'Gildan Sweatshirt', color: '#8a7364' }
+];
+
+let calendarEntries = {};
+let calViewDate = new Date();
+calViewDate.setDate(1);
+let selectedDayKey = null;
+let selectedCount = null;
+let selectedTypes = new Set();
+
+function dateKey(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+function todayKey() {
+  const t = new Date();
+  return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+}
+
+function loadCalendarEntries() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    calendarEntries = raw ? JSON.parse(raw) : {};
+  } catch (e) { calendarEntries = {}; }
+}
+
+function saveCalendarEntries() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(calendarEntries)); } catch (e) {}
+}
+
+function renderCalLegend() {
+  const el = document.getElementById('calLegend');
+  el.innerHTML = PRODUCT_TYPES.map(t =>
+    `<span class="cal-legend-item"><span class="cal-legend-dot" style="background:${t.color}"></span>${t.name}</span>`
+  ).join('');
+}
+
+function renderCalendarMonth() {
+  const year = calViewDate.getFullYear();
+  const month = calViewDate.getMonth();
+  document.getElementById('calMonthLabel').textContent = calViewDate.toLocaleDateString([], { month: 'long', year: 'numeric' });
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+    const label = document.createElement('div');
+    label.className = 'cal-daylabel';
+    label.textContent = d;
+    grid.appendChild(label);
+  });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const tKey = todayKey();
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-cell empty';
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = dateKey(year, month, d);
+    const entry = calendarEntries[key];
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (key === tKey ? ' today' : '');
+    const typesHtml = (entry && entry.types && entry.types.length)
+      ? `<div class="cal-types">${entry.types.map(tn => {
+          const pt = PRODUCT_TYPES.find(p => p.name === tn);
+          return `<span class="cal-type-label" style="background:${pt ? pt.color : '#999'}">${tn}</span>`;
+        }).join('')}</div>`
+      : '';
+    cell.innerHTML = `<span class="cal-date">${d}</span>${entry ? `<span class="cal-count">${entry.count} listing${entry.count === 1 ? '' : 's'}</span>` : ''}${typesHtml}`;
+    cell.addEventListener('click', () => openDayEditor(key, d, month, year));
+    grid.appendChild(cell);
+  }
+
+  renderMonthProgress(year, month, daysInMonth);
+}
+
+const POST_GOAL_DAYS = 21;
+
+function renderMonthProgress(year, month, daysInMonth) {
+  let loggedDays = 0;
+  let totalListings = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const entry = calendarEntries[dateKey(year, month, d)];
+    if (entry && entry.count > 0) {
+      loggedDays++;
+      totalListings += entry.count;
+    }
+  }
+  const pct = Math.min(100, Math.round((loggedDays / POST_GOAL_DAYS) * 100));
+  document.getElementById('monthProgressLabel').textContent = `${loggedDays} / ${POST_GOAL_DAYS} days this month`;
+  document.getElementById('monthProgressFill').style.width = pct + '%';
+  document.getElementById('monthListingsCount').textContent = `${totalListings} listing${totalListings === 1 ? '' : 's'} this month`;
+}
+
+function openDayEditor(key, d, month, year) {
+  selectedDayKey = key;
+  const entry = calendarEntries[key];
+  selectedCount = entry ? entry.count : null;
+  selectedTypes = new Set(entry ? entry.types : []);
+
+  const dateObj = new Date(year, month, d);
+  document.getElementById('dayEditorDate').textContent = dateObj.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  renderCountRow();
+  renderTypeMultiselect();
+
+  const editorCard = document.getElementById('dayEditorCard');
+  editorCard.style.display = 'block';
+  editorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderCountRow() {
+  const row = document.getElementById('countRow');
+  row.innerHTML = '';
+  for (let n = 1; n <= 10; n++) {
+    const btn = document.createElement('button');
+    btn.className = 'count-btn' + (selectedCount === n ? ' active' : '');
+    btn.textContent = n;
+    btn.addEventListener('click', () => {
+      selectedCount = (selectedCount === n) ? null : n;
+      renderCountRow();
+    });
+    row.appendChild(btn);
+  }
+}
+
+function renderTypeMultiselect() {
+  const wrap = document.getElementById('typeMultiselect');
+  wrap.innerHTML = '';
+  PRODUCT_TYPES.forEach(t => {
+    const isActive = selectedTypes.has(t.name);
+    const chip = document.createElement('button');
+    chip.className = 'type-ms-chip' + (isActive ? ' active' : '');
+    if (isActive) chip.style.background = t.color;
+    chip.innerHTML = `<span class="dot" style="background:${isActive ? '#fff' : t.color}"></span>${t.name}`;
+    chip.addEventListener('click', () => {
+      if (selectedTypes.has(t.name)) selectedTypes.delete(t.name);
+      else selectedTypes.add(t.name);
+      renderTypeMultiselect();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+document.getElementById('saveDayBtn').addEventListener('click', () => {
+  if (!selectedDayKey) return;
+  if (!selectedCount) return;
+  calendarEntries[selectedDayKey] = { count: selectedCount, types: Array.from(selectedTypes) };
+  saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+document.getElementById('deleteDayBtn').addEventListener('click', () => {
+  if (!selectedDayKey) return;
+  delete calendarEntries[selectedDayKey];
+  saveCalendarEntries();
+  renderCalendarMonth();
+  renderStreak();
+  closeDayEditor();
+});
+
+function closeDayEditor() {
+  document.getElementById('dayEditorCard').style.display = 'none';
+  selectedDayKey = null;
+}
+
+document.getElementById('closeDayEditorBtn').addEventListener('click', closeDayEditor);
+
+document.getElementById('calPrevBtn').addEventListener('click', () => {
+  calViewDate.setMonth(calViewDate.getMonth() - 1);
+  renderCalendarMonth();
+});
+
+document.getElementById('calNextBtn').addEventListener('click', () => {
+  calViewDate.setMonth(calViewDate.getMonth() + 1);
+  renderCalendarMonth();
+});
+
+function renderStreak() {
+  const el = document.getElementById('streakRow');
+  let streak = 0;
+  let cursor = new Date();
+  while (true) {
+    const key = dateKey(cursor.getFullYear(), cursor.getMonth(), cursor.getDate());
+    const entry = calendarEntries[key];
+    if (entry && entry.count > 0) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  el.textContent = streak > 0
+    ? `🔥 ${streak} day streak, keep it going`
+    : 'No listing logged for today yet, add one to start a streak';
+}
+
+loadCalendarEntries();
+renderCalLegend();
+renderCalendarMonth();
+renderStreak();
+</script>
+</body>
+</html>
