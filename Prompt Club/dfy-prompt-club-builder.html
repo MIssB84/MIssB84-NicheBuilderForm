@@ -423,6 +423,27 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
 </div>
 
+<div class="card" id="tools-footer-card">
+  <p class="card-title">"Tools I Use" Footer</p>
+  <p class="card-sub">This stays the same every week (not cleared with "Clear Week"), edit it whenever your tools/links change.</p>
+  <div>
+    <label class="field-label" for="f-toolsblurb">Blurb</label>
+    <textarea class="field-input" id="f-toolsblurb" style="min-height:60px;">These are my favorite tools for creating bestselling digital designs. I use them every week to generate the prompts inside this club.</textarea>
+  </div>
+  <div class="dna-row" style="margin-top:12px;">
+    <div><label class="field-label" for="f-tool1name">Tool 1 Name</label><input class="field-input" id="f-tool1name" placeholder="e.g. Kittl"></div>
+    <div><label class="field-label" for="f-tool1link">Tool 1 Link</label><input class="field-input" type="url" id="f-tool1link" placeholder="https://..."></div>
+  </div>
+  <div class="dna-row">
+    <div><label class="field-label" for="f-tool2name">Tool 2 Name</label><input class="field-input" id="f-tool2name" placeholder="e.g. MyDesigns"></div>
+    <div><label class="field-label" for="f-tool2link">Tool 2 Link</label><input class="field-input" type="url" id="f-tool2link" placeholder="https://..."></div>
+  </div>
+  <div class="dna-row">
+    <div><label class="field-label" for="f-tool3name">Tool 3 Name</label><input class="field-input" id="f-tool3name" placeholder="e.g. Galaxy AI"></div>
+    <div><label class="field-label" for="f-tool3link">Tool 3 Link</label><input class="field-input" type="url" id="f-tool3link" placeholder="https://..."></div>
+  </div>
+</div>
+
 <div style="height:80px;"></div>
 
 <div id="output-section">
@@ -462,6 +483,31 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <script>
 var STORAGE_KEY = 'dfy_prompt_club_builder';
+var TOOLS_FOOTER_KEY = 'dfy_prompt_club_tools_footer';
+var TOOLS_FOOTER_FIELDS = ['f-toolsblurb','f-tool1name','f-tool1link','f-tool2name','f-tool2link','f-tool3name','f-tool3link'];
+
+function loadToolsFooter() {
+  try {
+    var raw = localStorage.getItem(TOOLS_FOOTER_KEY);
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    TOOLS_FOOTER_FIELDS.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+  } catch (e) {}
+}
+function saveToolsFooter() {
+  try {
+    var data = {};
+    TOOLS_FOOTER_FIELDS.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    localStorage.setItem(TOOLS_FOOTER_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
 var isDirty = false;
 
 var fields = [
@@ -972,14 +1018,17 @@ function esc(str) {
 }
 
 var PRODUCT_SECTIONS_EXPORT = [
-  { type: 'Wall Art', ids: ['wa-1','wa-2','wa-3'], anchor: 'section-wallart' },
-  { type: 'Frame TV Art', ids: ['ft-1','ft-2','ft-3'], anchor: 'section-frametv' },
-  { type: 'PNG', ids: ['png-1','png-2','png-3'], anchor: 'section-png' },
-  { type: 'Tumbler Wraps', ids: ['tb-1','tb-2','tb-3'], anchor: 'section-tumbler' }
+  { type: 'Wall Art', ids: ['wa-1','wa-2','wa-3'], anchor: 'section-wall-art', idPrefix: 'wa' },
+  { type: 'Frame TV Art', ids: ['ft-1','ft-2','ft-3'], anchor: 'section-frame-tv-art', idPrefix: 'ft' },
+  { type: 'PNG', ids: ['png-1','png-2','png-3'], anchor: 'section-png', idPrefix: 'png' },
+  { type: 'Tumbler Wraps', ids: ['tb-1','tb-2','tb-3'], anchor: 'section-tumbler-wraps', idPrefix: 'tb' }
 ];
 
-function productPill(label, anchor) {
-  return '<a href="#'+anchor+'" style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#2a1f1c;color:#f5eddf;padding:10px 22px;border-radius:30px;text-decoration:none;margin:4px;">'+esc(label)+'</a>';
+function productPill(label, anchor, small) {
+  var pad = small ? '9px 18px' : '12px 22px';
+  var fs = small ? '11px' : '13px';
+  var nowrap = small ? 'white-space:nowrap;' : '';
+  return '<a href="#'+anchor+'" style="font-family:Jost,sans-serif;font-size:'+fs+';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:'+pad+';border-radius:30px;text-decoration:none;'+(small?'':'margin:4px;display:inline-block;')+nowrap+'">'+esc(label)+'</a>';
 }
 
 function buildIntroHTML() {
@@ -988,49 +1037,72 @@ function buildIntroHTML() {
 
   var productPills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor); }).join('');
 
-  return '<div id="top" style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">' +
-    '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
-    '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">'+(collectionName ? esc(collectionName) : 'This Week\'s Prompt Drop')+'</h2>' +
-    '<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#dea193;margin:0;">'+esc(theme)+'</p>' +
+  return '<div style="background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;margin-bottom:2rem;">' +
+    '<div style="background:#2a1f1c;padding:2.25rem 2rem 1.75rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.5rem;line-height:1.2;">'+(collectionName ? esc(collectionName) : 'This Week\'s Prompt Drop')+'</h2>' +
+    '<p style="font-size:15px;font-weight:600;color:#dea193;margin:0;letter-spacing:0.03em;">'+esc(theme)+'</p>' +
     '</div>' +
-    '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.2rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>' +
-    '<p style="font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#2a1f1c;margin:0;">Let\'s Create!</p>' +
+    '<div style="padding:2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong><br>Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>' +
+    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#2a1f1c;padding:11px 0;">Let\'s Create!</span>' +
     '</div>' +
-    '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;text-align:center;">' +
+    '<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;text-align:center;">' +
     '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">Jump to a Product Type</p>' +
     productPills +
     '</div></div>';
 }
 
 function buildProductSectionHeaderHTML(productType, anchor) {
-  return '<div id="'+anchor+'" style="font-family:Jost,sans-serif;max-width:680px;margin:0 auto;padding:2.5rem 1.5rem 0.5rem;text-align:center;">' +
-    '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.6rem;">Product Type</p>' +
-    '<h2 style="font-family:Playfair Display,serif;font-size:1.9rem;font-weight:700;color:#2a1f1c;margin:0 0 1rem;">'+esc(productType)+'</h2>' +
-    '<div style="display:flex;align-items:center;justify-content:center;gap:14px;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>' +
-    '</div>';
+  return '<div id="'+anchor+'" style="padding:2rem 0 0.5rem;">' +
+    '<span style="font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+esc(productType)+'</h2>' +
+    '<div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
 }
 
 function buildJumpBarHTML() {
-  var pills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor); }).join('');
-  var backToTop = '<a href="#top" style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:10px 22px;border-radius:30px;text-decoration:none;margin:4px;">↑ Back to Top</a>';
-  return '<div style="font-family:Jost,sans-serif;max-width:680px;margin:1.5rem auto 0;background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1.2rem 1.5rem;text-align:center;">' +
-    '<p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">Jump To:</p>' +
+  var pills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor, true); }).join('');
+  var backToTop = '<a href="#lesson-top" style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:9px 18px;border-radius:30px;text-decoration:none;white-space:nowrap;">&#8593; Back to Top</a>';
+  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.5rem;margin:2rem 0;display:flex;flex-wrap:wrap;align-items:center;gap:10px;">' +
+    '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;white-space:nowrap;">Jump to:</span>' +
     pills + backToTop +
+    '</div></div>';
+}
+
+function buildPromptHTML(promptNumInProduct, promptText, imgUrl, idPrefix) {
+  var uid = idPrefix + promptNumInProduct;
+  var imgHtml = imgUrl ?
+    '<div style="display:flex;flex-direction:column;align-items:center;">' +
+    '<div style="width:2px;height:16px;background:rgba(201,169,110,0.4);"></div>' +
+    '<img src="'+esc(imgUrl)+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #ead9d5;display:block;">' +
+    '</div>'
+    : '';
+  return '<div style="margin-bottom:3rem;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;">Prompt '+promptNumInProduct+'</p>' +
+    '<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;font-style:italic;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="p'+uid+'">'+esc(promptText)+'</p>' +
+    '<div style="text-align:center;">' +
+    '<button onclick="var el=document.getElementById(\'p'+uid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>' +
+    '</div></div>' +
+    imgHtml +
     '</div>';
 }
 
-function buildPromptHTML(promptNumInProduct, promptText, imgUrl) {
-  var uid = Math.random().toString(36).slice(2, 9);
-  var imgBlock = imgUrl ? '<div style="width:1px;height:24px;background:rgba(222,161,147,0.4);margin:0 auto;"></div><img src="'+esc(imgUrl)+'" alt="Example result" style="display:block;width:100%;border-radius:12px;margin-top:1.5rem;">' : '';
-  return '<div style="font-family:Jost,sans-serif;max-width:680px;margin:0 auto;padding:1.2rem 1.5rem;">' +
-    '<p style="text-align:center;font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.9rem;">Prompt '+promptNumInProduct+'</p>' +
-    '<div style="background:#2a1f1c;border-radius:16px;padding:2rem 2rem 1.5rem;">' +
-    '<p style="font-family:Playfair Display,serif;font-size:16px;font-style:italic;color:#f5eddf;line-height:1.85;text-align:center;margin-bottom:1.5rem;" id="ptext-'+uid+'">'+esc(promptText)+'</p>' +
-    '<button onclick="var t=document.getElementById(\'ptext-'+uid+'\').innerText;navigator.clipboard.writeText(t).then(function(){var b=document.getElementById(\'pbtn-'+uid+'\');b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);});" id="pbtn-'+uid+'" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>' +
-    '</div>' +
-    imgBlock +
+function buildToolsFooterHTML() {
+  var blurb = val('f-toolsblurb').trim();
+  var tools = [
+    { name: val('f-tool1name').trim(), link: val('f-tool1link').trim() },
+    { name: val('f-tool2name').trim(), link: val('f-tool2link').trim() },
+    { name: val('f-tool3name').trim(), link: val('f-tool3link').trim() }
+  ].filter(function(t){ return t.name && t.link; });
+  if (!blurb && !tools.length) return '';
+  var toolLinks = tools.map(function(t) {
+    return '<a href="'+esc(t.link)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 24px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;">'+esc(t.name)+'</a>';
+  }).join('');
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;border:1px solid #ead9d5;padding:2rem;margin-top:2rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.75rem;">Tools I Use</p>' +
+    (blurb ? '<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.5rem;">'+esc(blurb)+'</p>' : '') +
+    (toolLinks ? '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">'+toolLinks+'</div>' : '') +
     '</div>';
 }
 
@@ -1042,19 +1114,24 @@ function generateHTML() {
   var theme = val('f-theme');
   if (!theme) { showToast('Please fill in the working theme first.'); return; }
 
-  var fullPage = buildIntroHTML();
+  var fullPage = '<div id="lesson-top" style="font-family:Jost,sans-serif;font-size:82%;">';
+  fullPage += buildIntroHTML();
 
   PRODUCT_SECTIONS_EXPORT.forEach(function(p) {
     var filledIds = p.ids.filter(function(id){ return val(id).trim(); });
     if (!filledIds.length) return;
+    fullPage += '\n\n<!-- ' + p.type.toUpperCase() + ' -->\n';
     fullPage += buildProductSectionHeaderHTML(p.type, p.anchor);
     filledIds.forEach(function(id, i) {
       var text = val(id).trim();
       var imgUrl = val(id + '-img').trim();
-      fullPage += buildPromptHTML(i + 1, text, imgUrl);
+      fullPage += buildPromptHTML(i + 1, text, imgUrl, p.idPrefix);
     });
     fullPage += buildJumpBarHTML();
   });
+
+  fullPage += buildToolsFooterHTML();
+  fullPage += '</div>';
 
   document.getElementById('full-page-html').value = fullPage;
   document.getElementById('full-page-preview').innerHTML = fullPage;
@@ -1094,6 +1171,11 @@ updateAllProgress();
 attachImgThumbListeners();
 refreshAllImgThumbs();
 renderThemeIdeas(true);
+loadToolsFooter();
+TOOLS_FOOTER_FIELDS.forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('input', saveToolsFooter);
+});
 </script>
 </body>
 </html>
