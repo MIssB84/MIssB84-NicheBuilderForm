@@ -419,8 +419,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <div id="output-section">
   <div style="max-width:700px;margin:0 auto 1rem;">
-    <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;">Your HTML is ready.</p>
-    <p style="font-size:12px;color:#c4b0a8;">Copy each block and paste into Systeme.io. The intro goes in your first lesson element. Each prompt block goes in its own lesson.</p>
+    <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;">Preview</p>
+    <p style="font-size:12px;color:#c4b0a8;">Check it over, then copy each block and paste into Systeme.io. The intro goes in your first lesson element. Each prompt block goes in its own lesson.</p>
   </div>
 
   <div class="output-block">
@@ -447,6 +447,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="save-actions">
     <button class="btn btn-clear" onclick="clearAll()">Clear Week</button>
     <button class="btn btn-save" onclick="saveData()">Save Progress</button>
+    <button class="btn btn-generate" onclick="previewOutput()">👁 Preview</button>
     <button class="btn btn-generate" onclick="generateHTML()">Generate HTML</button>
   </div>
 </div>
@@ -480,9 +481,7 @@ var DFY_WALLART_SYSTEM = "You are a production assistant writing AI image genera
 
 var DFY_FRAMETV_SYSTEM = "You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs), for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. Do not force a specific art medium, only include one if it naturally fits. Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Never mention any TV or electronics brand name. Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
 
-var DFY_PNG_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts. Rules: Default style is a curated grouping or collage arrangement, with a strong main focal element, 3 to 5 supporting elements, cohesive theme, personality, interesting details, strong visual identity. The design should feel complete enough to sell on a shirt, boutique apparel graphics, trendy Etsy shirts, giftable designs, statement graphics. Avoid one isolated object, basic clip art appearance, generic AI artwork, realistic scenes, landscapes. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Each prompt must end exactly: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
-
-var DFY_TUMBLER_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts. Rules: Create full wrap artwork, focused on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+var DFY_PNG_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts, rotating between two proven formats:\n\nFORMAT A, ILLUSTRATED CLUSTER: Name 2 to 3 specific objects only, never more, that group together as one tight cluster (for example a flower plus one creature plus one small object, or two objects plus trailing vine or stem linework). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. Thin decorative linework such as curling vines, stems, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. State an explicit rendering style for every prompt, chosen to fit the theme, such as bold graphic illustration with thick outlines and flat or semi-flat color fills, or fine line etching or engraving with high contrast and selective color fills. Say explicitly that the cluster is surrounded by generous open white space and does not fill or crowd the canvas.\n\nFORMAT B, TYPOGRAPHY PLUS ICON: A short punchy word or phrase in bold chunky lettering (describe the lettering style, for example rounded retro type, hand lettered script, or varsity block letters), paired with one small supporting line-art or illustrated icon related to the theme, plus optionally a short handwritten accent phrase tucked into the open space. Describe the exact layout (what sits top, center, bottom) and keep it minimal so most of the canvas stays open white space.\n\nUse Format A more often than Format B, but include at least one Format B prompt when writing 3 or more prompts. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, landscapes, and avoid dense edge-to-edge compositions with no breathing room. Each prompt must end exactly: \"Centered design with generous negative space around it, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
 
 var PROMPT_SYSTEM_BY_KEY = {
   'wall-art': DFY_WALLART_SYSTEM,
@@ -1015,6 +1014,10 @@ function buildPromptHTML(promptNum, productType, promptText, imgUrl) {
     '</div>' +
     imgBlock +
     '</div>';
+}
+
+function previewOutput() {
+  generateHTML();
 }
 
 function generateHTML() {
