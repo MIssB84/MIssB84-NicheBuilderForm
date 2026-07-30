@@ -75,6 +75,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .btn-generate:hover { background: #bb7d72; border-color: #bb7d72; color: #fff; }
 .btn-clear { background: transparent; color: #c4b0a8; border-color: rgba(196,176,168,0.4); font-size: 11px; padding: 7px 14px; }
 .btn-clear:hover { border-color: #c4b0a8; color: #fff; }
+.btn-clear-light { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 18px; border-radius: 30px; cursor: pointer; border: 1.5px solid rgba(196,176,168,0.5); background: transparent; color: #5a4a45; transition: all 0.2s; }
+.btn-clear-light:hover { border-color: #dea193; color: #bb7d72; }
 
 #output-section { display: none; max-width: 700px; margin: 0 auto; }
 .output-actions { display: flex; gap: 12px; margin-bottom: 1.5rem; justify-content: center; flex-wrap: wrap; }
@@ -154,7 +156,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <p class="card-sub">This sets the header for your intro page and lesson title.</p>
   <div>
     <label class="field-label" for="f-date">Week Date</label>
-    <input class="field-input" id="f-date" placeholder="e.g. June 2, 2026">
+    <input class="field-input" type="date" id="f-date">
+    <div id="f-date-display" style="margin-top:6px; font-size:12px; color:#c4b0a8;"></div>
   </div>
 </div>
 
@@ -164,6 +167,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <div class="btn-row" style="margin-bottom:14px;">
     <button class="btn btn-generate" type="button" onclick="suggestThemes()" id="genbtn-themes">✨ Suggest Themes</button>
+    <button class="btn-clear-light" type="button" onclick="toggleThemeIdeasWrap()" id="toggleIdeasBtn">📂 Saved Ideas (0)</button>
     <span class="gen-status" id="genstatus-themes" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
   <div id="theme-ideas-wrap" style="display:none; margin-bottom:16px;"></div>
@@ -449,7 +453,7 @@ async function suggestThemes() {
       if (key && !seen[key]) { lastThemeIdeas.push(idea); seen[key] = true; }
     });
     saveThemeBank();
-    renderThemeIdeas();
+    renderThemeIdeas(true);
     status.textContent = newIdeas.length ? ' added ' + newIdeas.length + ' new ideas ✓' : ' no ideas returned, try again';
   } catch (e) {
     status.textContent = ' error: ' + e.message;
@@ -459,8 +463,11 @@ async function suggestThemes() {
   }
 }
 
-function renderThemeIdeas() {
+function renderThemeIdeas(forceOpen) {
   var wrap = document.getElementById('theme-ideas-wrap');
+  var toggleBtn = document.getElementById('toggleIdeasBtn');
+  var wasOpen = wrap.style.display === 'block';
+  if (toggleBtn) toggleBtn.textContent = '📂 Saved Ideas (' + lastThemeIdeas.length + ')';
   if (!lastThemeIdeas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
   wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">Saved ideas — pick one now or come back later for another.</p>' +
     lastThemeIdeas.map(function(idea, i) {
@@ -475,7 +482,13 @@ function renderThemeIdeas() {
       (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
       '</div>';
   }).join('');
-  wrap.style.display = 'block';
+  wrap.style.display = (forceOpen || wasOpen) ? 'block' : 'none';
+}
+
+function toggleThemeIdeasWrap() {
+  var wrap = document.getElementById('theme-ideas-wrap');
+  if (!lastThemeIdeas.length) { showToast('No saved ideas yet — click Suggest Themes first.'); return; }
+  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
 }
 
 function useThemeIdea(i) {
@@ -490,6 +503,9 @@ function useThemeIdea(i) {
   document.getElementById('f-avoid').value = idea.avoid || '';
   isDirty = true; updateAllProgress(); saveData();
   showToast('Collection DNA filled in from "' + (idea.theme || 'idea') + '"');
+  lastThemeIdeas.splice(i, 1);
+  saveThemeBank();
+  renderThemeIdeas();
   document.getElementById('f-theme').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
@@ -571,10 +587,23 @@ function getWallArtAnchors() {
   return ['wa-1','wa-2','wa-3'].map(function(id){ return val(id).trim(); });
 }
 
+function requireDateAndTheme() {
+  if (!val('f-date').trim()) {
+    showToast('Add the Week Date first.');
+    document.getElementById('f-date').focus();
+    return false;
+  }
+  if (!val('f-theme').trim()) {
+    showToast('Add the Working Theme first.');
+    document.getElementById('f-theme').focus();
+    return false;
+  }
+  return true;
+}
+
 async function generateForProduct(sectionKey) {
   var section = getSection(sectionKey);
-  var theme = val('f-theme').trim();
-  if (!theme) { showToast('Add the Working Theme first.'); document.getElementById('f-theme').focus(); return; }
+  if (!requireDateAndTheme()) return;
   var existing = section.ids.filter(function(id){ return val(id).trim().length > 0; });
   if (existing.length && !confirm('This will overwrite all 3 ' + section.label + ' prompts. Continue?')) return;
 
@@ -603,8 +632,7 @@ async function generateForProduct(sectionKey) {
 
 async function regenerateSingle(sectionKey, slotId) {
   var section = getSection(sectionKey);
-  var theme = val('f-theme').trim();
-  if (!theme) { showToast('Add the Working Theme first.'); document.getElementById('f-theme').focus(); return; }
+  if (!requireDateAndTheme()) return;
   var btn = document.querySelector('button[onclick="regenerateSingle(\'' + sectionKey + '\',\'' + slotId + '\')"]');
   var originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
@@ -632,8 +660,7 @@ async function regenerateSingle(sectionKey, slotId) {
 }
 
 async function generateFullCollection() {
-  var theme = val('f-theme').trim();
-  if (!theme) { showToast('Add the Working Theme first.'); document.getElementById('f-theme').focus(); return; }
+  if (!requireDateAndTheme()) return;
   var anyFilled = fields.filter(function(id){ return id.match(/^(wa|ft|png|tb)-\d$/); }).some(function(id){ return val(id).trim().length > 0; });
   if (anyFilled && !confirm('This will overwrite all 12 prompts across all 4 product types. Continue?')) return;
 
@@ -785,6 +812,20 @@ checkApiKeyUI();
 
 function val(id) { return (document.getElementById(id)||{}).value || ''; }
 
+function formatWeekDate(isoDate) {
+  if (!isoDate) return '';
+  var parts = isoDate.split('-');
+  if (parts.length !== 3) return isoDate;
+  var y = parseInt(parts[0], 10), m = parseInt(parts[1], 10) - 1, d = parseInt(parts[2], 10);
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  if (isNaN(y) || m < 0 || m > 11 || isNaN(d)) return isoDate;
+  return months[m] + ' ' + d + ', ' + y;
+}
+function updateDateDisplay() {
+  var el = document.getElementById('f-date-display');
+  if (el) el.textContent = formatWeekDate(val('f-date')) ? ('Week of ' + formatWeekDate(val('f-date'))) : '';
+}
+
 function loadData() {
   try {
     var raw = localStorage.getItem(STORAGE_KEY);
@@ -871,7 +912,7 @@ function nicheRow(num, label, anchor) {
 }
 
 function buildIntroHTML() {
-  var date = val('f-date') || 'DATE';
+  var date = formatWeekDate(val('f-date')) || 'DATE';
   var theme = val('f-theme') || 'THEME';
   var collectionName = val('f-collectionname').trim();
 
@@ -1000,7 +1041,10 @@ loadData();
 updateAllProgress();
 attachImgThumbListeners();
 refreshAllImgThumbs();
-renderThemeIdeas();
+renderThemeIdeas(true);
+updateDateDisplay();
+var f_date_el = document.getElementById('f-date');
+if (f_date_el) f_date_el.addEventListener('input', updateDateDisplay);
 </script>
 </body>
 </html>
