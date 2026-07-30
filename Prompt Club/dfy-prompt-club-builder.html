@@ -527,7 +527,7 @@ async function suggestThemes() {
     var hintNote = userHint ? ('The user gave this direction to build around: "' + userHint + '". Make roughly half the ideas directly based on this direction (it can include holidays, seasons, or specific subjects like animals or objects), and let the rest be your own fresh picks unrelated to it, so there is still variety to choose from.') : '';
     var userMsg = 'Give me 8 fresh collection ideas for the next weekly drop. ' + seasonHint + ' ' + existingNote + ' ' + hintNote;
     var result = await callClaude(THEME_BRAINSTORM_SYSTEM, userMsg, 2000);
-    var newIdeas = result.ideas || [];
+    var newIdeas = Array.isArray(result && result.ideas) ? result.ideas : [];
     var seen = {};
     lastThemeIdeas.forEach(function(idea){ seen[(idea.theme || '').toLowerCase().trim()] = true; });
     newIdeas.forEach(function(idea) {
@@ -692,7 +692,7 @@ async function generateForProduct(sectionKey) {
     var anchors = sectionKey === 'wall-art' ? null : getWallArtAnchors().some(Boolean) ? getWallArtAnchors() : null;
     var userMsg = buildPromptUserMessage(3, null, anchors);
     var result = await callClaude(sys, userMsg, 3000);
-    var prompts = (result.prompts || []).slice(0, 3);
+    var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
     section.ids.forEach(function(id, i) {
       var el = document.getElementById(id);
       if (el && prompts[i]) el.value = prompts[i];
@@ -724,7 +724,7 @@ async function regenerateSingle(sectionKey, slotId) {
     }
     var userMsg = buildPromptUserMessage(1, siblingTexts, anchors);
     var result = await callClaude(sys, userMsg, 1200);
-    var prompts = result.prompts || [];
+    var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
     if (prompts[0]) {
       document.getElementById(slotId).value = prompts[0];
       isDirty = true; updateAllProgress(); saveData();
@@ -760,7 +760,7 @@ async function generateFullCollection() {
       var step = sequence[i];
       status.textContent = ' writing ' + step.label + '...';
       var result = await callClaude(step.sys, buildPromptUserMessage(3, null, waPrompts), 3000);
-      var prompts = (result.prompts || []).slice(0, 3);
+      var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
       step.ids.forEach(function(id, j) { if (prompts[j]) document.getElementById(id).value = prompts[j]; });
       isDirty = true; updateAllProgress(); saveData();
     }
