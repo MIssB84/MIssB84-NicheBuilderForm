@@ -1054,7 +1054,7 @@ function buildIntroHTML() {
 }
 
 function buildProductSectionHeaderHTML(productType, anchor) {
-  return '<div id="'+anchor+'" style="padding:2rem 0 0.5rem;">' +
+  return '<div id="'+anchor+'" style="padding:2rem 0 0.5rem;text-align:center;">' +
     '<span style="font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>' +
     '<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+esc(productType)+'</h2>' +
     '<div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
@@ -1063,7 +1063,7 @@ function buildProductSectionHeaderHTML(productType, anchor) {
 function buildJumpBarHTML() {
   var pills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor, true); }).join('');
   var backToTop = '<a href="#lesson-top" style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:9px 18px;border-radius:30px;text-decoration:none;white-space:nowrap;">&#8593; Back to Top</a>';
-  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.5rem;margin:2rem 0;display:flex;flex-wrap:wrap;align-items:center;gap:10px;">' +
+  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.5rem;margin:2rem 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;">' +
     '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;white-space:nowrap;">Jump to:</span>' +
     pills + backToTop +
     '</div></div>';
@@ -1078,7 +1078,7 @@ function buildPromptHTML(promptNumInProduct, promptText, imgUrl, idPrefix) {
     '</div>'
     : '';
   return '<div style="margin-bottom:3rem;">' +
-    '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;">Prompt '+promptNumInProduct+'</p>' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;text-align:center;">Prompt '+promptNumInProduct+'</p>' +
     '<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">' +
     '<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;font-style:italic;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="p'+uid+'">'+esc(promptText)+'</p>' +
     '<div style="text-align:center;">' +
