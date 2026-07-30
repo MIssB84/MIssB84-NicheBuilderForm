@@ -100,6 +100,11 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .paste-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: transparent; border: 1.5px solid #ead9d5; color: #5a4a45; border-radius: 8px; padding: 0 12px; cursor: pointer; transition: all 0.2s; }
 .paste-btn:hover { border-color: #dea193; color: #dea193; }
 .img-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #ead9d5; margin-top: 6px; }
+.img-batch-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0e6de; }
+.img-batch-row:last-child { border-bottom: none; }
+.img-batch-label { font-size: 11.5px; font-weight: 600; color: #5a4a45; width: 165px; flex-shrink: 0; line-height: 1.3; }
+.img-batch-row .img-url-input { margin: 0; }
+.img-batch-row .img-thumb { margin-top: 0; flex-shrink: 0; width: 44px; height: 44px; }
 .dna-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .idea-card { background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 8px; }
 .idea-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
@@ -240,9 +245,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('wall-art')" id="genbtn-wall-art">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-wall-art" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-1" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-2" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-3" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-1" placeholder="Paste or type your wall art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-2" placeholder="Paste or type your wall art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-3" placeholder="Paste or type your wall art prompt here..."></textarea></div>
 </div>
 
 <div class="product-card" id="section-frame-tv">
@@ -264,9 +269,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('frame-tv')" id="genbtn-frame-tv">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-frame-tv" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-1" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-2" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-3" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-1" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-2" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-3" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
 </div>
 
 <div class="product-card" id="section-png">
@@ -288,9 +293,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('png')" id="genbtn-png">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-1" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-2" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-3" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-1" placeholder="Paste or type your PNG prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-2" placeholder="Paste or type your PNG prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-3" placeholder="Paste or type your PNG prompt here..."></textarea></div>
 </div>
 
 <div class="product-card" id="section-tumbler">
@@ -312,9 +317,86 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('tumbler')" id="genbtn-tumbler">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-tumbler" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-1" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-2" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-3" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-1" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-2" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-3" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
+</div>
+
+<div class="card" id="example-images-card">
+  <p class="card-title">Example Images (Batch)</p>
+  <p class="card-sub">Once all 12 prompts are generated: run them through your generator, mock them up in Canva, upload to Systeme.io, then paste all 12 URLs here in one pass.</p>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Wall Art — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="wa-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Wall Art — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="wa-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Wall Art — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="wa-3-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Frame TV Art — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="ft-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Frame TV Art — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="ft-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Frame TV Art — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="ft-3-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">PNG — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="png-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">PNG — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="png-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">PNG — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="png-3-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Tumbler Wrap — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="tb-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Tumbler Wrap — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="tb-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Tumbler Wrap — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="tb-3-img-thumb" style="display:none;">
+    </div>
 </div>
 
 <div class="card" id="collection-name-card">
