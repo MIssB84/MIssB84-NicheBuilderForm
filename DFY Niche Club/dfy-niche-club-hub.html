@@ -117,6 +117,7 @@
     <button class="tab-btn" data-tab="mm">Motivational Monday</button>
     <button class="tab-btn" data-tab="tip">Weekly Tip</button>
     <button class="tab-btn" data-tab="plr">PLR Resource</button>
+    <button class="tab-btn" data-tab="email">Email</button>
     <button class="tab-btn" data-tab="directory">Niche Directory</button>
     <button class="tab-btn" data-tab="announce">Announcements</button>
     <button class="tab-btn" data-tab="livecall">Monthly Live Call</button>
@@ -362,6 +363,92 @@ Write your own listing description and use your own mockups</textarea>
       <button class="btn btn-ghost" onclick="copyOutput('plr_output')">Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="plr_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ EMAIL TAB ============ -->
+  <div class="panel" id="panel-email">
+    <h2>Email Tool</h2>
+    <p class="sub">Marketing emails for your list — pick a type, give it a topic (or let AI brainstorm), pick a subject line, done.</p>
+
+    <div class="field">
+      <label>Email Type</label>
+      <select id="email_type">
+        <option value="value">Weekly Value Email (build trust, teach something, soft mention of the club)</option>
+        <option value="promo">Membership Promo (sell the DFY Niche Club)</option>
+        <option value="announce">Freebie / New Content Announcement</option>
+        <option value="winback">Re-engagement / Win-back (warm up a cold list)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;font-weight:600;color:var(--dark);">
+        <input type="checkbox" id="email_hastopic" onchange="emailToggleTopic()" style="width:auto;"> I have a topic in mind
+      </label>
+    </div>
+    <div class="field" id="email_topicfield" style="display:none;">
+      <label>Topic</label>
+      <input type="text" id="email_topic" placeholder="e.g. new niche drop, member win, seasonal push...">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="emailGenerateDraft()">Generate Draft (AI)<span id="email_gen_status"></span></button>
+    </div>
+
+    <div class="field" id="email_concepts_wrap" style="display:none;">
+      <label>Pick a Concept (scan, then generate the full email)</label>
+      <div id="email_concepts_picker"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="emailGenerateFromConcept()">Generate Full Email From This Concept</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Email Body (edit freely — use **word** for bold)</label>
+      <textarea id="email_body" rows="10" placeholder="AI draft will appear here, or write your own..."></textarea>
+    </div>
+    <div class="field">
+      <label>Subject Line Options (AI gives you 5 — pick your favorite)</label>
+      <div id="email_titles_picker" class="small-note">Generate a draft to see subject line options here.</div>
+    </div>
+    <div class="field">
+      <label>Feedback for AI (optional — then regenerate)</label>
+      <textarea id="email_feedback" rows="2" placeholder="e.g. make it more urgent, shorter, don't mention pricing..."></textarea>
+    </div>
+    <div class="field">
+      <label>Final Subject Line</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="email_finaltitle" placeholder="Your subject line" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="copyEmailSubject()" style="white-space:nowrap;">Copy Subject</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="emailRegenerateWithFeedback()">Regenerate With Feedback</button>
+    </div>
+
+    <div class="row2">
+      <div class="field"><label>CTA Button Text</label><input type="text" id="email_ctatext" placeholder="Join the DFY Niche Club"></div>
+      <div class="field"><label>CTA Link</label><input type="url" id="email_ctalink" placeholder="https://..."></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewEmail()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('email')">Clear</button>
+    </div>
+    <div class="preview-frame" id="email_preview_wrap" style="display:none;">
+      <iframe id="email_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="emailGenerateHTML()">Generate HTML</button>
+      <button class="btn btn-ghost" onclick="copyOutput('email_output')">Copy HTML</button>
+    </div>
+    <div class="output-wrap">
+      <label>Plain Text Version (paste into your email builder, ** = bold)</label>
+      <textarea id="email_plaintext" rows="8" readonly></textarea>
+    </div>
+    <div class="output-wrap">
+      <label>Generated HTML</label>
+      <textarea id="email_output" rows="10"></textarea>
+    </div>
   </div>
 
   <!-- ============ DIRECTORY TAB ============ -->
@@ -621,7 +708,7 @@ document.getElementById('tabBar').addEventListener('click', function(e){
 });
 
 /* ============ CORE: STICKY SAVE BAR + BACK TO TOP ============ */
-var TAB_TOOL_MAP = {mm:'mm', tip:'tip', plr:'plr', directory:'directory', announce:'ann', livecall:'lc', recap:'recap', adhoc:'adhoc', keyword:'kw'};
+var TAB_TOOL_MAP = {mm:'mm', tip:'tip', plr:'plr', email:'email', directory:'directory', announce:'ann', livecall:'lc', recap:'recap', adhoc:'adhoc', keyword:'kw'};
 var currentTab = 'nichebuilder';
 function updateStickyBarForTab(tab){
   currentTab = tab;
@@ -809,6 +896,7 @@ var TOOL_FIELDS = {
   mm: ['mm_hastopic','mm_topic','mm_body','mm_finaltitle','mm_plaintext','mm_output','mm_feedback'],
   tip: ['tip_hastopic','tip_topic','tip_body','tip_finaltitle','tip_eyebrow','tip_link','tip_linktext','tip_footer','tip_plaintext','tip_output','tip_feedback'],
   plr: ['plr_badge','plr_title','plr_subtitle','plr_link','plr_steps','plr_whatisit','plr_checklist','plr_reminder','plr_output'],
+  email: ['email_type','email_hastopic','email_topic','email_body','email_finaltitle','email_feedback','email_ctatext','email_ctalink','email_plaintext','email_output'],
   ann: ['ann_weekdate','ann_output'],
   lc: ['lc_date','lc_start','lc_end','lc_tz','lc_platform','lc_expect','lc_islive','lc_meetlink','lc_formlink','lc_nextdate','lc_output'],
   recap: ['recap_month','recap_video','recap_notes','recap_body','recap_output'],
@@ -864,6 +952,12 @@ function clearTool(tool){
     document.getElementById('tip_titles_picker').innerHTML='Generate a draft to see title options here.';
     document.getElementById('tip_concepts_wrap').style.display='none';
     document.getElementById('tip_concepts_picker').innerHTML='';
+  }
+  if(tool==='email'){
+    emailToggleTopic();
+    document.getElementById('email_titles_picker').innerHTML='Generate a draft to see subject line options here.';
+    document.getElementById('email_concepts_wrap').style.display='none';
+    document.getElementById('email_concepts_picker').innerHTML='';
   }
   if(tool==='ann'){ document.getElementById('ann_cards').innerHTML=''; annAddCard(); }
   if(tool==='adhoc'){ document.getElementById('adhoc_buttons').innerHTML=''; }
@@ -996,6 +1090,111 @@ function mmGenerateHTML(){
   document.getElementById('mm_output').value = html;
   saveDraft('mm');
 }
+
+/* ============ EMAIL TAB LOGIC ============ */
+function emailToggleTopic(){
+  document.getElementById('email_topicfield').style.display = document.getElementById('email_hastopic').checked ? 'block':'none';
+}
+var EMAIL_TYPE_INFO = {
+  value: { label: 'Weekly Value Email', desc: 'a short, genuinely useful email that teaches the reader something practical about selling on Etsy or building a digital product business, builds trust, does NOT hard sell, and ends with a soft, low pressure mention of the DFY Niche Club or Dania\'s resources as a natural next step' },
+  promo: { label: 'Membership Promo', desc: 'a warm but persuasive email selling the DFY Niche Club membership, focused on the concrete benefits and results members get, addressing a likely hesitation, and ending with a clear direct call to join' },
+  announce: { label: 'Freebie / New Content Announcement', desc: 'an upbeat, clear announcement email about something new (a freebie, a course, a video, a resource), explaining what it is and who it helps, ending with a clear call to go check it out' },
+  winback: { label: 'Re-engagement / Win-back', desc: 'a warm, no-guilt email to subscribers who have gone quiet, reminding them why they signed up in the first place and inviting them back in with something valuable, ending with a low pressure call to action' }
+};
+var EMAIL_SYSTEM = "You write marketing emails for Dania, who runs Thrive With Dania, an Etsy education brand, and the DFY Niche Club membership for Etsy sellers. Warm, direct, conversational, confident, practical tone. Never use the phrases 'no fluff' or 'no BS'. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Keep the body focused and skimmable: short paragraphs, no walls of text, no corporate voice. End with one clear call to action sentence that matches the email's purpose. Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the email body, use **word** for anything that should be bolded]\n\nSUBJECT LINES:\n1. [subject]\n2. [subject]\n3. [subject]\n4. [subject]\n5. [subject]\nFAVORITE: [number 1-5 of your favorite]";
+var EMAIL_CONCEPT_SYSTEM = "You brainstorm fresh angle ideas for a specific type of marketing email for an Etsy education brand and membership community. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full email.";
+function emailGetTypeInfo(){ return EMAIL_TYPE_INFO[document.getElementById('email_type').value] || EMAIL_TYPE_INFO.value; }
+async function emailGenerateDraft(){
+  var status = document.getElementById('email_gen_status');
+  var info = emailGetTypeInfo();
+  var hasTopic = document.getElementById('email_hastopic').checked;
+  if(hasTopic){
+    document.getElementById('email_concepts_wrap').style.display='none';
+    var topic = document.getElementById('email_topic').value;
+    await emailGenerateFullPostFor('Write '+info.desc+'. Topic to focus on: '+topic, status);
+  } else {
+    status.className='status-msg'; status.textContent=' getting concepts...';
+    try{
+      var result = await callClaude(EMAIL_CONCEPT_SYSTEM, 'Give me 5 fresh angle ideas for a "'+info.label+'" email. Email type description: '+info.desc, 300);
+      var concepts = result.split('\n').map(function(l){return l.replace(/^[-*\d.\s]+/,'').trim();}).filter(Boolean).slice(0,5);
+      renderConceptPicker('email_concepts_picker', concepts);
+      document.getElementById('email_concepts_wrap').style.display='block';
+      status.textContent=' pick a concept below ✓';
+    }catch(e){
+      status.className='status-err'; status.textContent=' error: '+e.message;
+    }
+  }
+}
+async function emailGenerateFromConcept(){
+  var concept = getSelectedConcept('email_concepts_picker');
+  if(!concept){ alert('Pick a concept first.'); return; }
+  var status = document.getElementById('email_gen_status');
+  var info = emailGetTypeInfo();
+  await emailGenerateFullPostFor('Write '+info.desc+'. Base it on this concept/angle: '+concept, status);
+}
+async function emailGenerateFullPostFor(userMsg, status){
+  status.className='status-msg'; status.textContent=' generating...';
+  try{
+    var result = await callClaude(EMAIL_SYSTEM, userMsg, 1200);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*SUBJECT LINES:/i);
+    var subjMatch = result.match(/SUBJECT LINES:\s*([\s\S]*)/i);
+    document.getElementById('email_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(subjMatch ? subjMatch[1] : '');
+    renderTitlePicker('email_titles_picker', 'email_finaltitle', 'email', parsed.titles, parsed.favIdx);
+    status.textContent=' done ✓';
+    saveDraft('email');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+async function emailRegenerateWithFeedback(){
+  var feedback = document.getElementById('email_feedback').value;
+  if(!feedback.trim()){ alert('Add feedback first.'); return; }
+  var status = document.getElementById('email_gen_status');
+  status.className='status-msg'; status.textContent=' revising...';
+  try{
+    var currentBody = document.getElementById('email_body').value;
+    var info = emailGetTypeInfo();
+    var userMsg = "This is "+info.desc+".\n\nHere is the current draft:\n\n"+currentBody+"\n\nPlease revise it based on this feedback: "+feedback+"\n\nOutput ONLY in this format:\n\nBODY:\n[revised email]\n\nSUBJECT LINES:\n1. [subject]\n2. [subject]\n3. [subject]\n4. [subject]\n5. [subject]\nFAVORITE: [number]";
+    var result = await callClaude(EMAIL_SYSTEM, userMsg, 1200);
+    var bodyMatch = result.match(/BODY:\s*([\s\S]*?)\n\s*SUBJECT LINES:/i);
+    var subjMatch = result.match(/SUBJECT LINES:\s*([\s\S]*)/i);
+    document.getElementById('email_body').value = stripEmDash(bodyMatch ? bodyMatch[1].trim() : result.trim());
+    var parsed = parseTitlesBlock(subjMatch ? subjMatch[1] : '');
+    renderTitlePicker('email_titles_picker', 'email_finaltitle', 'email', parsed.titles, parsed.favIdx);
+    document.getElementById('email_feedback').value='';
+    status.textContent=' revised ✓';
+    saveDraft('email');
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
+function copyEmailSubject(){
+  var el = document.getElementById('email_finaltitle');
+  navigator.clipboard.writeText(el.value).then(function(){ flashCopied('email_finaltitle'); }).catch(function(){
+    var temp = document.createElement('textarea'); temp.value=el.value; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); flashCopied('email_finaltitle');
+  });
+}
+function emailGenerateHTML(){
+  var body = document.getElementById('email_body').value;
+  var subject = document.getElementById('email_finaltitle').value || 'From Dania';
+  var ctaText = document.getElementById('email_ctatext').value;
+  var ctaLink = document.getElementById('email_ctalink').value;
+  var plain = "Subject: "+subject+"\n\n"+body+(ctaText ? "\n\n"+ctaText+(ctaLink ? ' -> '+ctaLink : '') : '');
+  document.getElementById('email_plaintext').value = plain;
+  var bodyHtml = paragraphsToHtml(body, "font-family:Jost,sans-serif;font-size:16px;color:#5a4a45;line-height:1.8;margin:0 0 1.2rem;");
+  var ctaHtml = (ctaText && ctaLink) ? '<div style="text-align:center;padding:0.5rem 0 0.5rem;"><a href="'+escapeAttr(ctaLink)+'" style="display:inline-block;background:#dea193;color:#2a1f1c;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;padding:14px 32px;border-radius:999px;">'+escapeHtml(ctaText)+'</a></div>' : '';
+  var html = '<div style="font-family:Jost,sans-serif;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">'+
+    '<div style="background:#2a1f1c;padding:1.8rem 2rem;text-align:center;border-bottom:3px solid #fff;">'+
+    '<p style="font-family:Jost,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin:0 0 0.5rem;">Thrive With Dania</p>'+
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.5rem;font-weight:700;color:#f5eddf;line-height:1.3;margin:0;">'+escapeHtml(subject)+'</h2></div>'+
+    '<div style="padding:2rem 2rem 1.5rem;">'+bodyHtml+ctaHtml+
+    '<div style="border-top:1px solid #ead9d5;padding-top:1.4rem;margin-top:1rem;">'+
+    '<p style="font-family:Playfair Display,serif;font-size:22px;font-style:italic;color:#dea193;margin:0;">Dania</p></div></div></div>';
+  document.getElementById('email_output').value = html;
+  saveDraft('email');
+}
+function previewEmail(){ emailGenerateHTML(); showPreview('email'); }
 
 /* ============ TIP TAB LOGIC ============ */
 function tipToggleTopic(){
@@ -1747,7 +1946,7 @@ window.addEventListener('DOMContentLoaded', function(){
     loadDraft(tool);
     attachAutosave(tool);
   });
-  mmToggleTopic(); tipToggleTopic();
+  mmToggleTopic(); tipToggleTopic(); emailToggleTopic();
   if(document.getElementById('dir_niche_rows').children.length===0) dirAddNicheRow();
   dirRenderWeeksList();
   if(!kwLoadSavedRows()){
