@@ -151,15 +151,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <span class="overall-count" id="overall-count">0 of 12 prompts</span>
 </div>
 
-<div class="card">
-  <p class="card-title">Week Info</p>
-  <p class="card-sub">This sets the header for your intro page and lesson title.</p>
-  <div>
-    <label class="field-label" for="f-date">Week Date</label>
-    <input class="field-input" type="date" id="f-date">
-    <div id="f-date-display" style="margin-top:6px; font-size:12px; color:#c4b0a8;"></div>
-  </div>
-</div>
 
 <div class="card">
   <p class="card-title">Collection DNA</p>
@@ -385,7 +376,7 @@ var STORAGE_KEY = 'dfy_prompt_club_builder';
 var isDirty = false;
 
 var fields = [
-  'f-date','f-theme','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname',
+  'f-theme','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -587,12 +578,7 @@ function getWallArtAnchors() {
   return ['wa-1','wa-2','wa-3'].map(function(id){ return val(id).trim(); });
 }
 
-function requireDateAndTheme() {
-  if (!val('f-date').trim()) {
-    showToast('Add the Week Date first.');
-    document.getElementById('f-date').focus();
-    return false;
-  }
+function requireTheme() {
   if (!val('f-theme').trim()) {
     showToast('Add the Working Theme first.');
     document.getElementById('f-theme').focus();
@@ -603,7 +589,7 @@ function requireDateAndTheme() {
 
 async function generateForProduct(sectionKey) {
   var section = getSection(sectionKey);
-  if (!requireDateAndTheme()) return;
+  if (!requireTheme()) return;
   var existing = section.ids.filter(function(id){ return val(id).trim().length > 0; });
   if (existing.length && !confirm('This will overwrite all 3 ' + section.label + ' prompts. Continue?')) return;
 
@@ -632,7 +618,7 @@ async function generateForProduct(sectionKey) {
 
 async function regenerateSingle(sectionKey, slotId) {
   var section = getSection(sectionKey);
-  if (!requireDateAndTheme()) return;
+  if (!requireTheme()) return;
   var btn = document.querySelector('button[onclick="regenerateSingle(\'' + sectionKey + '\',\'' + slotId + '\')"]');
   var originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
@@ -660,7 +646,7 @@ async function regenerateSingle(sectionKey, slotId) {
 }
 
 async function generateFullCollection() {
-  if (!requireDateAndTheme()) return;
+  if (!requireTheme()) return;
   var anyFilled = fields.filter(function(id){ return id.match(/^(wa|ft|png|tb)-\d$/); }).some(function(id){ return val(id).trim().length > 0; });
   if (anyFilled && !confirm('This will overwrite all 12 prompts across all 4 product types. Continue?')) return;
 
@@ -812,19 +798,6 @@ checkApiKeyUI();
 
 function val(id) { return (document.getElementById(id)||{}).value || ''; }
 
-function formatWeekDate(isoDate) {
-  if (!isoDate) return '';
-  var parts = isoDate.split('-');
-  if (parts.length !== 3) return isoDate;
-  var y = parseInt(parts[0], 10), m = parseInt(parts[1], 10) - 1, d = parseInt(parts[2], 10);
-  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  if (isNaN(y) || m < 0 || m > 11 || isNaN(d)) return isoDate;
-  return months[m] + ' ' + d + ', ' + y;
-}
-function updateDateDisplay() {
-  var el = document.getElementById('f-date-display');
-  if (el) el.textContent = formatWeekDate(val('f-date')) ? ('Week of ' + formatWeekDate(val('f-date'))) : '';
-}
 
 function loadData() {
   try {
@@ -912,7 +885,6 @@ function nicheRow(num, label, anchor) {
 }
 
 function buildIntroHTML() {
-  var date = formatWeekDate(val('f-date')) || 'DATE';
   var theme = val('f-theme') || 'THEME';
   var collectionName = val('f-collectionname').trim();
 
@@ -938,8 +910,7 @@ function buildIntroHTML() {
     '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;">' +
     '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
     '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">'+(collectionName ? esc(collectionName) : 'This Week\'s Prompt Drop')+'</h2>' +
-    '<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#dea193;margin:0 0 0.3rem;">'+esc(theme)+'</p>' +
-    '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>' +
+    '<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#dea193;margin:0;">'+esc(theme)+'</p>' +
     '</div>' +
     '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
     '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.2rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt below was built around this aesthetic so your designs feel cohesive and intentional. Copy the prompt, drop it into your generator, and go.</p>' +
@@ -966,8 +937,7 @@ function buildPromptHTML(promptNum, productType, promptText, imgUrl) {
 
 function generateHTML() {
   var theme = val('f-theme');
-  var date = val('f-date');
-  if (!theme || !date) { showToast('Please fill in the date and theme first.'); return; }
+  if (!theme) { showToast('Please fill in the working theme first.'); return; }
 
   var introHTML = buildIntroHTML();
   document.getElementById('intro-html').value = introHTML;
@@ -1042,9 +1012,6 @@ updateAllProgress();
 attachImgThumbListeners();
 refreshAllImgThumbs();
 renderThemeIdeas(true);
-updateDateDisplay();
-var f_date_el = document.getElementById('f-date');
-if (f_date_el) f_date_el.addEventListener('input', updateDateDisplay);
 </script>
 </body>
 </html>
