@@ -161,6 +161,14 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <p class="card-title">Collection DNA</p>
   <p class="card-sub">This is the creative north star. Every AI prompt across all 4 products pulls from this.</p>
 
+  <div style="margin-bottom:12px;">
+    <label class="field-label" for="f-themehint">Got a direction in mind? (optional)</label>
+    <div class="field-with-paste">
+      <input class="field-input" id="f-themehint" placeholder="e.g. cats and plants, or based on upcoming holidays">
+      <button class="paste-btn" type="button" onclick="pasteInto('f-themehint', this)">📋</button>
+    </div>
+  </div>
+
   <div class="btn-row" style="margin-bottom:14px;">
     <button class="btn btn-generate" type="button" onclick="suggestThemes()" id="genbtn-themes">✨ Suggest Themes</button>
     <button class="btn-clear-light" type="button" onclick="toggleThemeIdeasWrap()" id="toggleIdeasBtn">📂 Saved Ideas (0)</button>
@@ -459,7 +467,7 @@ var STORAGE_KEY = 'dfy_prompt_club_builder';
 var isDirty = false;
 
 var fields = [
-  'f-theme','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname',
+  'f-theme','f-themehint','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -515,7 +523,9 @@ async function suggestThemes() {
     var seasonHint = 'Today is roughly ' + new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + ', keep upcoming seasons/holidays in mind.';
     var existingThemes = lastThemeIdeas.map(function(idea){ return idea.theme; }).filter(Boolean);
     var existingNote = existingThemes.length ? ('Avoid repeating or closely resembling these already-suggested themes: ' + existingThemes.join(', ') + '.') : '';
-    var userMsg = 'Give me 8 fresh collection ideas for the next weekly drop. ' + seasonHint + ' ' + existingNote;
+    var userHint = val('f-themehint').trim();
+    var hintNote = userHint ? ('The user gave this direction to build around: "' + userHint + '". Make roughly half the ideas directly based on this direction (it can include holidays, seasons, or specific subjects like animals or objects), and let the rest be your own fresh picks unrelated to it, so there is still variety to choose from.') : '';
+    var userMsg = 'Give me 8 fresh collection ideas for the next weekly drop. ' + seasonHint + ' ' + existingNote + ' ' + hintNote;
     var result = await callClaude(THEME_BRAINSTORM_SYSTEM, userMsg, 2000);
     var newIdeas = result.ideas || [];
     var seen = {};
