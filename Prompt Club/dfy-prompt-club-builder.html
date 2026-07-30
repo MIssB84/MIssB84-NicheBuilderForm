@@ -428,19 +428,17 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 <div id="output-section">
   <div style="max-width:700px;margin:0 auto 1rem;">
     <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;">Preview</p>
-    <p style="font-size:12px;color:#c4b0a8;">Check it over, then copy each block and paste into Systeme.io. The intro goes in your first lesson element. Each prompt block goes in its own lesson.</p>
+    <p style="font-size:12px;color:#c4b0a8;">Check it over, then copy the whole thing and paste it into your Systeme.io lesson.</p>
   </div>
 
   <div class="output-block">
     <div class="output-block-header">
-      <span class="output-block-title">Intro Page HTML</span>
-      <button class="copy-block-btn" onclick="copyBlock('intro-html')">Copy</button>
+      <span class="output-block-title">Full Page HTML</span>
+      <button class="copy-block-btn" onclick="copyBlock('full-page-html')">Copy</button>
     </div>
-    <div class="output-preview" id="intro-preview"></div>
-    <textarea id="intro-html" style="display:none;"></textarea>
+    <div class="output-preview" id="full-page-preview"></div>
+    <textarea id="full-page-html" style="display:none;"></textarea>
   </div>
-
-  <div id="prompt-outputs"></div>
 
   <div class="output-actions">
     <button class="action-btn secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form ↑</button>
@@ -973,56 +971,64 @@ function esc(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function nicheRow(num, label, anchor) {
-  return '<a href="#'+anchor+'" style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ead9d5;border-left:4px solid #dea193;border-radius:8px;padding:12px 16px;text-decoration:none;margin-bottom:8px;"><span style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#fff;background:#2a1f1c;padding:3px 10px;border-radius:20px;white-space:nowrap;">'+esc(num)+'</span><span style="font-family:Jost,sans-serif;font-size:15px;font-weight:600;color:#2a1f1c;">'+esc(label)+'</span></a>';
+var PRODUCT_SECTIONS_EXPORT = [
+  { type: 'Wall Art', ids: ['wa-1','wa-2','wa-3'], anchor: 'section-wallart' },
+  { type: 'Frame TV Art', ids: ['ft-1','ft-2','ft-3'], anchor: 'section-frametv' },
+  { type: 'PNG', ids: ['png-1','png-2','png-3'], anchor: 'section-png' },
+  { type: 'Tumbler Wraps', ids: ['tb-1','tb-2','tb-3'], anchor: 'section-tumbler' }
+];
+
+function productPill(label, anchor) {
+  return '<a href="#'+anchor+'" style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#2a1f1c;color:#f5eddf;padding:10px 22px;border-radius:30px;text-decoration:none;margin:4px;">'+esc(label)+'</a>';
 }
 
 function buildIntroHTML() {
   var theme = val('f-theme') || 'THEME';
   var collectionName = val('f-collectionname').trim();
 
-  var productLabels = [
-    { num: 'Wall Art', ids: ['wa-1','wa-2','wa-3'], prefix: 'wa' },
-    { num: 'Frame TV Art', ids: ['ft-1','ft-2','ft-3'], prefix: 'ft' },
-    { num: 'PNG', ids: ['png-1','png-2','png-3'], prefix: 'png' },
-    { num: 'Tumbler Wraps', ids: ['tb-1','tb-2','tb-3'], prefix: 'tb' }
-  ];
+  var productPills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor); }).join('');
 
-  var navRows = '';
-  var promptNum = 1;
-  productLabels.forEach(function(p) {
-    p.ids.forEach(function(id) {
-      if (val(id).trim()) {
-        navRows += nicheRow('Prompt ' + promptNum, p.num + ' ' + promptNum, 'prompt-' + promptNum);
-        promptNum++;
-      }
-    });
-  });
-
-  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">' +
+  return '<div id="top" style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;">' +
     '<div style="background:#2a1f1c;padding:2rem 2rem 1.5rem;text-align:center;">' +
     '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
     '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0 0 0.4rem;line-height:1.2;">'+(collectionName ? esc(collectionName) : 'This Week\'s Prompt Drop')+'</h2>' +
     '<p style="font-family:Jost,sans-serif;font-size:14px;font-weight:600;color:#dea193;margin:0;">'+esc(theme)+'</p>' +
     '</div>' +
     '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.2rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt below was built around this aesthetic so your designs feel cohesive and intentional. Copy the prompt, drop it into your generator, and go.</p>' +
-    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>' +
+    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.2rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>' +
+    '<p style="font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#2a1f1c;margin:0;">Let\'s Create!</p>' +
     '</div>' +
-    '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;text-align:center;">Jump to a Prompt</p>' +
-    navRows +
+    '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">Jump to a Product Type</p>' +
+    productPills +
     '</div></div>';
 }
 
-function buildPromptHTML(promptNum, productType, promptText, imgUrl) {
-  var anchor = 'prompt-' + promptNum;
+function buildProductSectionHeaderHTML(productType, anchor) {
+  return '<div id="'+anchor+'" style="font-family:Jost,sans-serif;max-width:680px;margin:0 auto;padding:2.5rem 1.5rem 0.5rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.6rem;">Product Type</p>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.9rem;font-weight:700;color:#2a1f1c;margin:0 0 1rem;">'+esc(productType)+'</h2>' +
+    '<div style="display:flex;align-items:center;justify-content:center;gap:14px;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>' +
+    '</div>';
+}
+
+function buildJumpBarHTML() {
+  var pills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor); }).join('');
+  var backToTop = '<a href="#top" style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:10px 22px;border-radius:30px;text-decoration:none;margin:4px;">↑ Back to Top</a>';
+  return '<div style="font-family:Jost,sans-serif;max-width:680px;margin:1.5rem auto 0;background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1.2rem 1.5rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">Jump To:</p>' +
+    pills + backToTop +
+    '</div>';
+}
+
+function buildPromptHTML(promptNumInProduct, promptText, imgUrl) {
+  var uid = Math.random().toString(36).slice(2, 9);
   var imgBlock = imgUrl ? '<div style="width:1px;height:24px;background:rgba(222,161,147,0.4);margin:0 auto;"></div><img src="'+esc(imgUrl)+'" alt="Example result" style="display:block;width:100%;border-radius:12px;margin-top:1.5rem;">' : '';
-  return '<div id="'+anchor+'" style="font-family:Jost,sans-serif;max-width:680px;margin:0 auto;padding:2rem 1.5rem;">' +
-    '<p style="text-align:center;font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.9rem;">Prompt '+promptNum+': '+esc(productType)+'</p>' +
+  return '<div style="font-family:Jost,sans-serif;max-width:680px;margin:0 auto;padding:1.2rem 1.5rem;">' +
+    '<p style="text-align:center;font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.9rem;">Prompt '+promptNumInProduct+'</p>' +
     '<div style="background:#2a1f1c;border-radius:16px;padding:2rem 2rem 1.5rem;">' +
-    '<p style="font-family:Playfair Display,serif;font-size:16px;font-style:italic;color:#f5eddf;line-height:1.85;text-align:center;margin-bottom:1.5rem;" id="ptext-'+promptNum+'">'+esc(promptText)+'</p>' +
-    '<button onclick="var t=document.getElementById(\'ptext-'+promptNum+'\').innerText;navigator.clipboard.writeText(t).then(function(){var b=document.getElementById(\'pbtn-'+promptNum+'\');b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);});" id="pbtn-'+promptNum+'" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>' +
+    '<p style="font-family:Playfair Display,serif;font-size:16px;font-style:italic;color:#f5eddf;line-height:1.85;text-align:center;margin-bottom:1.5rem;" id="ptext-'+uid+'">'+esc(promptText)+'</p>' +
+    '<button onclick="var t=document.getElementById(\'ptext-'+uid+'\').innerText;navigator.clipboard.writeText(t).then(function(){var b=document.getElementById(\'pbtn-'+uid+'\');b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);});" id="pbtn-'+uid+'" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>' +
     '</div>' +
     imgBlock +
     '</div>';
@@ -1036,43 +1042,22 @@ function generateHTML() {
   var theme = val('f-theme');
   if (!theme) { showToast('Please fill in the working theme first.'); return; }
 
-  var introHTML = buildIntroHTML();
-  document.getElementById('intro-html').value = introHTML;
-  document.getElementById('intro-preview').innerHTML = introHTML;
+  var fullPage = buildIntroHTML();
 
-  var outputsEl = document.getElementById('prompt-outputs');
-  outputsEl.innerHTML = '';
-
-  var productLabels = [
-    { type: 'Wall Art', ids: ['wa-1','wa-2','wa-3'] },
-    { type: 'Frame TV Art', ids: ['ft-1','ft-2','ft-3'] },
-    { type: 'PNG', ids: ['png-1','png-2','png-3'] },
-    { type: 'Tumbler Wrap', ids: ['tb-1','tb-2','tb-3'] }
-  ];
-
-  var promptNum = 1;
-  productLabels.forEach(function(p) {
-    p.ids.forEach(function(id) {
+  PRODUCT_SECTIONS_EXPORT.forEach(function(p) {
+    var filledIds = p.ids.filter(function(id){ return val(id).trim(); });
+    if (!filledIds.length) return;
+    fullPage += buildProductSectionHeaderHTML(p.type, p.anchor);
+    filledIds.forEach(function(id, i) {
       var text = val(id).trim();
-      if (!text) return;
       var imgUrl = val(id + '-img').trim();
-      var html = buildPromptHTML(promptNum, p.type, text, imgUrl);
-      var blockId = 'prompt-html-' + promptNum;
-      var block = document.createElement('div');
-      block.className = 'output-block';
-      block.innerHTML =
-        '<div class="output-block-header">' +
-        '<span class="output-block-title">Prompt ' + promptNum + ' — ' + p.type + '</span>' +
-        '<button class="copy-block-btn" onclick="copyBlock(\'' + blockId + '\')">Copy</button>' +
-        '</div>' +
-        '<div class="output-preview" id="prev-' + promptNum + '"></div>' +
-        '<textarea id="' + blockId + '" style="display:none;"></textarea>';
-      outputsEl.appendChild(block);
-      document.getElementById('prev-' + promptNum).innerHTML = html;
-      document.getElementById(blockId).value = html;
-      promptNum++;
+      fullPage += buildPromptHTML(i + 1, text, imgUrl);
     });
+    fullPage += buildJumpBarHTML();
   });
+
+  document.getElementById('full-page-html').value = fullPage;
+  document.getElementById('full-page-preview').innerHTML = fullPage;
 
   document.getElementById('output-section').style.display = 'block';
   document.getElementById('output-section').scrollIntoView({ behavior: 'smooth' });
