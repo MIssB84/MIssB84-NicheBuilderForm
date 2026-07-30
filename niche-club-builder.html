@@ -184,6 +184,7 @@
   <div id="nicheSectionsContainer"></div>
 
   <div class="card">
+    <button class="btn secondary" id="copyAllNichesBtn" style="width:100%; text-align:center; justify-content:center; margin-bottom:12px;">📋 Copy All Niches (for Directory)</button>
     <button class="btn" id="generateAllBtn" style="width:100%; text-align:center; justify-content:center;">Generate Complete Weekly HTML</button>
     <div class="error" id="generateAllErr" style="text-align:center; margin-top:8px;"></div>
     <div class="out-block" id="outBlock">
@@ -199,8 +200,6 @@
   <span class="save-banner saved" id="saveBanner">All changes saved ✓</span>
   <span class="bottom-bar-status" id="bottomBarStatus"></span>
   <button class="pill-action" id="saveNowBtn">💾 Save Now</button>
-  <button class="pill-action" id="myLinkBtn">🔗 My Link</button>
-  <button class="pill-action" id="openAllBtn">🚀 Open All</button>
   <button class="pill-action danger" id="clearCurrentNicheBtn">🗑 Clear Current Niche</button>
   <button class="pill-action danger" id="clearAllNichesBtnBottom">🗑 Clear All</button>
   <a href="https://claude.ai/chat/a0fb5c8f-bab6-4407-861e-1fa2cf5bf17d" target="_blank" rel="noopener" id="convoLink" title="Continue this build in chat" style="color:#5a4a45; text-decoration:none; font-size:13px; opacity:0.5; margin-left:4px;">●</a>
@@ -214,6 +213,10 @@
     </div>
     <div class="modal-body" id="modalBody"></div>
   </div>
+</div>
+
+<div class="modal-overlay" id="imgLightboxOverlay" style="z-index:300; cursor:zoom-out;">
+  <img id="imgLightboxImg" src="" style="display:block; max-width:min(92vw,900px); max-height:88vh; margin:0 auto; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.5);">
 </div>
 
 <div class="modal-overlay" id="confirmOverlay">
@@ -574,7 +577,7 @@ function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 const PRODUCT_TYPES = ['Wall Art', 'PNG / Shirt Design', 'Frame TV Art', 'Tumbler Wrap', 'Other'];
 const DEFAULT_BAKED = {
   'Wall Art': 'Home Decor, Poster',
-  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic, Trendy Clipart',
+  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic, Graphic',
   'Frame TV Art': 'Smart Television Screensaver, Home Decor',
   'Tumbler Wrap': 'PNG, 20oz Skinny Tumbler Sublimation Design'
 };
@@ -683,6 +686,9 @@ function renderNicheList() {
   const container = document.getElementById('nicheListContainer');
   container.innerHTML = '';
   nicheOrder.forEach(niche => {
+    const wrap = document.createElement('div');
+    wrap.className = 'niche-list-row-wrap';
+
     const row = document.createElement('div');
     row.className = 'niche-list-row';
 
@@ -712,6 +718,13 @@ function renderNicheList() {
       if (t === niche.type) opt.selected = true;
       typeSelect.appendChild(opt);
     });
+
+    const namePicker = document.createElement('div');
+    namePicker.className = 'niche-name-picker';
+    namePicker.style.cssText = 'display:none; margin:6px 0 2px 0; padding:8px 10px; background:#fdf7f2; border:1px solid var(--border); border-radius:10px; font-size:12.5px;';
+    wrap.appendChild(row);
+    wrap.appendChild(namePicker);
+
     typeSelect.addEventListener('change', () => {
       niche.type = typeSelect.value;
       autosaveNicheOrder();
@@ -722,6 +735,47 @@ function renderNicheList() {
       bbStatus(`${label} title rebuilt for ${niche.type}`, 2500);
       const section = document.getElementById('section-' + niche.num);
       if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      namePicker.innerHTML = '';
+      namePicker.style.display = 'none';
+      const isQuickPickTarget = (niche.num === '4' || niche.isBonus);
+      if (isQuickPickTarget) {
+        const matches = nicheOrder.filter(n => n !== niche && !n.isBonus && n.num !== '4' && n.type === niche.type && n.name && n.name.trim());
+        if (matches.length) {
+          const label2 = document.createElement('div');
+          label2.style.cssText = 'font-weight:700; color:var(--mid-text); margin-bottom:6px;';
+          label2.textContent = `Use the same name as:`;
+          namePicker.appendChild(label2);
+          const btnRow = document.createElement('div');
+          btnRow.style.cssText = 'display:flex; flex-wrap:wrap; gap:6px;';
+          matches.forEach(m => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'btn secondary';
+            b.style.cssText = 'font-size:11.5px; padding:6px 12px;';
+            b.textContent = `Niche ${m.num}: ${m.name}`;
+            b.addEventListener('click', () => {
+              niche.name = m.name;
+              nameInput.value = m.name;
+              autosaveNicheOrder();
+              updateNicheSectionTitle(niche);
+              seedAllTitlesForNiche(niche);
+              if (niche._keywordInputEl) niche._keywordInputEl.value = niche.name;
+              namePicker.style.display = 'none';
+            });
+            btnRow.appendChild(b);
+          });
+          const dismiss = document.createElement('button');
+          dismiss.type = 'button';
+          dismiss.className = 'btn secondary';
+          dismiss.style.cssText = 'font-size:11.5px; padding:6px 12px; opacity:0.7;';
+          dismiss.textContent = 'Keep current name';
+          dismiss.addEventListener('click', () => { namePicker.style.display = 'none'; });
+          btnRow.appendChild(dismiss);
+          namePicker.appendChild(btnRow);
+          namePicker.style.display = 'block';
+        }
+      }
     });
     row.appendChild(typeSelect);
 
@@ -747,7 +801,7 @@ function renderNicheList() {
     jump.addEventListener('click', () => { setNicheCollapsed(niche, false); });
     row.appendChild(jump);
 
-    container.appendChild(row);
+    container.appendChild(wrap);
   });
 }
 
@@ -1097,6 +1151,8 @@ You will be given the niche keyword, the fixed baked in wording template, the ex
 Extract the descriptive keywords the seller used in the existing title, excluding the niche keyword and any fixed baked in wording (things like Poster, Home Decor, Digital Download). Redistribute or reword those exact same keywords into a new natural sounding order, similar to how "Warm Terracotta Botanical Decor, Minimalist Boho Poster" could become "Minimalist Botanical Poster, Modern Boho Terracotta Decor" using the same words shuffled differently. Do not invent new descriptive keywords, do not drop any of the ones used. Keep the niche keyword exactly as given, unchanged, at the very start. Keep any fixed trailing wording (like Digital Download) exactly as given, unchanged, at the very end. Use Title Case.
 
 Your result must use a genuinely different word order and grouping than every other title already in use, listed below. Do not produce something that is the same or nearly the same as any of them, that defeats the purpose.
+
+The "other titles already in use" are provided ONLY so you can make your word order and grouping different from theirs. They are NOT a source of content. Your output must be built exclusively from the descriptive keywords found in "Existing title to remix" — never pull in, reuse, or reintroduce a word or phrase just because it appears in one of the other titles but not in the existing title to remix. If a word was dropped from the existing title to remix, it must not appear in your result even if it still appears in one of the other titles.
 
 Respond ONLY with valid JSON, no preamble, no markdown fences:
 {"remixedTitle": "the full new title text"}`;
@@ -1455,14 +1511,13 @@ function buildTitlesTagsSubcard(niche) {
   poolSingle.addEventListener('keydown', async (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!poolSingle.value.trim()) return; await addToPool(poolSingle.value, false); poolSingle.value = ''; } });
   poolClearBtn.addEventListener('click', () => { niche.state.pool = []; renderPool(); });
   poolSplitAllBtn.addEventListener('click', () => {
-    const expanded = [];
+    const combined = niche.state.pool.slice();
     niche.state.pool.forEach(item => {
       const words = item.text.trim().split(/\s+/);
-      if (words.length > 1) words.forEach(w => expanded.push({ text: w }));
-      else expanded.push(item);
+      if (words.length > 1) words.forEach(w => combined.push({ text: w }));
     });
     const seen = new Set();
-    const deduped = expanded.filter(item => {
+    const deduped = combined.filter(item => {
       const key = item.text.trim().toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);
@@ -1873,7 +1928,9 @@ function buildGenImagesSubcard(niche) {
       slot.appendChild(errMsg);
 
       const thumb = document.createElement('img');
-      thumb.style.cssText = 'width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid var(--border); margin-top:8px; display:none;';
+      thumb.style.cssText = 'width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid var(--border); margin-top:8px; display:none; cursor:zoom-in;';
+      thumb.title = 'Click to view larger';
+      thumb.addEventListener('click', () => openImgLightbox(thumb.src));
       slot.appendChild(thumb);
 
       function refreshThumb() {
@@ -2054,6 +2111,22 @@ function moveNicheDataTo(sourceNiche, targetNiche) {
   bbStatus(`Moved ${sourceLabel}'s work into ${targetLabel}`, 3000);
 }
 
+document.getElementById('copyAllNichesBtn').addEventListener('click', (e) => {
+  const seen = new Set();
+  const names = [];
+  nicheOrder.forEach(n => {
+    if (n.isBonus && !n.bonusOn) return;
+    const name = (n.name || '').trim();
+    if (!name) return;
+    const key = name.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    names.push(name);
+  });
+  if (!names.length) { bbStatus('No niche names to copy yet', 2500); return; }
+  copyToClipboard(names.join('\n'), e.currentTarget, '📋 Copy All Niches (for Directory)');
+});
+
 document.getElementById('collapseAllBtn').addEventListener('click', () => { nicheOrder.forEach(n => setNicheCollapsed(n, true)); });
 document.getElementById('expandAllBtn').addEventListener('click', () => { nicheOrder.forEach(n => setNicheCollapsed(n, false)); });
 
@@ -2071,18 +2144,6 @@ const WORKFLOW_LINKS = [
   'https://www.canva.com/folder/FAHLwEtsMUM',
   'https://systeme.io/dashboard/files'
 ];
-
-const MY_LINK_URL = ''; // set this once you tell me which link "My Link" should be
-
-document.getElementById('myLinkBtn').addEventListener('click', () => {
-  if (!MY_LINK_URL) { bbStatus('My Link is not set yet, tell Claude which URL to use', 3000); return; }
-  window.open(MY_LINK_URL, '_blank', 'noopener');
-});
-
-document.getElementById('openAllBtn').addEventListener('click', () => {
-  WORKFLOW_LINKS.forEach(url => window.open(url, '_blank', 'noopener'));
-  bbStatus(`Opened ${WORKFLOW_LINKS.length} tabs`, 2500);
-});
 
 document.getElementById('clearCurrentNicheBtn').addEventListener('click', async () => {
   const expanded = nicheOrder.filter(n => n.collapsed === false);
@@ -2324,6 +2385,16 @@ function previewNiche(niche) {
   document.getElementById('modalOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
+function openImgLightbox(src) {
+  if (!src) return;
+  document.getElementById('imgLightboxImg').src = src;
+  document.getElementById('imgLightboxOverlay').classList.add('show');
+}
+document.getElementById('imgLightboxOverlay').addEventListener('click', () => {
+  document.getElementById('imgLightboxOverlay').classList.remove('show');
+  document.getElementById('imgLightboxImg').src = '';
+});
+
 document.getElementById('modalCloseBtn').addEventListener('click', () => {
   document.getElementById('modalOverlay').classList.remove('show');
   document.body.style.overflow = '';
