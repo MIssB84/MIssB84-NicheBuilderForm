@@ -55,6 +55,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .slot-regen-btn { font-size: 13px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
 .slot-regen-btn:hover { color: #dea193; }
 .slot-regen-btn:disabled { opacity: 0.4; cursor: wait; }
+.slot-copy-btn { font-size: 12px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
+.slot-copy-btn:hover { color: #dea193; }
 .gen-actions-row .btn-generate:disabled { opacity: 0.6; cursor: wait; }
 .prompt-slot textarea { width: 100%; border: none; background: transparent; font-family: 'Jost', sans-serif; font-size: 13px; color: #2a1f1c; outline: none; resize: vertical; min-height: 70px; line-height: 1.6; }
 
@@ -107,6 +109,10 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .field-with-paste { display: flex; gap: 8px; align-items: flex-start; }
 .field-with-paste .field-input { flex: 1; }
 .overall-progress { max-width: 700px; margin: 0 auto 1.5rem; background: #fff; border-radius: 14px; border: 1px solid #ead9d5; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 16px; }
+.api-key-corner { position: fixed; top: 16px; right: 20px; z-index: 200; text-align: right; }
+.api-key-corner-link { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #c4b0a8; text-decoration: underline; cursor: pointer; }
+.api-key-corner-link:hover { color: #dea193; }
+.api-key-panel { margin-top: 8px; background: #fff; border: 1px solid #ead9d5; border-radius: 10px; padding: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
 .overall-bar-wrap { flex: 1; background: #ead9d5; border-radius: 10px; height: 6px; overflow: hidden; }
 .overall-bar { height: 100%; background: #dea193; border-radius: 10px; transition: width 0.3s; width: 0%; }
 .overall-label { font-size: 12px; font-weight: 600; color: #5a4a45; white-space: nowrap; }
@@ -114,6 +120,22 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 </style>
 </head>
 <body>
+
+<div class="api-key-corner">
+  <a href="#" id="apiKeyToggleLink" class="api-key-corner-link">API Key</a>
+  <div class="api-key-panel" id="apiKeyPanel" style="display:none;">
+    <p class="card-sub" style="margin-bottom:10px;">Only needed outside Claude.ai, like on GitHub Pages. Stored only in this browser.</p>
+    <div id="apiKeyInputWrap" style="display:none;">
+      <div style="display:flex; gap:8px;">
+        <input class="field-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." style="flex:1;">
+        <button class="btn btn-save" id="saveApiKeyBtn" type="button">Save</button>
+      </div>
+    </div>
+    <div id="apiKeySavedMsg" style="display:none; font-size:12.5px; color:#5a4a45;">
+      API key saved. <button class="btn btn-clear" id="changeApiKeyBtn" type="button" style="margin-left:6px;">Change key</button>
+    </div>
+  </div>
+</div>
 
 <div class="page-header">
   <div class="page-badge">DFY Prompt Club</div>
@@ -130,22 +152,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 <div class="card">
   <p class="card-title">Week Info</p>
   <p class="card-sub">This sets the header for your intro page and lesson title.</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-    <div>
-      <label class="field-label" for="f-date">Week Date</label>
-      <input class="field-input" id="f-date" placeholder="e.g. June 2, 2026">
-    </div>
-    <div>
-      <label class="field-label" for="f-collectionname">Final Collection Name</label>
-      <div class="field-with-paste">
-        <input class="field-input" id="f-collectionname" placeholder="e.g. Moonlit Orchard Collection">
-        <button class="paste-btn" type="button" onclick="pasteInto('f-collectionname', this)">📋</button>
-      </div>
-    </div>
-  </div>
-  <div class="btn-row" style="margin-bottom:0;">
-    <button class="btn btn-generate" type="button" onclick="suggestCollectionName()" id="genbtn-collectionname">✨ Suggest Collection Name</button>
-    <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#c4b0a8;"></span>
+  <div>
+    <label class="field-label" for="f-date">Week Date</label>
+    <input class="field-input" id="f-date" placeholder="e.g. June 2, 2026">
   </div>
 </div>
 
@@ -216,60 +225,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
 </div>
 
-<div class="card" id="apiKeyCard">
-  <p class="card-title">API Key</p>
-  <p class="card-sub">Only needed outside Claude.ai, like on GitHub Pages. Stored only in this browser.</p>
-  <div id="apiKeyInputWrap" style="display:none; margin-top:8px;">
-    <div style="display:flex; gap:8px;">
-      <input class="field-input" type="password" id="apiKeyInput" placeholder="Paste your Anthropic API key (sk-ant-...)" style="flex:1;">
-      <button class="btn btn-save" id="saveApiKeyBtn" type="button">Save Key</button>
-    </div>
-  </div>
-  <div id="apiKeySavedMsg" style="display:none; margin-top:8px; font-size:12.5px; color:#5a4a45;">
-    API key saved. <button class="btn btn-clear" id="changeApiKeyBtn" type="button" style="margin-left:6px;">Change key</button>
-  </div>
-</div>
-<div id="apiKeyRevealLink" style="display:none; text-align:right; max-width:700px; margin:-10px auto 18px; font-size:11px;">
-  <a href="#" id="apiKeyRevealLinkA" style="color:#c4b0a8; text-decoration:underline;">API Key settings</a>
-</div>
-
-<div class="card">
-  <p class="card-title">Generators Used This Week</p>
-  <p class="card-sub">Update if your Kittl style changes week to week.</p>
-  <div class="gen-row">
-    <div>
-      <label class="field-label" for="g1-name">Generator 1</label>
-      <div class="field-with-paste">
-        <input class="field-input" id="g1-name" placeholder="e.g. GPT Image 2">
-        <button class="paste-btn" type="button" onclick="pasteInto('g1-name', this)">📋</button>
-      </div>
-    </div>
-    <div>
-      <label class="field-label" for="g1-style">Style (if applicable)</label>
-      <div class="field-with-paste">
-        <input class="field-input" id="g1-style" placeholder="e.g. N/A">
-        <button class="paste-btn" type="button" onclick="pasteInto('g1-style', this)">📋</button>
-      </div>
-    </div>
-  </div>
-  <div style="height:10px;"></div>
-  <div class="gen-row">
-    <div>
-      <label class="field-label" for="g2-name">Generator 2</label>
-      <div class="field-with-paste">
-        <input class="field-input" id="g2-name" placeholder="e.g. Kittl">
-        <button class="paste-btn" type="button" onclick="pasteInto('g2-name', this)">📋</button>
-      </div>
-    </div>
-    <div>
-      <label class="field-label" for="g2-style">Style</label>
-      <div class="field-with-paste">
-        <input class="field-input" id="g2-style" placeholder="e.g. Flux 1.1 Pro Ultra — Cozy Support">
-        <button class="paste-btn" type="button" onclick="pasteInto('g2-style', this)">📋</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="product-card" id="section-wall-art">
   <div class="product-header">
@@ -290,9 +245,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('wall-art')" id="genbtn-wall-art">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-wall-art" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-1')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="wa-1" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-2')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="wa-2" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-3')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="wa-3" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-1" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-1-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-2" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-2-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-3" placeholder="Paste or type your wall art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="wa-3-img-thumb" style="display:none;"></div>
 </div>
 
 <div class="product-card" id="section-frame-tv">
@@ -314,9 +269,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('frame-tv')" id="genbtn-frame-tv">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-frame-tv" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-1')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="ft-1" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-2')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="ft-2" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-3')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="ft-3" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-1" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-1-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-2" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-2-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-3" placeholder="Paste or type your Frame TV art prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('ft-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="ft-3-img-thumb" style="display:none;"></div>
 </div>
 
 <div class="product-card" id="section-png">
@@ -338,9 +293,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('png')" id="genbtn-png">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-1')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="png-1" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-2')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="png-2" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-3')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="png-3" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-1" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-1-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-2" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-2-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-3" placeholder="Paste or type your PNG prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('png-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="png-3-img-thumb" style="display:none;"></div>
 </div>
 
 <div class="product-card" id="section-tumbler">
@@ -362,9 +317,25 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('tumbler')" id="genbtn-tumbler">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-tumbler" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-1')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="tb-1" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-1-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-2')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="tb-2" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-2-img-thumb" style="display:none;"></div>
-  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-3')" title="Regenerate just this one with AI">🔄</button></span><textarea class="field-input" id="tb-3" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-3-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-1" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-1-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-2" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-2-img-thumb" style="display:none;"></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-3" placeholder="Paste or type your tumbler wrap prompt here..."></textarea><div class="img-row"><input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Kittl example image URL"><button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button></div><img class="img-thumb" id="tb-3-img-thumb" style="display:none;"></div>
+</div>
+
+<div class="card" id="collection-name-card">
+  <p class="card-title">Name Your Collection</p>
+  <p class="card-sub">Do this last, once all 12 prompts are actually done, so the name reflects what you made.</p>
+  <div>
+    <label class="field-label" for="f-collectionname">Final Collection Name</label>
+    <div class="field-with-paste">
+      <input class="field-input" id="f-collectionname" placeholder="e.g. Moonlit Orchard Collection">
+      <button class="paste-btn" type="button" onclick="pasteInto('f-collectionname', this)">📋</button>
+    </div>
+  </div>
+  <div class="btn-row" style="margin-top:10px; margin-bottom:0;">
+    <button class="btn btn-generate" type="button" onclick="suggestCollectionName()" id="genbtn-collectionname">✨ Suggest Collection Name</button>
+    <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
 </div>
 
 <div style="height:80px;"></div>
@@ -411,7 +382,6 @@ var isDirty = false;
 
 var fields = [
   'f-date','f-theme','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname',
-  'g1-name','g1-style','g2-name','g2-style',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -448,7 +418,18 @@ var COLLECTION_NAME_SYSTEM = "You name premium weekly AI prompt collections for 
 
 var THEME_BRAINSTORM_SYSTEM = "You are a creative director and Etsy marketplace consultant for DFY Prompt Club, a $17/month membership where Etsy sellers get a themed AI image prompt collection every Monday covering Wall Art, Frame TV Art, PNG, and Tumbler Wraps. When asked to brainstorm, immediately provide a curated list of collection ideas based on current Etsy trends, upcoming seasons and holidays, popular aesthetics, buyer behavior, POD opportunities, and digital product demand. Do not ask clarifying questions, just give strong ideas. For each idea provide: a short working theme name (2-4 words), a one-line mood description, a short color palette (3-5 colors or tones), 2-4 core visual elements, and one thing to avoid. Give a mix of safe bestseller-style ideas and a couple of more original, less obvious directions. Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"ideas\": [{\"theme\": \"...\", \"mood\": \"...\", \"palette\": \"...\", \"coreElements\": \"...\", \"avoid\": \"...\"}]}";
 
-var lastThemeIdeas = [];
+var THEME_BANK_KEY = 'dfy_prompt_club_theme_bank';
+var lastThemeIdeas = loadThemeBank();
+
+function loadThemeBank() {
+  try {
+    var raw = localStorage.getItem(THEME_BANK_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function saveThemeBank() {
+  try { localStorage.setItem(THEME_BANK_KEY, JSON.stringify(lastThemeIdeas)); } catch (e) {}
+}
 
 async function suggestThemes() {
   var btn = document.getElementById('genbtn-themes');
@@ -456,12 +437,20 @@ async function suggestThemes() {
   btn.disabled = true; status.textContent = ' brainstorming...';
   try {
     var seasonHint = 'Today is roughly ' + new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + ', keep upcoming seasons/holidays in mind.';
-    var existingNote = val('f-theme').trim() ? ('Avoid repeating this current working theme: ' + val('f-theme').trim() + '.') : '';
+    var existingThemes = lastThemeIdeas.map(function(idea){ return idea.theme; }).filter(Boolean);
+    var existingNote = existingThemes.length ? ('Avoid repeating or closely resembling these already-suggested themes: ' + existingThemes.join(', ') + '.') : '';
     var userMsg = 'Give me 8 fresh collection ideas for the next weekly drop. ' + seasonHint + ' ' + existingNote;
     var result = await callClaude(THEME_BRAINSTORM_SYSTEM, userMsg, 2000);
-    lastThemeIdeas = result.ideas || [];
+    var newIdeas = result.ideas || [];
+    var seen = {};
+    lastThemeIdeas.forEach(function(idea){ seen[(idea.theme || '').toLowerCase().trim()] = true; });
+    newIdeas.forEach(function(idea) {
+      var key = (idea.theme || '').toLowerCase().trim();
+      if (key && !seen[key]) { lastThemeIdeas.push(idea); seen[key] = true; }
+    });
+    saveThemeBank();
     renderThemeIdeas();
-    status.textContent = lastThemeIdeas.length ? ' pick one below ✓' : ' no ideas returned, try again';
+    status.textContent = newIdeas.length ? ' added ' + newIdeas.length + ' new ideas ✓' : ' no ideas returned, try again';
   } catch (e) {
     status.textContent = ' error: ' + e.message;
   } finally {
@@ -473,10 +462,14 @@ async function suggestThemes() {
 function renderThemeIdeas() {
   var wrap = document.getElementById('theme-ideas-wrap');
   if (!lastThemeIdeas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
-  wrap.innerHTML = lastThemeIdeas.map(function(idea, i) {
+  wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">Saved ideas — pick one now or come back later for another.</p>' +
+    lastThemeIdeas.map(function(idea, i) {
     return '<div class="idea-card">' +
       '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
-      '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button></div>' +
+      '<span style="display:flex;gap:6px;">' +
+      '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button>' +
+      '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
+      '</span></div>' +
       '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
       '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
       (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
@@ -495,21 +488,26 @@ function useThemeIdea(i) {
   document.getElementById('f-palette').value = idea.palette || '';
   document.getElementById('f-coreelements').value = idea.coreElements || '';
   document.getElementById('f-avoid').value = idea.avoid || '';
-  document.getElementById('theme-ideas-wrap').style.display = 'none';
   isDirty = true; updateAllProgress(); saveData();
   showToast('Collection DNA filled in from "' + (idea.theme || 'idea') + '"');
   document.getElementById('f-theme').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+
+function removeThemeIdea(i) {
+  lastThemeIdeas.splice(i, 1);
+  saveThemeBank();
+  renderThemeIdeas();
+}
+
 
 function getApiKey() { return localStorage.getItem('nicheclub_api_key'); }
 
 async function callClaude(systemPrompt, userContent, maxTokens) {
   var savedKey = getApiKey();
   if (!savedKey) {
-    document.getElementById('apiKeyCard').style.display = 'block';
-    document.getElementById('apiKeyRevealLink').style.display = 'none';
-    document.getElementById('apiKeyCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    throw new Error('Add your Anthropic API key above first.');
+    document.getElementById('apiKeyPanel').style.display = 'block';
+    checkApiKeyUI();
+    throw new Error('Add your Anthropic API key (top right) first.');
   }
   var headers = {
     'Content-Type': 'application/json',
@@ -699,6 +697,22 @@ async function suggestCollectionName() {
 }
 
 /* ============ PASTE FROM CLIPBOARD ============ */
+function copyPromptSlot(slotId, btn) {
+  var text = val(slotId).trim();
+  if (!text) { showToast('Nothing to copy yet.'); return; }
+  var original = btn.textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  }).catch(function(){
+    var temp = document.createElement('textarea');
+    temp.value = text; document.body.appendChild(temp); temp.select();
+    document.execCommand('copy'); document.body.removeChild(temp);
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  });
+}
+
 async function pasteInto(id, btn) {
   var original = btn.textContent;
   try {
@@ -738,22 +752,22 @@ function refreshAllImgThumbs() {
 
 function checkApiKeyUI() {
   var key = getApiKey();
-  var card = document.getElementById('apiKeyCard');
   var wrap = document.getElementById('apiKeyInputWrap');
   var saved = document.getElementById('apiKeySavedMsg');
-  var revealLink = document.getElementById('apiKeyRevealLink');
+  var link = document.getElementById('apiKeyToggleLink');
   if (key) {
     wrap.style.display = 'none'; saved.style.display = 'block';
-    card.style.display = 'none'; revealLink.style.display = 'block';
+    link.textContent = 'API Key ✓';
   } else {
     wrap.style.display = 'block'; saved.style.display = 'none';
-    card.style.display = 'block'; revealLink.style.display = 'none';
+    link.textContent = 'API Key';
   }
 }
-document.getElementById('apiKeyRevealLinkA').addEventListener('click', function(e){
+document.getElementById('apiKeyToggleLink').addEventListener('click', function(e){
   e.preventDefault();
-  document.getElementById('apiKeyCard').style.display = 'block';
-  document.getElementById('apiKeyRevealLink').style.display = 'none';
+  var panel = document.getElementById('apiKeyPanel');
+  panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+  checkApiKeyUI();
 });
 document.getElementById('saveApiKeyBtn').addEventListener('click', function(){
   var v = document.getElementById('apiKeyInput').value.trim();
@@ -860,12 +874,6 @@ function buildIntroHTML() {
   var date = val('f-date') || 'DATE';
   var theme = val('f-theme') || 'THEME';
   var collectionName = val('f-collectionname').trim();
-  var g1 = val('g1-name'); var g1s = val('g1-style');
-  var g2 = val('g2-name'); var g2s = val('g2-style');
-  var genLine = '';
-  if (g1) genLine += g1 + (g1s && g1s !== 'N/A' ? ' &mdash; ' + esc(g1s) : '');
-  if (g1 && g2) genLine += ' &nbsp;&bull;&nbsp; ';
-  if (g2) genLine += g2 + (g2s ? ' &mdash; ' + esc(g2s) : '');
 
   var productLabels = [
     { num: 'Wall Art', ids: ['wa-1','wa-2','wa-3'], prefix: 'wa' },
@@ -893,9 +901,7 @@ function buildIntroHTML() {
     '<p style="font-family:Jost,sans-serif;font-size:13px;color:#c4b0a8;margin:0;">'+esc(date)+'</p>' +
     '</div>' +
     '<div style="padding:1.8rem 2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt below was built around this aesthetic so your designs feel cohesive and intentional. Copy the prompt, drop it into your generator, and go.</p>' +
-    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.2rem;">Each prompt includes example results from <strong style="color:#2a1f1c;">' + (genLine || 'your generators') + '</strong> so you can see what to expect before you start.</p>' +
-    (genLine ? '<p style="font-family:Jost,sans-serif;font-size:12px;color:#c4b0a8;margin:0 0 1.2rem;font-style:italic;">Tools used this week: ' + genLine + '</p>' : '') +
+    '<p style="font-family:Jost,sans-serif;font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.2rem;">This week\'s theme is <strong style="color:#2a1f1c;">'+esc(theme)+'.</strong> Every prompt below was built around this aesthetic so your designs feel cohesive and intentional. Copy the prompt, drop it into your generator, and go.</p>' +
     '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 28px;border-radius:30px;border:1.5px solid #dea193;">Let\'s Create!</span>' +
     '</div>' +
     '<div style="padding:1.5rem 2rem 1.8rem;background:#fdf7f2;">' +
@@ -906,17 +912,15 @@ function buildIntroHTML() {
 
 function buildPromptHTML(promptNum, productType, promptText, imgUrl) {
   var anchor = 'prompt-' + promptNum;
-  var imgBlock = imgUrl ? '<img src="'+esc(imgUrl)+'" alt="Example result" style="display:block;width:100%;border-radius:12px;margin-bottom:1.5rem;">' : '';
+  var imgBlock = imgUrl ? '<div style="width:1px;height:24px;background:rgba(222,161,147,0.4);margin:0 auto;"></div><img src="'+esc(imgUrl)+'" alt="Example result" style="display:block;width:100%;border-radius:12px;margin-top:1.5rem;">' : '';
   return '<div id="'+anchor+'" style="font-family:Jost,sans-serif;max-width:680px;margin:0 auto;padding:2rem 1.5rem;">' +
-    '<span style="font-size:11px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.75rem;">Prompt '+promptNum+': '+esc(productType)+'</span>' +
-    '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+esc(productType)+'</h2>' +
-    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>' +
-    imgBlock +
-    '<span style="font-size:11px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;text-align:center;display:block;margin-bottom:1rem;">Your Prompt</span>' +
-    '<div style="background:#2a1f1c;border-radius:16px;padding:2rem 2rem 1.5rem;margin-bottom:2rem;">' +
+    '<p style="text-align:center;font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;margin:0 0 0.9rem;">Prompt '+promptNum+': '+esc(productType)+'</p>' +
+    '<div style="background:#2a1f1c;border-radius:16px;padding:2rem 2rem 1.5rem;">' +
     '<p style="font-family:Playfair Display,serif;font-size:16px;font-style:italic;color:#f5eddf;line-height:1.85;text-align:center;margin-bottom:1.5rem;" id="ptext-'+promptNum+'">'+esc(promptText)+'</p>' +
-    '<button onclick="var t=document.getElementById(\'ptext-'+promptNum+'\').innerText;navigator.clipboard.writeText(t).then(function(){var b=document.getElementById(\'pbtn-'+promptNum+'\');b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy prompt\';b.style.background=\'#d4968a\';},2000);});" id="pbtn-'+promptNum+'" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy prompt</button>' +
-    '</div></div>';
+    '<button onclick="var t=document.getElementById(\'ptext-'+promptNum+'\').innerText;navigator.clipboard.writeText(t).then(function(){var b=document.getElementById(\'pbtn-'+promptNum+'\');b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2000);});" id="pbtn-'+promptNum+'" style="display:block;margin:0 auto;background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 32px;cursor:pointer;">Copy Prompt</button>' +
+    '</div>' +
+    imgBlock +
+    '</div>';
 }
 
 function generateHTML() {
@@ -996,6 +1000,7 @@ loadData();
 updateAllProgress();
 attachImgThumbListeners();
 refreshAllImgThumbs();
+renderThemeIdeas();
 </script>
 </body>
 </html>
