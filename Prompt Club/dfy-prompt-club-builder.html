@@ -115,15 +115,10 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .use-idea-btn:hover { background: #bb7d72; color: #fff; }
 .field-with-paste { display: flex; gap: 8px; align-items: flex-start; }
 .field-with-paste .field-input { flex: 1; }
-.overall-progress { max-width: 700px; margin: 0 auto 1.5rem; background: #fff; border-radius: 14px; border: 1px solid #ead9d5; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 16px; }
 .api-key-corner { position: fixed; top: 16px; right: 20px; z-index: 200; text-align: right; }
 .api-key-corner-link { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #c4b0a8; text-decoration: underline; cursor: pointer; }
 .api-key-corner-link:hover { color: #dea193; }
 .api-key-panel { margin-top: 8px; background: #fff; border: 1px solid #ead9d5; border-radius: 10px; padding: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
-.overall-bar-wrap { flex: 1; background: #ead9d5; border-radius: 10px; height: 6px; overflow: hidden; }
-.overall-bar { height: 100%; background: #dea193; border-radius: 10px; transition: width 0.3s; width: 0%; }
-.overall-label { font-size: 12px; font-weight: 600; color: #5a4a45; white-space: nowrap; }
-.overall-count { font-size: 12px; color: #c4b0a8; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -148,12 +143,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="page-badge">DFY Prompt Club</div>
   <h1 class="page-title">Weekly Prompt Builder</h1>
   <p class="page-sub">Fill in across the week — your progress saves automatically.</p>
-</div>
-
-<div class="overall-progress">
-  <span class="overall-label">Weekly progress</span>
-  <div class="overall-bar-wrap"><div class="overall-bar" id="overall-bar"></div></div>
-  <span class="overall-count" id="overall-count">0 of 12 prompts</span>
 </div>
 
 
@@ -415,12 +404,14 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <div class="field-with-paste">
       <input class="field-input" id="f-collectionname" placeholder="e.g. Moonlit Orchard Collection">
       <button class="paste-btn" type="button" onclick="pasteInto('f-collectionname', this)">📋</button>
+      <button class="paste-btn" type="button" onclick="copyCollectionName(this)" title="Copy the name">Copy</button>
     </div>
   </div>
   <div class="btn-row" style="margin-top:10px; margin-bottom:0;">
     <button class="btn btn-generate" type="button" onclick="suggestCollectionName()" id="genbtn-collectionname">✨ Suggest Collection Name</button>
     <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
+  <div id="collectionname-options" style="display:none; margin-top:12px;"></div>
 </div>
 
 
@@ -456,7 +447,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-clear" onclick="clearAll()">Clear Week</button>
     <button class="btn btn-save" onclick="saveData()">Save Progress</button>
     <button class="btn btn-generate" onclick="previewOutput()">👁 Preview</button>
-    <button class="btn btn-generate" onclick="generateHTML()">Generate HTML</button>
+    <button class="btn btn-generate" onclick="generateHTML()">📋 Generate & Copy HTML</button>
   </div>
 </div>
 
@@ -501,7 +492,7 @@ var PROMPT_SYSTEM_BY_KEY = {
   'tumbler': DFY_TUMBLER_SYSTEM
 };
 
-var COLLECTION_NAME_SYSTEM = "You name premium weekly AI prompt collections for an Etsy seller membership called DFY Prompt Club. You will be given the Collection DNA and the actual finished prompts. Suggest one final collection name. Rules: it must be unique and descriptive, at least two words, include an aesthetic, subject, mood, setting, or angle, and end with the word Collection. Base it on what was actually created, not just the working theme. Respond ONLY with valid JSON, no preamble, no markdown fences: {\"name\": \"X Collection\"}";
+var COLLECTION_NAME_SYSTEM = "You name premium weekly AI prompt collections for an Etsy seller membership called DFY Prompt Club. You will be given the Collection DNA and the actual finished prompts. Suggest 3 different final collection name options. Rules: each must be unique and descriptive, at least two words, include an aesthetic, subject, mood, setting, or angle, and end with the word Collection. Base them on what was actually created, not just the working theme. The 3 options should feel meaningfully different from each other in angle, not just reworded. Pick which one is your favorite. Respond ONLY with valid JSON, no preamble, no markdown fences: {\"names\": [\"X Collection\", \"Y Collection\", \"Z Collection\"], \"favorite\": 0}";
 
 var THEME_BRAINSTORM_SYSTEM = "You are a creative director and Etsy marketplace consultant for DFY Prompt Club, a $17/month membership where Etsy sellers get a themed AI image prompt collection every Monday covering Wall Art, Frame TV Art, PNG, and Tumbler Wraps. When asked to brainstorm, immediately provide a curated list of collection ideas based on current Etsy trends, upcoming seasons and holidays, popular aesthetics, buyer behavior, POD opportunities, and digital product demand. Do not ask clarifying questions, just give strong ideas. For each idea provide: a short working theme name (2-4 words), a one-line mood description, a short color palette (3-5 colors or tones), 2-4 core visual elements, and one thing to avoid. Give a mix of safe bestseller-style ideas and a couple of more original, less obvious directions. Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"ideas\": [{\"theme\": \"...\", \"mood\": \"...\", \"palette\": \"...\", \"coreElements\": \"...\", \"avoid\": \"...\"}]}";
 
@@ -787,13 +778,16 @@ async function suggestCollectionName() {
   btn.disabled = true; status.textContent = ' naming...';
   try {
     var userMsg = 'Collection DNA:\n' + collectionDNAText() + '\n\nFinished prompts:\n' + allPrompts.join('\n\n');
-    var result = await callClaude(COLLECTION_NAME_SYSTEM, userMsg, 300);
-    if (result.name) {
-      document.getElementById('f-collectionname').value = result.name;
+    var result = await callClaude(COLLECTION_NAME_SYSTEM, userMsg, 400);
+    var names = Array.isArray(result && result.names) ? result.names : [];
+    if (names.length) {
+      var favIdx = (typeof result.favorite === 'number' && result.favorite >= 0 && result.favorite < names.length) ? result.favorite : 0;
+      renderCollectionNameOptions(names, favIdx);
+      document.getElementById('f-collectionname').value = names[favIdx];
       isDirty = true; saveData();
-      status.textContent = ' done ✓';
+      status.textContent = ' pick your favorite below ✓';
     } else {
-      status.textContent = ' no name returned, try again';
+      status.textContent = ' no names returned, try again';
     }
   } catch (e) {
     status.textContent = ' error: ' + e.message;
@@ -801,6 +795,45 @@ async function suggestCollectionName() {
     btn.disabled = false;
     setTimeout(function(){ status.textContent = ''; }, 4000);
   }
+}
+
+function renderCollectionNameOptions(names, favIdx) {
+  var wrap = document.getElementById('collectionname-options');
+  wrap.innerHTML = names.map(function(name, i) {
+    var isFav = i === favIdx;
+    return '<button type="button" class="use-idea-btn" style="display:block; width:100%; text-align:left; margin-bottom:6px; ' +
+      (isFav ? 'background:#dea193;' : 'background:#fdf7f2;color:#5a4a45;border:1px solid #ead9d5;') + '" ' +
+      'onclick="selectCollectionName(' + i + ')" data-name="' + esc(name) + '">' +
+      (isFav ? '⭐ ' : '') + esc(name) +
+      '</button>';
+  }).join('');
+  wrap._names = names;
+  wrap.style.display = 'block';
+}
+
+function selectCollectionName(i) {
+  var wrap = document.getElementById('collectionname-options');
+  var names = wrap._names || [];
+  if (!names[i]) return;
+  document.getElementById('f-collectionname').value = names[i];
+  isDirty = true; saveData();
+  showToast('Collection name set.');
+}
+
+function copyCollectionName(btn) {
+  var text = val('f-collectionname').trim();
+  if (!text) { showToast('Nothing to copy yet.'); return; }
+  var original = btn.textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  }).catch(function(){
+    var temp = document.createElement('textarea');
+    temp.value = text; document.body.appendChild(temp); temp.select();
+    document.execCommand('copy'); document.body.removeChild(temp);
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  });
 }
 
 /* ============ PASTE FROM CLIPBOARD ============ */
@@ -958,16 +991,9 @@ function updateProgress(sectionKey, ids) {
 }
 
 function updateAllProgress() {
-  var total = 0;
   productSections.forEach(function(s) {
     updateProgress(s.key, s.ids);
-    s.ids.forEach(function(id){ if (val(id).trim().length > 0) total++; });
   });
-  var bar = document.getElementById('overall-bar');
-  var count = document.getElementById('overall-count');
-  bar.style.width = Math.round((total/12)*100) + '%';
-  bar.style.background = total === 12 ? '#7a9e7e' : '#dea193';
-  count.textContent = total + ' of 12 prompts';
 }
 
 function esc(str) {
@@ -1063,14 +1089,7 @@ function buildToolsFooterHTML() {
     '</div>';
 }
 
-function previewOutput() {
-  generateHTML();
-}
-
-function generateHTML() {
-  var theme = val('f-theme');
-  if (!theme) { showToast('Please fill in the working theme first.'); return; }
-
+function buildFullPageHTML() {
   var fullPage = '<div id="lesson-top" style="font-family:Jost,sans-serif;font-size:82%;">';
   fullPage += buildIntroHTML();
 
@@ -1089,12 +1108,39 @@ function generateHTML() {
 
   fullPage += buildToolsFooterHTML();
   fullPage += '</div>';
+  return fullPage;
+}
+
+function previewOutput() {
+  var theme = val('f-theme');
+  if (!theme) { showToast('Please fill in the working theme first.'); return; }
+  var fullPage = buildFullPageHTML();
+  document.getElementById('full-page-html').value = fullPage;
+  document.getElementById('full-page-preview').innerHTML = fullPage;
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function generateHTML() {
+  var theme = val('f-theme');
+  if (!theme) { showToast('Please fill in the working theme first.'); return; }
+
+  var fullPage = buildFullPageHTML();
 
   document.getElementById('full-page-html').value = fullPage;
   document.getElementById('full-page-preview').innerHTML = fullPage;
-
   document.getElementById('output-section').style.display = 'block';
-  document.getElementById('output-section').scrollIntoView({ behavior: 'smooth' });
+
+  navigator.clipboard.writeText(fullPage).then(function(){
+    showToast('HTML copied to clipboard!');
+  }).catch(function(){
+    var el = document.getElementById('full-page-html');
+    el.style.display = 'block';
+    el.select();
+    try { document.execCommand('copy'); showToast('HTML copied to clipboard!'); }
+    catch(e) { showToast('Could not auto-copy, use the Copy button below.'); }
+    el.style.display = 'none';
+  });
 }
 
 function copyBlock(id) {
