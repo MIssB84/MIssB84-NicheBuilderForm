@@ -57,6 +57,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .slot-regen-btn:disabled { opacity: 0.4; cursor: wait; }
 .slot-copy-btn { font-size: 12px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
 .slot-copy-btn:hover { color: #dea193; }
+.field-input.copied-prompt { opacity: 0.5; background: #ece3dc; color: #8a7a72; }
+.prompt-slot.is-copied .prompt-slot-label { color: #b0a49d; }
 .gen-actions-row .btn-generate:disabled { opacity: 0.6; cursor: wait; }
 .prompt-slot textarea { width: 100%; border: none; background: transparent; font-family: 'Jost', sans-serif; font-size: 13px; color: #2a1f1c; outline: none; resize: vertical; min-height: 70px; line-height: 1.6; }
 
@@ -481,7 +483,7 @@ var DFY_WALLART_SYSTEM = "You are a production assistant writing AI image genera
 
 var DFY_FRAMETV_SYSTEM = "You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs), for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. Do not force a specific art medium, only include one if it naturally fits. Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Never mention any TV or electronics brand name. Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
 
-var DFY_PNG_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts, rotating between two proven formats:\n\nFORMAT A, ILLUSTRATED CLUSTER: Name 2 to 3 specific objects only, never more, that group together as one tight cluster (for example a flower plus one creature plus one small object, or two objects plus trailing vine or stem linework). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. Thin decorative linework such as curling vines, stems, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. State an explicit rendering style for every prompt, chosen to fit the theme, such as bold graphic illustration with thick outlines and flat or semi-flat color fills, or fine line etching or engraving with high contrast and selective color fills. Say explicitly that the cluster is surrounded by generous open white space and does not fill or crowd the canvas.\n\nFORMAT B, TYPOGRAPHY PLUS ICON: A short punchy word or phrase in bold chunky lettering (describe the lettering style, for example rounded retro type, hand lettered script, or varsity block letters), paired with one small supporting line-art or illustrated icon related to the theme, plus optionally a short handwritten accent phrase tucked into the open space. Describe the exact layout (what sits top, center, bottom) and keep it minimal so most of the canvas stays open white space.\n\nUse Format A more often than Format B, but include at least one Format B prompt when writing 3 or more prompts. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, landscapes, and avoid dense edge-to-edge compositions with no breathing room. Each prompt must end exactly: \"Centered design with generous negative space around it, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+var DFY_PNG_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts, rotating between two proven formats:\n\nTHE CORE GOAL: every prompt must chase a bold, playful, bestselling Etsy boutique aesthetic, the kind of design that feels instantly cute, trendy, and giftable on a shirt, never a fine art or botanical illustration plate. Favor confident bold black or dark hand-drawn outlines, a bright or richly saturated color palette (never muted, dusty, or monochrome unless the theme specifically calls for that), and playful doodle-style energy with personality, movement, and charm. Small decorative filler details like scattered stars, dots, ribbon or bow accents, or a light background pattern such as pinstripes or a simple repeating motif are encouraged when they fit the theme, since they read as intentional and finished rather than sparse. A design that looks like a delicate fine art illustration, a nature field guide plate, or a muted single subject floating alone is a failure state, it must feel like it belongs in a bestselling Etsy shop, not a botanical print shop.\n\nFORMAT A, ILLUSTRATED CLUSTER: Name 2 to 4 specific objects only that group together as one tight cluster (for example a themed icon plus a small creature plus one decorative accent, or a lettered banner plus supporting objects). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. One of the objects may be a small lettered element, such as a banner, sign, patch, or pennant carrying a short word or phrase that fits the theme, when that adds personality. Thin decorative linework such as curling vines, stems, ribbon ties, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. State an explicit rendering style for every prompt, chosen to fit the theme, such as bold doodle illustration with thick outlines and flat or semi-flat color fills, retro collage illustration, or fine line engraving with high contrast and selective bold color fills. Say explicitly that the cluster is surrounded by open space and does not feel cramped, even if a light background pattern is used.\n\nFORMAT B, TYPOGRAPHY PLUS ICON: A short punchy word or phrase in bold chunky lettering (describe the lettering style, for example rounded retro type, hand lettered script, or varsity block letters), paired with one or two small supporting illustrated icons related to the theme, plus optional playful filler details like stars, dots, or ribbon accents. Describe the exact layout (what sits top, center, bottom) and keep the composition feeling finished and boutique, not sparse.\n\nUse Format A more often than Format B, but include at least one Format B prompt when writing 3 or more prompts. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by too many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, landscapes, delicate fine art botanical illustration, and muted or monochrome palettes unless the theme specifically calls for it. Each prompt must end exactly: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
 
 var DFY_TUMBLER_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts. Rules: Create full wrap artwork, focused on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
 
@@ -689,7 +691,7 @@ async function generateForProduct(sectionKey) {
     var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
     section.ids.forEach(function(id, i) {
       var el = document.getElementById(id);
-      if (el && prompts[i]) el.value = prompts[i];
+      if (el && prompts[i]) { el.value = prompts[i]; clearCopied(id); }
     });
     status.textContent = prompts.length < 3 ? (' got ' + prompts.length + ' of 3, try again for the rest') : ' done ✓';
     isDirty = true; updateAllProgress(); saveData();
@@ -720,7 +722,7 @@ async function regenerateSingle(sectionKey, slotId) {
     var result = await callClaude(sys, userMsg, 1200);
     var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
     if (prompts[0]) {
-      document.getElementById(slotId).value = prompts[0];
+      document.getElementById(slotId).value = prompts[0]; clearCopied(slotId);
       isDirty = true; updateAllProgress(); saveData();
     }
   } catch (e) {
@@ -755,7 +757,7 @@ async function generateFullCollection() {
       status.textContent = ' writing ' + step.label + '...';
       var result = await callClaude(step.sys, buildPromptUserMessage(3, null, waPrompts), 3000);
       var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
-      step.ids.forEach(function(id, j) { if (prompts[j]) document.getElementById(id).value = prompts[j]; });
+      step.ids.forEach(function(id, j) { if (prompts[j]) { document.getElementById(id).value = prompts[j]; clearCopied(id); } });
       isDirty = true; updateAllProgress(); saveData();
     }
     status.textContent = ' all 12 done ✓';
@@ -844,13 +846,53 @@ function copyPromptSlot(slotId, btn) {
   navigator.clipboard.writeText(text).then(function(){
     btn.textContent = '✓';
     setTimeout(function(){ btn.textContent = original; }, 1200);
+    markCopied(slotId);
   }).catch(function(){
     var temp = document.createElement('textarea');
     temp.value = text; document.body.appendChild(temp); temp.select();
     document.execCommand('copy'); document.body.removeChild(temp);
     btn.textContent = '✓';
     setTimeout(function(){ btn.textContent = original; }, 1200);
+    markCopied(slotId);
   });
+}
+
+var COPIED_PROMPTS_KEY = 'dfy_prompt_club_copied_prompts';
+var copiedPromptIds = {};
+function loadCopiedPrompts() {
+  try {
+    var raw = localStorage.getItem(COPIED_PROMPTS_KEY);
+    copiedPromptIds = raw ? JSON.parse(raw) : {};
+  } catch (e) { copiedPromptIds = {}; }
+}
+function saveCopiedPrompts() {
+  try { localStorage.setItem(COPIED_PROMPTS_KEY, JSON.stringify(copiedPromptIds)); } catch (e) {}
+}
+function applyCopiedClass(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var slot = el.closest('.prompt-slot');
+  if (copiedPromptIds[id]) {
+    el.classList.add('copied-prompt');
+    if (slot) slot.classList.add('is-copied');
+  } else {
+    el.classList.remove('copied-prompt');
+    if (slot) slot.classList.remove('is-copied');
+  }
+}
+function applyAllCopiedClasses() {
+  ['wa-1','wa-2','wa-3','ft-1','ft-2','ft-3','png-1','png-2','png-3','tb-1','tb-2','tb-3'].forEach(applyCopiedClass);
+}
+function markCopied(id) {
+  copiedPromptIds[id] = true;
+  saveCopiedPrompts();
+  applyCopiedClass(id);
+}
+function clearCopied(id) {
+  if (!copiedPromptIds[id]) return;
+  delete copiedPromptIds[id];
+  saveCopiedPrompts();
+  applyCopiedClass(id);
 }
 
 async function pasteInto(id, btn) {
@@ -955,6 +997,9 @@ function clearAll() {
   if (!confirm('Clear all data for this week? This cannot be undone.')) return;
   fields.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
   localStorage.removeItem(STORAGE_KEY);
+  copiedPromptIds = {};
+  saveCopiedPrompts();
+  applyAllCopiedClasses();
   document.getElementById('output-section').style.display = 'none';
   isDirty = false;
   setStatus('unsaved','Cleared');
@@ -1089,9 +1134,25 @@ function buildToolsFooterHTML() {
     '</div>';
 }
 
+function buildAestheticSummaryHTML() {
+  var mood = val('f-mood').trim();
+  var palette = val('f-palette').trim();
+  var coreElements = val('f-coreelements').trim();
+  if (!mood && !palette && !coreElements) return '';
+  var rows = [];
+  if (mood) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#2a1f1c;">Mood</strong> &mdash; ' + esc(mood) + '</p>');
+  if (palette) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#2a1f1c;">Palette</strong> &mdash; ' + esc(palette) + '</p>');
+  if (coreElements) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0;"><strong style="color:#2a1f1c;">Elements</strong> &mdash; ' + esc(coreElements) + '</p>');
+  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1.75rem 2rem;margin-bottom:2rem;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">The Vibe</p>' +
+    rows.join('') +
+    '</div>';
+}
+
 function buildFullPageHTML() {
   var fullPage = '<div id="lesson-top" style="font-family:Jost,sans-serif;font-size:82%;">';
   fullPage += buildIntroHTML();
+  fullPage += buildAestheticSummaryHTML();
 
   PRODUCT_SECTIONS_EXPORT.forEach(function(p) {
     var filledIds = p.ids.filter(function(id){ return val(id).trim(); });
@@ -1156,6 +1217,7 @@ fields.forEach(function(id) {
     isDirty = true;
     setStatus('unsaved', 'Unsaved changes');
     updateAllProgress();
+    clearCopied(id);
   });
 });
 
@@ -1174,6 +1236,8 @@ updateAllProgress();
 attachImgThumbListeners();
 refreshAllImgThumbs();
 renderThemeIdeas(true);
+loadCopiedPrompts();
+applyAllCopiedClasses();
 </script>
 </body>
 </html>
