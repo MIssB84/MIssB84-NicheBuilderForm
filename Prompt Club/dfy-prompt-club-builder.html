@@ -65,6 +65,9 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #2a1f1c; border-top: 1px solid rgba(222,161,147,0.3); padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+.back-to-top-btn { position: fixed; right: 20px; bottom: 90px; width: 46px; height: 46px; border-radius: 50%; background: #dea193; color: #2a1f1c; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 99; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.25s; }
+.back-to-top-btn.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.back-to-top-btn:hover { background: #bb7d72; }
 .save-status { font-size: 12px; color: #c4b0a8; display: flex; align-items: center; gap: 6px; }
 .save-dot { width: 6px; height: 6px; border-radius: 50%; background: #c4b0a8; }
 .save-dot.saved { background: #7a9e7e; }
@@ -452,6 +455,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" onclick="generateHTML()">📋 Generate & Copy HTML</button>
   </div>
 </div>
+
+<button type="button" class="back-to-top-btn" id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 
 <div class="toast" id="toast"></div>
 
@@ -1238,6 +1243,12 @@ refreshAllImgThumbs();
 renderThemeIdeas(true);
 loadCopiedPrompts();
 applyAllCopiedClasses();
+
+var backToTopBtn = document.getElementById('backToTopBtn');
+window.addEventListener('scroll', function() {
+  if (window.scrollY > 400) backToTopBtn.classList.add('show');
+  else backToTopBtn.classList.remove('show');
+});
 </script>
 </body>
 </html>
