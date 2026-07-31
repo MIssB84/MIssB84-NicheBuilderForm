@@ -117,13 +117,13 @@
     <button class="tab-btn" data-tab="mm">Motivational Monday</button>
     <button class="tab-btn" data-tab="tip">Weekly Tip</button>
     <button class="tab-btn" data-tab="plr">PLR Resource</button>
-    <button class="tab-btn" data-tab="email">Email</button>
     <button class="tab-btn" data-tab="directory">Niche Directory</button>
     <button class="tab-btn" data-tab="announce">Announcements</button>
     <button class="tab-btn" data-tab="livecall">Monthly Live Call</button>
     <button class="tab-btn" data-tab="recap">Live Call Recap</button>
     <button class="tab-btn" data-tab="adhoc">Ad Hoc Post</button>
     <button class="tab-btn" data-tab="keyword">Keyword Report</button>
+    <button class="tab-btn" data-tab="email">Email</button>
     <button class="tab-btn" data-tab="settings">Settings</button>
   </div>
 
@@ -173,6 +173,9 @@
     <div class="field">
       <label>Post Body (edit freely — use **word** for bold)</label>
       <textarea id="mm_body" rows="10" placeholder="AI draft will appear here, or write your own..."></textarea>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="polishBox('mm','mm_body','mm_gen_status','a Motivational Monday post')">✨ Polish My Edits (AI)</button>
+      </div>
     </div>
     <div class="field">
       <label>Title Options (AI gives you 5 — pick your favorite)</label>
@@ -245,6 +248,9 @@
     <div class="field">
       <label>Tip Body (edit freely — use **word** for bold)</label>
       <textarea id="tip_body" rows="8"></textarea>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="polishBox('tip','tip_body','tip_gen_status','a weekly tip post')">✨ Polish My Edits (AI)</button>
+      </div>
     </div>
     <div class="field">
       <label>Title Options (AI gives you 5 — pick your favorite)</label>
@@ -404,6 +410,9 @@ Write your own listing description and use your own mockups</textarea>
     <div class="field">
       <label>Email Body (edit freely — use **word** for bold)</label>
       <textarea id="email_body" rows="10" placeholder="AI draft will appear here, or write your own..."></textarea>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="polishBox('email','email_body','email_gen_status','a marketing email')">✨ Polish My Edits (AI)</button>
+      </div>
     </div>
     <div class="field">
       <label>Subject Line Options (AI gives you 5 — pick your favorite)</label>
@@ -587,6 +596,9 @@ Write your own listing description and use your own mockups</textarea>
       <label>Recap Content (editable — bold sections are ## Header, bullets are - line)</label>
       <textarea id="recap_body" rows="14"></textarea>
       <div class="hint">Format: a line starting with ## is a section header. Lines starting with - are bullets under it.</div>
+      <div class="btn-row" style="margin-top:6px;">
+        <button class="btn btn-ghost btn-sm" onclick="polishBox('recap','recap_body','recap_gen_status','a monthly live call recap, keeping the ## section headers and - bullet formatting exactly')">✨ Polish My Edits (AI)</button>
+      </div>
     </div>
 
     <div class="btn-row">
@@ -974,6 +986,23 @@ var NO_EMDASH_RULE = "NEVER use an em dash (—) anywhere in the output. Use a p
 var MM_SYSTEM = "You write Motivational Monday posts for Etsy sellers and digital product entrepreneurs. Warm, practical, conversational, no cliches. 2-5 short paragraphs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the post body, use **word** for anything that should be bolded]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
 var MM_CONCEPT_SYSTEM = "You brainstorm fresh Motivational Monday post concepts for Etsy sellers and digital product entrepreneurs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full post.";
 function stripEmDash(s){ return (s||'').replace(/\s*—\s*/g, ', ').replace(/,\s*,/g, ','); }
+function polishSystemFor(desc){
+  return "You polish and clean up draft text for "+desc+" written by an Etsy seller and digital product entrepreneur. The text in the box may be a mix of an earlier AI draft and the person's own rough, unedited additions, typos, brain-dumped notes, or casual grammar. Rewrite the ENTIRE text so it reads as one clean, cohesive piece: fix grammar, spelling, and typos, and smooth the flow between the older and newer parts so it doesn't read as patched together. Keep it in the same warm, practical, conversational voice already used in the text. Do NOT cut or water down any of the person's ideas, information, or added points, and do NOT invent new information, claims, or details that aren't already there. Keep the length roughly the same. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY the polished text, using the exact same formatting conventions as the input (same blank-line paragraph breaks, same **bold** usage, same ## headers and - bullets if present), with no extra commentary.";
+}
+async function polishBox(tool, textareaId, statusId, desc){
+  var status = document.getElementById(statusId);
+  var raw = document.getElementById(textareaId).value;
+  if(!raw.trim()){ alert('Nothing to polish yet, add or generate some text first.'); return; }
+  status.className='status-msg'; status.textContent=' polishing...';
+  try{
+    var result = await callClaude(polishSystemFor(desc), "Polish this text, cleaning up my own rough edits/additions and blending everything into one cohesive piece:\n\n"+raw, 1600);
+    document.getElementById(textareaId).value = stripEmDash(result.trim());
+    status.textContent=' polished ✓';
+    saveDraft(tool);
+  }catch(e){
+    status.className='status-err'; status.textContent=' error: '+e.message;
+  }
+}
 function renderConceptPicker(containerId, concepts){
   var container = document.getElementById(containerId);
   if(!concepts || !concepts.length){ container.innerHTML = '<span class="small-note">No concepts yet.</span>'; return; }
