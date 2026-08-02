@@ -124,6 +124,19 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .api-key-corner-link { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #c4b0a8; text-decoration: underline; cursor: pointer; }
 .api-key-corner-link:hover { color: #dea193; }
 .api-key-panel { margin-top: 8px; background: #fff; border: 1px solid #ead9d5; border-radius: 10px; padding: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
+
+.vibe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vibe-chip { text-align: left; cursor: pointer; background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 10px 12px; transition: all 0.2s; }
+.vibe-chip:hover { border-color: #dea193; }
+.vibe-chip.selected { border-color: #dea193; background: #fbeee8; box-shadow: 0 0 0 1px #dea193 inset; }
+.vibe-chip-name { font-family: 'Playfair Display', serif; font-size: 13.5px; font-weight: 700; color: #2a1f1c; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.vibe-chip-check { font-size: 12px; color: #dea193; opacity: 0; }
+.vibe-chip.selected .vibe-chip-check { opacity: 1; }
+.vibe-chip-desc { font-size: 11px; color: #8a7a72; line-height: 1.4; }
+.vibe-selected-note { font-size: 11.5px; color: #5a4a45; margin-top: 12px; padding: 8px 12px; background: #fdf7f2; border-radius: 8px; border: 1px solid #ead9d5; display: none; }
+
+.season-warning { display: none; font-size: 12px; color: #8a5a2a; background: #fdf1de; border: 1px solid #ecd2a3; border-radius: 8px; padding: 9px 13px; margin-top: 10px; line-height: 1.5; }
+.season-warning.show { display: block; }
 </style>
 </head>
 <body>
@@ -174,9 +187,10 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <div>
       <label class="field-label" for="f-theme">Working Theme</label>
       <div class="field-with-paste">
-        <input class="field-input" id="f-theme" placeholder="e.g. Cottagecore">
+        <input class="field-input" id="f-theme" placeholder="e.g. Cottagecore" onblur="checkSeasonalTiming()">
         <button class="paste-btn" type="button" onclick="pasteInto('f-theme', this)">📋</button>
       </div>
+      <div class="season-warning" id="season-warning"></div>
     </div>
     <div>
       <label class="field-label" for="f-mood">Mood</label>
@@ -216,6 +230,14 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       <button class="paste-btn" type="button" onclick="pasteInto('f-notes', this)">📋</button>
     </div>
   </div>
+</div>
+
+<div class="card">
+  <p class="card-title">Aesthetic Vibe</p>
+  <p class="card-sub">Locks in the rendering style so every prompt actually looks like a bestseller, not generic AI art. One click covers all 4 products, PNG auto-adjusts behind the scenes to stay bold on a shirt.</p>
+  <div class="vibe-grid" id="vibe-grid"></div>
+  <div class="vibe-selected-note" id="vibe-selected-note"></div>
+  <input type="hidden" id="f-vibe" value="">
 </div>
 
 <div class="card">
@@ -466,7 +488,7 @@ var STORAGE_KEY = 'dfy_prompt_club_builder';
 var isDirty = false;
 
 var fields = [
-  'f-theme','f-themehint','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname',
+  'f-theme','f-themehint','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname','f-vibe',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -484,20 +506,85 @@ function getSection(key) { return productSections.filter(function(s){ return s.k
 /* ============ AI PROMPT GENERATION ============ */
 var PROMPT_RULES_COMMON = "Never use em dashes, use commas, colons, periods, or parentheses instead. Do not number or label the prompts, no bullets, no introductions or commentary. Vary sentence structure and opening line across the prompts, never open with the theme word or phrase itself.";
 
-var DFY_WALLART_SYSTEM = "You are a production assistant writing AI image generation prompts for premium Etsy Printable Wall Art, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. Do not force a specific art medium, only include one if it naturally fits. Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no printable, wall art, poster, frame, canvas, print). Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
-
-var DFY_FRAMETV_SYSTEM = "You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs), for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. Do not force a specific art medium, only include one if it naturally fits. Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Never mention any TV or electronics brand name. Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
-
-var DFY_PNG_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts, rotating between two proven formats:\n\nTHE CORE GOAL: every prompt must chase a bold, playful, bestselling Etsy boutique aesthetic, the kind of design that feels instantly cute, trendy, and giftable on a shirt, never a fine art or botanical illustration plate. Favor confident bold black or dark hand-drawn outlines, a bright or richly saturated color palette (never muted, dusty, or monochrome unless the theme specifically calls for that), and playful doodle-style energy with personality, movement, and charm. Small decorative filler details like scattered stars, dots, ribbon or bow accents, or a light background pattern such as pinstripes or a simple repeating motif are encouraged when they fit the theme, since they read as intentional and finished rather than sparse. A design that looks like a delicate fine art illustration, a nature field guide plate, or a muted single subject floating alone is a failure state, it must feel like it belongs in a bestselling Etsy shop, not a botanical print shop.\n\nFORMAT A, ILLUSTRATED CLUSTER: Name 2 to 4 specific objects only that group together as one tight cluster (for example a themed icon plus a small creature plus one decorative accent, or a lettered banner plus supporting objects). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. One of the objects may be a small lettered element, such as a banner, sign, patch, or pennant carrying a short word or phrase that fits the theme, when that adds personality. Thin decorative linework such as curling vines, stems, ribbon ties, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. State an explicit rendering style for every prompt, chosen to fit the theme, such as bold doodle illustration with thick outlines and flat or semi-flat color fills, retro collage illustration, or fine line engraving with high contrast and selective bold color fills. Say explicitly that the cluster is surrounded by open space and does not feel cramped, even if a light background pattern is used.\n\nFORMAT B, TYPOGRAPHY PLUS ICON: A short punchy word or phrase in bold chunky lettering (describe the lettering style, for example rounded retro type, hand lettered script, or varsity block letters), paired with one or two small supporting illustrated icons related to the theme, plus optional playful filler details like stars, dots, or ribbon accents. Describe the exact layout (what sits top, center, bottom) and keep the composition feeling finished and boutique, not sparse.\n\nUse Format A more often than Format B, but include at least one Format B prompt when writing 3 or more prompts. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by too many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, landscapes, delicate fine art botanical illustration, and muted or monochrome palettes unless the theme specifically calls for it. Each prompt must end exactly: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
-
-var DFY_TUMBLER_SYSTEM = "You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts. Rules: Create full wrap artwork, focused on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
-
-var PROMPT_SYSTEM_BY_KEY = {
-  'wall-art': DFY_WALLART_SYSTEM,
-  'frame-tv': DFY_FRAMETV_SYSTEM,
-  'png': DFY_PNG_SYSTEM,
-  'tumbler': DFY_TUMBLER_SYSTEM
+/* ============ AESTHETIC VIBES ============ */
+var VIBE_DEFINITIONS = {
+  'bold-varsity': {
+    name: 'Bold Varsity / Collegiate',
+    desc: 'Chunky block letters, pattern-fill lettering, distressed sporty energy',
+    block: "Every prompt should render in a bold varsity or collegiate style: thick chunky block letters or rounded retro type as a dominant visual element, letters or shapes filled with a bold pattern such as leopard print, checkerboard, plaid, or gingham where it fits the theme, confident thick outlines, and a distressed or slightly worn vintage texture across the whole piece. The overall feel should be sporty, confident, and instantly readable, like a varsity letter jacket patch or a collegiate crest.",
+    pngBlock: "On a shirt this should read at a glance, so keep the lettering or central shape large and dominant, with only one or two small supporting accents, never a busy multi-element scene."
+  },
+  'whimsical-brush': {
+    name: 'Whimsical Brushstroke',
+    desc: 'Loose painterly brush strokes, bright candy-pop color, playful energy',
+    block: "Every prompt should render with loose, expressive, visibly hand-painted brushstrokes, a bright and richly saturated candy-pop color palette (think hot pink, teal, sunny yellow, coral), and playful, energetic subjects with movement and personality. Avoid tight clean vector shapes, this should feel like it was painted quickly and joyfully with a loaded brush, textured and a little imperfect on purpose.",
+    pngBlock: "Keep the painted subject and any lettering large, bold, and instantly legible on a shirt, brushy texture is great but the overall silhouette must stay simple enough to read from a distance."
+  },
+  'vintage-engraved': {
+    name: 'Vintage Engraved Linework',
+    desc: 'Fine ink linework, muted antique palette, apothecary-botanical energy',
+    block: "Every prompt should render as fine, detailed ink linework in the style of antique engravings or naturalist field guide illustrations, using cross-hatching and stippling for shading, with a muted and limited palette (sepia, black, cream, one small accent color at most). Subject matter should lean botanical, apothecary, or naturalist in feeling, precise and antique rather than soft or cartoonish.",
+    pngBlock: "For a shirt graphic, increase the line weight and contrast noticeably compared to the wall art version so it reads boldly at a glance, simplify the composition to fewer, larger, more confident linework elements, and consider adding one or two selective bold color fills within the linework so it does not look flat or delicate on fabric."
+  },
+  'cute-doodle': {
+    name: 'Cute Doodle Character',
+    desc: 'Bold flat-color mascots, big charm, simple friendly shapes',
+    block: "Every prompt should center on a cute illustrated character or mascot (an animal, object, or figure with a face and personality) rendered with bold clean outlines, flat or lightly shaded color fills, simple rounded shapes, and an expressive, friendly, slightly exaggerated pose or expression. This should feel charming and giftable, like a beloved sticker or plush character, never realistic or intricate.",
+    pngBlock: "Keep the character large and centered as the clear hero of the design, with minimal small accents around it, since charm and instant recognizability sell better on a shirt than added detail."
+  },
+  'distressed-vintage-type': {
+    name: 'Distressed Vintage Typography',
+    desc: 'Worn retro text as the hero, minimal supporting graphics',
+    block: "Every prompt should be led by bold typography as the hero element, in a retro script, block, or varsity lettering style, rendered with a worn, distressed, faded vintage texture across the whole piece as if aged or sun bleached. Supporting graphics should be minimal, one or two small icons or accents at most, so the words stay the clear focal point.",
+    pngBlock: "The typography should dominate the composition and remain fully legible even distressed, keep supporting graphic elements small and secondary."
+  },
+  'boho-floral': {
+    name: 'Boho Floral Illustration',
+    desc: 'Romantic detailed florals, warm earthy-to-pastel palette, storybook feel',
+    block: "Every prompt should render as a detailed, romantic floral illustration with a soft storybook painterly quality, using a warm palette that blends earthy tones (terracotta, sage, cream) with gentle pastels, naturalistic detail in petals and leaves, and a gentle, dreamy overall mood.",
+    pngBlock: "For a shirt graphic, push the color saturation up slightly from the wall art version and keep clearer color blocking between elements rather than a fully soft painterly wash, so the design stays boutique and eye catching rather than reading as a faded fine art print."
+  },
+  'pattern-fill-max': {
+    name: 'Pattern-Fill Maximalist',
+    desc: 'Objects or letters filled with mixed decorative patterns, bold and layered',
+    block: "Every prompt should use decorative pattern fills, such as leopard print, checkerboard, polka dot, plaid, or floral, inside the main shapes or letters of the design, with bold clean outlines separating each pattern zone so the composition stays crisp rather than chaotic. Layer two to four different patterns across the design for a curated, maximalist, boutique feel.",
+    pngBlock: "Keep the overall silhouette simple even though the fills are busy, one dominant shape or word with pattern fills reads far better on a shirt than many small patterned pieces scattered around."
+  }
 };
+var VIBE_ORDER = ['bold-varsity','whimsical-brush','vintage-engraved','cute-doodle','distressed-vintage-type','boho-floral','pattern-fill-max'];
+
+function vibeStyleBlock(vibeKey, forPng) {
+  var v = VIBE_DEFINITIONS[vibeKey];
+  if (!v) return '';
+  var text = "AESTHETIC VIBE FOR THIS COLLECTION, this governs the rendering style of every prompt: " + v.name + ". " + v.block;
+  if (forPng && v.pngBlock) text += " " + v.pngBlock;
+  return text;
+}
+
+function buildWallArtSystem(vibeKey) {
+  return "You are a production assistant writing AI image generation prompts for premium Etsy Printable Wall Art, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). " + vibeStyleBlock(vibeKey, false) + " Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling, consistent with the aesthetic vibe above. Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no printable, wall art, poster, frame, canvas, print). Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function buildFrameTVSystem(vibeKey) {
+  return "You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs), for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). " + vibeStyleBlock(vibeKey, false) + " Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling, consistent with the aesthetic vibe above. Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Never mention any TV or electronics brand name. Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function buildPNGSystem(vibeKey) {
+  var vibeBlock = vibeStyleBlock(vibeKey, true);
+  return "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). " + vibeBlock + " Write the requested number of prompts, rotating between two proven formats:\n\nTHE CORE GOAL: every prompt must chase a bold, playful, bestselling Etsy boutique aesthetic that matches the aesthetic vibe above, the kind of design that feels instantly cute, trendy, and giftable on a shirt, never a delicate fine art plate. Confident bold outlines, an intentional and finished-looking composition, and playful energy with personality and charm are non negotiable regardless of which vibe is active. Small decorative filler details like scattered stars, dots, ribbon or bow accents, or a light background pattern such as pinstripes or a simple repeating motif are encouraged when they fit the theme, since they read as intentional and finished rather than sparse. A design that looks like generic AI clipart, a muted single subject floating alone with nothing else going on, or a busy scene overloaded with too many small competing elements is a failure state, it must feel like it belongs in a bestselling Etsy shop.\n\nFORMAT A, ILLUSTRATED CLUSTER: Name 2 to 4 specific objects only that group together as one tight cluster (for example a themed icon plus a small creature plus one decorative accent, or a lettered banner plus supporting objects). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. One of the objects may be a small lettered element, such as a banner, sign, patch, or pennant carrying a short word or phrase that fits the theme, when that adds personality. Thin decorative linework such as curling vines, stems, ribbon ties, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. Say explicitly that the cluster is surrounded by open space and does not feel cramped, even if a light background pattern is used.\n\nFORMAT B, TYPOGRAPHY PLUS ICON: A short punchy word or phrase in bold chunky lettering matching the aesthetic vibe above, paired with one or two small supporting illustrated icons related to the theme, plus optional playful filler details like stars, dots, or ribbon accents. Describe the exact layout (what sits top, center, bottom) and keep the composition feeling finished and boutique, not sparse.\n\nUse Format A more often than Format B, but include at least one Format B prompt when writing 3 or more prompts. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by too many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, and landscapes. Each prompt must end exactly: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function buildTumblerSystem(vibeKey) {
+  return "You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). " + vibeStyleBlock(vibeKey, false) + " Write the requested number of prompts. Rules: Create full wrap artwork, focused on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage, consistent with the aesthetic vibe above. Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function getPromptSystem(sectionKey, vibeKey) {
+  if (sectionKey === 'wall-art') return buildWallArtSystem(vibeKey);
+  if (sectionKey === 'frame-tv') return buildFrameTVSystem(vibeKey);
+  if (sectionKey === 'png') return buildPNGSystem(vibeKey);
+  if (sectionKey === 'tumbler') return buildTumblerSystem(vibeKey);
+  return '';
+}
 
 var COLLECTION_NAME_SYSTEM = "You name premium weekly AI prompt collections for an Etsy seller membership called DFY Prompt Club. You will be given the Collection DNA and the actual finished prompts. Suggest 3 different final collection name options. Rules: each must be unique and descriptive, at least two words, include an aesthetic, subject, mood, setting, or angle, and end with the word Collection. Base them on what was actually created, not just the working theme. The 3 options should feel meaningfully different from each other in angle, not just reworded. Pick which one is your favorite. Respond ONLY with valid JSON, no preamble, no markdown fences: {\"names\": [\"X Collection\", \"Y Collection\", \"Z Collection\"], \"favorite\": 0}";
 
@@ -679,9 +766,20 @@ function requireTheme() {
   return true;
 }
 
+function requireVibe() {
+  if (!val('f-vibe').trim()) {
+    showToast('Pick an Aesthetic Vibe first.');
+    var grid = document.getElementById('vibe-grid');
+    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return false;
+  }
+  return true;
+}
+
 async function generateForProduct(sectionKey) {
   var section = getSection(sectionKey);
   if (!requireTheme()) return;
+  if (!requireVibe()) return;
   var existing = section.ids.filter(function(id){ return val(id).trim().length > 0; });
   if (existing.length && !confirm('This will overwrite all 3 ' + section.label + ' prompts. Continue?')) return;
 
@@ -689,7 +787,7 @@ async function generateForProduct(sectionKey) {
   var status = document.getElementById('genstatus-' + sectionKey);
   btn.disabled = true; status.textContent = ' writing prompts...';
   try {
-    var sys = PROMPT_SYSTEM_BY_KEY[sectionKey];
+    var sys = getPromptSystem(sectionKey, val('f-vibe').trim());
     var anchors = sectionKey === 'wall-art' ? null : getWallArtAnchors().some(Boolean) ? getWallArtAnchors() : null;
     var userMsg = buildPromptUserMessage(3, null, anchors);
     var result = await callClaude(sys, userMsg, 3000);
@@ -711,11 +809,12 @@ async function generateForProduct(sectionKey) {
 async function regenerateSingle(sectionKey, slotId) {
   var section = getSection(sectionKey);
   if (!requireTheme()) return;
+  if (!requireVibe()) return;
   var btn = document.querySelector('button[onclick="regenerateSingle(\'' + sectionKey + '\',\'' + slotId + '\')"]');
   var originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
   try {
-    var sys = PROMPT_SYSTEM_BY_KEY[sectionKey];
+    var sys = getPromptSystem(sectionKey, val('f-vibe').trim());
     var siblingTexts = section.ids.filter(function(id){ return id !== slotId; }).map(function(id){ return val(id).trim(); }).filter(Boolean);
     var anchors = null;
     if (sectionKey !== 'wall-art') {
@@ -739,23 +838,25 @@ async function regenerateSingle(sectionKey, slotId) {
 
 async function generateFullCollection() {
   if (!requireTheme()) return;
+  if (!requireVibe()) return;
   var anyFilled = fields.filter(function(id){ return id.match(/^(wa|ft|png|tb)-\d$/); }).some(function(id){ return val(id).trim().length > 0; });
   if (anyFilled && !confirm('This will overwrite all 12 prompts across all 4 product types. Continue?')) return;
 
+  var vibeKey = val('f-vibe').trim();
   var btn = document.getElementById('genbtn-full');
   var status = document.getElementById('genstatus-full');
   btn.disabled = true;
   try {
     status.textContent = ' writing Wall Art (1 of 4)...';
-    var waResult = await callClaude(DFY_WALLART_SYSTEM, buildPromptUserMessage(3, null, null), 3000);
+    var waResult = await callClaude(buildWallArtSystem(vibeKey), buildPromptUserMessage(3, null, null), 3000);
     var waPrompts = (waResult.prompts || []).slice(0, 3);
     ['wa-1','wa-2','wa-3'].forEach(function(id, i) { if (waPrompts[i]) document.getElementById(id).value = waPrompts[i]; });
     isDirty = true; updateAllProgress(); saveData();
 
     var sequence = [
-      { key: 'frame-tv', sys: DFY_FRAMETV_SYSTEM, ids: ['ft-1','ft-2','ft-3'], label: 'Frame TV Art (2 of 4)' },
-      { key: 'png', sys: DFY_PNG_SYSTEM, ids: ['png-1','png-2','png-3'], label: 'PNG (3 of 4)' },
-      { key: 'tumbler', sys: DFY_TUMBLER_SYSTEM, ids: ['tb-1','tb-2','tb-3'], label: 'Tumbler Wrap (4 of 4)' }
+      { key: 'frame-tv', sys: buildFrameTVSystem(vibeKey), ids: ['ft-1','ft-2','ft-3'], label: 'Frame TV Art (2 of 4)' },
+      { key: 'png', sys: buildPNGSystem(vibeKey), ids: ['png-1','png-2','png-3'], label: 'PNG (3 of 4)' },
+      { key: 'tumbler', sys: buildTumblerSystem(vibeKey), ids: ['tb-1','tb-2','tb-3'], label: 'Tumbler Wrap (4 of 4)' }
     ];
     for (var i = 0; i < sequence.length; i++) {
       var step = sequence[i];
@@ -972,6 +1073,97 @@ checkApiKeyUI();
 
 function val(id) { return (document.getElementById(id)||{}).value || ''; }
 
+/* ============ VIBE GRID ============ */
+function renderVibeGrid() {
+  var grid = document.getElementById('vibe-grid');
+  if (!grid) return;
+  grid.innerHTML = VIBE_ORDER.map(function(key) {
+    var v = VIBE_DEFINITIONS[key];
+    return '<div class="vibe-chip" id="vibe-chip-' + key + '" onclick="selectVibe(\'' + key + '\')">' +
+      '<div class="vibe-chip-name">' + esc(v.name) + '<span class="vibe-chip-check">&#10003;</span></div>' +
+      '<div class="vibe-chip-desc">' + esc(v.desc) + '</div>' +
+    '</div>';
+  }).join('');
+  highlightSelectedVibe();
+}
+
+function selectVibe(key) {
+  document.getElementById('f-vibe').value = key;
+  isDirty = true;
+  highlightSelectedVibe();
+  saveData();
+}
+
+function highlightSelectedVibe() {
+  var current = val('f-vibe').trim();
+  VIBE_ORDER.forEach(function(key) {
+    var chip = document.getElementById('vibe-chip-' + key);
+    if (chip) chip.classList.toggle('selected', key === current);
+  });
+  var note = document.getElementById('vibe-selected-note');
+  if (note) {
+    if (current && VIBE_DEFINITIONS[current]) {
+      note.style.display = 'block';
+      note.textContent = 'Selected: ' + VIBE_DEFINITIONS[current].name + ' — this locks in across all 4 product types, PNG auto-adjusts for shirt readability.';
+    } else {
+      note.style.display = 'none';
+    }
+  }
+}
+
+/* ============ SEASONAL TIMING CHECK ============ */
+var SEASONAL_KEYWORDS = [
+  { words: ['valentine'], month: 2, day: 14, label: "Valentine's Day" },
+  { words: ['st patrick', "st. patrick", 'shamrock'], month: 3, day: 17, label: "St Patrick's Day" },
+  { words: ['easter'], month: 4, day: 5, label: 'Easter' },
+  { words: ["mother's day", 'mothers day', 'mom life'], month: 5, day: 11, label: "Mother's Day" },
+  { words: ['graduation', 'grad season'], month: 5, day: 15, label: 'Graduation' },
+  { words: ["father's day", 'fathers day', 'dad life'], month: 6, day: 15, label: "Father's Day" },
+  { words: ['fourth of july', '4th of july', 'independence day'], month: 7, day: 4, label: '4th of July' },
+  { words: ['back to school'], month: 8, day: 1, label: 'Back to School' },
+  { words: ['labor day'], month: 9, day: 1, label: 'Labor Day' },
+  { words: ['fall', 'autumn'], month: 9, day: 22, label: 'Fall' },
+  { words: ['halloween', 'spooky season', 'spooky', 'pumpkin'], month: 10, day: 31, label: 'Halloween' },
+  { words: ['thanksgiving'], month: 11, day: 27, label: 'Thanksgiving' },
+  { words: ['christmas', 'santa', 'holiday season'], month: 12, day: 25, label: 'Christmas' },
+  { words: ['winter'], month: 12, day: 21, label: 'Winter' },
+  { words: ['new year'], month: 1, day: 1, label: 'New Year' },
+  { words: ['spring'], month: 3, day: 20, label: 'Spring' },
+  { words: ['summer'], month: 6, day: 21, label: 'Summer' }
+];
+
+function nextOccurrenceDaysAway(month, day) {
+  var today = new Date();
+  var year = today.getFullYear();
+  var target = new Date(year, month - 1, day);
+  today.setHours(0,0,0,0);
+  if (target < today) target = new Date(year + 1, month - 1, day);
+  return Math.round((target - today) / 86400000);
+}
+
+function checkSeasonalTiming() {
+  var banner = document.getElementById('season-warning');
+  if (!banner) return;
+  var text = (val('f-theme') + ' ' + val('f-themehint')).toLowerCase();
+  var closest = null;
+  SEASONAL_KEYWORDS.forEach(function(entry) {
+    var matched = entry.words.some(function(w){ return text.indexOf(w) !== -1; });
+    if (!matched) return;
+    var days = nextOccurrenceDaysAway(entry.month, entry.day);
+    if (!closest || days < closest.days) closest = { label: entry.label, days: days };
+  });
+  if (closest && closest.days < 60) {
+    banner.className = 'season-warning show';
+    banner.textContent = closest.label + ' is only ' + closest.days + ' day' + (closest.days === 1 ? '' : 's') + ' out. Aim for 60 to 90 days of lead time so it lists before buyers are already shopping for it.';
+  } else if (closest && closest.days <= 90) {
+    banner.className = 'season-warning show';
+    banner.textContent = closest.label + ' is ' + closest.days + ' days out, that is within your 60 to 90 day window. Good timing.';
+  } else {
+    banner.className = 'season-warning';
+    banner.textContent = '';
+  }
+}
+
 
 function loadData() {
   try {
@@ -985,6 +1177,8 @@ function loadData() {
     setStatus('saved','Progress loaded');
     updateAllProgress();
   } catch(e) { setStatus('unsaved','Could not load saved data'); }
+  highlightSelectedVibe();
+  checkSeasonalTiming();
 }
 
 function saveData() {
@@ -1010,6 +1204,8 @@ function clearAll() {
   setStatus('unsaved','Cleared');
   updateAllProgress();
   refreshAllImgThumbs();
+  highlightSelectedVibe();
+  checkSeasonalTiming();
   showToast('Week cleared.');
 }
 
@@ -1236,6 +1432,7 @@ window.addEventListener('beforeunload', function(e) {
   if (isDirty) { e.preventDefault(); e.returnValue = ''; }
 });
 
+renderVibeGrid();
 loadData();
 updateAllProgress();
 attachImgThumbListeners();
