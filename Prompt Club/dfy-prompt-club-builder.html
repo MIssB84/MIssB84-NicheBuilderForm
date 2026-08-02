@@ -246,6 +246,59 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 </div>
 
 <div class="card">
+  <p class="card-title">Reference Images</p>
+  <p class="card-sub">Optional, one per product type. Style, palette, and composition inspiration only, not the subject matter, this week's actual subject still comes from your Working Theme above. Must be a direct image link (.jpg/.png), not an Etsy listing or Pinterest page.</p>
+
+  <div class="ref-img-block">
+    <label class="field-label">Wall Art (up to 2)</label>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="wa-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('wa-ref-1')">
+      <img class="img-thumb" id="wa-ref-1-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="wa-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('wa-ref-2')">
+      <img class="img-thumb" id="wa-ref-2-thumb" style="display:none;">
+    </div>
+  </div>
+
+  <div class="ref-img-block">
+    <label class="field-label">Frame TV Art (up to 2)</label>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="ft-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('ft-ref-1')">
+      <img class="img-thumb" id="ft-ref-1-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="ft-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('ft-ref-2')">
+      <img class="img-thumb" id="ft-ref-2-thumb" style="display:none;">
+    </div>
+  </div>
+
+  <div class="ref-img-block">
+    <label class="field-label">PNG (up to 2)</label>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="png-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('png-ref-1')">
+      <img class="img-thumb" id="png-ref-1-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="png-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('png-ref-2')">
+      <img class="img-thumb" id="png-ref-2-thumb" style="display:none;">
+    </div>
+  </div>
+
+  <div class="ref-img-block" style="margin-bottom:0;">
+    <label class="field-label">Tumbler Wrap (up to 2)</label>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="tb-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('tb-ref-1')">
+      <img class="img-thumb" id="tb-ref-1-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <input class="field-input img-url-input" id="tb-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('tb-ref-2')">
+      <img class="img-thumb" id="tb-ref-2-thumb" style="display:none;">
+    </div>
+  </div>
+</div>
+
+<div class="card">
   <p class="card-title">Full Collection Generation</p>
   <p class="card-sub">Generates Wall Art first, then coordinates Frame TV, PNG, and Tumbler to match the mood of each numbered Wall Art prompt (Prompt 1s share a treatment, Prompt 2s share a treatment, Prompt 3s share a treatment).</p>
   <div class="btn-row" style="margin-bottom:0;">
@@ -269,18 +322,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       </div>
       <span class="progress-label" id="label-wall-art">0/3</span>
     </div>
-  </div>
-  <div class="ref-img-block">
-    <label class="field-label">Reference Image (optional, up to 2)</label>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="wa-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('wa-ref-1')">
-      <img class="img-thumb" id="wa-ref-1-thumb" style="display:none;">
-    </div>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="wa-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('wa-ref-2')">
-      <img class="img-thumb" id="wa-ref-2-thumb" style="display:none;">
-    </div>
-    <p class="ref-img-hint">Style, palette, and composition inspiration only, this week's actual subject still comes from your Working Theme above. Must be a direct image link, not an Etsy listing or Pinterest page.</p>
   </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('wall-art')" id="genbtn-wall-art">✨ Generate 3 with AI</button>
@@ -306,18 +347,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       <span class="progress-label" id="label-frame-tv">0/3</span>
     </div>
   </div>
-  <div class="ref-img-block">
-    <label class="field-label">Reference Image (optional, up to 2)</label>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="ft-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('ft-ref-1')">
-      <img class="img-thumb" id="ft-ref-1-thumb" style="display:none;">
-    </div>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="ft-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('ft-ref-2')">
-      <img class="img-thumb" id="ft-ref-2-thumb" style="display:none;">
-    </div>
-    <p class="ref-img-hint">Style, palette, and composition inspiration only, this week's actual subject still comes from your Working Theme above. Must be a direct image link, not an Etsy listing or Pinterest page.</p>
-  </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('frame-tv')" id="genbtn-frame-tv">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-frame-tv" style="font-size:11.5px; color:#c4b0a8;"></span>
@@ -342,18 +371,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       <span class="progress-label" id="label-png">0/3</span>
     </div>
   </div>
-  <div class="ref-img-block">
-    <label class="field-label">Reference Image (optional, up to 2)</label>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="png-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('png-ref-1')">
-      <img class="img-thumb" id="png-ref-1-thumb" style="display:none;">
-    </div>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="png-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('png-ref-2')">
-      <img class="img-thumb" id="png-ref-2-thumb" style="display:none;">
-    </div>
-    <p class="ref-img-hint">Style, palette, and composition inspiration only, this week's actual subject still comes from your Working Theme above. Must be a direct image link, not an Etsy listing or Pinterest page.</p>
-  </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('png')" id="genbtn-png">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#c4b0a8;"></span>
@@ -377,18 +394,6 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       </div>
       <span class="progress-label" id="label-tumbler">0/3</span>
     </div>
-  </div>
-  <div class="ref-img-block">
-    <label class="field-label">Reference Image (optional, up to 2)</label>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="tb-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('tb-ref-1')">
-      <img class="img-thumb" id="tb-ref-1-thumb" style="display:none;">
-    </div>
-    <div class="img-batch-row">
-      <input class="field-input img-url-input" id="tb-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('tb-ref-2')">
-      <img class="img-thumb" id="tb-ref-2-thumb" style="display:none;">
-    </div>
-    <p class="ref-img-hint">Style, palette, and composition inspiration only, this week's actual subject still comes from your Working Theme above. Must be a direct image link, not an Etsy listing or Pinterest page.</p>
   </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('tumbler')" id="genbtn-tumbler">✨ Generate 3 with AI</button>
@@ -874,9 +879,11 @@ function requireTheme() {
   return true;
 }
 
-function requireVibe() {
-  if (!val('f-vibe').trim()) {
-    showToast('Pick a PNG Aesthetic Vibe first.');
+function requirePngStyleInput() {
+  var hasVibe = getSelectedVibes().length > 0;
+  var hasRef = getRefImageUrls('png').length > 0;
+  if (!hasVibe && !hasRef) {
+    showToast('Give PNG a vibe, a reference image, or both, before generating.');
     var grid = document.getElementById('vibe-grid');
     if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return false;
@@ -887,7 +894,7 @@ function requireVibe() {
 async function generateForProduct(sectionKey) {
   var section = getSection(sectionKey);
   if (!requireTheme()) return;
-  if (sectionKey === 'png' && !requireVibe()) return;
+  if (sectionKey === 'png' && !requirePngStyleInput()) return;
   var existing = section.ids.filter(function(id){ return val(id).trim().length > 0; });
   if (existing.length && !confirm('This will overwrite all 3 ' + section.label + ' prompts. Continue?')) return;
 
@@ -917,7 +924,7 @@ async function generateForProduct(sectionKey) {
 async function regenerateSingle(sectionKey, slotId) {
   var section = getSection(sectionKey);
   if (!requireTheme()) return;
-  if (sectionKey === 'png' && !requireVibe()) return;
+  if (sectionKey === 'png' && !requirePngStyleInput()) return;
   var btn = document.querySelector('button[onclick="regenerateSingle(\'' + sectionKey + '\',\'' + slotId + '\')"]');
   var originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
@@ -946,7 +953,7 @@ async function regenerateSingle(sectionKey, slotId) {
 
 async function generateFullCollection() {
   if (!requireTheme()) return;
-  if (!requireVibe()) return;
+  if (!requirePngStyleInput()) return;
   var anyFilled = fields.filter(function(id){ return id.match(/^(wa|ft|png|tb)-\d$/); }).some(function(id){ return val(id).trim().length > 0; });
   if (anyFilled && !confirm('This will overwrite all 12 prompts across all 4 product types. Continue?')) return;
 
