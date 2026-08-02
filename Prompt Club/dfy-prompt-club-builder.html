@@ -253,10 +253,12 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <label class="field-label">Wall Art (up to 2)</label>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="wa-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('wa-ref-1')">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-ref-1', this)">📋</button>
       <img class="img-thumb" id="wa-ref-1-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="wa-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('wa-ref-2')">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-ref-2', this)">📋</button>
       <img class="img-thumb" id="wa-ref-2-thumb" style="display:none;">
     </div>
   </div>
@@ -265,10 +267,12 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <label class="field-label">Frame TV Art (up to 2)</label>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="ft-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('ft-ref-1')">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-ref-1', this)">📋</button>
       <img class="img-thumb" id="ft-ref-1-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="ft-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('ft-ref-2')">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-ref-2', this)">📋</button>
       <img class="img-thumb" id="ft-ref-2-thumb" style="display:none;">
     </div>
   </div>
@@ -277,10 +281,12 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <label class="field-label">PNG (up to 2)</label>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="png-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('png-ref-1')">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-ref-1', this)">📋</button>
       <img class="img-thumb" id="png-ref-1-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="png-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('png-ref-2')">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-ref-2', this)">📋</button>
       <img class="img-thumb" id="png-ref-2-thumb" style="display:none;">
     </div>
   </div>
@@ -289,10 +295,12 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <label class="field-label">Tumbler Wrap (up to 2)</label>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="tb-ref-1" placeholder="Direct image link (.jpg/.png)" oninput="updateRefThumb('tb-ref-1')">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-ref-1', this)">📋</button>
       <img class="img-thumb" id="tb-ref-1-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <input class="field-input img-url-input" id="tb-ref-2" placeholder="Second reference (optional)" oninput="updateRefThumb('tb-ref-2')">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-ref-2', this)">📋</button>
       <img class="img-thumb" id="tb-ref-2-thumb" style="display:none;">
     </div>
   </div>
@@ -815,8 +823,8 @@ function collectionDNAText() {
 function buildPromptUserMessage(count, avoidTexts, anchorPrompts) {
   var msg = 'Collection DNA:\n' + collectionDNAText() + '\n\nWrite exactly ' + count + ' prompt' + (count === 1 ? '' : 's') + '.';
   if (anchorPrompts && anchorPrompts.length) {
-    msg += '\n\nThese are the Wall Art prompts already locked in for this collection, numbered 1 to ' + anchorPrompts.length + '. Your prompt(s) must share the same mood and visual treatment as the Wall Art prompt with the matching number, adapted to this product type\'s own rules:\n';
-    anchorPrompts.forEach(function(p, i) { if (p) msg += '\nWall Art Prompt ' + (i + 1) + ': ' + p; });
+    msg += '\n\nFor reference, these are the Wall Art prompts already locked in for this collection, numbered 1 to ' + anchorPrompts.length + '. Use the prompt with the matching number only as a loose cohesion anchor, so this product feels like part of the same collection in overall theme, mood, and palette. Your prompt must still describe its own distinct scene, composition, subject arrangement, and specific artistic technique, adapted to this product type\'s own rules. Do not reword, closely paraphrase, or reuse the same composition or visual treatment as the Wall Art prompt, that is a failure state, this needs to be genuinely different writing describing a genuinely different piece of art that merely belongs to the same collection:\n';
+    anchorPrompts.forEach(function(p, i) { if (p) msg += '\nWall Art Prompt ' + (i + 1) + ' (for cohesion reference only): ' + p; });
   }
   if (avoidTexts && avoidTexts.length) {
     msg += '\n\nAvoid repeating or closely resembling these prompts already in use this week:\n' + avoidTexts.join('\n---\n');
@@ -1127,6 +1135,7 @@ async function pasteInto(id, btn) {
     el.value = text.trim();
     isDirty = true; updateAllProgress(); saveData();
     if (id.indexOf('-img') !== -1) refreshImgThumb(id);
+    else if (/-ref-\d$/.test(id)) updateRefThumb(id);
     btn.textContent = '✓';
   } catch (e) {
     btn.textContent = 'error';
