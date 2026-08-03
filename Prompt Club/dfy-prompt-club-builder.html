@@ -1032,14 +1032,29 @@ function renderCollectionNameOptions(names, favIdx) {
   var wrap = document.getElementById('collectionname-options');
   wrap.innerHTML = names.map(function(name, i) {
     var isFav = i === favIdx;
-    return '<button type="button" class="use-idea-btn" style="display:block; width:100%; text-align:left; margin-bottom:6px; ' +
+    return '<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">' +
+      '<button type="button" class="use-idea-btn" style="display:block; flex:1; text-align:left; text-transform:none; letter-spacing:normal; font-weight:600; padding:8px 14px; ' +
       (isFav ? 'background:#dea193;' : 'background:#fdf7f2;color:#5a4a45;border:1px solid #ead9d5;') + '" ' +
       'onclick="selectCollectionName(' + i + ')" data-name="' + esc(name) + '">' +
       (isFav ? '⭐ ' : '') + esc(name) +
-      '</button>';
+      '</button>' +
+      '<button type="button" class="paste-btn" style="text-transform:none;" onclick="copyCollectionNameOption(' + i + ', this)" title="Copy this name">📋</button>' +
+    '</div>';
   }).join('');
   wrap._names = names;
   wrap.style.display = 'block';
+}
+
+function copyCollectionNameOption(i, btn) {
+  var wrap = document.getElementById('collectionname-options');
+  var names = wrap._names || [];
+  if (!names[i]) return;
+  navigator.clipboard.writeText(names[i]).then(function() {
+    var original = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+    showToast('Name copied!');
+  });
 }
 
 function selectCollectionName(i) {
