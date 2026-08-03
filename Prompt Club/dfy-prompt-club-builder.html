@@ -298,6 +298,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <label class="field-label">PNG</label>
     <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
     <div class="ref-lib-grid" id="png-lib-grid"></div>
+    <div id="png-lib-clear-row" style="margin-top:8px;"></div>
     <div class="ref-add-row" id="png-ref-row" style="margin-top:10px;"></div>
     <input type="hidden" id="png-ref-1" value="">
     <input type="hidden" id="png-ref-2" value="">
@@ -309,6 +310,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <label class="field-label">Tumbler Wrap</label>
     <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
     <div class="ref-lib-grid" id="tumbler-lib-grid"></div>
+    <div id="tumbler-lib-clear-row" style="margin-top:8px;"></div>
     <div class="ref-add-row" id="tb-ref-row" style="margin-top:10px;"></div>
     <input type="hidden" id="tb-ref-1" value="">
     <input type="hidden" id="tb-ref-2" value="">
@@ -1219,17 +1221,34 @@ function renderAllRefButtonRows() {
   ['wall-art','frame-tv','png','tumbler'].forEach(renderRefButtonRow);
 }
 
+function clearLockedPool(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var el = document.getElementById(prefix + '-locked');
+  if (el) el.value = '';
+  isDirty = true; saveData();
+  renderRefLibrary(sectionKey);
+  showToast('Preferences cleared, back to fully random.');
+}
+
 function renderRefLibrary(sectionKey) {
   var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
   var gridId = (sectionKey === 'png' ? 'png' : 'tumbler') + '-lib-grid';
+  var clearRowId = (sectionKey === 'png' ? 'png' : 'tumbler') + '-lib-clear-row';
   var grid = document.getElementById(gridId);
+  var clearRow = document.getElementById(clearRowId);
   if (!grid) return;
   var urls = refLibrary[listKey] || [];
   if (!urls.length) {
     grid.innerHTML = '<span class="ref-lib-empty">No saved references yet.</span>';
+    if (clearRow) clearRow.innerHTML = '';
     return;
   }
   var locked = getLockedPool(sectionKey);
+  if (clearRow) {
+    clearRow.innerHTML = locked.length
+      ? '<button class="paste-btn" type="button" style="text-transform:none;" onclick="clearLockedPool(\'' + sectionKey + '\')">Clear my ' + locked.length + ' preferred pick' + (locked.length === 1 ? '' : 's') + '</button>'
+      : '';
+  }
   grid.innerHTML = urls.map(function(url) {
     var isSelected = locked.indexOf(url) !== -1;
     var supported = isApiImageFormat(url);
