@@ -153,6 +153,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .ref-lib-check { position: absolute; top: -6px; left: -6px; background: #dea193; color: #2a1f1c; font-size: 12px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; line-height: 1; }
 .ref-lib-thumb-wrap.selected .ref-lib-check { display: flex; }
 .ref-lib-remove { position: absolute; top: -6px; right: -6px; background: #2a1f1c; color: #fff; font-size: 12px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; cursor: pointer; border: none; padding: 0; }
+.ref-lib-thumb-wrap.unsupported .ref-lib-thumb { opacity: 0.4; filter: grayscale(60%); }
+.ref-lib-badge { position: absolute; bottom: 4px; left: 4px; right: 4px; background: rgba(42,31,28,0.85); color: #f5eddf; font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; padding: 2px 0; border-radius: 4px; }
 .ref-lib-empty { font-size: 11px; color: #c4b0a8; font-style: italic; }
 
 .ref-add-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -209,9 +211,13 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="btn-row" style="margin-bottom:14px;">
     <button class="btn btn-generate" type="button" onclick="suggestThemes()" id="genbtn-themes">✨ Suggest Themes</button>
     <button class="btn-clear-light" type="button" onclick="toggleThemeIdeasWrap()" id="toggleIdeasBtn">📂 Saved Ideas (0)</button>
+    <button class="btn-clear-light" type="button" onclick="toggleSavedForLaterWrap()" id="toggleSavedForLaterBtn">💤 Saved for Later (0)</button>
+    <button class="btn-clear-light" type="button" onclick="toggleUsedIdeasWrap()" id="toggleUsedBtn">✓ Used (0)</button>
     <span class="gen-status" id="genstatus-themes" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
   <div id="theme-ideas-wrap" style="display:none; margin-bottom:16px;"></div>
+  <div id="saved-for-later-wrap" style="display:none; margin-bottom:16px;"></div>
+  <div id="used-ideas-wrap" style="display:none; margin-bottom:16px;"></div>
 
   <div class="dna-row">
     <div>
@@ -290,22 +296,24 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <div class="ref-img-block">
     <label class="field-label">PNG</label>
-    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click to lock in specific ones instead of random</span></p>
+    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
     <div class="ref-lib-grid" id="png-lib-grid"></div>
     <div class="ref-add-row" id="png-ref-row" style="margin-top:10px;"></div>
     <input type="hidden" id="png-ref-1" value="">
     <input type="hidden" id="png-ref-2" value="">
     <input type="hidden" id="png-ref-3" value="">
+    <input type="hidden" id="png-locked" value="">
   </div>
 
   <div class="ref-img-block" style="margin-bottom:0;">
     <label class="field-label">Tumbler Wrap</label>
-    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click to lock in specific ones instead of random</span></p>
+    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
     <div class="ref-lib-grid" id="tumbler-lib-grid"></div>
     <div class="ref-add-row" id="tb-ref-row" style="margin-top:10px;"></div>
     <input type="hidden" id="tb-ref-1" value="">
     <input type="hidden" id="tb-ref-2" value="">
     <input type="hidden" id="tb-ref-3" value="">
+    <input type="hidden" id="tb-locked" value="">
   </div>
 </div>
 
@@ -599,7 +607,7 @@ var isDirty = false;
 
 var fields = [
   'f-theme','f-themehint','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname','f-vibe',
-  'wa-ref-1','wa-ref-2','ft-ref-1','ft-ref-2','png-ref-1','png-ref-2','png-ref-3','tb-ref-1','tb-ref-2','tb-ref-3',
+  'wa-ref-1','wa-ref-2','ft-ref-1','ft-ref-2','png-ref-1','png-ref-2','png-ref-3','png-locked','tb-ref-1','tb-ref-2','tb-ref-3','tb-locked',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
@@ -770,14 +778,17 @@ function renderThemeIdeas(forceOpen) {
   var wrap = document.getElementById('theme-ideas-wrap');
   var toggleBtn = document.getElementById('toggleIdeasBtn');
   var wasOpen = wrap.style.display === 'block';
-  if (toggleBtn) toggleBtn.textContent = '📂 Saved Ideas (' + lastThemeIdeas.length + ')';
-  if (!lastThemeIdeas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+  var activeIdeas = lastThemeIdeas.filter(function(idea){ return !idea.status; });
+  if (toggleBtn) toggleBtn.textContent = '📂 Saved Ideas (' + activeIdeas.length + ')';
+  if (!activeIdeas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; renderSavedForLaterIdeas(); renderUsedIdeas(); return; }
   wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">Saved ideas — pick one now or come back later for another.</p>' +
-    lastThemeIdeas.map(function(idea, i) {
+    activeIdeas.map(function(idea) {
+    var i = lastThemeIdeas.indexOf(idea);
     return '<div class="idea-card">' +
       '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
       '<span style="display:flex;gap:6px;">' +
       '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button>' +
+      '<button class="use-idea-btn" type="button" style="background:transparent;color:#5a4a45;border:1px solid #ead9d5;" onclick="saveIdeaForLater(' + i + ')" title="Move to Saved for Later">💤</button>' +
       '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
       '</span></div>' +
       '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
@@ -786,11 +797,60 @@ function renderThemeIdeas(forceOpen) {
       '</div>';
   }).join('');
   wrap.style.display = (forceOpen || wasOpen) ? 'block' : 'none';
+  renderSavedForLaterIdeas();
+  renderUsedIdeas();
+}
+
+function renderIdeaBucket(status, wrapId, btnId, btnLabel, emptyText) {
+  var wrap = document.getElementById(wrapId);
+  var btn = document.getElementById(btnId);
+  var wasOpen = wrap.style.display === 'block';
+  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === status; });
+  if (btn) btn.textContent = btnLabel + ' (' + ideas.length + ')';
+  if (!ideas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">' + emptyText + '</p>' +
+    ideas.map(function(idea) {
+      var i = lastThemeIdeas.indexOf(idea);
+      return '<div class="idea-card">' +
+        '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
+        '<span style="display:flex;gap:6px;">' +
+        '<button class="use-idea-btn" type="button" onclick="restoreIdeaToActive(' + i + ')">↩ Move to Active</button>' +
+        '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
+        '</span></div>' +
+        '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
+        '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
+        (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
+        '</div>';
+    }).join('');
+  wrap.style.display = wasOpen ? 'block' : 'none';
+}
+
+function renderSavedForLaterIdeas() {
+  renderIdeaBucket('saved', 'saved-for-later-wrap', 'toggleSavedForLaterBtn', '💤 Saved for Later', 'Tucked away so they are not in your face — move one back to Active whenever you want it.');
+}
+
+function renderUsedIdeas() {
+  renderIdeaBucket('used', 'used-ideas-wrap', 'toggleUsedBtn', '✓ Used', 'Already used this week — move one back to Active if you change your mind.');
 }
 
 function toggleThemeIdeasWrap() {
   var wrap = document.getElementById('theme-ideas-wrap');
-  if (!lastThemeIdeas.length) { showToast('No saved ideas yet — click Suggest Themes first.'); return; }
+  var activeIdeas = lastThemeIdeas.filter(function(idea){ return !idea.status; });
+  if (!activeIdeas.length) { showToast('No active ideas — click Suggest Themes first.'); return; }
+  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
+}
+
+function toggleSavedForLaterWrap() {
+  var wrap = document.getElementById('saved-for-later-wrap');
+  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === 'saved'; });
+  if (!ideas.length) { showToast('Nothing saved for later yet.'); return; }
+  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
+}
+
+function toggleUsedIdeasWrap() {
+  var wrap = document.getElementById('used-ideas-wrap');
+  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === 'used'; });
+  if (!ideas.length) { showToast('No used ideas yet.'); return; }
   wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
 }
 
@@ -805,11 +865,29 @@ function useThemeIdea(i) {
   document.getElementById('f-coreelements').value = idea.coreElements || '';
   document.getElementById('f-avoid').value = idea.avoid || '';
   isDirty = true; updateAllProgress(); saveData();
-  showToast('Collection DNA filled in from "' + (idea.theme || 'idea') + '"');
-  lastThemeIdeas.splice(i, 1);
+  idea.status = 'used';
   saveThemeBank();
   renderThemeIdeas();
+  showToast('Collection DNA filled in from "' + (idea.theme || 'idea') + '" — moved to Used, tap ✓ Used to put it back.');
   document.getElementById('f-theme').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function saveIdeaForLater(i) {
+  var idea = lastThemeIdeas[i];
+  if (!idea) return;
+  idea.status = 'saved';
+  saveThemeBank();
+  renderThemeIdeas();
+  showToast('Moved to Saved for Later.');
+}
+
+function restoreIdeaToActive(i) {
+  var idea = lastThemeIdeas[i];
+  if (!idea) return;
+  delete idea.status;
+  saveThemeBank();
+  renderThemeIdeas();
+  showToast('Back in your active ideas.');
 }
 
 function removeThemeIdea(i) {
@@ -924,24 +1002,15 @@ function getRefImageUrls(sectionKey) {
 var REF_LIBRARY_KEY = 'dfy_ref_library_v1';
 var DEFAULT_REF_LIBRARY = {
   png: [
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe001b6bf58.04320840_il_1588xN.8223774191_5gm1.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe02ad3d8b1.81829890_il_1588xN.8198428324_b3hu.avif',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe051effc25.03696565_il_1588xN.8231169789_lnkx.avif',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe07a4257f0.67208760_il_1588xN.7667842256_hyq3.avif',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f0beeb6.45060487_il_1588xN.8129796722_oo7w.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f0d4ac8.60050994_il_1588xN.8221817984_6nzd.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f4486e6.84168501_il_1588xN.8195788390_63pb.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f45a1f1.94732926_il_1588xN.8264105724_dien.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f488ed0.64896567_il_1588xN.7766655650_fvir.avif',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f490272.80134173_il_1588xN.7317864747_eryy.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f49f1d1.79067112_il_1588xN.7889396684_ghfh.jpg',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f4ab832.56848703_il_1588xN.7149544456_3eq4.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f4cc6d3.80923570_il_1588xN.8173271570_eo96.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe12f5ae0c8.29088790_il_1588xN.8263223807_bd7r.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe13194d398.21391968_il_1588xN.8046222656_kzc0.avif',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe131a98782.25009435_il_1588xN.8098097144_toix.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe131c04fd4.45452272_il_1588xN.8109974284_rqv9.webp',
-    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe1322f59e9.21198558_il_1588xN.8110797306_nwc2.jpg'
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56399875.58638540_1.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564e6784.63294180_2.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56501927.28915893_3.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da565605f4.88786669_4.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56399871.34884866_5.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564f37a5.84390186_6.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56173e30.34317257_7.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564b7178.35830405_8.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564b1655.93686348_9.jpg'
   ],
   tumbler: [
     'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe6027836e0.60649083_il_1588xN.8080662608_henz.webp',
@@ -958,6 +1027,9 @@ var DEFAULT_REF_LIBRARY = {
 };
 var refLibrary = { png: [], tumbler: [] };
 
+var REF_LIBRARY_VERSION_KEY = 'dfy_ref_library_version';
+var PNG_LIBRARY_VERSION = 2;
+
 function loadRefLibrary() {
   try {
     var raw = localStorage.getItem(REF_LIBRARY_KEY);
@@ -965,6 +1037,11 @@ function loadRefLibrary() {
     if (!refLibrary.png) refLibrary.png = [];
     if (!refLibrary.tumbler) refLibrary.tumbler = [];
   } catch (e) { refLibrary = { png: [], tumbler: [] }; }
+  var storedVersion = parseInt(localStorage.getItem(REF_LIBRARY_VERSION_KEY) || '1', 10);
+  if (storedVersion < PNG_LIBRARY_VERSION) {
+    refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
+    try { localStorage.setItem(REF_LIBRARY_VERSION_KEY, String(PNG_LIBRARY_VERSION)); } catch (e) {}
+  }
   if (!refLibrary.png.length) refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
   if (!refLibrary.tumbler.length) refLibrary.tumbler = DEFAULT_REF_LIBRARY.tumbler.slice();
   saveRefLibrary();
@@ -983,12 +1060,31 @@ function shuffleArr(arr) {
   return a;
 }
 
+function isApiImageFormat(url) {
+  return /\.(jpe?g|png|gif|webp)(\?.*)?$/i.test((url || '').split('#')[0].split('?')[0]);
+}
+
+function getLockedPool(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var raw = val(prefix + '-locked').trim();
+  return raw ? raw.split(',').filter(Boolean) : [];
+}
+
+function saveLockedPool(sectionKey, arr) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var el = document.getElementById(prefix + '-locked');
+  if (el) el.value = arr.join(',');
+}
+
 function getEffectiveRefsForPrompts(sectionKey) {
   var slots = getRefSlotValues(sectionKey);
   var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
-  var pool = (refLibrary[listKey] || []).slice();
   var manualSet = slots.filter(Boolean);
-  var available = shuffleArr(pool.filter(function(u){ return manualSet.indexOf(u) === -1; }));
+  var lockedPool = getLockedPool(sectionKey).filter(isApiImageFormat);
+  var fullPool = (refLibrary[listKey] || []).filter(isApiImageFormat);
+  var primary = shuffleArr(lockedPool.filter(function(u){ return manualSet.indexOf(u) === -1; }));
+  var secondary = shuffleArr(fullPool.filter(function(u){ return manualSet.indexOf(u) === -1 && primary.indexOf(u) === -1; }));
+  var available = primary.concat(secondary);
   var result = [];
   for (var i = 0; i < slots.length; i++) {
     if (slots[i]) result.push(slots[i]);
@@ -1021,24 +1117,13 @@ function removeLibraryImage(sectionKey, url, evt) {
 }
 
 function selectLibraryImage(sectionKey, url) {
-  var n = REF_SLOT_COUNT[sectionKey] || 2;
-  var slots = getRefSlotValues(sectionKey);
-  var idx = slots.indexOf(url);
-  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
-  if (idx !== -1) {
-    document.getElementById(prefix + '-ref-' + (idx + 1)).value = '';
-  } else {
-    var emptyIdx = slots.indexOf('');
-    if (emptyIdx !== -1) {
-      document.getElementById(prefix + '-ref-' + (emptyIdx + 1)).value = url;
-    } else {
-      for (var i = n; i > 1; i--) { document.getElementById(prefix + '-ref-' + i).value = document.getElementById(prefix + '-ref-' + (i - 1)).value; }
-      document.getElementById(prefix + '-ref-1').value = url;
-    }
-  }
+  var pool = getLockedPool(sectionKey);
+  var idx = pool.indexOf(url);
+  if (idx !== -1) pool.splice(idx, 1);
+  else pool.push(url);
+  saveLockedPool(sectionKey, pool);
   isDirty = true; saveData();
   renderRefLibrary(sectionKey);
-  renderRefButtonRow(sectionKey);
 }
 
 /* ============ AD HOC REFERENCE MODAL ============ */
@@ -1131,12 +1216,15 @@ function renderRefLibrary(sectionKey) {
     grid.innerHTML = '<span class="ref-lib-empty">No saved references yet.</span>';
     return;
   }
-  var active = getRefSlotValues(sectionKey);
+  var locked = getLockedPool(sectionKey);
   grid.innerHTML = urls.map(function(url) {
-    var isSelected = active.indexOf(url) !== -1;
-    return '<div class="ref-lib-thumb-wrap' + (isSelected ? ' selected' : '') + '" onclick="selectLibraryImage(\'' + sectionKey + '\', \'' + esc(url).replace(/'/g, "\\'") + '\')" title="Click to lock this in as one of your 3, click again to release it back to random">' +
+    var isSelected = locked.indexOf(url) !== -1;
+    var supported = isApiImageFormat(url);
+    var titleText = supported ? 'Click to prefer this one, click again to release it back to the general pool' : 'This file format is not supported for AI generation, viewable here but will be skipped automatically';
+    return '<div class="ref-lib-thumb-wrap' + (isSelected ? ' selected' : '') + (supported ? '' : ' unsupported') + '" onclick="selectLibraryImage(\'' + sectionKey + '\', \'' + esc(url).replace(/'/g, "\\'") + '\')" title="' + titleText + '">' +
       '<img class="ref-lib-thumb" src="' + esc(url) + '" onerror="this.parentElement.style.display=\'none\';">' +
       '<span class="ref-lib-check">&#10003;</span>' +
+      (supported ? '' : '<span class="ref-lib-badge">no AI</span>') +
       '<button class="ref-lib-remove" type="button" onclick="removeLibraryImage(\'' + sectionKey + '\', \'' + esc(url).replace(/'/g, "\\'") + '\', event)" title="Delete from library">&times;</button>' +
     '</div>';
   }).join('');
@@ -1270,7 +1358,7 @@ async function generateFullCollection() {
     status.textContent = ' writing Wall Art (1 of 4)...';
     var waResult = await callClaude(buildWallArtSystem(), buildUserContent('wall-art', 3, null, null), 3000);
     var waPrompts = (waResult.prompts || []).slice(0, 3);
-    ['wa-1','wa-2','wa-3'].forEach(function(id, i) { if (waPrompts[i]) document.getElementById(id).value = waPrompts[i]; });
+    ['wa-1','wa-2','wa-3'].forEach(function(id, i) { if (waPrompts[i]) { document.getElementById(id).value = waPrompts[i]; clearCopied(id); } });
     isDirty = true; updateAllProgress(); saveData();
 
     var sequence = [
@@ -1650,8 +1738,10 @@ function saveData() {
 
 function clearAll() {
   if (!confirm('Clear all data for this week? This cannot be undone.')) return;
-  fields.forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
+  var preserveIds = ['png-locked', 'tb-locked'];
+  fields.forEach(function(id) { if (preserveIds.indexOf(id) !== -1) return; var el = document.getElementById(id); if (el) el.value = ''; });
   localStorage.removeItem(STORAGE_KEY);
+  saveData();
   copiedPromptIds = {};
   saveCopiedPrompts();
   applyAllCopiedClasses();
