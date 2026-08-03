@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFY Prompt Club Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --db: #2a1f1c;
+  --cream: #f5eddf;
+  --gold: #c9a96e;
+  --rose: #dea193;
+  --border: #ead9d5;
+  --light-bg: #fdf7f2;
+  --mid: #5a4a45;
+  --muted: #c4b0a8;
+  --success: #7a9e7e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Jost', sans-serif; background: #2a1f1c; min-height: 100vh; padding: 2rem 1rem 5rem; }
+
+.page-header { text-align: center; margin-bottom: 2rem; }
+.page-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #dea193; background: transparent; border: 1px solid rgba(222,161,147,0.4); padding: 5px 16px; border-radius: 20px; margin-bottom: 0.75rem; }
+.page-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #f5eddf; margin-bottom: 0.25rem; }
+.page-sub { font-size: 13px; color: #c4b0a8; }
+
+.card { background: #fff; border-radius: 14px; border: 1px solid #ead9d5; padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+.card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: #2a1f1c; margin-bottom: 0.2rem; }
+.card-sub { font-size: 12px; color: #c4b0a8; margin-bottom: 1.2rem; }
+
+.field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #5a4a45; margin-bottom: 4px; display: block; }
+.field-input { width: 100%; border: 1.5px solid #ead9d5; border-radius: 8px; padding: 9px 13px; font-family: 'Jost', sans-serif; font-size: 13px; color: #2a1f1c; background: #fdf7f2; outline: none; transition: border-color 0.2s; }
+.field-input:focus { border-color: #dea193; }
+textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+.section-divider { height: 1px; background: #ead9d5; margin: 1.5rem 0; max-width: 700px; margin-left: auto; margin-right: auto; }
+
+.product-card { background: #fff; border-radius: 14px; border: 1px solid #ead9d5; padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+.product-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+.product-title-wrap { display: flex; align-items: center; gap: 10px; }
+.product-icon { width: 32px; height: 32px; border-radius: 8px; background: #2a1f1c; display: flex; align-items: center; justify-content: center; }
+.product-icon svg { width: 16px; height: 16px; fill: #dea193; }
+.product-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: #2a1f1c; }
+.progress-wrap { display: flex; align-items: center; gap: 8px; }
+.progress-dots { display: flex; gap: 4px; }
+.progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #ead9d5; transition: background 0.2s; }
+.progress-dot.filled { background: #dea193; }
+.progress-dot.complete { background: #7a9e7e; }
+.progress-label { font-size: 11px; font-weight: 600; color: #c4b0a8; letter-spacing: 0.05em; }
+
+.prompt-slot { background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; transition: border-color 0.2s; }
+.prompt-slot:focus-within { border-color: #dea193; }
+.prompt-slot-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #c4b0a8; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+.slot-regen-btn { font-size: 13px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
+.slot-regen-btn:hover { color: #dea193; }
+.slot-regen-btn:disabled { opacity: 0.4; cursor: wait; }
+.slot-copy-btn { font-size: 12px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
+.slot-copy-btn:hover { color: #dea193; }
+.field-input.copied-prompt { opacity: 0.5; background: #ece3dc; color: #8a7a72; }
+.prompt-slot.is-copied .prompt-slot-label { color: #b0a49d; }
+.gen-actions-row .btn-generate:disabled { opacity: 0.6; cursor: wait; }
+.prompt-slot textarea { width: 100%; border: none; background: transparent; font-family: 'Jost', sans-serif; font-size: 13px; color: #2a1f1c; outline: none; resize: vertical; min-height: 70px; line-height: 1.6; }
+
+.gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #2a1f1c; border-top: 1px solid rgba(222,161,147,0.3); padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+.back-to-top-btn { position: fixed; right: 20px; bottom: 90px; width: 46px; height: 46px; border-radius: 50%; background: #dea193; color: #2a1f1c; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 99; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.25s; }
+.back-to-top-btn.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.back-to-top-btn:hover { background: #bb7d72; }
+.save-status { font-size: 12px; color: #c4b0a8; display: flex; align-items: center; gap: 6px; }
+.save-dot { width: 6px; height: 6px; border-radius: 50%; background: #c4b0a8; }
+.save-dot.saved { background: #7a9e7e; }
+.save-dot.unsaved { background: #dea193; }
+.save-actions { display: flex; gap: 10px; }
+.btn { font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 20px; border-radius: 30px; cursor: pointer; border: 1.5px solid; transition: all 0.2s; }
+.btn-save { background: transparent; color: #dea193; border-color: #dea193; }
+.btn-save:hover { background: #dea193; color: #2a1f1c; }
+.btn-generate { background: #dea193; color: #2a1f1c; border-color: #dea193; }
+.btn-generate:hover { background: #bb7d72; border-color: #bb7d72; color: #fff; }
+.btn-clear { background: transparent; color: #c4b0a8; border-color: rgba(196,176,168,0.4); font-size: 11px; padding: 7px 14px; }
+.btn-clear:hover { border-color: #c4b0a8; color: #fff; }
+.btn-clear-light { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 18px; border-radius: 30px; cursor: pointer; border: 1.5px solid rgba(196,176,168,0.5); background: transparent; color: #5a4a45; transition: all 0.2s; }
+.btn-clear-light:hover { border-color: #dea193; color: #bb7d72; }
+
+#output-section { display: none; max-width: 700px; margin: 0 auto; }
+.output-actions { display: flex; gap: 12px; margin-bottom: 1.5rem; justify-content: center; flex-wrap: wrap; }
+.action-btn { font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 24px; border-radius: 30px; cursor: pointer; border: 2px solid #2a1f1c; transition: all 0.2s; }
+.action-btn.primary { background: #2a1f1c; color: #dea193; }
+.action-btn.primary:hover { background: #dea193; color: #2a1f1c; border-color: #dea193; }
+.action-btn.secondary { background: transparent; color: #2a1f1c; }
+.action-btn.secondary:hover { background: #2a1f1c; color: #dea193; }
+
+.output-block { background: #fff; border-radius: 14px; border: 1px solid #ead9d5; overflow: hidden; margin-bottom: 1.5rem; }
+.output-block-header { background: #2a1f1c; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+.output-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #dea193; }
+.copy-block-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 1px solid rgba(222,161,147,0.4); color: #dea193; padding: 5px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+.copy-block-btn:hover { background: #dea193; color: #2a1f1c; }
+.output-preview { padding: 1.25rem; }
+
+.toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: #2a1f1c; color: #dea193; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; padding: 10px 24px; border-radius: 30px; border: 1px solid #dea193; display: none; z-index: 9999; white-space: nowrap; }
+
+.img-row { display: flex; gap: 8px; margin-top: 8px; }
+.img-url-input { flex: 1; font-size: 12px; padding: 7px 11px; background: #fff; }
+.paste-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: transparent; border: 1.5px solid #ead9d5; color: #5a4a45; border-radius: 8px; padding: 0 12px; cursor: pointer; transition: all 0.2s; }
+.paste-btn:hover { border-color: #dea193; color: #dea193; }
+.img-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #ead9d5; margin-top: 6px; }
+.img-batch-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0e6de; }
+.img-batch-row:last-child { border-bottom: none; }
+.img-batch-label { font-size: 11.5px; font-weight: 600; color: #5a4a45; width: 165px; flex-shrink: 0; line-height: 1.3; }
+.img-batch-row .img-url-input { margin: 0; }
+.img-batch-row .img-thumb { margin-top: 0; flex-shrink: 0; width: 44px; height: 44px; }
+.dna-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.idea-card { background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 8px; }
+.idea-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.idea-theme { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: #2a1f1c; }
+.idea-detail { font-size: 12px; color: #5a4a45; line-height: 1.6; }
+.idea-detail b { color: #2a1f1c; }
+.use-idea-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: #dea193; color: #2a1f1c; border: none; border-radius: 20px; padding: 6px 16px; cursor: pointer; transition: all 0.2s; }
+.use-idea-btn:hover { background: #bb7d72; color: #fff; }
+.field-with-paste { display: flex; gap: 8px; align-items: flex-start; }
+.field-with-paste .field-input { flex: 1; }
+.api-key-corner { position: fixed; top: 16px; right: 20px; z-index: 200; text-align: right; }
+.api-key-corner-link { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #c4b0a8; text-decoration: underline; cursor: pointer; }
+.api-key-corner-link:hover { color: #dea193; }
+.api-key-panel { margin-top: 8px; background: #fff; border: 1px solid #ead9d5; border-radius: 10px; padding: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
+
+.vibe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vibe-chip { text-align: left; cursor: pointer; background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 10px 12px; transition: all 0.2s; }
+.vibe-chip:hover { border-color: #dea193; }
+.vibe-chip.selected { border-color: #dea193; background: #fbeee8; box-shadow: 0 0 0 1px #dea193 inset; }
+.vibe-chip-name { font-family: 'Playfair Display', serif; font-size: 13.5px; font-weight: 700; color: #2a1f1c; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.vibe-chip-check { font-size: 12px; color: #dea193; opacity: 0; }
+.vibe-chip.selected .vibe-chip-check { opacity: 1; }
+.vibe-chip-desc { font-size: 11px; color: #8a7a72; line-height: 1.4; }
+.vibe-selected-note { font-size: 11.5px; color: #5a4a45; margin-top: 12px; padding: 8px 12px; background: #fdf7f2; border-radius: 8px; border: 1px solid #ead9d5; display: none; }
+
+.season-warning { display: none; font-size: 12px; color: #8a5a2a; background: #fdf1de; border: 1px solid #ecd2a3; border-radius: 8px; padding: 9px 13px; margin-top: 10px; line-height: 1.5; }
+.season-warning.show { display: block; }
+
+.ref-img-block { margin-bottom: 14px; padding: 10px 12px; background: #fdf7f2; border: 1px solid #ead9d5; border-radius: 10px; }
+.ref-img-block .field-label { margin-bottom: 8px; }
+.ref-img-block .img-batch-row { padding: 6px 0; }
+.ref-img-hint { font-size: 10.5px; color: #c4b0a8; margin-top: 6px; line-height: 1.4; }
+
+.ref-lib-block { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ead9d5; }
+.ref-lib-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5a4a45; margin-bottom: 6px; }
+.ref-lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 8px; }
+.ref-lib-thumb-wrap { position: relative; cursor: pointer; border-radius: 10px; overflow: visible; }
+.ref-lib-thumb { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #ead9d5; display: block; transition: all 0.15s; }
+.ref-lib-thumb-wrap:hover .ref-lib-thumb { border-color: #dea193; }
+.ref-lib-thumb-wrap.selected .ref-lib-thumb { border-color: #dea193; box-shadow: 0 0 0 2px #dea193; }
+.ref-lib-check { position: absolute; top: -6px; left: -6px; background: #dea193; color: #2a1f1c; font-size: 12px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; line-height: 1; }
+.ref-lib-thumb-wrap.selected .ref-lib-check { display: flex; }
+.ref-lib-remove { position: absolute; top: -6px; right: -6px; background: #2a1f1c; color: #fff; font-size: 12px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; cursor: pointer; border: none; padding: 0; }
+.ref-lib-thumb-wrap.unsupported .ref-lib-thumb { opacity: 0.4; filter: grayscale(60%); }
+.ref-lib-badge { position: absolute; bottom: 4px; left: 4px; right: 4px; background: rgba(42,31,28,0.85); color: #f5eddf; font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; padding: 2px 0; border-radius: 4px; }
+.ref-lib-empty { font-size: 11px; color: #c4b0a8; font-style: italic; }
+
+.ref-add-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ref-add-thumbs { display: flex; gap: 6px; align-items: center; }
+.ref-add-thumbs img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; border: 1.5px solid #ead9d5; }
+
+.ref-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,31,28,0.55); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.ref-modal-overlay.show { display: flex; }
+.ref-modal { background: #fff; border-radius: 14px; padding: 26px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; }
+.ref-modal-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #2a1f1c; margin-bottom: 6px; padding-right: 20px; }
+.ref-modal-sub { font-size: 11.5px; color: #8a7a72; margin-bottom: 18px; line-height: 1.5; }
+.ref-modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 22px; color: #c4b0a8; cursor: pointer; line-height: 1; }
+.ref-modal-row { margin-bottom: 14px; }
+.ref-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<div class="api-key-corner">
+  <a href="#" id="apiKeyToggleLink" class="api-key-corner-link">API Key</a>
+  <div class="api-key-panel" id="apiKeyPanel" style="display:none;">
+    <p class="card-sub" style="margin-bottom:10px;">Only needed outside Claude.ai, like on GitHub Pages. Stored only in this browser.</p>
+    <div id="apiKeyInputWrap" style="display:none;">
+      <div style="display:flex; gap:8px;">
+        <input class="field-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." style="flex:1;">
+        <button class="btn btn-save" id="saveApiKeyBtn" type="button">Save</button>
+      </div>
+    </div>
+    <div id="apiKeySavedMsg" style="display:none; font-size:12.5px; color:#5a4a45;">
+      API key saved. <button class="btn btn-clear" id="changeApiKeyBtn" type="button" style="margin-left:6px;">Change key</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-header">
+  <div class="page-badge">DFY Prompt Club</div>
+  <h1 class="page-title">Weekly Prompt Builder</h1>
+  <p class="page-sub">Fill in across the week — your progress saves automatically.</p>
+</div>
+
+
+<div class="card">
+  <p class="card-title">Collection DNA</p>
+  <p class="card-sub">This is the creative north star. Every AI prompt across all 4 products pulls from this.</p>
+
+  <div style="margin-bottom:12px;">
+    <label class="field-label" for="f-themehint">Got a direction in mind? (optional)</label>
+    <div class="field-with-paste">
+      <input class="field-input" id="f-themehint" placeholder="e.g. cats and plants, or based on upcoming holidays">
+      <button class="paste-btn" type="button" onclick="pasteInto('f-themehint', this)">📋</button>
+    </div>
+  </div>
+
+  <div class="btn-row" style="margin-bottom:14px;">
+    <button class="btn btn-generate" type="button" onclick="suggestThemes()" id="genbtn-themes">✨ Suggest Themes</button>
+    <button class="btn-clear-light" type="button" onclick="toggleThemeIdeasWrap()" id="toggleIdeasBtn">📂 Saved Ideas (0)</button>
+    <button class="btn-clear-light" type="button" onclick="toggleSavedForLaterWrap()" id="toggleSavedForLaterBtn">💤 Saved for Later (0)</button>
+    <button class="btn-clear-light" type="button" onclick="toggleUsedIdeasWrap()" id="toggleUsedBtn">✓ Used (0)</button>
+    <span class="gen-status" id="genstatus-themes" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+  <div id="theme-ideas-wrap" style="display:none; margin-bottom:16px;"></div>
+  <div id="saved-for-later-wrap" style="display:none; margin-bottom:16px;"></div>
+  <div id="used-ideas-wrap" style="display:none; margin-bottom:16px;"></div>
+
+  <div class="dna-row">
+    <div>
+      <label class="field-label" for="f-theme">Working Theme</label>
+      <div class="field-with-paste">
+        <input class="field-input" id="f-theme" placeholder="e.g. Cottagecore" onblur="checkSeasonalTiming()">
+        <button class="paste-btn" type="button" onclick="pasteInto('f-theme', this)">📋</button>
+      </div>
+      <div class="season-warning" id="season-warning"></div>
+    </div>
+    <div>
+      <label class="field-label" for="f-mood">Mood</label>
+      <div class="field-with-paste">
+        <input class="field-input" id="f-mood" placeholder="e.g. dreamy, nostalgic, soft">
+        <button class="paste-btn" type="button" onclick="pasteInto('f-mood', this)">📋</button>
+      </div>
+    </div>
+  </div>
+  <div class="dna-row">
+    <div>
+      <label class="field-label" for="f-palette">Palette</label>
+      <div class="field-with-paste">
+        <input class="field-input" id="f-palette" placeholder="e.g. sage, cream, terracotta">
+        <button class="paste-btn" type="button" onclick="pasteInto('f-palette', this)">📋</button>
+      </div>
+    </div>
+    <div>
+      <label class="field-label" for="f-coreelements">Core Elements</label>
+      <div class="field-with-paste">
+        <input class="field-input" id="f-coreelements" placeholder="e.g. wildflowers, farmhouse windows">
+        <button class="paste-btn" type="button" onclick="pasteInto('f-coreelements', this)">📋</button>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:12px;">
+    <label class="field-label" for="f-avoid">Avoid</label>
+    <div class="field-with-paste">
+      <input class="field-input" id="f-avoid" placeholder="e.g. anything Halloween-specific, cartoonish faces">
+      <button class="paste-btn" type="button" onclick="pasteInto('f-avoid', this)">📋</button>
+    </div>
+  </div>
+  <div>
+    <label class="field-label" for="f-notes">Additional Creative Direction (optional)</label>
+    <div class="field-with-paste">
+      <textarea class="field-input" id="f-notes" placeholder="Anything else the AI should know..." style="min-height:60px;"></textarea>
+      <button class="paste-btn" type="button" onclick="pasteInto('f-notes', this)">📋</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <p class="card-title">PNG Aesthetic Vibe</p>
+  <p class="card-sub">This only locks the rendering style for PNG shirt designs, so they read as bold and sellable instead of generic AI art. Leave this blank and 3 vibes are auto-picked at random every time, one matched to each prompt, no clicking required. Click 1-3 to lock in specific ones instead. Wall Art, Frame TV, and Tumbler each get their own varied artistic treatment per prompt automatically, all still unified by your Working Theme above.</p>
+  <div class="vibe-grid" id="vibe-grid"></div>
+  <div class="vibe-selected-note" id="vibe-selected-note"></div>
+  <input type="hidden" id="f-vibe" value="">
+</div>
+
+<div class="card">
+  <p class="card-title">Reference Images</p>
+  <p class="card-sub">The AI leans heavily on these as its primary style guide, only the subject matter still comes from your Working Theme above, not the reference. For PNG and Tumbler, your baked-in library is always in play automatically, a different reference matched to each of the 3 prompts, no clicking required. Click specific ones to lock them in instead of random, or use Ad Hoc for a one-off image outside the library. Wall Art and Frame TV are Ad Hoc only. Must be a direct image link (.jpg/.png), not an Etsy listing or Pinterest page.</p>
+
+  <div class="ref-img-block">
+    <label class="field-label">Wall Art</label>
+    <div class="ref-add-row" id="wa-ref-row"></div>
+    <input type="hidden" id="wa-ref-1" value="">
+    <input type="hidden" id="wa-ref-2" value="">
+  </div>
+
+  <div class="ref-img-block">
+    <label class="field-label">Frame TV Art</label>
+    <div class="ref-add-row" id="ft-ref-row"></div>
+    <input type="hidden" id="ft-ref-1" value="">
+    <input type="hidden" id="ft-ref-2" value="">
+  </div>
+
+  <div class="ref-img-block">
+    <label class="field-label">PNG</label>
+    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
+    <div class="ref-lib-grid" id="png-lib-grid"></div>
+    <div id="png-lib-clear-row" style="margin-top:8px;"></div>
+    <div class="ref-add-row" id="png-ref-row" style="margin-top:10px;"></div>
+    <input type="hidden" id="png-ref-1" value="">
+    <input type="hidden" id="png-ref-2" value="">
+    <input type="hidden" id="png-ref-3" value="">
+    <input type="hidden" id="png-locked" value="">
+  </div>
+
+  <div class="ref-img-block" style="margin-bottom:0;">
+    <label class="field-label">Tumbler Wrap</label>
+    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
+    <div class="ref-lib-grid" id="tumbler-lib-grid"></div>
+    <div id="tumbler-lib-clear-row" style="margin-top:8px;"></div>
+    <div class="ref-add-row" id="tb-ref-row" style="margin-top:10px;"></div>
+    <input type="hidden" id="tb-ref-1" value="">
+    <input type="hidden" id="tb-ref-2" value="">
+    <input type="hidden" id="tb-ref-3" value="">
+    <input type="hidden" id="tb-locked" value="">
+  </div>
+</div>
+
+<div class="ref-modal-overlay" id="ref-modal-overlay" onclick="if(event.target===this) closeRefModal()">
+  <div class="ref-modal">
+    <button class="ref-modal-close" type="button" onclick="closeRefModal()">&times;</button>
+    <p class="ref-modal-title" id="ref-modal-title">Add Reference Images</p>
+    <p class="ref-modal-sub">Ad hoc, one-off references for this week only. Style, palette, and composition inspiration, not the subject matter. Must be a direct image link (.jpg/.png), not an Etsy listing or Pinterest page.</p>
+    <div class="ref-modal-row">
+      <label class="field-label" id="ref-modal-label-1">Reference 1</label>
+      <div class="img-batch-row" style="border-bottom:none; padding:4px 0;">
+        <input class="field-input img-url-input" id="ref-modal-input-1" placeholder="Direct image link (.jpg/.png)">
+        <button class="paste-btn" type="button" onclick="pasteIntoModal(1, this)">📋 Paste</button>
+      </div>
+    </div>
+    <div class="ref-modal-row">
+      <label class="field-label" id="ref-modal-label-2">Reference 2 (optional)</label>
+      <div class="img-batch-row" style="border-bottom:none; padding:4px 0;">
+        <input class="field-input img-url-input" id="ref-modal-input-2" placeholder="Second reference (optional)">
+        <button class="paste-btn" type="button" onclick="pasteIntoModal(2, this)">📋 Paste</button>
+      </div>
+    </div>
+    <div class="ref-modal-row" id="ref-modal-row-3">
+      <label class="field-label" id="ref-modal-label-3">Reference 3 (optional)</label>
+      <div class="img-batch-row" style="border-bottom:none; padding:4px 0;">
+        <input class="field-input img-url-input" id="ref-modal-input-3" placeholder="Third reference (optional)">
+        <button class="paste-btn" type="button" onclick="pasteIntoModal(3, this)">📋 Paste</button>
+      </div>
+    </div>
+    <div class="ref-modal-actions">
+      <button class="btn btn-generate" type="button" onclick="saveRefModal()" style="flex:1;">Save</button>
+      <button class="btn-clear-light" type="button" onclick="closeRefModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <p class="card-title">Full Collection Generation</p>
+  <p class="card-sub">Generates Wall Art first, then coordinates Frame TV, PNG, and Tumbler to match the mood of each numbered Wall Art prompt (Prompt 1s share a treatment, Prompt 2s share a treatment, Prompt 3s share a treatment).</p>
+  <div class="btn-row" style="margin-bottom:0;">
+    <button class="btn btn-generate" type="button" onclick="generateFullCollection()" id="genbtn-full">✨ Generate Full Collection (12, Coordinated)</button>
+    <span class="gen-status" id="genstatus-full" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+</div>
+
+
+<div class="product-card" id="section-wall-art">
+  <div class="product-header">
+    <div class="product-title-wrap">
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#dea193" stroke-width="2"/><path d="M3 9h18" stroke="#dea193" stroke-width="1.5"/></svg>
+      </div>
+      <span class="product-name">Wall Art</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-dots" id="dots-wall-art">
+        <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+      </div>
+      <span class="progress-label" id="label-wall-art">0/3</span>
+    </div>
+  </div>
+  <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
+    <button class="btn btn-generate" type="button" onclick="generateForProduct('wall-art')" id="genbtn-wall-art">✨ Generate 3 with AI</button>
+    <span class="gen-status" id="genstatus-wall-art" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-1" placeholder="Paste or type your wall art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-2" placeholder="Paste or type your wall art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-3" placeholder="Paste or type your wall art prompt here..."></textarea></div>
+</div>
+
+<div class="product-card" id="section-frame-tv">
+  <div class="product-header">
+    <div class="product-title-wrap">
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="14" rx="2" fill="none" stroke="#dea193" stroke-width="2"/><path d="M8 21h8M12 18v3" stroke="#dea193" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="product-name">Frame TV Art</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-dots" id="dots-frame-tv">
+        <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+      </div>
+      <span class="progress-label" id="label-frame-tv">0/3</span>
+    </div>
+  </div>
+  <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
+    <button class="btn btn-generate" type="button" onclick="generateForProduct('frame-tv')" id="genbtn-frame-tv">✨ Generate 3 with AI</button>
+    <span class="gen-status" id="genstatus-frame-tv" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-1" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-2" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-3" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
+</div>
+
+<div class="product-card" id="section-png">
+  <div class="product-header">
+    <div class="product-title-wrap">
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" fill="none" stroke="#dea193" stroke-width="2"/><path d="M13 2v7h7" stroke="#dea193" stroke-width="1.5"/></svg>
+      </div>
+      <span class="product-name">PNG</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-dots" id="dots-png">
+        <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+      </div>
+      <span class="progress-label" id="label-png">0/3</span>
+    </div>
+  </div>
+  <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
+    <button class="btn btn-generate" type="button" onclick="generateForProduct('png')" id="genbtn-png">✨ Generate 3 with AI</button>
+    <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-1" placeholder="Paste or type your PNG prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-2" placeholder="Paste or type your PNG prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-3" placeholder="Paste or type your PNG prompt here..."></textarea></div>
+</div>
+
+<div class="product-card" id="section-tumbler">
+  <div class="product-header">
+    <div class="product-title-wrap">
+      <div class="product-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 3h10l-1 16a2 2 0 01-2 2H10a2 2 0 01-2-2L7 3z" fill="none" stroke="#dea193" stroke-width="2"/><path d="M6 7h12" stroke="#dea193" stroke-width="1.5"/></svg>
+      </div>
+      <span class="product-name">Tumbler Wraps</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-dots" id="dots-tumbler">
+        <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+      </div>
+      <span class="progress-label" id="label-tumbler">0/3</span>
+    </div>
+  </div>
+  <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
+    <button class="btn btn-generate" type="button" onclick="generateForProduct('tumbler')" id="genbtn-tumbler">✨ Generate 3 with AI</button>
+    <span class="gen-status" id="genstatus-tumbler" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-1" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-2" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
+  <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-3" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
+</div>
+
+<div class="card" id="example-images-card">
+  <p class="card-title">Example Images (Batch)</p>
+  <p class="card-sub">Once all 12 prompts are generated: run them through your generator, mock them up in Canva, upload to Systeme.io, then paste all 12 URLs here in one pass.</p>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Wall Art — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="wa-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Wall Art — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="wa-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Wall Art — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="wa-3-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Frame TV Art — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="ft-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Frame TV Art — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="ft-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Frame TV Art — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('ft-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="ft-3-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">PNG — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="png-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">PNG — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="png-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">PNG — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('png-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="png-3-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Tumbler Wrap — Prompt 1</span>
+      <input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="tb-1-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Tumbler Wrap — Prompt 2</span>
+      <input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="tb-2-img-thumb" style="display:none;">
+    </div>
+    <div class="img-batch-row">
+      <span class="img-batch-label">Tumbler Wrap — Prompt 3</span>
+      <input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button>
+      <img class="img-thumb" id="tb-3-img-thumb" style="display:none;">
+    </div>
+</div>
+
+<div class="card" id="collection-name-card">
+  <p class="card-title">Name Your Collection</p>
+  <p class="card-sub">Do this last, once all 12 prompts are actually done, so the name reflects what you made.</p>
+  <div>
+    <label class="field-label" for="f-collectionname">Final Collection Name</label>
+    <div class="field-with-paste">
+      <input class="field-input" id="f-collectionname" placeholder="e.g. Moonlit Orchard Collection">
+      <button class="paste-btn" type="button" onclick="pasteInto('f-collectionname', this)">📋</button>
+      <button class="paste-btn" type="button" onclick="copyCollectionName(this)" title="Copy the name">Copy</button>
+    </div>
+  </div>
+  <div class="btn-row" style="margin-top:10px; margin-bottom:0;">
+    <button class="btn btn-generate" type="button" onclick="suggestCollectionName()" id="genbtn-collectionname">✨ Suggest Collection Name</button>
+    <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#c4b0a8;"></span>
+  </div>
+  <div id="collectionname-options" style="display:none; margin-top:12px;"></div>
+</div>
+
+
+
+<div style="height:80px;"></div>
+
+<div id="output-section">
+  <div style="max-width:700px;margin:0 auto 1rem;">
+    <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;">Preview</p>
+    <p style="font-size:12px;color:#c4b0a8;">Check it over, then copy the whole thing and paste it into your Systeme.io lesson.</p>
+  </div>
+
+  <div class="output-block">
+    <div class="output-block-header">
+      <span class="output-block-title">Collection Title</span>
+      <button class="copy-block-btn" onclick="copyCollectionName(this)">Copy</button>
+    </div>
+    <div class="output-preview" id="collection-title-preview" style="padding:12px 16px; font-family:'Playfair Display',serif; font-weight:700; font-size:16px; color:#2a1f1c;"></div>
+  </div>
+
+  <div class="output-block">
+    <div class="output-block-header">
+      <span class="output-block-title">Full Page HTML</span>
+      <button class="copy-block-btn" onclick="copyBlock('full-page-html')">Copy</button>
+    </div>
+    <div class="output-preview" id="full-page-preview"></div>
+    <textarea id="full-page-html" style="display:none;"></textarea>
+  </div>
+
+  <div class="output-actions">
+    <button class="action-btn secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Form ↑</button>
+  </div>
+</div>
+
+<div class="save-bar">
+  <div class="save-status">
+    <div class="save-dot" id="save-dot"></div>
+    <span id="save-status-text">Loading...</span>
+  </div>
+  <div class="save-actions">
+    <button class="btn btn-clear" onclick="clearAll()">Clear Week</button>
+    <button class="btn btn-save" onclick="saveData()">Save Progress</button>
+    <button class="btn btn-generate" onclick="previewOutput()">👁 Preview</button>
+    <button class="btn btn-generate" onclick="generateHTML()">📋 Generate & Copy HTML</button>
+  </div>
+</div>
+
+<button type="button" class="back-to-top-btn" id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var STORAGE_KEY = 'dfy_prompt_club_builder';
+
+var isDirty = false;
+
+var fields = [
+  'f-theme','f-themehint','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname','f-vibe',
+  'wa-ref-1','wa-ref-2','ft-ref-1','ft-ref-2','png-ref-1','png-ref-2','png-ref-3','png-locked','tb-ref-1','tb-ref-2','tb-ref-3','tb-locked',
+  'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
+  'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
+  'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
+  'tb-1','tb-1-img','tb-2','tb-2-img','tb-3','tb-3-img'
+];
+
+var productSections = [
+  { key: 'wall-art', ids: ['wa-1','wa-2','wa-3'], label: 'Wall Art' },
+  { key: 'frame-tv', ids: ['ft-1','ft-2','ft-3'], label: 'Frame TV Art' },
+  { key: 'png',      ids: ['png-1','png-2','png-3'], label: 'PNG' },
+  { key: 'tumbler',  ids: ['tb-1','tb-2','tb-3'], label: 'Tumbler Wrap' }
+];
+function getSection(key) { return productSections.filter(function(s){ return s.key === key; })[0]; }
+
+/* ============ AI PROMPT GENERATION ============ */
+var PROMPT_RULES_COMMON = "Never use em dashes, use commas, colons, periods, or parentheses instead. Do not number or label the prompts, no bullets, no introductions or commentary. Vary sentence structure and opening line across the prompts, never open with the theme word or phrase itself.";
+
+/* ============ AESTHETIC VIBES ============ */
+var VIBE_DEFINITIONS = {
+  'bold-varsity': {
+    name: 'Bold Varsity / Collegiate',
+    desc: 'Chunky block letters, pattern-fill lettering, distressed sporty energy',
+    block: "Every prompt should render in a bold varsity or collegiate style: thick chunky block letters or rounded retro type as a dominant visual element, letters or shapes filled with a bold pattern such as leopard print, checkerboard, plaid, or gingham where it fits the theme, confident thick outlines, and a distressed or slightly worn vintage texture across the whole piece. The overall feel should be sporty, confident, and instantly readable, like a varsity letter jacket patch or a collegiate crest.",
+    pngBlock: "On a shirt this should read at a glance, so keep the lettering or central shape large and dominant, with only one or two small supporting accents, never a busy multi-element scene."
+  },
+  'whimsical-brush': {
+    name: 'Whimsical Brushstroke',
+    desc: 'Loose painterly brush strokes, bright candy-pop color, playful energy',
+    block: "Every prompt should render with loose, expressive, visibly hand-painted brushstrokes, a bright and richly saturated candy-pop color palette (think hot pink, teal, sunny yellow, coral), and playful, energetic subjects with movement and personality. Avoid tight clean vector shapes, this should feel like it was painted quickly and joyfully with a loaded brush, textured and a little imperfect on purpose.",
+    pngBlock: "Keep the painted subject and any lettering large, bold, and instantly legible on a shirt, brushy texture is great but the overall silhouette must stay simple enough to read from a distance."
+  },
+  'vintage-engraved': {
+    name: 'Vintage Engraved Linework',
+    desc: 'Fine ink linework, muted antique palette, apothecary-botanical energy',
+    block: "Every prompt should render as fine, detailed ink linework in the style of antique engravings or naturalist field guide illustrations, using cross-hatching and stippling for shading, with a muted and limited palette (sepia, black, cream, one small accent color at most). Subject matter should lean botanical, apothecary, or naturalist in feeling, precise and antique rather than soft or cartoonish.",
+    pngBlock: "For a shirt graphic, increase the line weight and contrast noticeably compared to the wall art version so it reads boldly at a glance, simplify the composition to fewer, larger, more confident linework elements, and consider adding one or two selective bold color fills within the linework so it does not look flat or delicate on fabric."
+  },
+  'cute-doodle': {
+    name: 'Cute Doodle Character',
+    desc: 'Bold flat-color mascots, big charm, simple friendly shapes',
+    block: "Every prompt should center on a cute illustrated character or mascot (an animal, object, or figure with a face and personality) rendered with bold clean outlines, flat or lightly shaded color fills, simple rounded shapes, and an expressive, friendly, slightly exaggerated pose or expression. This should feel charming and giftable, like a beloved sticker or plush character, never realistic or intricate.",
+    pngBlock: "Keep the character large and centered as the clear hero of the design, with minimal small accents around it, since charm and instant recognizability sell better on a shirt than added detail."
+  },
+  'distressed-vintage-type': {
+    name: 'Distressed Vintage Typography',
+    desc: 'Worn retro text as the hero, minimal supporting graphics',
+    block: "Every prompt should be led by bold typography as the hero element, in a retro script, block, or varsity lettering style, rendered with a worn, distressed, faded vintage texture across the whole piece as if aged or sun bleached. Supporting graphics should be minimal, one or two small icons or accents at most, so the words stay the clear focal point.",
+    pngBlock: "The typography should dominate the composition and remain fully legible even distressed, keep supporting graphic elements small and secondary."
+  },
+  'boho-floral': {
+    name: 'Boho Floral Illustration',
+    desc: 'Romantic detailed florals, warm earthy-to-pastel palette, storybook feel',
+    block: "Every prompt should render as a detailed, romantic floral illustration with a soft storybook painterly quality, using a warm palette that blends earthy tones (terracotta, sage, cream) with gentle pastels, naturalistic detail in petals and leaves, and a gentle, dreamy overall mood.",
+    pngBlock: "For a shirt graphic, push the color saturation up slightly from the wall art version and keep clearer color blocking between elements rather than a fully soft painterly wash, so the design stays boutique and eye catching rather than reading as a faded fine art print."
+  },
+  'pattern-fill-max': {
+    name: 'Pattern-Fill Maximalist',
+    desc: 'Objects or letters filled with mixed decorative patterns, bold and layered',
+    block: "Every prompt should use decorative pattern fills, such as leopard print, checkerboard, polka dot, plaid, or floral, inside the main shapes or letters of the design, with bold clean outlines separating each pattern zone so the composition stays crisp rather than chaotic. Layer two to four different patterns across the design for a curated, maximalist, boutique feel.",
+    pngBlock: "Keep the overall silhouette simple even though the fills are busy, one dominant shape or word with pattern fills reads far better on a shirt than many small patterned pieces scattered around."
+  }
+};
+var VIBE_ORDER = ['bold-varsity','whimsical-brush','vintage-engraved','cute-doodle','distressed-vintage-type','boho-floral','pattern-fill-max'];
+
+function vibeStyleBlock(vibeKeysCsv, forPng) {
+  var keys = (vibeKeysCsv || '').split(',').map(function(s){ return s.trim(); }).filter(function(k){ return VIBE_DEFINITIONS[k]; });
+  if (!keys.length) return '';
+  if (keys.length === 1) {
+    var v = VIBE_DEFINITIONS[keys[0]];
+    var text = "AESTHETIC VIBE FOR THIS COLLECTION, this governs the rendering style of every prompt: " + v.name + ". " + v.block;
+    if (forPng && v.pngBlock) text += " " + v.pngBlock;
+    return text;
+  }
+  var parts = keys.map(function(key) {
+    var vv = VIBE_DEFINITIONS[key];
+    var t = vv.name + ": " + vv.block;
+    if (forPng && vv.pngBlock) t += " " + vv.pngBlock;
+    return t;
+  });
+  return "AESTHETIC VIBES FOR THIS COLLECTION, there are " + keys.length + " selected. Assign a different one of these vibes to each individual prompt so the set has real visual variety, rotate through the list if there are more prompts than vibes, and never blend two vibes together within a single prompt, each prompt commits fully to just one: " + parts.join(" || ");
+}
+
+var VARY_STYLE_PER_PROMPT = "Give each individual prompt its own distinct artistic style or rendering technique (for example one prompt might be loose gouache painting, another fine watercolor, another bold linocut print, another soft colored pencil, chosen to fit that specific scene) so the set feels like a curated, varied collection rather than the same treatment repeated. All prompts must still clearly share the same working theme, mood, and palette from the Collection DNA, the variety is in technique and rendering only, not in departing from the theme.";
+
+function buildWallArtSystem() {
+  return "You are a production assistant writing AI image generation prompts for premium Etsy Printable Wall Art, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. " + VARY_STYLE_PER_PROMPT + " Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no printable, wall art, poster, frame, canvas, print). Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function buildFrameTVSystem() {
+  return "You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs), for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. " + VARY_STYLE_PER_PROMPT + " Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Never mention any TV or electronics brand name. Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function buildPNGSystem(vibeKey) {
+  var vibeBlock = vibeStyleBlock(vibeKey, true);
+  return "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). " + vibeBlock + " Write the requested number of prompts, rotating between two proven formats:\n\nTHE CORE GOAL: every prompt must chase a bold, playful, bestselling Etsy boutique aesthetic that matches the aesthetic vibe above, the kind of design that feels instantly cute, trendy, and giftable on a shirt, never a delicate fine art plate. Confident bold outlines, an intentional and finished-looking composition, and playful energy with personality and charm are non negotiable regardless of which vibe is active. Small decorative filler details like scattered stars, dots, ribbon or bow accents, or a light background pattern such as pinstripes or a simple repeating motif are encouraged when they fit the theme, since they read as intentional and finished rather than sparse. A design that looks like generic AI clipart, a muted single subject floating alone with nothing else going on, or a busy scene overloaded with too many small competing elements is a failure state, it must feel like it belongs in a bestselling Etsy shop.\n\nFORMAT A, ILLUSTRATED CLUSTER: Name 2 to 4 specific objects only that group together as one tight cluster (for example a themed icon plus a small creature plus one decorative accent, or a lettered banner plus supporting objects). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. One of the objects may be a small lettered element, such as a banner, sign, patch, or pennant carrying a short word or phrase that fits the theme, when that adds personality. Thin decorative linework such as curling vines, stems, ribbon ties, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. Say explicitly that the cluster is surrounded by open space and does not feel cramped, even if a light background pattern is used.\n\nFORMAT B, TYPOGRAPHY PLUS ICON: A short punchy word or phrase in bold chunky lettering matching the aesthetic vibe above, paired with one or two small supporting illustrated icons related to the theme, plus optional playful filler details like stars, dots, or ribbon accents. Describe the exact layout (what sits top, center, bottom) and keep the composition feeling finished and boutique, not sparse.\n\nUse Format A more often than Format B, but include at least one Format B prompt when writing 3 or more prompts. Never write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by too many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, and landscapes. Each prompt must end exactly: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function buildTumblerSystem() {
+  return "You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts. Rules: Create full wrap artwork, focused on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage. " + VARY_STYLE_PER_PROMPT + " Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+}
+
+function getEffectivePngVibeKeys(count) {
+  var manual = getSelectedVibes();
+  if (manual.length) {
+    if (count === 1) return [manual[Math.floor(Math.random() * manual.length)]];
+    return manual;
+  }
+  var shuffled = shuffleArr(VIBE_ORDER);
+  return count === 1 ? [shuffled[0]] : shuffled.slice(0, 3);
+}
+
+function getPromptSystem(sectionKey, count) {
+  if (sectionKey === 'wall-art') return buildWallArtSystem();
+  if (sectionKey === 'frame-tv') return buildFrameTVSystem();
+  if (sectionKey === 'png') return buildPNGSystem(getEffectivePngVibeKeys(count).join(','));
+  if (sectionKey === 'tumbler') return buildTumblerSystem();
+  return '';
+}
+
+var COLLECTION_NAME_SYSTEM = "You name premium weekly AI prompt collections for an Etsy seller membership called DFY Prompt Club. You will be given the Collection DNA, including the Working Theme, and the actual finished prompts. Suggest 3 final collection name options. Rules: the Working Theme is the anchor, every option must clearly and recognizably contain or reflect the actual words or subject of the Working Theme, this is not optional. Do not invent a different angle, subject, or concept that departs from the Working Theme, even if the finished prompts suggest other directions, a person skimming the name should immediately recognize it as the same theme they typed in. Light, minimal variation is fine (reordering the theme's own words, adding one fitting adjective, adjusting capitalization or punctuation), but the core subject and wording of the Working Theme must stay intact and recognizable in all 3 options. Each option must end with the word Collection. The 3 options should feel like light variations on presentation, not different concepts. Pick which one is your favorite. Respond ONLY with valid JSON, no preamble, no markdown fences: {\"names\": [\"X Collection\", \"Y Collection\", \"Z Collection\"], \"favorite\": 0}";
+
+var THEME_BRAINSTORM_SYSTEM = "You are a creative director and Etsy marketplace consultant for DFY Prompt Club, a $17/month membership where Etsy sellers get a themed AI image prompt collection every Monday covering Wall Art, Frame TV Art, PNG, and Tumbler Wraps. When asked to brainstorm, immediately provide a curated list of collection ideas based on current Etsy trends, upcoming seasons and holidays, popular aesthetics, buyer behavior, POD opportunities, and digital product demand. Do not ask clarifying questions, just give strong ideas. For each idea provide: a short working theme name (2-4 words), a one-line mood description, a short color palette (3-5 colors or tones), 2-4 core visual elements, and one thing to avoid. Give a mix of safe bestseller-style ideas and a couple of more original, less obvious directions. Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"ideas\": [{\"theme\": \"...\", \"mood\": \"...\", \"palette\": \"...\", \"coreElements\": \"...\", \"avoid\": \"...\"}]}";
+
+var THEME_BANK_KEY = 'dfy_prompt_club_theme_bank';
+var lastThemeIdeas = loadThemeBank();
+
+function loadThemeBank() {
+  try {
+    var raw = localStorage.getItem(THEME_BANK_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function saveThemeBank() {
+  try { localStorage.setItem(THEME_BANK_KEY, JSON.stringify(lastThemeIdeas)); } catch (e) {}
+}
+
+async function suggestThemes() {
+  var btn = document.getElementById('genbtn-themes');
+  var status = document.getElementById('genstatus-themes');
+  btn.disabled = true; status.textContent = ' brainstorming...';
+  try {
+    var seasonHint = 'Today is roughly ' + new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + ', keep upcoming seasons/holidays in mind.';
+    var existingThemes = lastThemeIdeas.map(function(idea){ return idea.theme; }).filter(Boolean);
+    var existingNote = existingThemes.length ? ('Avoid repeating or closely resembling these already-suggested themes: ' + existingThemes.join(', ') + '.') : '';
+    var userHint = val('f-themehint').trim();
+    var hintNote = userHint ? ('The user gave this direction to build around: "' + userHint + '". Make roughly half the ideas directly based on this direction (it can include holidays, seasons, or specific subjects like animals or objects), and let the rest be your own fresh picks unrelated to it, so there is still variety to choose from.') : '';
+    var userMsg = 'Give me 8 fresh collection ideas for the next weekly drop. ' + seasonHint + ' ' + existingNote + ' ' + hintNote;
+    var result = await callClaude(THEME_BRAINSTORM_SYSTEM, userMsg, 2000);
+    var newIdeas = Array.isArray(result && result.ideas) ? result.ideas : [];
+    var seen = {};
+    lastThemeIdeas.forEach(function(idea){ seen[(idea.theme || '').toLowerCase().trim()] = true; });
+    newIdeas.forEach(function(idea) {
+      var key = (idea.theme || '').toLowerCase().trim();
+      if (key && !seen[key]) { lastThemeIdeas.push(idea); seen[key] = true; }
+    });
+    saveThemeBank();
+    renderThemeIdeas(true);
+    status.textContent = newIdeas.length ? ' added ' + newIdeas.length + ' new ideas ✓' : ' no ideas returned, try again';
+  } catch (e) {
+    status.textContent = ' error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+    setTimeout(function(){ status.textContent = ''; }, 4000);
+  }
+}
+
+function renderThemeIdeas(forceOpen) {
+  var wrap = document.getElementById('theme-ideas-wrap');
+  var toggleBtn = document.getElementById('toggleIdeasBtn');
+  var wasOpen = wrap.style.display === 'block';
+  var activeIdeas = lastThemeIdeas.filter(function(idea){ return !idea.status; });
+  if (toggleBtn) toggleBtn.textContent = '📂 Saved Ideas (' + activeIdeas.length + ')';
+  if (!activeIdeas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; renderSavedForLaterIdeas(); renderUsedIdeas(); return; }
+  wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">Saved ideas — pick one now or come back later for another.</p>' +
+    activeIdeas.map(function(idea) {
+    var i = lastThemeIdeas.indexOf(idea);
+    return '<div class="idea-card">' +
+      '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
+      '<span style="display:flex;gap:6px;">' +
+      '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button>' +
+      '<button class="use-idea-btn" type="button" style="background:transparent;color:#5a4a45;border:1px solid #ead9d5;" onclick="saveIdeaForLater(' + i + ')" title="Move to Saved for Later">💤</button>' +
+      '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
+      '</span></div>' +
+      '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
+      '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
+      (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
+      '</div>';
+  }).join('');
+  wrap.style.display = (forceOpen || wasOpen) ? 'block' : 'none';
+  renderSavedForLaterIdeas();
+  renderUsedIdeas();
+}
+
+function renderIdeaBucket(status, wrapId, btnId, btnLabel, emptyText) {
+  var wrap = document.getElementById(wrapId);
+  var btn = document.getElementById(btnId);
+  var wasOpen = wrap.style.display === 'block';
+  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === status; });
+  if (btn) btn.textContent = btnLabel + ' (' + ideas.length + ')';
+  if (!ideas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">' + emptyText + '</p>' +
+    ideas.map(function(idea) {
+      var i = lastThemeIdeas.indexOf(idea);
+      return '<div class="idea-card">' +
+        '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
+        '<span style="display:flex;gap:6px;">' +
+        '<button class="use-idea-btn" type="button" onclick="restoreIdeaToActive(' + i + ')">↩ Move to Active</button>' +
+        '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
+        '</span></div>' +
+        '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
+        '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
+        (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
+        '</div>';
+    }).join('');
+  wrap.style.display = wasOpen ? 'block' : 'none';
+}
+
+function renderSavedForLaterIdeas() {
+  renderIdeaBucket('saved', 'saved-for-later-wrap', 'toggleSavedForLaterBtn', '💤 Saved for Later', 'Tucked away so they are not in your face — move one back to Active whenever you want it.');
+}
+
+function renderUsedIdeas() {
+  renderIdeaBucket('used', 'used-ideas-wrap', 'toggleUsedBtn', '✓ Used', 'Already used this week — move one back to Active if you change your mind.');
+}
+
+function toggleThemeIdeasWrap() {
+  var wrap = document.getElementById('theme-ideas-wrap');
+  var activeIdeas = lastThemeIdeas.filter(function(idea){ return !idea.status; });
+  if (!activeIdeas.length) { showToast('No active ideas — click Suggest Themes first.'); return; }
+  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
+}
+
+function toggleSavedForLaterWrap() {
+  var wrap = document.getElementById('saved-for-later-wrap');
+  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === 'saved'; });
+  if (!ideas.length) { showToast('Nothing saved for later yet.'); return; }
+  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
+}
+
+function toggleUsedIdeasWrap() {
+  var wrap = document.getElementById('used-ideas-wrap');
+  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === 'used'; });
+  if (!ideas.length) { showToast('No used ideas yet.'); return; }
+  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
+}
+
+function useThemeIdea(i) {
+  var idea = lastThemeIdeas[i];
+  if (!idea) return;
+  var hasExisting = val('f-theme').trim() || val('f-mood').trim() || val('f-palette').trim();
+  if (hasExisting && !confirm('This will overwrite your current Collection DNA fields. Continue?')) return;
+  document.getElementById('f-theme').value = idea.theme || '';
+  document.getElementById('f-mood').value = idea.mood || '';
+  document.getElementById('f-palette').value = idea.palette || '';
+  document.getElementById('f-coreelements').value = idea.coreElements || '';
+  document.getElementById('f-avoid').value = idea.avoid || '';
+  isDirty = true; updateAllProgress(); saveData();
+  idea.status = 'used';
+  saveThemeBank();
+  renderThemeIdeas();
+  showToast('Collection DNA filled in from "' + (idea.theme || 'idea') + '" — moved to Used, tap ✓ Used to put it back.');
+  document.getElementById('f-theme').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function saveIdeaForLater(i) {
+  var idea = lastThemeIdeas[i];
+  if (!idea) return;
+  idea.status = 'saved';
+  saveThemeBank();
+  renderThemeIdeas();
+  showToast('Moved to Saved for Later.');
+}
+
+function restoreIdeaToActive(i) {
+  var idea = lastThemeIdeas[i];
+  if (!idea) return;
+  delete idea.status;
+  saveThemeBank();
+  renderThemeIdeas();
+  showToast('Back in your active ideas.');
+}
+
+function removeThemeIdea(i) {
+  lastThemeIdeas.splice(i, 1);
+  saveThemeBank();
+  renderThemeIdeas();
+}
+
+
+function getApiKey() { return localStorage.getItem('nicheclub_api_key'); }
+
+async function callClaude(systemPrompt, userContent, maxTokens) {
+  var savedKey = getApiKey();
+  if (!savedKey) {
+    document.getElementById('apiKeyPanel').style.display = 'block';
+    checkApiKeyUI();
+    throw new Error('Add your Anthropic API key (top right) first.');
+  }
+  var headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': savedKey,
+    'anthropic-version': '2023-06-01',
+    'anthropic-dangerous-direct-browser-access': 'true'
+  };
+  var response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST', headers: headers,
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens || 2000, system: systemPrompt, messages: [{ role: 'user', content: userContent }] })
+  });
+  if (!response.ok) {
+    var detail = '';
+    try { var errBody = await response.json(); detail = (errBody && errBody.error && errBody.error.message) || ''; } catch (e) {}
+    throw new Error('API request failed (' + response.status + ')' + (detail ? ': ' + detail : ''));
+  }
+  var data = await response.json();
+  var textBlock = (data.content || []).filter(function(b){ return b.type === 'text'; })[0];
+  if (!textBlock) throw new Error('Response had no text content to parse.');
+  var raw = textBlock.text.trim();
+  var cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+  try { return JSON.parse(cleaned); }
+  catch (e) {
+    var fb = cleaned.indexOf('{'), lb = cleaned.lastIndexOf('}');
+    if (fb !== -1 && lb !== -1 && lb > fb) {
+      try { return JSON.parse(cleaned.slice(fb, lb + 1)); } catch (e2) {}
+    }
+    throw new Error('Could not parse the AI response, try again.');
+  }
+}
+
+async function callClaudeWithRetry(systemPrompt, userContent, maxTokens, expectedCount) {
+  var result = await callClaude(systemPrompt, userContent, maxTokens);
+  var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
+  if (prompts.length < expectedCount) {
+    try {
+      var retryResult = await callClaude(systemPrompt, userContent, maxTokens);
+      var retryPrompts = Array.isArray(retryResult && retryResult.prompts) ? retryResult.prompts : [];
+      if (retryPrompts.length > prompts.length) return retryResult;
+    } catch (e) { /* keep the original partial result if the retry itself fails */ }
+  }
+  return result;
+}
+
+function collectionDNAText() {
+  var theme = val('f-theme').trim() || 'not set yet';
+  var mood = val('f-mood').trim();
+  var palette = val('f-palette').trim();
+  var coreElements = val('f-coreelements').trim();
+  var avoid = val('f-avoid').trim();
+  var notes = val('f-notes').trim();
+  var lines = ['Working Theme: ' + theme];
+  if (mood) lines.push('Mood: ' + mood);
+  if (palette) lines.push('Palette: ' + palette);
+  if (coreElements) lines.push('Core Elements: ' + coreElements);
+  if (avoid) lines.push('Avoid: ' + avoid);
+  if (notes) lines.push('Additional creative direction: ' + notes);
+  return lines.join('\n');
+}
+
+function buildPromptUserMessage(count, avoidTexts, anchorPrompts) {
+  var msg = 'Collection DNA:\n' + collectionDNAText() + '\n\nWrite exactly ' + count + ' prompt' + (count === 1 ? '' : 's') + '.';
+  if (anchorPrompts && anchorPrompts.length) {
+    msg += '\n\nFor reference, these are the Wall Art prompts already locked in for this collection, numbered 1 to ' + anchorPrompts.length + '. Use the prompt with the matching number only as a loose cohesion anchor, so this product feels like part of the same collection in overall theme, mood, and palette. Your prompt must still describe its own distinct scene, composition, subject arrangement, and specific artistic technique, adapted to this product type\'s own rules. Do not reword, closely paraphrase, or reuse the same composition or visual treatment as the Wall Art prompt, that is a failure state, this needs to be genuinely different writing describing a genuinely different piece of art that merely belongs to the same collection:\n';
+    anchorPrompts.forEach(function(p, i) { if (p) msg += '\nWall Art Prompt ' + (i + 1) + ' (for cohesion reference only): ' + p; });
+  }
+  if (avoidTexts && avoidTexts.length) {
+    msg += '\n\nAvoid repeating or closely resembling these prompts already in use this week:\n' + avoidTexts.join('\n---\n');
+  }
+  return msg;
+}
+
+function getWallArtAnchors() {
+  return ['wa-1','wa-2','wa-3'].map(function(id){ return val(id).trim(); });
+}
+
+/* ============ REFERENCE IMAGES ============ */
+var REF_PREFIX_BY_SECTION = { 'wall-art': 'wa', 'frame-tv': 'ft', 'png': 'png', 'tumbler': 'tb' };
+var REF_SLOT_COUNT = { 'wall-art': 2, 'frame-tv': 2, 'png': 3, 'tumbler': 3 };
+
+function updateRefThumb(id) {
+  var input = document.getElementById(id);
+  var thumb = document.getElementById(id + '-thumb');
+  if (!input || !thumb) return;
+  var v = input.value.trim();
+  if (v) {
+    thumb.src = v;
+    thumb.style.display = 'inline-block';
+    thumb.onerror = function(){ thumb.style.display = 'none'; };
+  } else {
+    thumb.style.display = 'none';
+  }
+}
+
+function getRefSlotValues(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var n = REF_SLOT_COUNT[sectionKey] || 2;
+  var arr = [];
+  for (var i = 1; i <= n; i++) { arr.push(val(prefix + '-ref-' + i).trim()); }
+  return arr;
+}
+
+function getRefImageUrls(sectionKey) {
+  return getRefSlotValues(sectionKey).filter(Boolean);
+}
+
+/* ============ REFERENCE LIBRARY (persists across weeks, not cleared by Clear Week) ============ */
+var REF_LIBRARY_KEY = 'dfy_ref_library_v1';
+var DEFAULT_REF_LIBRARY = {
+  png: [
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56399875.58638540_1.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564e6784.63294180_2.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56501927.28915893_3.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da565605f4.88786669_4.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56399871.34884866_5.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564f37a5.84390186_6.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da56173e30.34317257_7.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564b7178.35830405_8.jpg',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a70da564b1655.93686348_9.jpg'
+  ],
+  tumbler: [
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe6027836e0.60649083_il_1588xN.8080662608_henz.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602790440.97342341_il_1588xN.8321912987_3g5p.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602a5a7c2.78382518_il_1588xN.8215507321_ny26.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602a84408.89804867_il_1588xN.8304684042_88y6.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602a93031.92230761_il_1588xN.7679022539_ii77.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602ab9ce7.52619453_il_1588xN.7157180289_l4le.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602abe146.66709476_il_1588xN.7933461440_ey2n.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602ac1bc5.83105066_il_1588xN.8059910737_1mi0.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602ac8298.21632402_il_1588xN.8211350473_hjc7.webp',
+    'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602ad92d9.91966147_il_1588xN.8215291508_b266.webp'
+  ]
+};
+var refLibrary = { png: [], tumbler: [] };
+
+var REF_LIBRARY_VERSION_KEY = 'dfy_ref_library_version';
+var PNG_LIBRARY_VERSION = 2;
+
+function loadRefLibrary() {
+  try {
+    var raw = localStorage.getItem(REF_LIBRARY_KEY);
+    if (raw) refLibrary = JSON.parse(raw);
+    if (!refLibrary.png) refLibrary.png = [];
+    if (!refLibrary.tumbler) refLibrary.tumbler = [];
+  } catch (e) { refLibrary = { png: [], tumbler: [] }; }
+  var storedVersion = parseInt(localStorage.getItem(REF_LIBRARY_VERSION_KEY) || '1', 10);
+  if (storedVersion < PNG_LIBRARY_VERSION) {
+    refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
+    try { localStorage.setItem(REF_LIBRARY_VERSION_KEY, String(PNG_LIBRARY_VERSION)); } catch (e) {}
+  }
+  if (!refLibrary.png.length) refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
+  if (!refLibrary.tumbler.length) refLibrary.tumbler = DEFAULT_REF_LIBRARY.tumbler.slice();
+  saveRefLibrary();
+}
+
+function saveRefLibrary() {
+  try { localStorage.setItem(REF_LIBRARY_KEY, JSON.stringify(refLibrary)); } catch (e) {}
+}
+
+function shuffleArr(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function isApiImageFormat(url) {
+  return /\.(jpe?g|png|gif|webp)(\?.*)?$/i.test((url || '').split('#')[0].split('?')[0]);
+}
+
+function getLockedPool(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var raw = val(prefix + '-locked').trim();
+  return raw ? raw.split(',').filter(Boolean) : [];
+}
+
+function saveLockedPool(sectionKey, arr) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var el = document.getElementById(prefix + '-locked');
+  if (el) el.value = arr.join(',');
+}
+
+function getEffectiveRefsForPrompts(sectionKey) {
+  var slots = getRefSlotValues(sectionKey);
+  var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
+  var manualSet = slots.filter(Boolean);
+  var lockedPool = getLockedPool(sectionKey).filter(isApiImageFormat);
+  var fullPool = (refLibrary[listKey] || []).filter(isApiImageFormat);
+  var primary = shuffleArr(lockedPool.filter(function(u){ return manualSet.indexOf(u) === -1; }));
+  var secondary = shuffleArr(fullPool.filter(function(u){ return manualSet.indexOf(u) === -1 && primary.indexOf(u) === -1; }));
+  var available = primary.concat(secondary);
+  var result = [];
+  for (var i = 0; i < slots.length; i++) {
+    if (slots[i]) result.push(slots[i]);
+    else if (available.length) result.push(available.shift());
+    else result.push(null);
+  }
+  return result;
+}
+
+function addLibraryImage(sectionKey) {
+  var inputId = (sectionKey === 'png' ? 'png' : 'tb') + '-lib-add-input';
+  var input = document.getElementById(inputId);
+  var url = input ? input.value.trim() : '';
+  if (!url) { showToast('Paste a URL first.'); return; }
+  var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
+  if (refLibrary[listKey].indexOf(url) !== -1) { showToast('Already in your library.'); input.value = ''; return; }
+  refLibrary[listKey].push(url);
+  saveRefLibrary();
+  input.value = '';
+  renderRefLibrary(sectionKey);
+  showToast('Added to library.');
+}
+
+function removeLibraryImage(sectionKey, url, evt) {
+  if (evt) evt.stopPropagation();
+  var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
+  refLibrary[listKey] = refLibrary[listKey].filter(function(u){ return u !== url; });
+  saveRefLibrary();
+  renderRefLibrary(sectionKey);
+}
+
+function selectLibraryImage(sectionKey, url) {
+  var pool = getLockedPool(sectionKey);
+  var idx = pool.indexOf(url);
+  if (idx !== -1) pool.splice(idx, 1);
+  else pool.push(url);
+  saveLockedPool(sectionKey, pool);
+  isDirty = true; saveData();
+  renderRefLibrary(sectionKey);
+}
+
+/* ============ AD HOC REFERENCE MODAL ============ */
+var REF_MODAL_LABELS = { 'wall-art': 'Wall Art', 'frame-tv': 'Frame TV Art', 'png': 'PNG', 'tumbler': 'Tumbler Wrap' };
+var refModalSection = null;
+
+function openRefModal(sectionKey) {
+  refModalSection = sectionKey;
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var n = REF_SLOT_COUNT[sectionKey] || 2;
+  var perPrompt = (sectionKey === 'png' || sectionKey === 'tumbler');
+  document.getElementById('ref-modal-title').textContent = 'Ad Hoc Reference — ' + REF_MODAL_LABELS[sectionKey];
+  document.getElementById('ref-modal-label-1').textContent = perPrompt ? 'Reference for Prompt 1' : 'Reference 1';
+  document.getElementById('ref-modal-label-2').textContent = perPrompt ? 'Reference for Prompt 2 (optional)' : 'Reference 2 (optional)';
+  document.getElementById('ref-modal-label-3').textContent = 'Reference for Prompt 3 (optional)';
+  document.getElementById('ref-modal-input-1').value = val(prefix + '-ref-1');
+  document.getElementById('ref-modal-input-2').value = val(prefix + '-ref-2');
+  document.getElementById('ref-modal-input-3').value = n >= 3 ? val(prefix + '-ref-3') : '';
+  document.getElementById('ref-modal-row-3').style.display = n >= 3 ? 'block' : 'none';
+  document.getElementById('ref-modal-overlay').classList.add('show');
+}
+
+function closeRefModal() {
+  document.getElementById('ref-modal-overlay').classList.remove('show');
+  refModalSection = null;
+}
+
+async function pasteIntoModal(n, btn) {
+  var original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) { btn.textContent = 'Ctrl+V'; setTimeout(function(){ btn.textContent = original; }, 1500); return; }
+    var text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) { btn.textContent = 'empty'; setTimeout(function(){ btn.textContent = original; }, 1500); return; }
+    document.getElementById('ref-modal-input-' + n).value = text.trim();
+    btn.textContent = '✓';
+  } catch (e) { btn.textContent = 'error'; }
+  setTimeout(function(){ btn.textContent = original; }, 1200);
+}
+
+function saveRefModal() {
+  if (!refModalSection) return;
+  var prefix = REF_PREFIX_BY_SECTION[refModalSection];
+  var n = REF_SLOT_COUNT[refModalSection] || 2;
+  for (var i = 1; i <= n; i++) {
+    document.getElementById(prefix + '-ref-' + i).value = document.getElementById('ref-modal-input-' + i).value.trim();
+  }
+  isDirty = true; saveData();
+  renderRefButtonRow(refModalSection);
+  if (refModalSection === 'png' || refModalSection === 'tumbler') renderRefLibrary(refModalSection);
+  var savedSection = refModalSection;
+  closeRefModal();
+  showToast(REF_MODAL_LABELS[savedSection] + ' reference saved.');
+}
+
+function clearRefSlots(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var n = REF_SLOT_COUNT[sectionKey] || 2;
+  for (var i = 1; i <= n; i++) { document.getElementById(prefix + '-ref-' + i).value = ''; }
+  isDirty = true; saveData();
+  renderRefButtonRow(sectionKey);
+  if (sectionKey === 'png' || sectionKey === 'tumbler') renderRefLibrary(sectionKey);
+}
+
+function renderRefButtonRow(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var row = document.getElementById(prefix + '-ref-row');
+  if (!row) return;
+  var slots = getRefSlotValues(sectionKey);
+  var hasAny = slots.some(Boolean);
+  var thumbs = slots.filter(Boolean).map(function(u) {
+    return '<img src="' + esc(u) + '" onerror="this.style.display=\'none\';">';
+  }).join('');
+  row.innerHTML =
+    '<button class="use-idea-btn" type="button" style="text-transform:none;" onclick="openRefModal(\'' + sectionKey + '\')">' + (hasAny ? '✎ Edit Ad Hoc Reference' : '+ Add Ad Hoc Reference') + '</button>' +
+    (hasAny ? '<button class="paste-btn" type="button" style="text-transform:none;" onclick="clearRefSlots(\'' + sectionKey + '\')">Clear</button>' : '') +
+    (thumbs ? '<div class="ref-add-thumbs">' + thumbs + '</div>' : '');
+}
+
+function renderAllRefButtonRows() {
+  ['wall-art','frame-tv','png','tumbler'].forEach(renderRefButtonRow);
+}
+
+function clearLockedPool(sectionKey) {
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var el = document.getElementById(prefix + '-locked');
+  if (el) el.value = '';
+  isDirty = true; saveData();
+  renderRefLibrary(sectionKey);
+  showToast('Preferences cleared, back to fully random.');
+}
+
+function renderRefLibrary(sectionKey) {
+  var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
+  var gridId = (sectionKey === 'png' ? 'png' : 'tumbler') + '-lib-grid';
+  var clearRowId = (sectionKey === 'png' ? 'png' : 'tumbler') + '-lib-clear-row';
+  var grid = document.getElementById(gridId);
+  var clearRow = document.getElementById(clearRowId);
+  if (!grid) return;
+  var urls = refLibrary[listKey] || [];
+  if (!urls.length) {
+    grid.innerHTML = '<span class="ref-lib-empty">No saved references yet.</span>';
+    if (clearRow) clearRow.innerHTML = '';
+    return;
+  }
+  var locked = getLockedPool(sectionKey);
+  if (clearRow) {
+    clearRow.innerHTML = locked.length
+      ? '<button class="paste-btn" type="button" style="text-transform:none;" onclick="clearLockedPool(\'' + sectionKey + '\')">Clear my ' + locked.length + ' preferred pick' + (locked.length === 1 ? '' : 's') + '</button>'
+      : '';
+  }
+  grid.innerHTML = urls.map(function(url) {
+    var isSelected = locked.indexOf(url) !== -1;
+    var supported = isApiImageFormat(url);
+    var titleText = supported ? 'Click to prefer this one, click again to release it back to the general pool' : 'This file format is not supported for AI generation, viewable here but will be skipped automatically';
+    return '<div class="ref-lib-thumb-wrap' + (isSelected ? ' selected' : '') + (supported ? '' : ' unsupported') + '" onclick="selectLibraryImage(\'' + sectionKey + '\', \'' + esc(url).replace(/'/g, "\\'") + '\')" title="' + titleText + '">' +
+      '<img class="ref-lib-thumb" src="' + esc(url) + '" onerror="this.parentElement.style.display=\'none\';">' +
+      '<span class="ref-lib-check">&#10003;</span>' +
+      (supported ? '' : '<span class="ref-lib-badge">no AI</span>') +
+      '<button class="ref-lib-remove" type="button" onclick="removeLibraryImage(\'' + sectionKey + '\', \'' + esc(url).replace(/'/g, "\\'") + '\', event)" title="Delete from library">&times;</button>' +
+    '</div>';
+  }).join('');
+}
+
+var REF_NOTE_GENERIC = ' The reference image(s) attached above are your primary style guide for this prompt, lean heavily on them. Closely emulate their rendering technique, line quality, color palette, composition, layout, and overall aesthetic, this should read as clearly influenced by the reference, not a generic interpretation of the theme. The only thing that must differ from the reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference image(s).';
+
+function buildUserContent(sectionKey, count, avoidTexts, anchorPrompts, singleSlotIndex) {
+  var textMsg = buildPromptUserMessage(count, avoidTexts, anchorPrompts);
+  var isAutoSection = (sectionKey === 'png' || sectionKey === 'tumbler');
+
+  if (!isAutoSection) {
+    var refs = getRefImageUrls(sectionKey);
+    if (!refs.length) return textMsg;
+    var content = refs.map(function(url){ return { type: 'image', source: { type: 'url', url: url } }; });
+    content.push({ type: 'text', text: textMsg + REF_NOTE_GENERIC });
+    return content;
+  }
+
+  var all3 = getEffectiveRefsForPrompts(sectionKey);
+
+  if (count === 1 && typeof singleSlotIndex === 'number') {
+    var single = all3[singleSlotIndex];
+    if (!single) return textMsg;
+    return [ { type: 'image', source: { type: 'url', url: single } }, { type: 'text', text: textMsg + REF_NOTE_GENERIC } ];
+  }
+
+  var imgBlocks = [];
+  var mapLines = [];
+  var counter = 0;
+  all3.forEach(function(url, i) {
+    if (url) {
+      imgBlocks.push({ type: 'image', source: { type: 'url', url: url } });
+      counter++;
+      mapLines.push('Reference image ' + counter + ' is matched to prompt ' + (i + 1) + ', lean heavily on it specifically for that prompt.');
+    }
+  });
+  if (!imgBlocks.length) return textMsg;
+  var contentBlocks = imgBlocks.slice();
+  contentBlocks.push({
+    type: 'text',
+    text: textMsg + '\n\nEach reference image attached above is the primary style guide for one specific prompt, matched in order. ' + mapLines.join(' ') + ' Closely emulate that reference\'s rendering technique, line quality, color palette, composition, and overall aesthetic for its matched prompt only, this should read as clearly influenced by that reference, not a generic interpretation of the theme. The only thing that must differ from each reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference images.'
+  });
+  return contentBlocks;
+}
+
+function requireTheme() {
+  if (!val('f-theme').trim()) {
+    showToast('Add the Working Theme first.');
+    document.getElementById('f-theme').focus();
+    return false;
+  }
+  return true;
+}
+
+function requirePngStyleInput() {
+  return true;
+}
+
+async function generateForProduct(sectionKey) {
+  var section = getSection(sectionKey);
+  if (!requireTheme()) return;
+  if (sectionKey === 'png' && !requirePngStyleInput()) return;
+  var existing = section.ids.filter(function(id){ return val(id).trim().length > 0; });
+  if (existing.length && !confirm('This will overwrite all 3 ' + section.label + ' prompts. Continue?')) return;
+
+  var btn = document.getElementById('genbtn-' + sectionKey);
+  var status = document.getElementById('genstatus-' + sectionKey);
+  btn.disabled = true; status.textContent = ' writing prompts...';
+  try {
+    var sys = getPromptSystem(sectionKey, 3);
+    var anchors = sectionKey === 'wall-art' ? null : getWallArtAnchors().some(Boolean) ? getWallArtAnchors() : null;
+    var userMsg = buildUserContent(sectionKey, 3, null, anchors);
+    var result = await callClaudeWithRetry(sys, userMsg, 3000, 3);
+    var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
+    section.ids.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (el && prompts[i]) { el.value = prompts[i]; clearCopied(id); }
+    });
+    status.textContent = prompts.length < 3 ? (' got ' + prompts.length + ' of 3, try again for the rest') : ' done ✓';
+    isDirty = true; updateAllProgress(); saveData();
+  } catch (e) {
+    status.textContent = ' error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+    setTimeout(function(){ status.textContent = ''; }, 4000);
+  }
+}
+
+async function regenerateSingle(sectionKey, slotId) {
+  var section = getSection(sectionKey);
+  if (!requireTheme()) return;
+  if (sectionKey === 'png' && !requirePngStyleInput()) return;
+  var btn = document.querySelector('button[onclick="regenerateSingle(\'' + sectionKey + '\',\'' + slotId + '\')"]');
+  var originalText = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    var sys = getPromptSystem(sectionKey, 1);
+    var siblingTexts = section.ids.filter(function(id){ return id !== slotId; }).map(function(id){ return val(id).trim(); }).filter(Boolean);
+    var anchors = null;
+    var slotIndex = section.ids.indexOf(slotId);
+    if (sectionKey !== 'wall-art') {
+      var waAnchors = getWallArtAnchors();
+      if (waAnchors[slotIndex]) { anchors = [null, null, null]; anchors[slotIndex] = waAnchors[slotIndex]; }
+    }
+    var userMsg = buildUserContent(sectionKey, 1, siblingTexts, anchors, slotIndex);
+    var result = await callClaudeWithRetry(sys, userMsg, 1200, 1);
+    var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
+    if (prompts[0]) {
+      document.getElementById(slotId).value = prompts[0]; clearCopied(slotId);
+      isDirty = true; updateAllProgress(); saveData();
+    } else {
+      showToast('No prompt came back, try again.');
+    }
+  } catch (e) {
+    showToast('Error: ' + e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = originalText; }
+  }
+}
+
+async function generateFullCollection() {
+  if (!requireTheme()) return;
+  if (!requirePngStyleInput()) return;
+  var anyFilled = fields.filter(function(id){ return id.match(/^(wa|ft|png|tb)-\d$/); }).some(function(id){ return val(id).trim().length > 0; });
+  if (anyFilled && !confirm('This will overwrite all 12 prompts across all 4 product types. Continue?')) return;
+
+  var vibeKey = getEffectivePngVibeKeys(3).join(',');
+  var btn = document.getElementById('genbtn-full');
+  var status = document.getElementById('genstatus-full');
+  btn.disabled = true;
+  try {
+    status.textContent = ' writing Wall Art (1 of 4)...';
+    var waResult = await callClaudeWithRetry(buildWallArtSystem(), buildUserContent('wall-art', 3, null, null), 3000, 3);
+    var waPrompts = (waResult.prompts || []).slice(0, 3);
+    ['wa-1','wa-2','wa-3'].forEach(function(id, i) { if (waPrompts[i]) { document.getElementById(id).value = waPrompts[i]; clearCopied(id); } });
+    isDirty = true; updateAllProgress(); saveData();
+    var shortfalls = [];
+    if (waPrompts.length < 3) shortfalls.push('Wall Art (' + waPrompts.length + '/3)');
+
+    var sequence = [
+      { key: 'frame-tv', sys: buildFrameTVSystem(), ids: ['ft-1','ft-2','ft-3'], label: 'Frame TV Art (2 of 4)' },
+      { key: 'png', sys: buildPNGSystem(vibeKey), ids: ['png-1','png-2','png-3'], label: 'PNG (3 of 4)' },
+      { key: 'tumbler', sys: buildTumblerSystem(), ids: ['tb-1','tb-2','tb-3'], label: 'Tumbler Wrap (4 of 4)' }
+    ];
+    for (var i = 0; i < sequence.length; i++) {
+      var step = sequence[i];
+      status.textContent = ' writing ' + step.label + '...';
+      var result = await callClaudeWithRetry(step.sys, buildUserContent(step.key, 3, null, waPrompts), 3000, 3);
+      var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
+      step.ids.forEach(function(id, j) { if (prompts[j]) { document.getElementById(id).value = prompts[j]; clearCopied(id); } });
+      isDirty = true; updateAllProgress(); saveData();
+      if (prompts.length < 3) shortfalls.push(step.label.replace(/\s*\(\d of 4\)/,'') + ' (' + prompts.length + '/3)');
+    }
+    status.textContent = shortfalls.length
+      ? ' done, but short on: ' + shortfalls.join(', ') + ' — use that section\'s Generate button to fill the rest'
+      : ' all 12 done ✓';
+  } catch (e) {
+    status.textContent = ' error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+    setTimeout(function(){ status.textContent = ''; }, 9000);
+  }
+}
+
+async function suggestCollectionName() {
+  var allPrompts = [];
+  productSections.forEach(function(s) {
+    s.ids.forEach(function(id) { var t = val(id).trim(); if (t) allPrompts.push(s.label + ': ' + t); });
+  });
+  if (!allPrompts.length) { showToast('Add or generate some prompts first.'); return; }
+  var btn = document.getElementById('genbtn-collectionname');
+  var status = document.getElementById('genstatus-collectionname');
+  btn.disabled = true; status.textContent = ' naming...';
+  try {
+    var userMsg = 'Collection DNA:\n' + collectionDNAText() + '\n\nFinished prompts:\n' + allPrompts.join('\n\n');
+    var result = await callClaude(COLLECTION_NAME_SYSTEM, userMsg, 400);
+    var names = Array.isArray(result && result.names) ? result.names : [];
+    if (names.length) {
+      var favIdx = (typeof result.favorite === 'number' && result.favorite >= 0 && result.favorite < names.length) ? result.favorite : 0;
+      renderCollectionNameOptions(names, favIdx);
+      document.getElementById('f-collectionname').value = names[favIdx];
+      isDirty = true; saveData();
+      status.textContent = ' pick your favorite below ✓';
+    } else {
+      status.textContent = ' no names returned, try again';
+    }
+  } catch (e) {
+    status.textContent = ' error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+    setTimeout(function(){ status.textContent = ''; }, 4000);
+  }
+}
+
+function renderCollectionNameOptions(names, favIdx) {
+  var wrap = document.getElementById('collectionname-options');
+  wrap.innerHTML = names.map(function(name, i) {
+    var isFav = i === favIdx;
+    return '<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">' +
+      '<button type="button" class="use-idea-btn" style="display:block; flex:1; text-align:left; text-transform:none; letter-spacing:normal; font-weight:600; padding:8px 14px; ' +
+      (isFav ? 'background:#dea193;' : 'background:#fdf7f2;color:#5a4a45;border:1px solid #ead9d5;') + '" ' +
+      'onclick="selectCollectionName(' + i + ')" data-name="' + esc(name) + '">' +
+      (isFav ? '⭐ ' : '') + esc(name) +
+      '</button>' +
+      '<button type="button" class="paste-btn" style="text-transform:none;" onclick="copyCollectionNameOption(' + i + ', this)" title="Copy this name">📋</button>' +
+    '</div>';
+  }).join('');
+  wrap._names = names;
+  wrap.style.display = 'block';
+}
+
+function copyCollectionNameOption(i, btn) {
+  var wrap = document.getElementById('collectionname-options');
+  var names = wrap._names || [];
+  if (!names[i]) return;
+  navigator.clipboard.writeText(names[i]).then(function() {
+    var original = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+    showToast('Name copied!');
+  });
+}
+
+function selectCollectionName(i) {
+  var wrap = document.getElementById('collectionname-options');
+  var names = wrap._names || [];
+  if (!names[i]) return;
+  document.getElementById('f-collectionname').value = names[i];
+  isDirty = true; saveData();
+  showToast('Collection name set.');
+}
+
+function copyCollectionName(btn) {
+  var text = val('f-collectionname').trim();
+  if (!text) { showToast('Nothing to copy yet.'); return; }
+  var original = btn.textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  }).catch(function(){
+    var temp = document.createElement('textarea');
+    temp.value = text; document.body.appendChild(temp); temp.select();
+    document.execCommand('copy'); document.body.removeChild(temp);
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+  });
+}
+
+/* ============ PASTE FROM CLIPBOARD ============ */
+function copyPromptSlot(slotId, btn) {
+  var text = val(slotId).trim();
+  if (!text) { showToast('Nothing to copy yet.'); return; }
+  var original = btn.textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+    markCopied(slotId);
+  }).catch(function(){
+    var temp = document.createElement('textarea');
+    temp.value = text; document.body.appendChild(temp); temp.select();
+    document.execCommand('copy'); document.body.removeChild(temp);
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.textContent = original; }, 1200);
+    markCopied(slotId);
+  });
+}
+
+var COPIED_PROMPTS_KEY = 'dfy_prompt_club_copied_prompts';
+var copiedPromptIds = {};
+function loadCopiedPrompts() {
+  try {
+    var raw = localStorage.getItem(COPIED_PROMPTS_KEY);
+    copiedPromptIds = raw ? JSON.parse(raw) : {};
+  } catch (e) { copiedPromptIds = {}; }
+}
+function saveCopiedPrompts() {
+  try { localStorage.setItem(COPIED_PROMPTS_KEY, JSON.stringify(copiedPromptIds)); } catch (e) {}
+}
+function applyCopiedClass(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var slot = el.closest('.prompt-slot');
+  if (copiedPromptIds[id]) {
+    el.classList.add('copied-prompt');
+    if (slot) slot.classList.add('is-copied');
+  } else {
+    el.classList.remove('copied-prompt');
+    if (slot) slot.classList.remove('is-copied');
+  }
+}
+function applyAllCopiedClasses() {
+  ['wa-1','wa-2','wa-3','ft-1','ft-2','ft-3','png-1','png-2','png-3','tb-1','tb-2','tb-3'].forEach(applyCopiedClass);
+}
+function markCopied(id) {
+  copiedPromptIds[id] = true;
+  saveCopiedPrompts();
+  applyCopiedClass(id);
+}
+function clearCopied(id) {
+  if (!copiedPromptIds[id]) return;
+  delete copiedPromptIds[id];
+  saveCopiedPrompts();
+  applyCopiedClass(id);
+}
+
+async function pasteInto(id, btn) {
+  var original = btn.textContent;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) { btn.textContent = 'Ctrl+V'; setTimeout(function(){ btn.textContent = original; }, 1500); return; }
+    var text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) { btn.textContent = 'empty'; setTimeout(function(){ btn.textContent = original; }, 1500); return; }
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.value = text.trim();
+    isDirty = true; updateAllProgress(); saveData();
+    if (id.indexOf('-img') !== -1) refreshImgThumb(id);
+    else if (/^png-ref-\d$/.test(id)) { updateRefThumb(id); renderRefLibrary('png'); }
+    else if (/^tb-ref-\d$/.test(id)) { updateRefThumb(id); renderRefLibrary('tumbler'); }
+    else if (/-ref-\d$/.test(id)) updateRefThumb(id);
+    btn.textContent = '✓';
+  } catch (e) {
+    btn.textContent = 'error';
+  }
+  setTimeout(function(){ btn.textContent = original; }, 1200);
+}
+
+function refreshImgThumb(imgFieldId) {
+  var thumb = document.getElementById(imgFieldId + '-thumb');
+  if (!thumb) return;
+  var url = val(imgFieldId).trim();
+  if (!url) { thumb.style.display = 'none'; return; }
+  thumb.onload = function(){ thumb.style.display = 'block'; };
+  thumb.onerror = function(){ thumb.style.display = 'none'; };
+  thumb.src = url;
+}
+function attachImgThumbListeners() {
+  fields.filter(function(id){ return id.indexOf('-img') !== -1; }).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function(){ refreshImgThumb(id); });
+  });
+}
+function refreshAllImgThumbs() {
+  fields.filter(function(id){ return id.indexOf('-img') !== -1; }).forEach(refreshImgThumb);
+}
+
+function checkApiKeyUI() {
+  var key = getApiKey();
+  var wrap = document.getElementById('apiKeyInputWrap');
+  var saved = document.getElementById('apiKeySavedMsg');
+  var link = document.getElementById('apiKeyToggleLink');
+  if (key) {
+    wrap.style.display = 'none'; saved.style.display = 'block';
+    link.textContent = 'API Key ✓';
+  } else {
+    wrap.style.display = 'block'; saved.style.display = 'none';
+    link.textContent = 'API Key';
+  }
+}
+document.getElementById('apiKeyToggleLink').addEventListener('click', function(e){
+  e.preventDefault();
+  var panel = document.getElementById('apiKeyPanel');
+  panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+  checkApiKeyUI();
+});
+document.getElementById('saveApiKeyBtn').addEventListener('click', function(){
+  var v = document.getElementById('apiKeyInput').value.trim();
+  if (!v) return;
+  localStorage.setItem('nicheclub_api_key', v);
+  document.getElementById('apiKeyInput').value = '';
+  checkApiKeyUI();
+  showToast('API key saved!');
+});
+document.getElementById('changeApiKeyBtn').addEventListener('click', function(){
+  localStorage.removeItem('nicheclub_api_key');
+  checkApiKeyUI();
+});
+checkApiKeyUI();
+
+function val(id) { return (document.getElementById(id)||{}).value || ''; }
+
+/* ============ VIBE GRID ============ */
+function renderVibeGrid() {
+  var grid = document.getElementById('vibe-grid');
+  if (!grid) return;
+  grid.innerHTML = VIBE_ORDER.map(function(key) {
+    var v = VIBE_DEFINITIONS[key];
+    return '<div class="vibe-chip" id="vibe-chip-' + key + '" onclick="toggleVibe(\'' + key + '\')">' +
+      '<div class="vibe-chip-name">' + esc(v.name) + '<span class="vibe-chip-check">&#10003;</span></div>' +
+      '<div class="vibe-chip-desc">' + esc(v.desc) + '</div>' +
+    '</div>';
+  }).join('');
+  highlightSelectedVibe();
+}
+
+function getSelectedVibes() {
+  return val('f-vibe').trim() ? val('f-vibe').trim().split(',').filter(Boolean) : [];
+}
+
+function toggleVibe(key) {
+  var current = getSelectedVibes();
+  var idx = current.indexOf(key);
+  if (idx !== -1) {
+    current.splice(idx, 1);
+  } else {
+    if (current.length >= 3) { showToast('Pick up to 3 vibes for PNG.'); return; }
+    current.push(key);
+  }
+  document.getElementById('f-vibe').value = current.join(',');
+  isDirty = true;
+  highlightSelectedVibe();
+  saveData();
+}
+
+function highlightSelectedVibe() {
+  var current = getSelectedVibes();
+  VIBE_ORDER.forEach(function(key) {
+    var chip = document.getElementById('vibe-chip-' + key);
+    if (chip) chip.classList.toggle('selected', current.indexOf(key) !== -1);
+  });
+  var note = document.getElementById('vibe-selected-note');
+  if (note) {
+    if (current.length) {
+      var names = current.map(function(k){ return VIBE_DEFINITIONS[k] ? VIBE_DEFINITIONS[k].name : k; });
+      note.style.display = 'block';
+      note.textContent = current.length === 1
+        ? 'Selected: ' + names[0] + ' — this governs PNG only. Wall Art, Frame TV, and Tumbler stay varied per prompt within your theme.'
+        : 'Selected: ' + names.join(', ') + ' — these rotate across your 3 PNG prompts (a different one per prompt). Wall Art, Frame TV, and Tumbler stay varied per prompt within your theme.';
+    } else {
+      note.style.display = 'none';
+    }
+  }
+}
+
+/* ============ SEASONAL TIMING CHECK ============ */
+var SEASONAL_KEYWORDS = [
+  { words: ['valentine'], month: 2, day: 14, label: "Valentine's Day" },
+  { words: ['st patrick', "st. patrick", 'shamrock'], month: 3, day: 17, label: "St Patrick's Day" },
+  { words: ['easter'], month: 4, day: 5, label: 'Easter' },
+  { words: ["mother's day", 'mothers day', 'mom life'], month: 5, day: 11, label: "Mother's Day" },
+  { words: ['graduation', 'grad season'], month: 5, day: 15, label: 'Graduation' },
+  { words: ["father's day", 'fathers day', 'dad life'], month: 6, day: 15, label: "Father's Day" },
+  { words: ['fourth of july', '4th of july', 'independence day'], month: 7, day: 4, label: '4th of July' },
+  { words: ['back to school'], month: 8, day: 1, label: 'Back to School' },
+  { words: ['labor day'], month: 9, day: 1, label: 'Labor Day' },
+  { words: ['fall', 'autumn'], month: 9, day: 22, label: 'Fall' },
+  { words: ['halloween', 'spooky season', 'spooky', 'pumpkin'], month: 10, day: 31, label: 'Halloween' },
+  { words: ['thanksgiving'], month: 11, day: 27, label: 'Thanksgiving' },
+  { words: ['christmas', 'santa', 'holiday season'], month: 12, day: 25, label: 'Christmas' },
+  { words: ['winter'], month: 12, day: 21, label: 'Winter' },
+  { words: ['new year'], month: 1, day: 1, label: 'New Year' },
+  { words: ['spring'], month: 3, day: 20, label: 'Spring' },
+  { words: ['summer'], month: 6, day: 21, label: 'Summer' }
+];
+
+function nextOccurrenceDaysAway(month, day) {
+  var today = new Date();
+  var year = today.getFullYear();
+  var target = new Date(year, month - 1, day);
+  today.setHours(0,0,0,0);
+  if (target < today) target = new Date(year + 1, month - 1, day);
+  return Math.round((target - today) / 86400000);
+}
+
+function checkSeasonalTiming() {
+  var banner = document.getElementById('season-warning');
+  if (!banner) return;
+  var text = (val('f-theme') + ' ' + val('f-themehint')).toLowerCase();
+  var closest = null;
+  SEASONAL_KEYWORDS.forEach(function(entry) {
+    var matched = entry.words.some(function(w){ return text.indexOf(w) !== -1; });
+    if (!matched) return;
+    var days = nextOccurrenceDaysAway(entry.month, entry.day);
+    if (!closest || days < closest.days) closest = { label: entry.label, days: days };
+  });
+  if (closest && closest.days < 60) {
+    banner.className = 'season-warning show';
+    banner.textContent = closest.label + ' is only ' + closest.days + ' day' + (closest.days === 1 ? '' : 's') + ' out. Aim for 60 to 90 days of lead time so it lists before buyers are already shopping for it.';
+  } else if (closest && closest.days <= 90) {
+    banner.className = 'season-warning show';
+    banner.textContent = closest.label + ' is ' + closest.days + ' days out, that is within your 60 to 90 day window. Good timing.';
+  } else {
+    banner.className = 'season-warning';
+    banner.textContent = '';
+  }
+}
+
+
+function loadData() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) { setStatus('unsaved','Nothing saved yet'); return; }
+    var data = JSON.parse(raw);
+    fields.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+    setStatus('saved','Progress loaded');
+    updateAllProgress();
+  } catch(e) { setStatus('unsaved','Could not load saved data'); }
+  highlightSelectedVibe();
+  checkSeasonalTiming();
+  renderAllRefButtonRows();
+  renderRefLibrary('png');
+  renderRefLibrary('tumbler');
+}
+
+function saveData() {
+  var data = {};
+  fields.forEach(function(id) { data[id] = val(id); });
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    isDirty = false;
+    setStatus('saved','Saved just now');
+    showToast('Progress saved!');
+  } catch(e) { showToast('Could not save — check browser storage'); }
+}
+
+function clearAll() {
+  if (!confirm('Clear all data for this week? This cannot be undone.')) return;
+  var preserveIds = ['png-locked', 'tb-locked'];
+  fields.forEach(function(id) { if (preserveIds.indexOf(id) !== -1) return; var el = document.getElementById(id); if (el) el.value = ''; });
+  localStorage.removeItem(STORAGE_KEY);
+  saveData();
+  copiedPromptIds = {};
+  saveCopiedPrompts();
+  applyAllCopiedClasses();
+  document.getElementById('output-section').style.display = 'none';
+  isDirty = false;
+  setStatus('unsaved','Cleared');
+  updateAllProgress();
+  refreshAllImgThumbs();
+  highlightSelectedVibe();
+  checkSeasonalTiming();
+  renderAllRefButtonRows();
+  renderRefLibrary('png');
+  renderRefLibrary('tumbler');
+  showToast('Week cleared.');
+}
+
+function setStatus(state, text) {
+  var dot = document.getElementById('save-dot');
+  var label = document.getElementById('save-status-text');
+  dot.className = 'save-dot ' + (state === 'saved' ? 'saved' : 'unsaved');
+  label.textContent = text;
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(function(){ t.style.display = 'none'; }, 2500);
+}
+
+function updateProgress(sectionKey, ids) {
+  var filled = ids.filter(function(id){ return val(id).trim().length > 0; }).length;
+  var dots = document.getElementById('dots-' + sectionKey);
+  var label = document.getElementById('label-' + sectionKey);
+  if (!dots || !label) return;
+  var dotEls = dots.querySelectorAll('.progress-dot');
+  dotEls.forEach(function(d, i) {
+    d.className = 'progress-dot' + (i < filled ? (filled === 3 ? ' complete' : ' filled') : '');
+  });
+  label.textContent = filled + '/3';
+  label.style.color = filled === 3 ? '#7a9e7e' : '#c4b0a8';
+}
+
+function updateAllProgress() {
+  productSections.forEach(function(s) {
+    updateProgress(s.key, s.ids);
+  });
+}
+
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+var PRODUCT_SECTIONS_EXPORT = [
+  { type: 'Wall Art', ids: ['wa-1','wa-2','wa-3'], anchor: 'section-wall-art', idPrefix: 'wa' },
+  { type: 'Frame TV Art', ids: ['ft-1','ft-2','ft-3'], anchor: 'section-frame-tv-art', idPrefix: 'ft' },
+  { type: 'PNG', ids: ['png-1','png-2','png-3'], anchor: 'section-png', idPrefix: 'png' },
+  { type: 'Tumbler Wraps', ids: ['tb-1','tb-2','tb-3'], anchor: 'section-tumbler-wraps', idPrefix: 'tb' }
+];
+
+function productPill(label, anchor, small) {
+  var pad = small ? '9px 18px' : '12px 22px';
+  var fs = small ? '11px' : '13px';
+  var nowrap = small ? 'white-space:nowrap;' : '';
+  return '<a href="#'+anchor+'" style="font-family:Jost,sans-serif;font-size:'+fs+';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:'+pad+';border-radius:30px;text-decoration:none;'+(small?'':'margin:4px;display:inline-block;')+nowrap+'">'+esc(label)+'</a>';
+}
+
+function buildIntroHTML() {
+  var theme = val('f-theme') || 'THEME';
+  var collectionName = val('f-collectionname').trim();
+
+  var productPills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor); }).join('');
+
+  return '<div style="background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;margin-bottom:2rem;">' +
+    '<div style="background:#2a1f1c;padding:2.25rem 2rem 1.75rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0;line-height:1.2;">'+(collectionName ? esc(collectionName) : 'This Week\'s Prompt Drop')+'</h2>' +
+    '</div>' +
+    '<div style="padding:2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong><br>Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>' +
+    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#2a1f1c;padding:11px 0;">Let\'s Create!</span>' +
+    '</div>' +
+    '<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">Jump to a Product Type</p>' +
+    productPills +
+    '</div></div>';
+}
+
+function buildProductSectionHeaderHTML(productType, anchor) {
+  return '<div id="'+anchor+'" style="padding:2rem 0 0.5rem;text-align:center;">' +
+    '<span style="font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+esc(productType)+'</h2>' +
+    '<div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
+}
+
+function buildJumpBarHTML() {
+  var pills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor, true); }).join('');
+  var backToTop = '<a href="#lesson-top" style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:9px 18px;border-radius:30px;text-decoration:none;white-space:nowrap;">&#8593; Back to Top</a>';
+  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.5rem;margin:2rem 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;">' +
+    '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;white-space:nowrap;">Jump to:</span>' +
+    pills + backToTop +
+    '</div></div>';
+}
+
+function buildPromptHTML(promptNumInProduct, promptText, imgUrl, idPrefix) {
+  var uid = idPrefix + promptNumInProduct;
+  var imgHtml = imgUrl ?
+    '<div style="display:flex;flex-direction:column;align-items:center;">' +
+    '<div style="width:2px;height:16px;background:rgba(201,169,110,0.4);"></div>' +
+    '<img src="'+esc(imgUrl)+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #ead9d5;display:block;">' +
+    '</div>'
+    : '';
+  return '<div style="margin-bottom:3rem;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;text-align:center;">Prompt '+promptNumInProduct+'</p>' +
+    '<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;font-style:italic;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="p'+uid+'">'+esc(promptText)+'</p>' +
+    '<div style="text-align:center;">' +
+    '<button onclick="var el=document.getElementById(\'p'+uid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>' +
+    '</div></div>' +
+    imgHtml +
+    '</div>';
+}
+
+var TOOLS_FOOTER_BLURB = "These are my favorite tools for creating bestselling digital designs. I use them every week to generate the prompts inside this club.";
+var TOOLS_FOOTER_LINKS = [
+  { name: 'Kittl', link: 'https://kittl.com?ref=dania' },
+  { name: 'MyDesigns', link: 'https://affiliates.mydesigns.io/32714/161230' },
+  { name: 'Galaxy AI', link: 'https://galaxy.ai/?via=dania' }
+];
+
+function buildToolsFooterHTML() {
+  var toolLinks = TOOLS_FOOTER_LINKS.map(function(t) {
+    return '<a href="'+esc(t.link)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 24px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;">'+esc(t.name)+'</a>';
+  }).join('');
+  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;border:1px solid #ead9d5;padding:2rem;margin-top:2rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.75rem;">Tools I Use</p>' +
+    '<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.5rem;">'+esc(TOOLS_FOOTER_BLURB)+'</p>' +
+    '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">'+toolLinks+'</div>' +
+    '</div>';
+}
+
+function buildAestheticSummaryHTML() {
+  var mood = val('f-mood').trim();
+  var palette = val('f-palette').trim();
+  var coreElements = val('f-coreelements').trim();
+  if (!mood && !palette && !coreElements) return '';
+  var rows = [];
+  if (mood) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#2a1f1c;">Mood</strong> &mdash; ' + esc(mood) + '</p>');
+  if (palette) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#2a1f1c;">Palette</strong> &mdash; ' + esc(palette) + '</p>');
+  if (coreElements) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0;"><strong style="color:#2a1f1c;">Elements</strong> &mdash; ' + esc(coreElements) + '</p>');
+  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1.75rem 2rem;margin-bottom:2rem;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">The Vibe</p>' +
+    rows.join('') +
+    '</div>';
+}
+
+function buildFullPageHTML() {
+  var fullPage = '<div id="lesson-top" style="font-family:Jost,sans-serif;font-size:82%;">';
+  fullPage += buildIntroHTML();
+  fullPage += buildAestheticSummaryHTML();
+
+  PRODUCT_SECTIONS_EXPORT.forEach(function(p) {
+    var filledIds = p.ids.filter(function(id){ return val(id).trim(); });
+    if (!filledIds.length) return;
+    fullPage += '\n\n<!-- ' + p.type.toUpperCase() + ' -->\n';
+    fullPage += buildProductSectionHeaderHTML(p.type, p.anchor);
+    filledIds.forEach(function(id, i) {
+      var text = val(id).trim();
+      var imgUrl = val(id + '-img').trim();
+      fullPage += buildPromptHTML(i + 1, text, imgUrl, p.idPrefix);
+    });
+    fullPage += buildJumpBarHTML();
+  });
+
+  fullPage += buildToolsFooterHTML();
+  fullPage += '</div>';
+  return fullPage;
+}
+
+function previewOutput() {
+  var theme = val('f-theme');
+  if (!theme) { showToast('Please fill in the working theme first.'); return; }
+  var fullPage = buildFullPageHTML();
+  document.getElementById('full-page-html').value = fullPage;
+  document.getElementById('full-page-preview').innerHTML = fullPage;
+  document.getElementById('collection-title-preview').textContent = val('f-collectionname').trim() || '(no collection title set yet)';
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function generateHTML() {
+  var theme = val('f-theme');
+  if (!theme) { showToast('Please fill in the working theme first.'); return; }
+
+  var fullPage = buildFullPageHTML();
+
+  document.getElementById('full-page-html').value = fullPage;
+  document.getElementById('full-page-preview').innerHTML = fullPage;
+  document.getElementById('collection-title-preview').textContent = val('f-collectionname').trim() || '(no collection title set yet)';
+  document.getElementById('output-section').style.display = 'block';
+
+  navigator.clipboard.writeText(fullPage).then(function(){
+    showToast('HTML copied to clipboard!');
+  }).catch(function(){
+    var el = document.getElementById('full-page-html');
+    el.style.display = 'block';
+    el.select();
+    try { document.execCommand('copy'); showToast('HTML copied to clipboard!'); }
+    catch(e) { showToast('Could not auto-copy, use the Copy button below.'); }
+    el.style.display = 'none';
+  });
+}
+
+function copyBlock(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.value).then(function() { showToast('HTML copied!'); });
+}
+
+fields.forEach(function(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', function() {
+    isDirty = true;
+    setStatus('unsaved', 'Unsaved changes');
+    updateAllProgress();
+    clearCopied(id);
+  });
+});
+
+var autoSaveTimer;
+document.addEventListener('input', function() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(function() { saveData(); }, 3000);
+});
+
+window.addEventListener('beforeunload', function(e) {
+  if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+renderVibeGrid();
+loadRefLibrary();
+loadData();
+updateAllProgress();
+attachImgThumbListeners();
+refreshAllImgThumbs();
+renderRefLibrary('png');
+renderRefLibrary('tumbler');
+renderAllRefButtonRows();
+renderThemeIdeas(true);
+loadCopiedPrompts();
+applyAllCopiedClasses();
+
+var backToTopBtn = document.getElementById('backToTopBtn');
+window.addEventListener('scroll', function() {
+  if (window.scrollY > 400) backToTopBtn.classList.add('show');
+  else backToTopBtn.classList.remove('show');
+});
+</script>
+</body>
+</html>
