@@ -936,6 +936,19 @@ async function callClaude(systemPrompt, userContent, maxTokens) {
   }
 }
 
+async function callClaudeWithRetry(systemPrompt, userContent, maxTokens, expectedCount) {
+  var result = await callClaude(systemPrompt, userContent, maxTokens);
+  var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
+  if (prompts.length < expectedCount) {
+    try {
+      var retryResult = await callClaude(systemPrompt, userContent, maxTokens);
+      var retryPrompts = Array.isArray(retryResult && retryResult.prompts) ? retryResult.prompts : [];
+      if (retryPrompts.length > prompts.length) return retryResult;
+    } catch (e) { /* keep the original partial result if the retry itself fails */ }
+  }
+  return result;
+}
+
 function collectionDNAText() {
   var theme = val('f-theme').trim() || 'not set yet';
   var mood = val('f-mood').trim();
@@ -1298,7 +1311,7 @@ async function generateForProduct(sectionKey) {
     var sys = getPromptSystem(sectionKey, 3);
     var anchors = sectionKey === 'wall-art' ? null : getWallArtAnchors().some(Boolean) ? getWallArtAnchors() : null;
     var userMsg = buildUserContent(sectionKey, 3, null, anchors);
-    var result = await callClaude(sys, userMsg, 3000);
+    var result = await callClaudeWithRetry(sys, userMsg, 3000, 3);
     var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
     section.ids.forEach(function(id, i) {
       var el = document.getElementById(id);
@@ -1331,11 +1344,13 @@ async function regenerateSingle(sectionKey, slotId) {
       if (waAnchors[slotIndex]) { anchors = [null, null, null]; anchors[slotIndex] = waAnchors[slotIndex]; }
     }
     var userMsg = buildUserContent(sectionKey, 1, siblingTexts, anchors, slotIndex);
-    var result = await callClaude(sys, userMsg, 1200);
+    var result = await callClaudeWithRetry(sys, userMsg, 1200, 1);
     var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
     if (prompts[0]) {
       document.getElementById(slotId).value = prompts[0]; clearCopied(slotId);
       isDirty = true; updateAllProgress(); saveData();
+    } else {
+      showToast('No prompt came back, try again.');
     }
   } catch (e) {
     showToast('Error: ' + e.message);
@@ -1356,10 +1371,12 @@ async function generateFullCollection() {
   btn.disabled = true;
   try {
     status.textContent = ' writing Wall Art (1 of 4)...';
-    var waResult = await callClaude(buildWallArtSystem(), buildUserContent('wall-art', 3, null, null), 3000);
+    var waResult = await callClaudeWithRetry(buildWallArtSystem(), buildUserContent('wall-art', 3, null, null), 3000, 3);
     var waPrompts = (waResult.prompts || []).slice(0, 3);
     ['wa-1','wa-2','wa-3'].forEach(function(id, i) { if (waPrompts[i]) { document.getElementById(id).value = waPrompts[i]; clearCopied(id); } });
     isDirty = true; updateAllProgress(); saveData();
+    var shortfalls = [];
+    if (waPrompts.length < 3) shortfalls.push('Wall Art (' + waPrompts.length + '/3)');
 
     var sequence = [
       { key: 'frame-tv', sys: buildFrameTVSystem(), ids: ['ft-1','ft-2','ft-3'], label: 'Frame TV Art (2 of 4)' },
@@ -1369,17 +1386,20 @@ async function generateFullCollection() {
     for (var i = 0; i < sequence.length; i++) {
       var step = sequence[i];
       status.textContent = ' writing ' + step.label + '...';
-      var result = await callClaude(step.sys, buildUserContent(step.key, 3, null, waPrompts), 3000);
+      var result = await callClaudeWithRetry(step.sys, buildUserContent(step.key, 3, null, waPrompts), 3000, 3);
       var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
       step.ids.forEach(function(id, j) { if (prompts[j]) { document.getElementById(id).value = prompts[j]; clearCopied(id); } });
       isDirty = true; updateAllProgress(); saveData();
+      if (prompts.length < 3) shortfalls.push(step.label.replace(/\s*\(\d of 4\)/,'') + ' (' + prompts.length + '/3)');
     }
-    status.textContent = ' all 12 done ✓';
+    status.textContent = shortfalls.length
+      ? ' done, but short on: ' + shortfalls.join(', ') + ' — use that section\'s Generate button to fill the rest'
+      : ' all 12 done ✓';
   } catch (e) {
     status.textContent = ' error: ' + e.message;
   } finally {
     btn.disabled = false;
-    setTimeout(function(){ status.textContent = ''; }, 5000);
+    setTimeout(function(){ status.textContent = ''; }, 9000);
   }
 }
 
