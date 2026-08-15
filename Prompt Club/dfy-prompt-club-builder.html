@@ -940,15 +940,15 @@ async function callClaude(systemPrompt, userContent, maxTokens) {
 
 async function callClaudeWithRetry(systemPrompt, userContent, maxTokens, expectedCount) {
   var result = await callClaude(systemPrompt, userContent, maxTokens);
-  var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
+  var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).filter(function(p){ return typeof p === 'string' && p.trim().length > 0; });
   if (prompts.length < expectedCount) {
     try {
       var retryResult = await callClaude(systemPrompt, userContent, maxTokens);
-      var retryPrompts = Array.isArray(retryResult && retryResult.prompts) ? retryResult.prompts : [];
-      if (retryPrompts.length > prompts.length) return retryResult;
+      var retryPrompts = (Array.isArray(retryResult && retryResult.prompts) ? retryResult.prompts : []).filter(function(p){ return typeof p === 'string' && p.trim().length > 0; });
+      if (retryPrompts.length > prompts.length) return { prompts: retryPrompts };
     } catch (e) { /* keep the original partial result if the retry itself fails */ }
   }
-  return result;
+  return { prompts: prompts };
 }
 
 function collectionDNAText() {
