@@ -462,19 +462,19 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <p class="card-title">Example Images (Batch)</p>
   <p class="card-sub">Once all 12 prompts are generated: run them through your generator, mock them up in Canva, upload to Systeme.io, then paste all 12 URLs here in one pass.</p>
     <div class="img-batch-row">
-      <span class="img-batch-label">1 - Printable Wall Art — Prompt 1</span>
+      <span class="img-batch-label">1 - Wall Art — Prompt 1</span>
       <input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Paste mockup URL from Systeme.io">
       <button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button>
       <img class="img-thumb" id="wa-1-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
-      <span class="img-batch-label">1 - Printable Wall Art — Prompt 2</span>
+      <span class="img-batch-label">1 - Wall Art — Prompt 2</span>
       <input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Paste mockup URL from Systeme.io">
       <button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button>
       <img class="img-thumb" id="wa-2-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
-      <span class="img-batch-label">1 - Printable Wall Art — Prompt 3</span>
+      <span class="img-batch-label">1 - Wall Art — Prompt 3</span>
       <input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Paste mockup URL from Systeme.io">
       <button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button>
       <img class="img-thumb" id="wa-3-img-thumb" style="display:none;">
@@ -516,19 +516,19 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       <img class="img-thumb" id="png-3-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
-      <span class="img-batch-label">4 - Tumbler Wrap — Prompt 1</span>
+      <span class="img-batch-label">4 - Tumbler — Prompt 1</span>
       <input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Paste mockup URL from Systeme.io">
       <button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button>
       <img class="img-thumb" id="tb-1-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
-      <span class="img-batch-label">4 - Tumbler Wrap — Prompt 2</span>
+      <span class="img-batch-label">4 - Tumbler — Prompt 2</span>
       <input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Paste mockup URL from Systeme.io">
       <button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button>
       <img class="img-thumb" id="tb-2-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
-      <span class="img-batch-label">4 - Tumbler Wrap — Prompt 3</span>
+      <span class="img-batch-label">4 - Tumbler — Prompt 3</span>
       <input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Paste mockup URL from Systeme.io">
       <button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button>
       <img class="img-thumb" id="tb-3-img-thumb" style="display:none;">
@@ -1142,7 +1142,7 @@ function selectLibraryImage(sectionKey, url) {
 }
 
 /* ============ AD HOC REFERENCE MODAL ============ */
-var REF_MODAL_LABELS = { 'wall-art': '1 - Printable Wall Art', 'frame-tv': '2 - Frame TV Art', 'png': '3 - PNG', 'tumbler': '4 - Tumbler Wrap' };
+var REF_MODAL_LABELS = { 'wall-art': '1 - Wall Art', 'frame-tv': '2 - Frame TV Art', 'png': '3 - PNG', 'tumbler': '4 - Tumbler' };
 var refModalSection = null;
 
 function openRefModal(sectionKey) {
@@ -1497,7 +1497,7 @@ function selectCollectionName(i) {
 }
 
 function copyCollectionName(btn) {
-  var text = val('f-collectionname').trim();
+  var text = val('f-collectionname').trim().replace(/^the\s+/i, '').trim();
   if (!text) { showToast('Nothing to copy yet.'); return; }
   var original = btn.textContent;
   navigator.clipboard.writeText(text).then(function(){
