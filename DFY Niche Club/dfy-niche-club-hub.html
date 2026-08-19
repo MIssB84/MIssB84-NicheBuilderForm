@@ -377,6 +377,15 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">Marketing emails for your list — pick a type, give it a topic (or let AI brainstorm), pick a subject line, done.</p>
 
     <div class="field">
+      <label>DFY Niche Club Page Link</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="email_niche_page_link" value="https://www.thrivewithdania.com/thedfynicheclub" readonly style="flex:1;background:#fdf7f2;color:#5a4a45;">
+        <button class="btn btn-ghost btn-sm" onclick="copyField('email_niche_page_link')" style="white-space:nowrap;">Copy Link</button>
+      </div>
+      <div class="hint">Quick copy for dropping into emails, no more digging for it</div>
+    </div>
+
+    <div class="field">
       <label>Email Type</label>
       <select id="email_type">
         <option value="value">Weekly Value Email (build trust, teach something, soft mention of the club)</option>
@@ -983,11 +992,13 @@ function mmToggleTopic(){
 var MM_IMAGE_URL = "https://d1yei2z3i6k35z.cloudfront.net/10270628/695a7e36e4a11_DFYCourseImages1.png";
 var NO_TAG_TITLE_ADVICE_RULE = "NEVER advise Etsy sellers to change, tweak, edit, or update their existing/live product titles or tags to try to improve SEO or ranking. Changing live listing titles/tags resets their search ranking history, so this advice is harmful and must never be given, even indirectly or as one option among others.";
 var NO_EMDASH_RULE = "NEVER use an em dash (—) anywhere in the output. Use a period, comma, or separate sentence instead.";
-var MM_SYSTEM = "You write Motivational Monday posts for Etsy sellers and digital product entrepreneurs. Warm, practical, conversational, no cliches. 2-5 short paragraphs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the post body, use **word** for anything that should be bolded]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var NICHE_FREQUENCY_RULE = "The DFY Niche Club drops brand new niches WEEKLY, every Monday. NEVER describe new niche drops as monthly or 'once a month' — that is wrong. (The live Q&A call is the only monthly thing in this club.)";
+var NO_HANDMADE_RULE = "Dania's shops sell digital downloads and print-on-demand (POD) apparel only. She does NOT sell handmade physical goods. Never reference or suggest handmade products.";
+var MM_SYSTEM = "You write Motivational Monday posts for Etsy sellers and digital product entrepreneurs. Warm, practical, conversational, no cliches. 2-5 short paragraphs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" "+NICHE_FREQUENCY_RULE+" "+NO_HANDMADE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the post body, use **word** for anything that should be bolded]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
 var MM_CONCEPT_SYSTEM = "You brainstorm fresh Motivational Monday post concepts for Etsy sellers and digital product entrepreneurs. Topics rotate through consistency, comparison, perfectionism, burnout, confidence, fear, patience, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full post.";
 function stripEmDash(s){ return (s||'').replace(/\s*—\s*/g, ', ').replace(/,\s*,/g, ','); }
 function polishSystemFor(desc){
-  return "You polish and clean up draft text for "+desc+" written by an Etsy seller and digital product entrepreneur. The text in the box may be a mix of an earlier AI draft and the person's own rough, unedited additions, typos, brain-dumped notes, or casual grammar. Rewrite the ENTIRE text so it reads as one clean, cohesive piece: fix grammar, spelling, and typos, and smooth the flow between the older and newer parts so it doesn't read as patched together. Keep it in the same warm, practical, conversational voice already used in the text. Do NOT cut or water down any of the person's ideas, information, or added points, and do NOT invent new information, claims, or details that aren't already there. Keep the length roughly the same. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY the polished text, using the exact same formatting conventions as the input (same blank-line paragraph breaks, same **bold** usage, same ## headers and - bullets if present), with no extra commentary.";
+  return "You polish and clean up draft text for "+desc+" written by an Etsy seller and digital product entrepreneur. The text in the box may be a mix of an earlier AI draft and the person's own rough, unedited additions, typos, brain-dumped notes, or casual grammar. Rewrite the ENTIRE text so it reads as one clean, cohesive piece: fix grammar, spelling, and typos, and smooth the flow between the older and newer parts so it doesn't read as patched together. Keep it in the same warm, practical, conversational voice already used in the text. Do NOT cut or water down any of the person's ideas, information, or added points, and do NOT invent new information, claims, or details that aren't already there. Keep the length roughly the same. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" "+NICHE_FREQUENCY_RULE+" "+NO_HANDMADE_RULE+" Output ONLY the polished text, using the exact same formatting conventions as the input (same blank-line paragraph breaks, same **bold** usage, same ## headers and - bullets if present), with no extra commentary.";
 }
 async function polishBox(tool, textareaId, statusId, desc){
   var status = document.getElementById(statusId);
@@ -1123,7 +1134,7 @@ var EMAIL_TYPE_INFO = {
   announce: { label: 'Freebie / New Content Announcement', desc: 'an upbeat, clear announcement email about something new (a freebie, a course, a video, a resource), explaining what it is and who it helps, ending with a clear call to go check it out' },
   winback: { label: 'Re-engagement / Win-back', desc: 'a warm, no-guilt email to subscribers who have gone quiet, reminding them why they signed up in the first place and inviting them back in with something valuable, ending with a low pressure call to action' }
 };
-var EMAIL_SYSTEM = "You write marketing emails for Dania, who runs Thrive With Dania, an Etsy education brand, and the DFY Niche Club membership for Etsy sellers. Warm, direct, conversational, confident, practical tone. Never use the phrases 'no fluff' or 'no BS'. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Keep the body focused and skimmable: short paragraphs, no walls of text, no corporate voice. End with one clear call to action sentence that matches the email's purpose. Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the email body, use **word** for anything that should be bolded]\n\nSUBJECT LINES:\n1. [subject]\n2. [subject]\n3. [subject]\n4. [subject]\n5. [subject]\nFAVORITE: [number 1-5 of your favorite]";
+var EMAIL_SYSTEM = "You write marketing emails for Dania, who runs Thrive With Dania, an Etsy education brand, and the DFY Niche Club membership for Etsy sellers. Warm, direct, conversational, confident, practical tone. Never use the phrases 'no fluff' or 'no BS'. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" "+NICHE_FREQUENCY_RULE+" "+NO_HANDMADE_RULE+" Keep the body focused and skimmable: short paragraphs, no walls of text, no corporate voice. End with one clear call to action sentence that matches the email's purpose. Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the email body, use **word** for anything that should be bolded]\n\nSUBJECT LINES:\n1. [subject]\n2. [subject]\n3. [subject]\n4. [subject]\n5. [subject]\nFAVORITE: [number 1-5 of your favorite]";
 var EMAIL_CONCEPT_SYSTEM = "You brainstorm fresh angle ideas for a specific type of marketing email for an Etsy education brand and membership community. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full email.";
 function emailGetTypeInfo(){ return EMAIL_TYPE_INFO[document.getElementById('email_type').value] || EMAIL_TYPE_INFO.value; }
 async function emailGenerateDraft(){
@@ -1262,7 +1273,7 @@ function emailAttachPreviewListeners(){
 function tipToggleTopic(){
   document.getElementById('tip_topicfield').style.display = document.getElementById('tip_hastopic').checked ? 'block':'none';
 }
-var TIP_SYSTEM = "You write weekly tips for Etsy sellers and digital product creators. Practical, conversational, no fluff. 2-4 short paragraphs, one clear takeaway, bold used sparingly on the most important lines. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the tip body, use **word** for bold]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
+var TIP_SYSTEM = "You write weekly tips for Etsy sellers and digital product creators. Practical, conversational, no fluff. 2-4 short paragraphs, one clear takeaway, bold used sparingly on the most important lines. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" "+NICHE_FREQUENCY_RULE+" "+NO_HANDMADE_RULE+" Output ONLY in this exact format with no extra commentary:\n\nBODY:\n[the tip body, use **word** for bold]\n\nTITLES:\n1. [title]\n2. [title]\n3. [title]\n4. [title]\n5. [title]\nFAVORITE: [number 1-5 of your favorite]";
 var TIP_CONCEPT_SYSTEM = "You brainstorm fresh weekly tip concepts for Etsy sellers and digital product creators. Topics: SEO, AI tools, seasonal planning, pricing, workflow, Etsy algorithm, POD, Canva, etc. Output ONLY 5 short one-line concept ideas, one per line, no numbering, no bullets, no extra commentary. Each line under 14 words, giving a clear sense of the angle without writing the full tip.";
 async function tipGenerateDraft(){
   var status = document.getElementById('tip_gen_status');
@@ -1760,7 +1771,7 @@ function lcGenerateHTML(){
 }
 
 /* ============ RECAP TAB LOGIC ============ */
-var RECAP_SYSTEM = "You turn raw Google Meet summary notes from a monthly live call into a clean, scannable recap for members who could not attend. Format rules: bold section headers based on topics discussed (these vary), 4-6 bullet points per section, each a complete standalone actionable takeaway in plain direct language, no vague or fluffy language, no member names ever, no intro fluff, no closing summary, logical flow grouping related topics together. Tone: warm but direct, written for busy Etsy sellers who want to scan fast. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY in this exact plain format (no extra commentary, no markdown symbols besides what's shown):\n\n## Section Header One\n- bullet\n- bullet\n- bullet\n\n## Section Header Two\n- bullet\n- bullet";
+var RECAP_SYSTEM = "You turn raw Google Meet summary notes from a monthly live call into a clean, scannable recap for members who could not attend. Format rules: bold section headers based on topics discussed (these vary), 4-6 bullet points per section, each a complete standalone actionable takeaway in plain direct language, no vague or fluffy language, no member names ever, no intro fluff, no closing summary, logical flow grouping related topics together. Tone: warm but direct, written for busy Etsy sellers who want to scan fast. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" "+NICHE_FREQUENCY_RULE+" "+NO_HANDMADE_RULE+" Output ONLY in this exact plain format (no extra commentary, no markdown symbols besides what's shown):\n\n## Section Header One\n- bullet\n- bullet\n- bullet\n\n## Section Header Two\n- bullet\n- bullet";
 async function recapGenerateDraft(){
   var status = document.getElementById('recap_gen_status');
   status.className='status-msg'; status.textContent=' generating...';
@@ -1826,7 +1837,7 @@ function recapGenerateHTML(){
 }
 
 /* ============ AD HOC TAB LOGIC ============ */
-var ADHOC_SYSTEM = "You clean up messy notes or brain dumps into a clear, readable post for Etsy sellers and digital product creators. Keep the person's original meaning and information exactly as given, just organize it into clean short paragraphs, fix grammar and flow, add **bold** to the most important lines sparingly. No cliches, no added information, no assumptions beyond what's given, no HTML tags, no headers, just plain paragraphs separated by a blank line. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" Output ONLY the cleaned-up post text with no extra commentary.";
+var ADHOC_SYSTEM = "You clean up messy notes or brain dumps into a clear, readable post for Etsy sellers and digital product creators. Keep the person's original meaning and information exactly as given, just organize it into clean short paragraphs, fix grammar and flow, add **bold** to the most important lines sparingly. No cliches, no added information, no assumptions beyond what's given, no HTML tags, no headers, just plain paragraphs separated by a blank line. "+NO_EMDASH_RULE+" "+NO_TAG_TITLE_ADVICE_RULE+" "+NICHE_FREQUENCY_RULE+" "+NO_HANDMADE_RULE+" Output ONLY the cleaned-up post text with no extra commentary.";
 async function adhocCleanUp(){
   var status = document.getElementById('adhoc_gen_status');
   var raw = document.getElementById('adhoc_body').value;
@@ -1890,6 +1901,26 @@ var KW_STANDARD_KEYWORDS = [
   "Digital Invitation","Tumbler Wrap PNG","Sublimation PNG","40 Oz Tumbler Wrap",
   "40oz Tumbler Wrap","20oz Tumbler Wrap","20 Oz Tumbler Wrap"
 ].sort(function(a,b){ return a.localeCompare(b); });
+/* Auto-splits any multi-word keyword phrase above into its individual words (e.g. "Digital Planner" -> "Digital", "Planner"),
+   skipping words that already exist as their own standard keyword, dropping the "(POD)" tag and pure numbers.
+   Returned in their own alphabetical order, separate from the kept-together phrases above. */
+function kwSplitWordList(){
+  var existingLower = {};
+  KW_STANDARD_KEYWORDS.forEach(function(k){ existingLower[k.toLowerCase()] = true; });
+  var seen = {};
+  KW_STANDARD_KEYWORDS.forEach(function(k){
+    var clean = k.replace(/\(pod\)/ig,'').trim();
+    var words = clean.split(/\s+/).filter(Boolean);
+    if(words.length <= 1) return;
+    words.forEach(function(w){
+      var wl = w.toLowerCase();
+      if(/^\d+$/.test(w)) return;
+      if(existingLower[wl]) return;
+      if(!seen[wl]) seen[wl] = w;
+    });
+  });
+  return Object.keys(seen).map(function(wl){ return seen[wl]; }).sort(function(a,b){ return a.localeCompare(b); });
+}
 function kwRowHtml(name){
   return '<div class="card-block" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr;gap:10px;padding:.8rem 1rem;">'+
     '<input type="text" class="kw-name" placeholder="Keyword" value="'+escapeAttr(name||'')+'">'+
@@ -1907,6 +1938,13 @@ function kwLoadStandardList(){
   KW_STANDARD_KEYWORDS.forEach(function(k){
     document.getElementById('kw_rows').insertAdjacentHTML('beforeend', kwRowHtml(k));
   });
+  var splitWords = kwSplitWordList();
+  if(splitWords.length){
+    document.getElementById('kw_rows').insertAdjacentHTML('beforeend', '<div style="padding:.9rem 1rem .3rem;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--midtext);">Split Keywords</div>');
+    splitWords.forEach(function(w){
+      document.getElementById('kw_rows').insertAdjacentHTML('beforeend', kwRowHtml(w));
+    });
+  }
   kwSaveRows();
 }
 function kwSaveRows(){
