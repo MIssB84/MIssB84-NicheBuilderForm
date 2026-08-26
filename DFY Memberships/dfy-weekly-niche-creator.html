@@ -1408,8 +1408,7 @@ function buildTitlesTagsSubcard(niche) {
   const poolList = document.createElement('div'); poolList.className = 'tag-list'; poolWrap.appendChild(poolList);
   const poolBtnRow = document.createElement('div'); poolBtnRow.className = 'add-row';
   const poolClearBtn = document.createElement('button'); poolClearBtn.className = 'btn secondary'; poolClearBtn.textContent = 'Clear pool';
-  const poolSplitAllBtn = document.createElement('button'); poolSplitAllBtn.className = 'btn secondary'; poolSplitAllBtn.textContent = 'Split All';
-  poolBtnRow.appendChild(poolClearBtn); poolBtnRow.appendChild(poolSplitAllBtn);
+  poolBtnRow.appendChild(poolClearBtn);
   poolWrap.appendChild(poolBtnRow);
 
   const wordPoolDivider = document.createElement('div');
@@ -1496,12 +1495,6 @@ function buildTitlesTagsSubcard(niche) {
       const copyBtn = document.createElement('button'); copyBtn.className = 'copy-pill'; copyBtn.textContent = 'Copy';
       copyBtn.addEventListener('click', (e) => { e.stopPropagation(); copyToClipboard(item.text + ' ', copyBtn, 'Copy'); });
 
-      const words = item.text.trim().split(/\s+/);
-      let splitBtn = null;
-      if (words.length > 1) {
-        splitBtn = document.createElement('button'); splitBtn.className = 'copy-pill'; splitBtn.textContent = 'Split';
-        splitBtn.addEventListener('click', (e) => { e.stopPropagation(); words.forEach(w => niche.state.pool.push({ text: w })); renderPool(); });
-      }
       const rm = document.createElement('button'); rm.className = 'rmv-btn'; rm.textContent = '×';
       rm.addEventListener('click', (e) => { e.stopPropagation(); niche.state.pool.splice(i, 1); renderPool(); });
 
@@ -1518,7 +1511,6 @@ function buildTitlesTagsSubcard(niche) {
 
       chip.appendChild(textSpan); chip.appendChild(lenSpan);
       if (openSlots.length) chip.appendChild(slotBtns);
-      if (splitBtn) chip.appendChild(splitBtn);
       chip.appendChild(copyBtn); chip.appendChild(rm);
       poolList.appendChild(chip);
     });
@@ -1585,22 +1577,6 @@ function buildTitlesTagsSubcard(niche) {
 
   poolSingle.addEventListener('keydown', async (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!poolSingle.value.trim()) return; await addToPool(poolSingle.value, false); poolSingle.value = ''; } });
   poolClearBtn.addEventListener('click', () => { niche.state.pool = []; renderPool(); });
-  poolSplitAllBtn.addEventListener('click', () => {
-    const combined = niche.state.pool.slice();
-    niche.state.pool.forEach(item => {
-      const words = item.text.trim().split(/\s+/);
-      if (words.length > 1) words.forEach(w => combined.push({ text: w }));
-    });
-    const seen = new Set();
-    const deduped = combined.filter(item => {
-      const key = item.text.trim().toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    niche.state.pool = deduped;
-    renderPool();
-  });
   poolPasteBtn.addEventListener('click', () => pasteTextClip(poolPasteBtn, async (text) => { await addToPool(text, true); }));
 
   sc.appendChild(poolWrap);
