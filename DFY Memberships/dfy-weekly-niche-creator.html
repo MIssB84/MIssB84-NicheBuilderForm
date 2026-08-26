@@ -581,7 +581,11 @@ const DEFAULT_BAKED = {
   'Frame TV Art': 'Smart Television Screensaver, Home Decor',
   'Tumbler Wrap': 'PNG, 20oz Skinny Tumbler Sublimation Design'
 };
-const DEFAULT_BAKED_TAGS = { 'Wall Art': ['printable wall art', 'digital download', 'trendy home decor'] };
+const DEFAULT_BAKED_TAGS = {
+  'Wall Art': ['printable wall art', 'digital download', 'trendy home decor'],
+  'PNG / Shirt Design': ['digital download', 'sublimation design', 'trendy bestseller'],
+  'Frame TV Art': ['digital download', 'frame tv art', 'smart tv artwork']
+};
 const TITLE_CHAR_LIMIT = { 'Wall Art': 140 };
 const DEFAULT_TITLE_CHAR_LIMIT = 140;
 
@@ -607,6 +611,7 @@ function makeNicheState() {
     valueSections: [], // {heading, text}
     proTip: '',
     pool: [],
+    wordPool: [],
     tags: [],
     suggestedTags: [],
     titles: ['', '', ''],
@@ -975,10 +980,17 @@ function buildBasicsSubcard(niche) {
   [c1i, c2i, c3i, c4i, salesInput].forEach(el => {
     const keys = { }; // map below
   });
+  function refreshBuyersDisabled() {
+    const cartsActive = !!(c3i.value || '').trim() || c3checkbox.checked;
+    c4i.disabled = cartsActive;
+    c4i.style.opacity = cartsActive ? '0.5' : '';
+    c4i.style.cursor = cartsActive ? 'not-allowed' : '';
+  }
+  refreshBuyersDisabled();
   c1i.addEventListener('input', () => { b.noteListing = c1i.value; refreshPreview(); autosaveNicheState(niche.num); });
   c2i.addEventListener('input', () => { b.noteAge = c2i.value; refreshPreview(); autosaveNicheState(niche.num); });
-  c3i.addEventListener('input', () => { b.noteCarts = c3i.value; refreshPreview(); autosaveNicheState(niche.num); });
-  c3checkbox.addEventListener('change', () => { b.noteCarts20Plus = c3checkbox.checked; refreshPreview(); autosaveNicheState(niche.num); });
+  c3i.addEventListener('input', () => { b.noteCarts = c3i.value; refreshPreview(); autosaveNicheState(niche.num); refreshBuyersDisabled(); });
+  c3checkbox.addEventListener('change', () => { b.noteCarts20Plus = c3checkbox.checked; refreshPreview(); autosaveNicheState(niche.num); refreshBuyersDisabled(); });
   c4i.addEventListener('input', () => { b.noteBuyers = c4i.value; refreshPreview(); autosaveNicheState(niche.num); });
   salesInput.addEventListener('input', () => { b.noteSales = salesInput.value; refreshPreview(); autosaveNicheState(niche.num); });
   bsCheck.addEventListener('change', () => { b.noteBestseller = bsCheck.checked; refreshPreview(); autosaveNicheState(niche.num); });
@@ -1400,6 +1412,12 @@ function buildTitlesTagsSubcard(niche) {
   poolBtnRow.appendChild(poolClearBtn); poolBtnRow.appendChild(poolSplitAllBtn);
   poolWrap.appendChild(poolBtnRow);
 
+  const wordPoolDivider = document.createElement('div');
+  wordPoolDivider.style.cssText = 'border-top:1px solid var(--border); margin:16px 0 4px; padding-top:12px;';
+  wordPoolDivider.innerHTML = '<label class="first" style="margin-top:0;">Single words</label><div class="hint">Auto-generated from every phrase above, broken into individual words. Kept separate from the phrase pool on purpose, deduped on its own.</div>';
+  poolWrap.appendChild(wordPoolDivider);
+  const wordPoolList = document.createElement('div'); wordPoolList.className = 'tag-list'; poolWrap.appendChild(wordPoolList);
+
   async function extractKeywords(text) {
     const result = await callClaude(WALLART_KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }], 1000);
     return result.keywords || [];
@@ -1504,9 +1522,66 @@ function buildTitlesTagsSubcard(niche) {
       chip.appendChild(copyBtn); chip.appendChild(rm);
       poolList.appendChild(chip);
     });
+    renderWordPool();
     autosaveNicheState(niche.num);
   }
   niche._renderPool = renderPool;
+
+  function renderWordPool() {
+    const seen = new Set();
+    const words = [];
+    niche.state.pool.forEach(item => {
+      item.text.trim().split(/\s+/).filter(Boolean).forEach(w => {
+        const key = w.toLowerCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+        words.push(w);
+      });
+    });
+    words.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    niche.state.wordPool = words.map(w => ({ text: w }));
+
+    wordPoolList.innerHTML = '';
+    const openSlots = getOpenSlotsFor(niche, activeTitleNum);
+    niche.state.wordPool.forEach((item) => {
+      const chip = document.createElement('div'); chip.className = 'tag-chip pill';
+      const textSpan = document.createElement('span'); textSpan.className = 'pill-text'; textSpan.textContent = item.text;
+      const lenSpan = document.createElement('span'); lenSpan.className = 'len'; lenSpan.textContent = item.text.length;
+
+      const slotBtns = document.createElement('span'); slotBtns.className = 'slot-btns';
+      openSlots.forEach(n => {
+        const sBtn = document.createElement('button'); sBtn.className = 'slot-btn'; sBtn.textContent = n; sBtn.title = `Place at spot ${n}`;
+        sBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const ta = niche._titleEls[activeTitleNum].textarea;
+          const cased = toTitleCase(item.text);
+          ta.value = ta.value.replace(slotMarker(n), `${cased} ${slotMarker(n)}`);
+          niche.state.titles[activeTitleNum - 1] = ta.value;
+          updateTitleCountFor(niche, activeTitleNum);
+          autosaveNicheState(niche.num);
+        });
+        slotBtns.appendChild(sBtn);
+      });
+
+      const copyBtn = document.createElement('button'); copyBtn.className = 'copy-pill'; copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', (e) => { e.stopPropagation(); copyToClipboard(item.text + ' ', copyBtn, 'Copy'); });
+
+      chip.addEventListener('click', () => {
+        const ta = niche._titleEls[activeTitleNum].textarea;
+        const current = ta.value.trim(); const cased = toTitleCase(item.text);
+        ta.value = current ? `${current} ${cased}` : cased;
+        niche.state.titles[activeTitleNum - 1] = ta.value;
+        updateTitleCountFor(niche, activeTitleNum);
+        autosaveNicheState(niche.num);
+      });
+
+      chip.appendChild(textSpan); chip.appendChild(lenSpan);
+      if (openSlots.length) chip.appendChild(slotBtns);
+      chip.appendChild(copyBtn);
+      wordPoolList.appendChild(chip);
+    });
+  }
+  niche._renderWordPool = renderWordPool;
 
   poolSingle.addEventListener('keydown', async (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!poolSingle.value.trim()) return; await addToPool(poolSingle.value, false); poolSingle.value = ''; } });
   poolClearBtn.addEventListener('click', () => { niche.state.pool = []; renderPool(); });
