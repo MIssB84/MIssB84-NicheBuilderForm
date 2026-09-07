@@ -9,31 +9,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --espresso:#282922;   /* Deep Charcoal */
-    --olive:#494b39;      /* Olive Brown */
-    --wine:#93585e;       /* Earthy Wine */
-    --rose:#c09189;       /* Dusty Rose */
-    --blush:#f2cfcd;      /* Soft Blush */
-    --sage:#a9cc8b;       /* Sage Green */
-
-    --cream:#f2cfcd;
-    --gold:#c09189;
-    --parchment:#faf7f5;
-    --border:#e6d9d6;
-    --mid:#736861;
-    --muted:#c9b9b5;
-    --success:#494b39;
-    --success-bg:#dceac9;
-    --warn:#93585e;
-    --warn-bg:#efd6d3;
-    --danger:#93585e;
-    --danger-bg:#efd6d3;
+    --espresso:#100a14;    /* deepest ink — topbar */
+    --bg-page:#180f1d;     /* page background — near-black plum */
+    --parchment:#251a2c;   /* surface — cards, inputs, buttons */
+    --text:#f0e2e4;        /* primary light text */
+    --cream:#f5e2df;       /* light text on darkest surfaces */
+    --gold:#b9827a;        /* Dusty Rose, deepened */
+    --blush:#f2cfcd;       /* Soft Blush — used sparingly now */
+    --purple:#8a63ad;      /* deep amethyst accent */
+    --purple-bg:#312342;
+    --green:#7aa15c;       /* deep forest green, replacing sage */
+    --border:#3c2d44;
+    --mid:#af96a2;
+    --muted:#7d6a76;
+    --success:#cfe3ba;
+    --success-bg:#212f19;
+    --warn:#f0c9cf;
+    --warn-bg:#3d2126;
+    --danger:#f0c9cf;
+    --danger-bg:#3d2126;
   }
   *{box-sizing:border-box;}
+  html{color-scheme:dark;}
   body{
     margin:0;
-    background:var(--parchment);
-    color:var(--espresso);
+    background:var(--bg-page);
+    color:var(--text);
     font-family:'DM Sans', sans-serif;
     font-size:17px;
     font-weight:500;
@@ -94,7 +95,7 @@
   .btn{
     border:1px solid var(--border);
     background:var(--parchment);
-    color:var(--espresso);
+    color:var(--text);
     padding:11px 18px;
     border-radius:9px;
     font-size:15px;
@@ -102,11 +103,11 @@
   }
   .btn:hover{border-color:var(--gold);}
   .btn-primary{
-    background:var(--espresso);
+    background:var(--purple);
     color:var(--cream);
-    border:1px solid var(--espresso);
+    border:1px solid var(--purple);
   }
-  .btn-primary:hover{background:#3a2b26;}
+  .btn-primary:hover{background:#7550a0;}
   .btn-gold{
     background:var(--gold);
     color:var(--espresso);
@@ -156,7 +157,7 @@
   .detail-header input.title-input:focus{outline:none;border-bottom:1px solid var(--gold);}
 
   .section{
-    background:#f9e2df;
+    background:#241a2c;
     border-radius:12px;
     margin-bottom:12px;
     overflow:hidden;
@@ -189,7 +190,7 @@
     border:1px solid var(--border);
     border-radius:8px;
     padding:10px 12px;
-    color:var(--espresso);
+    color:var(--text);
     font-size:14.5px;
     font-weight:500;
   }
@@ -205,7 +206,7 @@
   .remove-x{background:none;border:none;color:var(--mid);font-size:16px;padding:2px 6px;}
   .remove-x:hover{color:var(--danger);}
   .add-link{background:none;border:1px dashed var(--muted);color:var(--mid);border-radius:8px;padding:7px 12px;font-size:13px;width:100%;text-align:left;}
-  .add-link:hover{border-color:var(--gold);color:var(--espresso);}
+  .add-link:hover{border-color:var(--gold);color:var(--text);}
 
   .checklist-item{display:flex;align-items:center;gap:11px;margin-bottom:9px;background:var(--parchment);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:15.5px;}
   .checklist-item.item-done{background:var(--success-bg);border-color:var(--success);}
@@ -298,7 +299,7 @@
   .jump-nav-divider{width:1px;height:18px;background:var(--border);margin:0 4px;}
 
   .empty-state{text-align:center;padding:60px 20px;color:var(--mid);}
-  .empty-state h2{margin-bottom:8px;color:var(--espresso);}
+  .empty-state h2{margin-bottom:8px;color:var(--text);}
 
   .top-actions{display:flex;gap:8px;}
   .save-indicator{font-size:12px;color:var(--mid);display:flex;align-items:center;gap:6px;}
@@ -362,11 +363,11 @@
 /* ---------------- State ---------------- */
 const STAGES = ["Planning","Scripting","Ready to Film","Editing","Scheduled"];
 const STAGE_COLORS = {
-  "Planning":      {dot:"#282922", bg:"#dcdbd6", text:"#282922"}, /* Deep Charcoal */
-  "Scripting":     {dot:"#c09189", bg:"#efd2cc", text:"#7a4a42"}, /* Dusty Rose */
-  "Ready to Film": {dot:"#93585e", bg:"#e6c1c4", text:"#6b3a3f"}, /* Earthy Wine */
-  "Editing":       {dot:"#a9cc8b", bg:"#d9e8c4", text:"#4f6b3a"}, /* Sage Green */
-  "Scheduled":     {dot:"#494b39", bg:"#d5d8c6", text:"#383a2c"}  /* Olive Brown */
+  "Planning":      {dot:"#a89bb0", bg:"#2c2432", text:"#d8c8dc"}, /* charcoal-mauve */
+  "Scripting":     {dot:"#c09189", bg:"#3d2a2c", text:"#eccdc8"}, /* Dusty Rose */
+  "Ready to Film": {dot:"#8a5fae", bg:"#2f2140", text:"#ddc7ec"}, /* deep purple */
+  "Editing":       {dot:"#93585e", bg:"#3d2126", text:"#e9c3c6"}, /* Earthy Wine */
+  "Scheduled":     {dot:"#6f9450", bg:"#212f19", text:"#c9e0ad"}  /* deep green */
 };
 function formatDate(iso){
   if(!iso) return "";
@@ -374,6 +375,13 @@ function formatDate(iso){
   return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 }
 const CATEGORIES = ["Unsaturated Niches","Tutorial","Strategy","Proof-Based","Other"];
+const CATEGORY_COLORS = {
+  "Unsaturated Niches": {bg:"#212f19", text:"#c9e0ad"}, /* deep green */
+  "Tutorial":           {bg:"#3d2a2c", text:"#eccdc8"}, /* Dusty Rose */
+  "Strategy":           {bg:"#3d2126", text:"#e9c3c6"}, /* Earthy Wine */
+  "Proof-Based":        {bg:"#2f2140", text:"#ddc7ec"}, /* deep purple */
+  "Other":              {bg:"#2c2432", text:"#d8c8dc"}  /* charcoal-mauve */
+};
 const SOURCE_OPTIONS = ["ChatGPT","Myself","YouTube Video","Other"];
 const DEFAULT_POST_CHECKLIST = [
   "Create thumbnail","Set project status to Scheduled/Published","Like video",
@@ -602,7 +610,7 @@ function renderDashboard(){
           ? (v.publishDate ? formatDate(v.publishDate) : "")
           : (v.filmDate ? "Filming " + formatDate(v.filmDate) : "");
         html += `<div class="kcard" onclick="openVideo('${v.id}')">
-          <div class="tag">${v.category}</div>
+          <div class="tag" style="background:${(CATEGORY_COLORS[v.category]||CATEGORY_COLORS['Other']).bg};color:${(CATEGORY_COLORS[v.category]||CATEGORY_COLORS['Other']).text};">${v.category}</div>
           <div class="title">${escapeHtml(v.title || 'Untitled video')}</div>
           ${dateLine ? `<div class="meta">${dateLine}</div>` : ''}
           <span class="stage-pill" style="background:${c.bg};color:${c.text};"><span class="dot" style="background:${c.dot};"></span>${stage}</span>
