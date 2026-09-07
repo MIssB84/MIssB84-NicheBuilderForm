@@ -9,28 +9,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --espresso:#100a14;    /* deepest ink — topbar */
-    --bg-page:#180f1d;     /* page background — near-black plum */
-    --parchment:#251a2c;   /* surface — cards, inputs, buttons */
-    --text:#f0e2e4;        /* primary light text */
-    --cream:#f5e2df;       /* light text on darkest surfaces */
-    --gold:#b9827a;        /* Dusty Rose, deepened */
-    --blush:#f2cfcd;       /* Soft Blush — used sparingly now */
-    --purple:#8a63ad;      /* deep amethyst accent */
-    --purple-bg:#312342;
-    --green:#7aa15c;       /* deep forest green, replacing sage */
-    --border:#3c2d44;
-    --mid:#af96a2;
-    --muted:#7d6a76;
-    --success:#cfe3ba;
-    --success-bg:#212f19;
-    --warn:#f0c9cf;
-    --warn-bg:#3d2126;
-    --danger:#f0c9cf;
-    --danger-bg:#3d2126;
+    --espresso:#1c1522;    /* deepest ink — topbar */
+    --bg-page:#f5ece3;      /* page background — soft cream */
+    --parchment:#ffffff;    /* surface — cards, inputs, buttons (white) */
+    --text:#2a1f30;         /* primary dark text */
+    --cream:#f5e2df;        /* light text on dark surfaces (topbar, accent buttons) */
+    --gold:#c99a91;         /* Dusty Rose accent */
+    --blush:#f2cfcd;        /* Soft Blush */
+    --purple:#9a70c0;       /* deep amethyst accent */
+    --purple-bg:#f0e6f5;
+    --green:#6f9450;        /* deep forest green */
+    --border:#e6d9e3;
+    --mid:#7d6577;
+    --muted:#b8a2b0;
+    --success:#3f5c2c;
+    --success-bg:#e3efd6;
+    --warn:#6b3a42;
+    --warn-bg:#f3e0e2;
+    --danger:#6b3a42;
+    --danger-bg:#f3e0e2;
   }
   *{box-sizing:border-box;}
-  html{color-scheme:dark;}
+  html{color-scheme:light;}
   body{
     margin:0;
     background:var(--bg-page);
@@ -125,6 +125,7 @@
   .kcol-head span.label{font-size:15px;font-weight:700;letter-spacing:0.2px;}
   .kcol-head span.count{font-size:13px;font-weight:600;color:var(--mid);background:var(--parchment);padding:3px 10px;border-radius:10px;}
   .kcard{
+    position:relative;
     background:var(--parchment);
     border:1px solid var(--border);
     border-radius:12px;
@@ -133,6 +134,19 @@
     cursor:pointer;
   }
   .kcard:hover{border-color:var(--gold);}
+  .kcard-delete{
+    position:absolute;
+    top:8px;
+    right:8px;
+    background:none;
+    border:none;
+    color:var(--mid);
+    font-size:17px;
+    line-height:1;
+    padding:4px 7px;
+    border-radius:6px;
+  }
+  .kcard-delete:hover{color:var(--danger);background:rgba(0,0,0,0.15);}
   .kcard .tag{display:inline-block;font-size:12.5px;background:var(--blush);color:var(--espresso);padding:4px 11px;border-radius:12px;margin-bottom:10px;font-weight:600;}
   .kcard .title{font-size:17px;font-weight:700;line-height:1.4;margin-bottom:10px;}
   .kcard .meta{font-size:13px;font-weight:500;color:var(--mid);margin-bottom:10px;}
@@ -157,7 +171,7 @@
   .detail-header input.title-input:focus{outline:none;border-bottom:1px solid var(--gold);}
 
   .section{
-    background:#241a2c;
+    background:#f4eaf1;
     border-radius:12px;
     margin-bottom:12px;
     overflow:hidden;
@@ -610,6 +624,7 @@ function renderDashboard(){
           ? (v.publishDate ? formatDate(v.publishDate) : "")
           : (v.filmDate ? "Filming " + formatDate(v.filmDate) : "");
         html += `<div class="kcard" onclick="openVideo('${v.id}')">
+          <button class="kcard-delete" onclick="event.stopPropagation(); deleteVideoQuick('${v.id}')" title="Delete video">&times;</button>
           <div class="tag" style="background:${(CATEGORY_COLORS[v.category]||CATEGORY_COLORS['Other']).bg};color:${(CATEGORY_COLORS[v.category]||CATEGORY_COLORS['Other']).text};">${v.category}</div>
           <div class="title">${escapeHtml(v.title || 'Untitled video')}</div>
           ${dateLine ? `<div class="meta">${dateLine}</div>` : ''}
@@ -1156,6 +1171,13 @@ function deleteVideo(id){
   state.videos = state.videos.filter(v=>v.id!==id);
   scheduleSave();
   backToDashboard();
+}
+function deleteVideoQuick(id){
+  const v = findVideo(id);
+  if(!confirm(`Delete "${v ? v.title : 'this video'}"? This can't be undone.`)) return;
+  state.videos = state.videos.filter(v=>v.id!==id);
+  scheduleSave();
+  render();
 }
 
 /* ---------------- Init ---------------- */
