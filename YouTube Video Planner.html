@@ -22,12 +22,12 @@
     --border:#e6d9d6;
     --mid:#736861;
     --muted:#c9b9b5;
-    --success:#5f7a48;
-    --success-bg:#e8f0de;
+    --success:#494b39;
+    --success-bg:#dceac9;
     --warn:#93585e;
-    --warn-bg:#f1e1e0;
+    --warn-bg:#efd6d3;
     --danger:#93585e;
-    --danger-bg:#f1e1e0;
+    --danger-bg:#efd6d3;
   }
   *{box-sizing:border-box;}
   body{
@@ -119,7 +119,7 @@
   /* Kanban */
   .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;align-items:start;}
   @media(max-width:1100px){.kanban{grid-template-columns:1fr;}}
-  .kcol{background:#f5e9e6;border-radius:14px;padding:18px;min-height:200px;}
+  .kcol{border-radius:14px;padding:18px;min-height:200px;}
   .kcol-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:0 4px;}
   .kcol-head span.label{font-size:15px;font-weight:700;letter-spacing:0.2px;}
   .kcol-head span.count{font-size:13px;font-weight:600;color:var(--mid);background:var(--parchment);padding:3px 10px;border-radius:10px;}
@@ -156,7 +156,7 @@
   .detail-header input.title-input:focus{outline:none;border-bottom:1px solid var(--gold);}
 
   .section{
-    background:#f5e9e6;
+    background:#f9e2df;
     border-radius:12px;
     margin-bottom:12px;
     overflow:hidden;
@@ -362,11 +362,11 @@
 /* ---------------- State ---------------- */
 const STAGES = ["Planning","Scripting","Ready to Film","Editing","Scheduled"];
 const STAGE_COLORS = {
-  "Planning":      {dot:"#282922", bg:"#e6e5e2", text:"#282922"}, /* Deep Charcoal */
-  "Scripting":     {dot:"#c09189", bg:"#f5e6e3", text:"#8a5f57"}, /* Dusty Rose */
-  "Ready to Film": {dot:"#93585e", bg:"#f1dcdd", text:"#93585e"}, /* Earthy Wine */
-  "Editing":       {dot:"#a9cc8b", bg:"#e9f0de", text:"#5f7a48"}, /* Sage Green */
-  "Scheduled":     {dot:"#494b39", bg:"#e3e5da", text:"#494b39"}  /* Olive Brown */
+  "Planning":      {dot:"#282922", bg:"#dcdbd6", text:"#282922"}, /* Deep Charcoal */
+  "Scripting":     {dot:"#c09189", bg:"#efd2cc", text:"#7a4a42"}, /* Dusty Rose */
+  "Ready to Film": {dot:"#93585e", bg:"#e6c1c4", text:"#6b3a3f"}, /* Earthy Wine */
+  "Editing":       {dot:"#a9cc8b", bg:"#d9e8c4", text:"#4f6b3a"}, /* Sage Green */
+  "Scheduled":     {dot:"#494b39", bg:"#d5d8c6", text:"#383a2c"}  /* Olive Brown */
 };
 function formatDate(iso){
   if(!iso) return "";
@@ -595,7 +595,7 @@ function renderDashboard(){
     STAGES.forEach(stage=>{
       const vids = state.videos.filter(v=>v.stage===stage);
       const c = STAGE_COLORS[stage];
-      html += `<div class="kcol"><div class="kcol-head"><span class="label"><span class="dot" style="background:${c.dot};"></span>${stage}</span><span class="count">${vids.length}</span></div>`;
+      html += `<div class="kcol" style="background:${c.bg};"><div class="kcol-head"><span class="label"><span class="dot" style="background:${c.dot};"></span>${stage}</span><span class="count">${vids.length}</span></div>`;
       vids.forEach(v=>{
         const pre = checklistProgress(v.preChecklist);
         const dateLine = stage === "Scheduled"
@@ -818,6 +818,10 @@ function updateListItemText(id, key, itemId, value){
 function setFinalListItem(id, key, itemId){
   const v = findVideo(id);
   v[key].forEach(i=> i.final = (i.id===itemId));
+  if(key === 'titles'){
+    const chosen = v.titles.find(i=>i.id===itemId);
+    if(chosen && chosen.text.trim()) v.title = chosen.text;
+  }
   scheduleSave(); render();
 }
 
