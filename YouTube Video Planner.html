@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Planner — Thrive With Dania</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --espresso:#282922;   /* Deep Charcoal */
+    --olive:#494b39;      /* Olive Brown */
+    --wine:#93585e;       /* Earthy Wine */
+    --rose:#c09189;       /* Dusty Rose */
+    --blush:#f2cfcd;      /* Soft Blush */
+    --sage:#a9cc8b;       /* Sage Green */
+
+    --cream:#f2cfcd;
+    --gold:#c09189;
+    --parchment:#faf7f5;
+    --border:#e6d9d6;
+    --mid:#736861;
+    --muted:#c9b9b5;
+    --success:#5f7a48;
+    --success-bg:#e8f0de;
+    --warn:#93585e;
+    --warn-bg:#f1e1e0;
+    --danger:#93585e;
+    --danger-bg:#f1e1e0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--espresso);
+    font-family:'DM Sans', sans-serif;
+    font-size:17px;
+    font-weight:500;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{font-family:'Cormorant Garamond', serif;}
+  h1{font-size:40px;font-weight:700;margin:0;}
+  h2{font-size:30px;font-weight:700;margin:0;}
+  h3{font-size:21px;font-weight:700;margin:0;}
+  label{font-weight:600 !important;}
+  a{color:var(--gold);}
+  button{
+    font-family:'DM Sans', sans-serif;
+    cursor:pointer;
+  }
+  input, textarea, select{
+    font-family:'DM Sans', sans-serif;
+    font-size:14px;
+  }
+  .topbar{
+    background:var(--espresso);
+    color:var(--cream);
+    padding:18px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .topbar h1{color:var(--cream);}
+  .topbar .sub{color:var(--blush);font-size:13px;margin-top:2px;}
+  .icon-btn{
+    background:transparent;
+    border:1px solid var(--gold);
+    color:var(--cream);
+    border-radius:8px;
+    padding:8px 14px;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .icon-btn:hover{background:rgba(201,169,110,0.15);}
+  .container{max-width:1300px;margin:0 auto;padding:32px 24px 90px;}
+
+  .warnings{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+  .warning-banner{
+    background:var(--warn-bg);
+    color:var(--warn);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:13.5px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+  .btn{
+    border:1px solid var(--border);
+    background:var(--parchment);
+    color:var(--espresso);
+    padding:11px 18px;
+    border-radius:9px;
+    font-size:15px;
+    font-weight:600;
+  }
+  .btn:hover{border-color:var(--gold);}
+  .btn-primary{
+    background:var(--espresso);
+    color:var(--cream);
+    border:1px solid var(--espresso);
+  }
+  .btn-primary:hover{background:#3a2b26;}
+  .btn-gold{
+    background:var(--gold);
+    color:var(--espresso);
+    border:1px solid var(--gold);
+    font-weight:600;
+  }
+  .btn-gold:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn-danger{color:var(--danger);border-color:var(--danger);background:transparent;}
+
+  /* Kanban */
+  .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;align-items:start;}
+  @media(max-width:1100px){.kanban{grid-template-columns:1fr;}}
+  .kcol{background:#f5e9e6;border-radius:14px;padding:18px;min-height:200px;}
+  .kcol-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:0 4px;}
+  .kcol-head span.label{font-size:15px;font-weight:700;letter-spacing:0.2px;}
+  .kcol-head span.count{font-size:13px;font-weight:600;color:var(--mid);background:var(--parchment);padding:3px 10px;border-radius:10px;}
+  .kcard{
+    background:var(--parchment);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    cursor:pointer;
+  }
+  .kcard:hover{border-color:var(--gold);}
+  .kcard .tag{display:inline-block;font-size:12.5px;background:var(--blush);color:var(--espresso);padding:4px 11px;border-radius:12px;margin-bottom:10px;font-weight:600;}
+  .kcard .title{font-size:17px;font-weight:700;line-height:1.4;margin-bottom:10px;}
+  .kcard .meta{font-size:13px;font-weight:500;color:var(--mid);margin-bottom:10px;}
+  .kcard .stage-pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:4px 11px;border-radius:12px;}
+  .kcard .stage-pill .dot{width:6px;height:6px;border-radius:50%;}
+  .kcard .progress-mini{height:4px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden;}
+  .kcard .progress-mini > div{height:100%;background:var(--gold);}
+  .kcol-head .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:7px;}
+
+  /* Detail view */
+  .detail-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
+  .detail-header input.title-input{
+    font-family:'DM Sans', sans-serif;
+    font-size:26px;
+    font-weight:700;
+    border:none;
+    background:transparent;
+    width:100%;
+    padding:2px 0;
+    border-bottom:1px solid transparent;
+  }
+  .detail-header input.title-input:focus{outline:none;border-bottom:1px solid var(--gold);}
+
+  .section{
+    background:#f5e9e6;
+    border-radius:12px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 20px;
+    cursor:pointer;
+  }
+  .section-head .left{display:flex;align-items:center;gap:10px;}
+  .section-head h3{font-size:20px;font-weight:700;font-family:'DM Sans', sans-serif;}
+  .section-head .badge{font-size:13.5px;font-weight:600;color:var(--mid);}
+  .section-head .chev{transition:transform 0.15s ease;color:var(--mid);font-size:20px;}
+  .section.open .chev{transform:rotate(90deg);}
+  .section.done .section-head{background:var(--success-bg);}
+  .section.done .section-head h3{color:var(--success);}
+  .section-body{padding:0 20px 20px;display:none;font-size:16px;}
+  .section.open .section-body{display:block;}
+  .section-done-toggle{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--mid);margin-right:10px;}
+  .section-done-toggle input{width:18px;height:18px;accent-color:var(--success);}
+  .section.done .section-done-toggle{color:var(--success);}
+
+  .field-row{margin-bottom:14px;}
+  .field-row label{display:block;font-size:14px;font-weight:700;color:var(--mid);margin-bottom:6px;}
+  .field-row input[type=text], .field-row input[type=url], .field-row input[type=date], .field-row textarea, .field-row select{
+    width:100%;
+    background:var(--parchment);
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px 14px;
+    color:var(--espresso);
+    font-size:16px;
+    font-weight:500;
+  }
+  .field-row textarea{resize:vertical;min-height:70px;}
+  .field-row input:focus, .field-row textarea:focus, .field-row select:focus{outline:none;border-color:var(--gold);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+
+  .list-item-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .list-item-row input[type=text]{flex:1;}
+  .list-item-row input[type=radio]{width:auto;accent-color:var(--gold);}
+  .list-item-row .final-label{font-size:11px;color:var(--mid);white-space:nowrap;}
+  .remove-x{background:none;border:none;color:var(--mid);font-size:16px;padding:2px 6px;}
+  .remove-x:hover{color:var(--danger);}
+  .add-link{background:none;border:1px dashed var(--muted);color:var(--mid);border-radius:8px;padding:7px 12px;font-size:13px;width:100%;text-align:left;}
+  .add-link:hover{border-color:var(--gold);color:var(--espresso);}
+
+  .checklist-item{display:flex;align-items:center;gap:11px;margin-bottom:9px;background:var(--parchment);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:15.5px;}
+  .checklist-item.item-done{background:var(--success-bg);border-color:var(--success);}
+  .checklist-item.item-done span{color:var(--success);text-decoration:line-through;}
+  .checklist-item.item-done input[type=text]{color:var(--success);text-decoration:line-through;}
+  .checklist-item input[type=checkbox]{width:19px;height:19px;accent-color:var(--gold);}
+  .checklist-item input[type=text]{border:none;background:transparent;flex:1;padding:0;}
+  .checklist-item input[type=text]:focus{outline:none;}
+  .checklist-progress{font-size:12px;color:var(--mid);margin-bottom:8px;}
+  .checklist-progress .done{color:var(--success);}
+
+  .inspo-preview{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .inspo-preview img{width:80px;height:45px;object-fit:cover;border-radius:6px;background:var(--border);}
+  .inspo-preview a{font-size:13px;}
+
+  .inspo-item{background:var(--parchment);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;}
+  .inspo-item-top{display:flex;gap:8px;margin-bottom:10px;}
+  .inspo-item-top input{flex:1;}
+  .inspo-thumb-big{width:100%;max-width:420px;border-radius:10px;display:block;background:var(--border);aspect-ratio:16/9;object-fit:cover;}
+  .inspo-item a.watch-link{display:inline-block;margin-top:8px;font-size:13px;font-weight:600;}
+
+  .thumb-concept-upload{border:1.5px dashed var(--muted);border-radius:10px;padding:18px;text-align:center;color:var(--mid);font-size:13px;cursor:pointer;}
+  .thumb-concept-upload:hover{border-color:var(--gold);}
+  .thumb-concept-img{max-width:100%;border-radius:10px;margin-top:10px;display:block;}
+
+  /* Script builder */
+  .script-section-row{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:8px;
+    background:var(--parchment);
+  }
+  .script-section-row.locked{border-color:var(--success);background:var(--success-bg);}
+  .script-section-row .grip{cursor:grab;color:var(--mid);padding-top:8px;}
+  .script-section-row .content{flex:1;}
+  .script-type-badge{
+    display:inline-block;
+    font-size:11px;
+    font-weight:600;
+    background:var(--parchment);
+    border:1px solid var(--border);
+    padding:2px 9px;
+    border-radius:12px;
+    margin-bottom:6px;
+  }
+  .script-section-row textarea{width:100%;border:none;background:transparent;font-size:13.5px;padding:0;resize:vertical;min-height:44px;}
+  .script-section-row textarea:focus{outline:none;}
+  .lock-btn{background:none;border:none;padding:8px 4px;font-size:16px;}
+  .add-section-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px;}
+  .add-type-btn{font-size:12px;background:var(--parchment);border:1px solid var(--border);border-radius:16px;padding:6px 12px;}
+  .add-type-btn:hover{border-color:var(--gold);}
+  .finalize-status{font-size:12px;color:var(--mid);margin-bottom:10px;}
+
+  .final-script-output{
+    background:var(--parchment);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+    margin-top:12px;
+    font-size:14px;
+    line-height:1.7;
+    white-space:pre-wrap;
+  }
+  .final-script-output b{font-family:'Cormorant Garamond', serif;font-size:16px;}
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(42,31,28,0.5);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--parchment);
+    border-radius:14px;
+    max-width:440px;width:100%;
+    padding:24px;
+    max-height:90vh;
+    overflow-y:auto;
+  }
+  .modal h2{margin-bottom:6px;}
+  .modal .modal-sub{font-size:13px;color:var(--mid);margin-bottom:18px;}
+  .modal-close{float:right;background:none;border:none;font-size:20px;color:var(--mid);}
+
+  .jump-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center;}
+  .jump-nav-btn{font-size:14px;font-weight:600;padding:9px 16px;}
+  .jump-nav-divider{width:1px;height:20px;background:var(--border);margin:0 4px;}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--mid);}
+  .empty-state h2{margin-bottom:8px;color:var(--espresso);}
+
+  .top-actions{display:flex;gap:8px;}
+  .save-indicator{font-size:12px;color:var(--mid);display:flex;align-items:center;gap:6px;}
+  .save-indicator .dot{width:6px;height:6px;border-radius:50%;background:var(--success);}
+
+  .detail-wrap{max-width:920px;margin:0 auto;font-size:17px;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Video Planner</h1>
+    <div class="sub">Thrive With Dania</div>
+  </div>
+  <div class="top-actions">
+    <span class="save-indicator" id="saveIndicator"><span class="dot"></span>Saved</span>
+    <button class="icon-btn" onclick="openSettings()">Settings</button>
+  </div>
+</div>
+
+<div class="container" id="app"></div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSettings()">&times;</button>
+    <h2>Settings</h2>
+    <div class="modal-sub">Paste these in once per device. They're stored only in this browser.</div>
+
+    <div class="field-row">
+      <label>Anthropic API key (for script polishing)</label>
+      <input type="text" id="settingApiKey" placeholder="sk-ant-...">
+    </div>
+
+    <div class="field-row">
+      <label>GitHub personal access token (for syncing across devices)</label>
+      <input type="text" id="settingGhToken" placeholder="ghp_...">
+    </div>
+    <div class="field-row">
+      <label>GitHub repo (owner/repo)</label>
+      <input type="text" id="settingGhRepo" placeholder="daniausername/yt-planner-data">
+    </div>
+    <div class="field-row">
+      <label>Data file path in that repo</label>
+      <input type="text" id="settingGhPath" placeholder="data.json">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary" onclick="saveSettings()">Save settings</button>
+      <button class="btn" onclick="pullFromGithub(true)">Pull from GitHub</button>
+    </div>
+    <div id="settingsMsg" style="font-size:12.5px;margin-top:10px;color:var(--mid);"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- State ---------------- */
+const STAGES = ["Planning","Scripting","Ready to Film","Editing","Scheduled"];
+const STAGE_COLORS = {
+  "Planning":      {dot:"#282922", bg:"#e6e5e2", text:"#282922"}, /* Deep Charcoal */
+  "Scripting":     {dot:"#c09189", bg:"#f5e6e3", text:"#8a5f57"}, /* Dusty Rose */
+  "Ready to Film": {dot:"#93585e", bg:"#f1dcdd", text:"#93585e"}, /* Earthy Wine */
+  "Editing":       {dot:"#a9cc8b", bg:"#e9f0de", text:"#5f7a48"}, /* Sage Green */
+  "Scheduled":     {dot:"#494b39", bg:"#e3e5da", text:"#494b39"}  /* Olive Brown */
+};
+function formatDate(iso){
+  if(!iso) return "";
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+const CATEGORIES = ["Unsaturated Niches","Tutorial","Strategy","Proof-Based","Other"];
+const SOURCE_OPTIONS = ["ChatGPT","Myself","YouTube Video","Other"];
+const DEFAULT_POST_CHECKLIST = [
+  "Create thumbnail","Set project status to Scheduled/Published","Like video",
+  "Add pinned comment","Send email","Add video to DFY Niche Club",
+  "Do Community Post (optional)","Add video file to Google Drive"
+];
+const SCRIPT_TYPES = ["Hook","Intro","Section","CTA","Outro"];
+
+let state = {
+  videos: [],
+  settings: { apiKey:"", ghToken:"", ghRepo:"", ghPath:"data.json" }
+};
+let currentView = { mode:"dashboard", videoId:null };
+let ghSha = null;
+let saveTimer = null;
+
+function uid(){ return 'v_' + Math.random().toString(36).slice(2,10); }
+
+function blankVideo(){
+  return {
+    id: uid(),
+    title: "Untitled video",
+    category: CATEGORIES[0],
+    stage: "Planning",
+    filmDate: "",
+    publishDate: "",
+    titles: [],           // {id, text, final}
+    thumbTexts: [],        // {id, text, final}
+    ideaSource: "Myself", ideaSourceOther:"",
+    inspoVideos: [],        // {id, url, thumbnail}
+    thumbConceptNotes: "",
+    thumbConceptImage: "",  // base64 data URL
+    description: "",
+    tags: "",
+    preChecklist: [],       // {id, text, done}
+    postChecklist: DEFAULT_POST_CHECKLIST.map(t=>({id:uid(), text:t, done:false})),
+    scriptSections: [],     // {id, type, content, locked}
+    finalScript: "",
+    resources: [],          // {id, text}
+    sectionDone: {}          // {sectionKey: true/false}
+  };
+}
+function ensureVideoShape(v){
+  if(!v.inspoVideos){
+    v.inspoVideos = v.inspoUrl ? [{id:uid(), url:v.inspoUrl, thumbnail:""}] : [];
+  }
+  if(v.thumbConceptNotes === undefined) v.thumbConceptNotes = "";
+  if(v.thumbConceptImage === undefined) v.thumbConceptImage = "";
+  if(!v.sectionDone) v.sectionDone = {};
+  return v;
+}
+
+/* ---------------- Persistence ---------------- */
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem('yt_planner_state');
+    if(raw) state = JSON.parse(raw);
+  }catch(e){ console.error(e); }
+  const s = localStorage.getItem('yt_planner_settings');
+  if(s) state.settings = JSON.parse(s);
+}
+function saveLocal(){
+  localStorage.setItem('yt_planner_state', JSON.stringify({videos: state.videos}));
+  localStorage.setItem('yt_planner_settings', JSON.stringify(state.settings));
+}
+function markSaved(status){
+  const el = document.getElementById('saveIndicator');
+  if(status === 'saving') el.innerHTML = '<span class="dot" style="background:var(--warn);"></span>Saving...';
+  else if(status === 'error') el.innerHTML = '<span class="dot" style="background:var(--danger);"></span>Sync failed';
+  else el.innerHTML = '<span class="dot"></span>Saved';
+}
+function scheduleSave(){
+  saveLocal();
+  markSaved('saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    if(state.settings.ghToken && state.settings.ghRepo){
+      pushToGithub();
+    } else {
+      markSaved('saved');
+    }
+  }, 1500);
+}
+
+function b64EncodeUnicode(str){
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (m,p)=>String.fromCharCode('0x'+p)));
+}
+function b64DecodeUnicode(str){
+  return decodeURIComponent(atob(str).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+}
+
+async function pushToGithub(){
+  const {ghToken, ghRepo, ghPath} = state.settings;
+  if(!ghToken || !ghRepo) return;
+  try{
+    const url = `https://api.github.com/repos/${ghRepo}/contents/${ghPath || 'data.json'}`;
+    const body = {
+      message: "Update video planner data",
+      content: b64EncodeUnicode(JSON.stringify({videos: state.videos}, null, 2)),
+    };
+    if(ghSha) body.sha = ghSha;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${ghToken}`,
+        'Accept': 'application/vnd.github+json'
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.message || res.statusText);
+    }
+    const data = await res.json();
+    ghSha = data.content.sha;
+    markSaved('saved');
+  }catch(e){
+    console.error(e);
+    markSaved('error');
+  }
+}
+
+async function pullFromGithub(showMsg){
+  const {ghToken, ghRepo, ghPath} = state.settings;
+  const msgEl = document.getElementById('settingsMsg');
+  if(!ghToken || !ghRepo){
+    if(showMsg) msgEl.textContent = "Add your GitHub token and repo first.";
+    return;
+  }
+  try{
+    const url = `https://api.github.com/repos/${ghRepo}/contents/${ghPath || 'data.json'}`;
+    const res = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${ghToken}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if(res.status === 404){
+      ghSha = null;
+      if(showMsg) msgEl.textContent = "No data file yet in that repo — it'll be created on your next save.";
+      return;
+    }
+    if(!res.ok) throw new Error(res.statusText);
+    const data = await res.json();
+    ghSha = data.sha;
+    const parsed = JSON.parse(b64DecodeUnicode(data.content));
+    state.videos = parsed.videos || [];
+    saveLocal();
+    render();
+    if(showMsg) msgEl.textContent = "Pulled latest data from GitHub.";
+  }catch(e){
+    console.error(e);
+    if(showMsg) msgEl.textContent = "Couldn't reach GitHub — check your token and repo name.";
+  }
+}
+
+/* ---------------- Settings modal ---------------- */
+function openSettings(){
+  document.getElementById('settingApiKey').value = state.settings.apiKey || "";
+  document.getElementById('settingGhToken').value = state.settings.ghToken || "";
+  document.getElementById('settingGhRepo').value = state.settings.ghRepo || "";
+  document.getElementById('settingGhPath').value = state.settings.ghPath || "data.json";
+  document.getElementById('settingsMsg').textContent = "";
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){ document.getElementById('settingsModal').classList.remove('open'); }
+function saveSettings(){
+  state.settings.apiKey = document.getElementById('settingApiKey').value.trim();
+  state.settings.ghToken = document.getElementById('settingGhToken').value.trim();
+  state.settings.ghRepo = document.getElementById('settingGhRepo').value.trim();
+  state.settings.ghPath = document.getElementById('settingGhPath').value.trim() || "data.json";
+  saveLocal();
+  document.getElementById('settingsMsg').textContent = "Settings saved.";
+  if(state.settings.ghToken && state.settings.ghRepo) pullFromGithub(false);
+}
+
+/* ---------------- Checks & balances ---------------- */
+function computeWarnings(){
+  const warnings = [];
+  const today = new Date().toISOString().slice(0,10);
+  const stuckFilm = state.videos.filter(v => v.filmDate && v.filmDate < today && ["Planning","Scripting"].includes(v.stage));
+  if(stuckFilm.length) warnings.push(`${stuckFilm.length} video${stuckFilm.length>1?'s have':' has'} a film date in the past but ${stuckFilm.length>1?'are':'is'} still in ${stuckFilm.length>1?'Planning/Scripting':'Planning or Scripting'}.`);
+
+  const noChecklistForFilm = state.videos.filter(v => v.stage === "Ready to Film" && v.preChecklist.length > 0 && v.preChecklist.some(c=>!c.done));
+  if(noChecklistForFilm.length) warnings.push(`${noChecklistForFilm.length} video${noChecklistForFilm.length>1?'s are':' is'} marked Ready to Film with an incomplete pre-filming checklist.`);
+
+  const noPostForScheduled = state.videos.filter(v => v.stage === "Scheduled" && v.postChecklist.some(c=>!c.done));
+  if(noPostForScheduled.length) warnings.push(`${noPostForScheduled.length} scheduled video${noPostForScheduled.length>1?'s':''} still ${noPostForScheduled.length>1?'have':'has'} unfinished post-publishing steps.`);
+
+  const noScript = state.videos.filter(v => v.stage === "Scripting" && v.scriptSections.length === 0);
+  if(noScript.length) warnings.push(`${noScript.length} video${noScript.length>1?'s':''} in Scripting ${noScript.length>1?'have':'has'} no script sections started yet.`);
+
+  return warnings;
+}
+
+/* ---------------- Rendering: Dashboard ---------------- */
+function render(){
+  if(currentView.mode === "detail"){
+    renderDetail(currentView.videoId);
+  } else {
+    renderDashboard();
+  }
+}
+
+function renderDashboard(){
+  const app = document.getElementById('app');
+  const warnings = computeWarnings();
+
+  let html = `<div class="toolbar">
+    <h2>Your videos</h2>
+    <button class="btn btn-primary" onclick="createVideo()">+ New video</button>
+  </div>`;
+
+  if(warnings.length){
+    html += `<div class="warnings">` + warnings.map(w=>`<div class="warning-banner">⚠ ${w}</div>`).join('') + `</div>`;
+  }
+
+  if(state.videos.length === 0){
+    html += `<div class="empty-state"><h2>Nothing planned yet</h2><p>Start your first video and build out its plan.</p></div>`;
+  } else {
+    html += `<div class="kanban">`;
+    STAGES.forEach(stage=>{
+      const vids = state.videos.filter(v=>v.stage===stage);
+      const c = STAGE_COLORS[stage];
+      html += `<div class="kcol"><div class="kcol-head"><span class="label"><span class="dot" style="background:${c.dot};"></span>${stage}</span><span class="count">${vids.length}</span></div>`;
+      vids.forEach(v=>{
+        const pre = checklistProgress(v.preChecklist);
+        const dateLine = stage === "Scheduled"
+          ? (v.publishDate ? formatDate(v.publishDate) : "")
+          : (v.filmDate ? "Filming " + formatDate(v.filmDate) : "");
+        html += `<div class="kcard" onclick="openVideo('${v.id}')">
+          <div class="tag">${v.category}</div>
+          <div class="title">${escapeHtml(v.title || 'Untitled video')}</div>
+          ${dateLine ? `<div class="meta">${dateLine}</div>` : ''}
+          <span class="stage-pill" style="background:${c.bg};color:${c.text};"><span class="dot" style="background:${c.dot};"></span>${stage}</span>
+          ${v.preChecklist.length ? `<div class="progress-mini"><div style="width:${pre.pct}%"></div></div>` : ''}
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  app.innerHTML = html;
+}
+
+function checklistProgress(list){
+  if(!list || list.length === 0) return {done:0,total:0,pct:0};
+  const done = list.filter(i=>i.done).length;
+  return {done, total:list.length, pct: Math.round((done/list.length)*100)};
+}
+
+function createVideo(){
+  const v = blankVideo();
+  state.videos.unshift(v);
+  scheduleSave();
+  openVideo(v.id);
+}
+
+function openVideo(id){ currentView = {mode:"detail", videoId:id}; render(); }
+function backToDashboard(){ currentView = {mode:"dashboard", videoId:null}; render(); }
+
+function findVideo(id){
+  const v = state.videos.find(v=>v.id===id);
+  return v ? ensureVideoShape(v) : undefined;
+}
+
+function escapeHtml(str){
+  return (str||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+/* ---------------- Detail view ---------------- */
+let openSections = new Set(["basics"]);
+
+function toggleSection(key){
+  if(openSections.has(key)) openSections.delete(key); else openSections.add(key);
+  render();
+}
+
+function renderDetail(id){
+  const v = findVideo(id);
+  const app = document.getElementById('app');
+  if(!v){ backToDashboard(); return; }
+
+  const pre = checklistProgress(v.preChecklist);
+  const post = checklistProgress(v.postChecklist);
+  const finalizedCount = v.scriptSections.filter(s=>s.locked).length;
+  const canGenerate = v.scriptSections.length > 0 && finalizedCount === v.scriptSections.length;
+
+  let html = `
+  <div class="detail-wrap">
+  <button class="btn" onclick="backToDashboard()">&larr; All videos</button>
+  <div class="detail-header" style="margin-top:16px;">
+    <input class="title-input" value="${escapeHtml(v.title)}" oninput="updateField('${v.id}','title',this.value)" placeholder="Video title">
+    <select onchange="updateField('${v.id}','stage',this.value)" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--parchment);">
+      ${STAGES.map(s=>`<option value="${s}" ${v.stage===s?'selected':''}>${s}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="field-row" style="max-width:260px;">
+    <label>Category / Pillar</label>
+    <select onchange="updateField('${v.id}','category',this.value)">
+      ${CATEGORIES.map(c=>`<option value="${c}" ${v.category===c?'selected':''}>${c}</option>`).join('')}
+    </select>
+  </div>
+
+  <div class="two-col field-row">
+    <div><label>Film date</label><input type="date" value="${v.filmDate}" onchange="updateField('${v.id}','filmDate',this.value)"></div>
+    <div><label>Publish date</label><input type="date" value="${v.publishDate}" onchange="updateField('${v.id}','publishDate',this.value)"></div>
+  </div>
+
+  <div class="jump-nav">
+    <button class="btn jump-nav-btn" onclick="expandAllSections()">Expand all</button>
+    <button class="btn jump-nav-btn" onclick="collapseAllSections()">Collapse all</button>
+    <span class="jump-nav-divider"></span>
+    ${SECTION_NAV.map(s=>`<button class="btn jump-nav-btn" onclick="jumpToSection('${s.key}')">${s.label}</button>`).join('')}
+  </div>
+
+  ${renderTitlesSection(v)}
+  ${renderInspoSection(v)}
+  ${renderThumbTextSection(v)}
+  ${renderThumbConceptSection(v)}
+  ${renderCreationTrackingSection(v)}
+  ${renderTextSection(v, "description", "Video description", v.description)}
+  ${renderTagsSection(v)}
+  ${renderScriptSection(v, finalizedCount, canGenerate)}
+  ${renderPreChecklistSection(v, pre)}
+  ${renderPostChecklistSection(v, post)}
+
+  <div class="two-col field-row" style="margin-top:6px;">
+    <div><label>Film date</label><input type="date" value="${v.filmDate}" onchange="updateField('${v.id}','filmDate',this.value)"></div>
+    <div><label>Publish date</label><input type="date" value="${v.publishDate}" onchange="updateField('${v.id}','publishDate',this.value)"></div>
+  </div>
+  <div class="field-row" style="max-width:260px;">
+    <label>Stage</label>
+    <select onchange="updateField('${v.id}','stage',this.value)">
+      ${STAGES.map(s=>`<option value="${s}" ${v.stage===s?'selected':''}>${s}</option>`).join('')}
+    </select>
+  </div>
+
+  <div style="margin-top:20px;">
+    <button class="btn btn-danger" onclick="deleteVideo('${v.id}')">Delete this video</button>
+  </div>
+  </div>
+  `;
+  app.innerHTML = html;
+}
+
+function sectionWrap(key, title, badge, bodyHtml, vId){
+  const open = openSections.has(key);
+  let doneToggle = "";
+  let doneClass = "";
+  if(vId){
+    const v = findVideo(vId);
+    const isDone = !!v.sectionDone[key];
+    doneClass = isDone ? "done" : "";
+    doneToggle = `<label class="section-done-toggle" onclick="event.stopPropagation()">
+      <input type="checkbox" ${isDone?'checked':''} onchange="toggleSectionDone('${vId}','${key}')">Done
+    </label>`;
+  }
+  return `<div class="section ${open?'open':''} ${doneClass}" id="section-${key}">
+    <div class="section-head" onclick="toggleSection('${key}')">
+      <div class="left"><h3>${title}</h3>${badge?`<span class="badge">${badge}</span>`:''}</div>
+      <div style="display:flex;align-items:center;">${doneToggle}<span class="chev">›</span></div>
+    </div>
+    <div class="section-body">${bodyHtml}</div>
+  </div>`;
+}
+function toggleSectionDone(vId, key){
+  const v = findVideo(vId);
+  v.sectionDone[key] = !v.sectionDone[key];
+  scheduleSave(); render();
+}
+
+const SECTION_NAV = [
+  {key:"titles", label:"Titles"},
+  {key:"inspo", label:"Inspo"},
+  {key:"thumbtext", label:"Thumb text"},
+  {key:"thumbconcept", label:"Thumb concept"},
+  {key:"creation", label:"Tracking"},
+  {key:"description", label:"Description"},
+  {key:"tags", label:"Tags"},
+  {key:"pre", label:"Pre-filming"},
+  {key:"script", label:"Script"},
+  {key:"post", label:"Post-publishing"}
+];
+
+function expandAllSections(){
+  openSections = new Set(SECTION_NAV.map(s=>s.key));
+  render();
+}
+function collapseAllSections(){
+  openSections = new Set();
+  render();
+}
+function jumpToSection(key){
+  openSections.add(key);
+  render();
+  setTimeout(()=>{
+    const el = document.getElementById('section-'+key);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 0);
+}
+
+function updateField(id, field, value){
+  const v = findVideo(id);
+  v[field] = value;
+  scheduleSave();
+  if(field === 'title') return; // avoid re-render disrupting typing in the title input
+  render();
+}
+
+/* Titles & Thumbnail text (list + pick final) share logic */
+function renderListSection(v, key, label, sectionKey){
+  const items = v[key];
+  const rows = items.map(it=>`
+    <div class="list-item-row">
+      <input type="radio" name="${sectionKey}_${v.id}" ${it.final?'checked':''} onchange="setFinalListItem('${v.id}','${key}','${it.id}')" title="Mark as final">
+      <input type="text" value="${escapeHtml(it.text)}" oninput="updateListItemText('${v.id}','${key}','${it.id}',this.value)" placeholder="${label} option">
+      <button class="remove-x" onclick="removeListItem('${v.id}','${key}','${it.id}')">&times;</button>
+    </div>`).join('');
+  return sectionWrap(sectionKey, label, items.length ? `${items.length}` : null, `
+    ${rows}
+    <button class="add-link" onclick="addListItem('${v.id}','${key}')">+ Add option</button>
+  `, v.id);
+}
+function renderTitlesSection(v){ return renderListSection(v, 'titles', 'Titles', 'titles'); }
+function renderThumbTextSection(v){ return renderListSection(v, 'thumbTexts', 'Thumbnail text ideas', 'thumbtext'); }
+
+function addListItem(id, key){
+  const v = findVideo(id);
+  v[key].push({id:uid(), text:"", final:false});
+  scheduleSave(); render();
+}
+function removeListItem(id, key, itemId){
+  const v = findVideo(id);
+  v[key] = v[key].filter(i=>i.id!==itemId);
+  scheduleSave(); render();
+}
+function updateListItemText(id, key, itemId, value){
+  const v = findVideo(id);
+  const item = v[key].find(i=>i.id===itemId);
+  item.text = value;
+  scheduleSave();
+}
+function setFinalListItem(id, key, itemId){
+  const v = findVideo(id);
+  v[key].forEach(i=> i.final = (i.id===itemId));
+  scheduleSave(); render();
+}
+
+/* Video inspo — supports multiple reference videos with big thumbnails */
+function renderInspoSection(v){
+  const rows = v.inspoVideos.map(item=>`
+    <div class="inspo-item">
+      <div class="inspo-item-top">
+        <input type="url" value="${escapeHtml(item.url)}" oninput="updateInspoUrl('${v.id}','${item.id}',this.value)" onblur="loadInspoThumb('${v.id}','${item.id}')" placeholder="https://youtube.com/watch?v=...">
+        <button class="remove-x" onclick="removeInspoVideo('${v.id}','${item.id}')">&times;</button>
+      </div>
+      ${item.thumbnail ? `<img class="inspo-thumb-big" id="inspoThumb_${item.id}" src="${item.thumbnail}" alt="">` : (item.url ? `<img class="inspo-thumb-big" id="inspoThumb_${item.id}" src="" alt="">` : '')}
+      ${item.url ? `<a class="watch-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Watch video ↗</a>` : ''}
+    </div>`).join('');
+  return sectionWrap('inspo', 'Video inspo', v.inspoVideos.length?`${v.inspoVideos.length}`:null, `
+    ${rows}
+    <button class="add-link" onclick="addInspoVideo('${v.id}')">+ Add another inspo video</button>
+  `, v.id);
+}
+function addInspoVideo(id){
+  const v = findVideo(id);
+  v.inspoVideos.push({id:uid(), url:"", thumbnail:""});
+  scheduleSave(); render();
+}
+function removeInspoVideo(id, itemId){
+  const v = findVideo(id);
+  v.inspoVideos = v.inspoVideos.filter(i=>i.id!==itemId);
+  scheduleSave(); render();
+}
+function updateInspoUrl(id, itemId, value){
+  const v = findVideo(id);
+  v.inspoVideos.find(i=>i.id===itemId).url = value;
+  scheduleSave();
+}
+async function loadInspoThumb(id, itemId){
+  const v = findVideo(id);
+  const item = v.inspoVideos.find(i=>i.id===itemId);
+  if(!item.url) { render(); return; }
+  try{
+    const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(item.url)}&format=json`);
+    if(!res.ok) { render(); return; }
+    const data = await res.json();
+    item.thumbnail = (data.thumbnail_url || "").replace('hqdefault','maxresdefault');
+    scheduleSave();
+  }catch(e){ console.error(e); }
+  render();
+}
+
+/* Thumbnail concept — screenshot upload or notes */
+function renderThumbConceptSection(v){
+  const imgHtml = v.thumbConceptImage
+    ? `<img class="thumb-concept-img" src="${v.thumbConceptImage}" alt="Thumbnail concept">
+       <button class="btn" style="margin-top:8px;" onclick="removeThumbConceptImage('${v.id}')">Remove image</button>`
+    : `<label class="thumb-concept-upload">
+        Click to upload a thumbnail mockup screenshot
+        <input type="file" accept="image/*" style="display:none;" onchange="uploadThumbConcept('${v.id}',this)">
+      </label>`;
+  return sectionWrap('thumbconcept', 'Thumbnail concept', null, `
+    <div class="field-row">
+      <label>Notes</label>
+      <textarea oninput="updateField('${v.id}','thumbConceptNotes',this.value)" placeholder="Colors, text placement, mood...">${escapeHtml(v.thumbConceptNotes)}</textarea>
+    </div>
+    <div class="field-row">
+      <label>Mockup screenshot</label>
+      ${imgHtml}
+    </div>
+  `, v.id);
+}
+function uploadThumbConcept(id, input){
+  const v = findVideo(id);
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    v.thumbConceptImage = e.target.result;
+    scheduleSave(); render();
+  };
+  reader.readAsDataURL(file);
+}
+function removeThumbConceptImage(id){
+  const v = findVideo(id);
+  v.thumbConceptImage = "";
+  scheduleSave(); render();
+}
+
+/* Creation tracking */
+function renderCreationTrackingSection(v){
+  return sectionWrap('creation', 'Video creation tracking', null, `
+    <div class="field-row">
+      <label>Video idea came from</label>
+      <select onchange="updateField('${v.id}','ideaSource',this.value); render();">
+        ${SOURCE_OPTIONS.map(o=>`<option value="${o}" ${v.ideaSource===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+      ${v.ideaSource==='Other'?`<input type="text" style="margin-top:6px;" value="${escapeHtml(v.ideaSourceOther)}" oninput="updateField('${v.id}','ideaSourceOther',this.value)" placeholder="Describe source">`:''}
+    </div>
+  `, v.id);
+}
+
+function renderTextSection(v, field, label, value){
+  return sectionWrap(field, label, null, `
+    <div class="field-row"><textarea oninput="updateField('${v.id}','${field}',this.value)" placeholder="${label}...">${escapeHtml(value)}</textarea></div>
+  `, v.id);
+}
+
+function renderTagsSection(v){
+  const len = (v.tags||"").length;
+  const over = len > 500;
+  return sectionWrap('tags', 'Video tags', `${len}/500`, `
+    <div class="field-row">
+      <textarea maxlength="500" oninput="updateTagsField('${v.id}',this.value)" placeholder="Video tags...">${escapeHtml(v.tags)}</textarea>
+      <div style="text-align:right;font-size:12px;margin-top:4px;color:${over?'var(--danger)':'var(--mid)'};">${len}/500 characters</div>
+    </div>
+  `, v.id);
+}
+function updateTagsField(id, value){
+  const v = findVideo(id);
+  v.tags = value.slice(0,500);
+  scheduleSave();
+  const badgeEl = document.querySelector('#section-tags .badge');
+  if(badgeEl) badgeEl.textContent = `${v.tags.length}/500`;
+  const counterEl = document.querySelector('#section-tags .field-row div');
+  if(counterEl){
+    counterEl.textContent = `${v.tags.length}/500 characters`;
+    counterEl.style.color = v.tags.length > 500 ? 'var(--danger)' : 'var(--mid)';
+  }
+}
+
+/* Pre-filming checklist — free-form items she defines herself */
+function renderPreChecklistSection(v, pre){
+  const rows = v.preChecklist.map(it=>`
+    <div class="checklist-item ${it.done?'item-done':''}">
+      <input type="checkbox" ${it.done?'checked':''} onchange="toggleChecklistItem('${v.id}','preChecklist','${it.id}')">
+      <input type="text" value="${escapeHtml(it.text)}" oninput="updateChecklistItemText('${v.id}','preChecklist','${it.id}',this.value)" placeholder="Checklist item">
+      <button class="remove-x" onclick="removeChecklistItem('${v.id}','preChecklist','${it.id}')">&times;</button>
+    </div>`).join('');
+  return sectionWrap('pre', 'Pre-filming checklist', pre.total?`${pre.done}/${pre.total}`:null, `
+    ${rows}
+    <button class="add-link" onclick="addChecklistItem('${v.id}','preChecklist')">+ Add checklist item</button>
+  `, v.id);
+}
+function renderPostChecklistSection(v, post){
+  const rows = v.postChecklist.map(it=>`
+    <div class="checklist-item ${it.done?'item-done':''}">
+      <input type="checkbox" ${it.done?'checked':''} onchange="toggleChecklistItem('${v.id}','postChecklist','${it.id}')">
+      <span style="flex:1;font-size:14px;">${escapeHtml(it.text)}</span>
+      <button class="remove-x" onclick="removeChecklistItem('${v.id}','postChecklist','${it.id}')" title="Remove — not needed for this video">&times;</button>
+    </div>`).join('');
+  return sectionWrap('post', 'Post-publishing checklist', `${post.done}/${post.total}`, rows, v.id);
+}
+function addChecklistItem(id, key){
+  const v = findVideo(id);
+  v[key].push({id:uid(), text:"", done:false});
+  scheduleSave(); render();
+}
+function removeChecklistItem(id, key, itemId){
+  const v = findVideo(id);
+  v[key] = v[key].filter(i=>i.id!==itemId);
+  scheduleSave(); render();
+}
+function updateChecklistItemText(id, key, itemId, value){
+  const v = findVideo(id);
+  v[key].find(i=>i.id===itemId).text = value;
+  scheduleSave();
+}
+function toggleChecklistItem(id, key, itemId){
+  const v = findVideo(id);
+  const item = v[key].find(i=>i.id===itemId);
+  item.done = !item.done;
+  scheduleSave(); render();
+}
+
+/* ---------------- Script builder ---------------- */
+let dragSectionId = null;
+
+function renderScriptSection(v, finalizedCount, canGenerate){
+  const rows = v.scriptSections.map((s, idx)=>`
+    <div class="script-section-row ${s.locked?'locked':''}" draggable="true"
+         ondragstart="dragSectionId='${s.id}'"
+         ondragover="event.preventDefault()"
+         ondrop="dropScriptSection('${v.id}','${s.id}')">
+      <span class="grip">⠿</span>
+      <div class="content">
+        <span class="script-type-badge">${s.type}</span>
+        <textarea ${s.locked?'readonly':''} oninput="updateScriptSectionText('${v.id}','${s.id}',this.value)" placeholder="Write this section...">${escapeHtml(s.content)}</textarea>
+      </div>
+      <button class="lock-btn" onclick="toggleLockSection('${v.id}','${s.id}')" title="${s.locked?'Unlock to edit':'Finalize this section'}">${s.locked?'🔒':'🔓'}</button>
+      <button class="remove-x" onclick="removeScriptSection('${v.id}','${s.id}')">&times;</button>
+    </div>`).join('');
+
+  const addButtons = SCRIPT_TYPES.map(t=>`<button class="add-type-btn" onclick="addScriptSection('${v.id}','${t}')">+ ${t}</button>`).join('');
+
+  const finalOutput = v.finalScript ? `<div class="final-script-output">${formatFinalScript(v.finalScript)}</div>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button class="btn" onclick="polishScript(event,'${v.id}')">Polish with AI</button>
+      <button class="btn" onclick="copyFinalScript('${v.id}')">Copy script</button>
+    </div>` : '';
+
+  return sectionWrap('script', 'Script builder', v.scriptSections.length?`${finalizedCount}/${v.scriptSections.length} finalized`:null, `
+    ${rows}
+    <div class="add-section-row">${addButtons}</div>
+    ${renderResourcesBlock(v)}
+    <div class="finalize-status">${v.scriptSections.length ? `${finalizedCount} of ${v.scriptSections.length} sections finalized` : 'Add sections to build your script'}</div>
+    <button class="btn btn-gold" ${canGenerate?'':'disabled'} onclick="generateFinalScript('${v.id}')">Generate final script</button>
+    ${finalOutput}
+  `, v.id);
+}
+
+function renderResourcesBlock(v){
+  const rows = v.resources.map(r=>`
+    <div class="list-item-row">
+      <input type="text" value="${escapeHtml(r.text)}" oninput="updateResourceText('${v.id}','${r.id}',this.value)" placeholder="Link, note, or screenshot description">
+      <button class="remove-x" onclick="removeResource('${v.id}','${r.id}')">&times;</button>
+    </div>`).join('');
+  return `<div style="margin:12px 0;">
+    <label style="display:block;font-size:12px;color:var(--mid);margin-bottom:6px;">Resources (links, screenshots, notes)</label>
+    ${rows}
+    <button class="add-link" onclick="addResource('${v.id}')">+ Add resource</button>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;background:var(--parchment);border:1px solid var(--border);border-radius:8px;padding:9px 11px;margin-top:10px;">
+      <input type="checkbox" ${v.resourcesConfirmed?'checked':''} onchange="toggleResourcesConfirmed('${v.id}')" style="width:auto;">
+      Script and resources confirmed ready
+    </label>
+  </div>`;
+}
+function addResource(id){ const v=findVideo(id); v.resources.push({id:uid(),text:""}); scheduleSave(); render(); }
+function removeResource(id, rid){ const v=findVideo(id); v.resources = v.resources.filter(r=>r.id!==rid); scheduleSave(); render(); }
+function updateResourceText(id, rid, value){ const v=findVideo(id); v.resources.find(r=>r.id===rid).text = value; scheduleSave(); }
+function toggleResourcesConfirmed(id){
+  const v = findVideo(id);
+  v.resourcesConfirmed = !v.resourcesConfirmed;
+  if(v.resourcesConfirmed && v.stage === "Scripting"){ v.stage = "Ready to Film"; }
+  scheduleSave(); render();
+}
+
+function addScriptSection(id, type){
+  const v = findVideo(id);
+  v.scriptSections.push({id:uid(), type, content:"", locked:false});
+  scheduleSave(); render();
+}
+function removeScriptSection(id, sid){
+  const v = findVideo(id);
+  v.scriptSections = v.scriptSections.filter(s=>s.id!==sid);
+  scheduleSave(); render();
+}
+function updateScriptSectionText(id, sid, value){
+  const v = findVideo(id);
+  v.scriptSections.find(s=>s.id===sid).content = value;
+  scheduleSave();
+}
+function toggleLockSection(id, sid){
+  const v = findVideo(id);
+  const s = v.scriptSections.find(s=>s.id===sid);
+  s.locked = !s.locked;
+  scheduleSave(); render();
+}
+function dropScriptSection(id, targetId){
+  const v = findVideo(id);
+  if(!dragSectionId || dragSectionId === targetId) return;
+  const fromIdx = v.scriptSections.findIndex(s=>s.id===dragSectionId);
+  const toIdx = v.scriptSections.findIndex(s=>s.id===targetId);
+  const [moved] = v.scriptSections.splice(fromIdx,1);
+  v.scriptSections.splice(toIdx,0,moved);
+  dragSectionId = null;
+  scheduleSave(); render();
+}
+
+function generateFinalScript(id){
+  const v = findVideo(id);
+  const text = v.scriptSections.map(s=>`**${s.type}**\n${s.content}`).join('\n\n');
+  v.finalScript = text;
+  scheduleSave(); render();
+}
+
+function formatFinalScript(text){
+  return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+
+function copyFinalScript(id){
+  const v = findVideo(id);
+  navigator.clipboard.writeText(v.finalScript).then(()=>{
+    alert("Script copied.");
+  });
+}
+
+async function polishScript(evt, id){
+  const v = findVideo(id);
+  if(!state.settings.apiKey){
+    alert("Add your Anthropic API key in Settings first.");
+    return;
+  }
+  const btn = evt.target;
+  btn.textContent = "Polishing...";
+  btn.disabled = true;
+  try{
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": state.settings.apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        messages: [{
+          role: "user",
+          content: `Lightly polish this YouTube script for grammar, flow, and clarity only. Do not rewrite the substance, add new ideas, or change the meaning. Keep the bolded section headers (**Header**) exactly as they are, in the same order. Return only the polished script, nothing else.\n\n${v.finalScript}`
+        }]
+      })
+    });
+    const data = await res.json();
+    const polished = data.content?.map(c=>c.text||"").join("") || v.finalScript;
+    v.finalScript = polished;
+    scheduleSave(); render();
+  }catch(e){
+    console.error(e);
+    alert("Couldn't reach the API. Check your key and try again.");
+  }
+}
+
+/* ---------------- Delete ---------------- */
+function deleteVideo(id){
+  if(!confirm("Delete this video and everything in it? This can't be undone.")) return;
+  state.videos = state.videos.filter(v=>v.id!==id);
+  scheduleSave();
+  backToDashboard();
+}
+
+/* ---------------- Init ---------------- */
+loadLocal();
+if(state.settings.ghToken && state.settings.ghRepo){
+  pullFromGithub(false).then(render);
+} else {
+  render();
+}
+</script>
+</body>
+</html>
