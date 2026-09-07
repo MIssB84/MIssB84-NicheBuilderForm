@@ -9,16 +9,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --espresso:#1c1522;    /* deepest ink — topbar */
+    --espresso:#211e23;     /* deepest ink — topbar, near-black from swatch */
     --bg-page:#f5ece3;      /* page background — soft cream */
     --parchment:#ffffff;    /* surface — cards, inputs, buttons (white) */
     --text:#2a1f30;         /* primary dark text */
     --cream:#f5e2df;        /* light text on dark surfaces (topbar, accent buttons) */
-    --gold:#c99a91;         /* Dusty Rose accent */
-    --blush:#f2cfcd;        /* Soft Blush */
-    --purple:#9a70c0;       /* deep amethyst accent */
-    --purple-bg:#f0e6f5;
-    --green:#6f9450;        /* deep forest green */
+    --gold:#a9639c;         /* Mauve/orchid accent */
+    --blush:#e3e3e1;        /* Light Gray */
+    --purple:#a13d7b;       /* Deep Berry — main action color */
+    --purple-bg:#f3e4ee;
+    --green:#8fb0b3;        /* Pale Dusty Blue */
     --border:#e6d9e3;
     --mid:#7d6577;
     --muted:#b8a2b0;
@@ -107,7 +107,7 @@
     color:var(--cream);
     border:1px solid var(--purple);
   }
-  .btn-primary:hover{background:#7550a0;}
+  .btn-primary:hover{background:#8a3468;}
   .btn-gold{
     background:var(--gold);
     color:var(--espresso);
@@ -377,11 +377,11 @@
 /* ---------------- State ---------------- */
 const STAGES = ["Planning","Scripting","Ready to Film","Editing","Scheduled"];
 const STAGE_COLORS = {
-  "Planning":      {dot:"#a89bb0", bg:"#2c2432", text:"#d8c8dc"}, /* charcoal-mauve */
-  "Scripting":     {dot:"#c09189", bg:"#3d2a2c", text:"#eccdc8"}, /* Dusty Rose */
-  "Ready to Film": {dot:"#8a5fae", bg:"#2f2140", text:"#ddc7ec"}, /* deep purple */
-  "Editing":       {dot:"#93585e", bg:"#3d2126", text:"#e9c3c6"}, /* Earthy Wine */
-  "Scheduled":     {dot:"#6f9450", bg:"#212f19", text:"#c9e0ad"}  /* deep green */
+  "Planning":      {dot:"#b0b0ae", bg:"#e9e9e7", text:"#2b2530"}, /* Light Gray */
+  "Scripting":     {dot:"#8fb0b3", bg:"#d3e2e3", text:"#2b2530"}, /* Pale Dusty Blue */
+  "Ready to Film": {dot:"#a9639c", bg:"#a9639c", text:"#f9f0f7"}, /* Mauve/Orchid */
+  "Editing":       {dot:"#211e23", bg:"#2b2530", text:"#f0e6e8"}, /* Near-Black */
+  "Scheduled":     {dot:"#a13d7b", bg:"#a13d7b", text:"#f9eaf3"}  /* Deep Berry */
 };
 function formatDate(iso){
   if(!iso) return "";
@@ -390,11 +390,11 @@ function formatDate(iso){
 }
 const CATEGORIES = ["Unsaturated Niches","Tutorial","Strategy","Proof-Based","Other"];
 const CATEGORY_COLORS = {
-  "Unsaturated Niches": {bg:"#212f19", text:"#c9e0ad"}, /* deep green */
-  "Tutorial":           {bg:"#3d2a2c", text:"#eccdc8"}, /* Dusty Rose */
-  "Strategy":           {bg:"#3d2126", text:"#e9c3c6"}, /* Earthy Wine */
-  "Proof-Based":        {bg:"#2f2140", text:"#ddc7ec"}, /* deep purple */
-  "Other":              {bg:"#2c2432", text:"#d8c8dc"}  /* charcoal-mauve */
+  "Unsaturated Niches": {bg:"#a13d7b", text:"#f9eaf3"}, /* Deep Berry */
+  "Tutorial":           {bg:"#d3e2e3", text:"#2b2530"}, /* Pale Dusty Blue */
+  "Strategy":           {bg:"#a9639c", text:"#f9f0f7"}, /* Mauve/Orchid */
+  "Proof-Based":        {bg:"#2b2530", text:"#f0e6e8"}, /* Near-Black */
+  "Other":              {bg:"#e9e9e7", text:"#2b2530"}  /* Light Gray */
 };
 const SOURCE_OPTIONS = ["ChatGPT","Myself","YouTube Video","Other"];
 const DEFAULT_POST_CHECKLIST = [
