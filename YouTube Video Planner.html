@@ -377,11 +377,11 @@
 /* ---------------- State ---------------- */
 const STAGES = ["Planning","Scripting","Ready to Film","Editing","Scheduled"];
 const STAGE_COLORS = {
-  "Planning":      {dot:"#b0b0ae", bg:"#e9e9e7", text:"#2b2530"}, /* Light Gray */
-  "Scripting":     {dot:"#8fb0b3", bg:"#d3e2e3", text:"#2b2530"}, /* Pale Dusty Blue */
-  "Ready to Film": {dot:"#a9639c", bg:"#a9639c", text:"#f9f0f7"}, /* Mauve/Orchid */
-  "Editing":       {dot:"#211e23", bg:"#2b2530", text:"#f0e6e8"}, /* Near-Black */
-  "Scheduled":     {dot:"#a13d7b", bg:"#a13d7b", text:"#f9eaf3"}  /* Deep Berry */
+  "Planning":      {dot:"#8a8a87", bg:"#e9e9e7", text:"#2b2530"}, /* Light Gray */
+  "Scripting":     {dot:"#5f8285", bg:"#d3e2e3", text:"#2b2530"}, /* Pale Dusty Blue */
+  "Ready to Film": {dot:"#4a2340", bg:"#a9639c", text:"#f9f0f7"}, /* Mauve/Orchid */
+  "Editing":       {dot:"#f0e6e8", bg:"#2b2530", text:"#f0e6e8"}, /* Near-Black */
+  "Scheduled":     {dot:"#f9eaf3", bg:"#a13d7b", text:"#f9eaf3"}  /* Deep Berry */
 };
 function formatDate(iso){
   if(!iso) return "";
@@ -617,7 +617,7 @@ function renderDashboard(){
     STAGES.forEach(stage=>{
       const vids = state.videos.filter(v=>v.stage===stage);
       const c = STAGE_COLORS[stage];
-      html += `<div class="kcol" style="background:${c.bg};"><div class="kcol-head"><span class="label"><span class="dot" style="background:${c.dot};"></span>${stage}</span><span class="count">${vids.length}</span></div>`;
+      html += `<div class="kcol" style="background:${c.bg};"><div class="kcol-head"><span class="label" style="color:${c.text};"><span class="dot" style="background:${c.dot};"></span>${stage}</span><span class="count">${vids.length}</span></div>`;
       vids.forEach(v=>{
         const pre = checklistProgress(v.preChecklist);
         const dateLine = stage === "Scheduled"
@@ -682,19 +682,22 @@ function renderDetail(id){
   const finalizedCount = v.scriptSections.filter(s=>s.locked).length;
   const canGenerate = v.scriptSections.length > 0 && finalizedCount === v.scriptSections.length;
 
+  const stageColor = STAGE_COLORS[v.stage] || STAGE_COLORS['Planning'];
+  const categoryColor = CATEGORY_COLORS[v.category] || CATEGORY_COLORS['Other'];
+
   let html = `
   <div class="detail-wrap">
   <button class="btn" onclick="backToDashboard()">&larr; All videos</button>
   <div class="detail-header" style="margin-top:16px;">
     <input class="title-input" value="${escapeHtml(v.title)}" oninput="updateField('${v.id}','title',this.value)" placeholder="Video title">
-    <select onchange="updateField('${v.id}','stage',this.value)" style="border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--parchment);">
+    <select onchange="updateField('${v.id}','stage',this.value)" style="border:none;border-radius:20px;padding:9px 16px;background:${stageColor.bg};color:${stageColor.text};font-weight:600;">
       ${STAGES.map(s=>`<option value="${s}" ${v.stage===s?'selected':''}>${s}</option>`).join('')}
     </select>
   </div>
 
   <div class="field-row" style="max-width:260px;">
     <label>Category / Pillar</label>
-    <select onchange="updateField('${v.id}','category',this.value)">
+    <select onchange="updateField('${v.id}','category',this.value)" style="background:${categoryColor.bg};color:${categoryColor.text};font-weight:600;border:none;">
       ${CATEGORIES.map(c=>`<option value="${c}" ${v.category===c?'selected':''}>${c}</option>`).join('')}
     </select>
   </div>
@@ -728,7 +731,7 @@ function renderDetail(id){
   </div>
   <div class="field-row" style="max-width:260px;">
     <label>Stage</label>
-    <select onchange="updateField('${v.id}','stage',this.value)">
+    <select onchange="updateField('${v.id}','stage',this.value)" style="background:${stageColor.bg};color:${stageColor.text};font-weight:600;border:none;">
       ${STAGES.map(s=>`<option value="${s}" ${v.stage===s?'selected':''}>${s}</option>`).join('')}
     </select>
   </div>
