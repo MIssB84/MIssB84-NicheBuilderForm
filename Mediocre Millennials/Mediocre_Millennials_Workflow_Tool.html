@@ -565,7 +565,24 @@
 
   <div class="card">
     <h2><span class="step-tag">Step 2</span> Titles &amp; Tags per Product</h2>
-    <div class="hint" style="margin-top:-8px;">Each product below gets its own paste box, locked front keyword, and 3 AI-written title remixes pulled from your own proven keywords. Click a garment's wording pill to drop in its baked-in variations. Each product keeps its own character count and its own tags.</div>
+    <div class="hint" style="margin-top:-8px;">Paste your titles or keywords once and set one front keyword \u2014 both carry across all 3 products below. One click writes 3 remixes for Baby Tee, T Shirt, and Sweatshirt at once, each following that product's own naming rules. Click a garment's wording pill to drop in its baked-in variations.</div>
+
+    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
+      <label class="first" style="margin-top:0;">Paste your existing titles or keywords</label>
+      <div class="hint">Used as the source material for all 3 products \u2014 the AI pulls real keyword phrases from here instead of inventing new ones, and ignores any garment wording already in there in favor of each product's own rules.</div>
+    </div>
+    <div class="orig-titles-box">
+      <textarea id="sharedOrigPaste" placeholder="Paste your working Etsy titles or keywords here, one per line"></textarea>
+    </div>
+
+    <div style="margin-top:14px;">
+      <label class="first" style="margin-top:0;">Front keyword (locked to the start of every remix on every product, before the first comma)</label>
+      <input type="text" id="sharedKeyword" placeholder="e.g. Getting Meowied">
+    </div>
+
+    <button class="btn secondary" id="generateAllBtn" style="margin-top:14px;">\u2728 Generate all 3 products' titles</button>
+    <div class="status" id="remixStatusAll"></div>
+    <div class="error" id="remixErrorAll"></div>
 
     <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
       <label class="first" style="margin-top:0;">Titles &amp; tags by product</label>
@@ -741,16 +758,30 @@ const GARMENTS = [
   }
 ];
 
-// Each garment now keeps its own independent title-building state: what you pasted
-// as reference/source material, the front keyword locked to the start of every
-// remix, and 3 editable AI-written remixes.
+// The paste box and front keyword are now shared across all 3 products \u2014 enter
+// them once and every garment's remixes pull from the same source. Only the 3
+// remixes themselves stay per-garment, since each product has its own naming rules.
+let sharedTitleInput = { pasted: '', keyword: '' };
+let lastSyncedTrackerName = '';
+
 function blankGarmentTitleState() {
-  return { pasted: '', keyword: '', remixes: [{ text: '', final: false }, { text: '', final: false }, { text: '', final: false }] };
+  return { remixes: [{ text: '', final: false }, { text: '', final: false }, { text: '', final: false }] };
 }
 let garmentTitleState = { babytee: blankGarmentTitleState(), tshirt: blankGarmentTitleState(), sweatshirt: blankGarmentTitleState() };
 let garmentTags = { babytee: [], tshirt: [], sweatshirt: [] };
 let activeGarment = 'babytee';
 let lastFocusedTitleFieldId = null;
+
+// Keeps the Design Tracker's name field in sync with the front keyword, without
+// clobbering a name Dania typed there herself on purpose.
+function syncTrackerNameFromKeyword(val) {
+  const nameField = document.getElementById('trackerDesignName');
+  if (!nameField) return;
+  if (!nameField.value.trim() || nameField.value === lastSyncedTrackerName) {
+    nameField.value = val;
+    lastSyncedTrackerName = val;
+  }
+}
 
 // Returns whichever remix is marked final, or the first filled-in one, or '' if none yet.
 function getCurrentGarmentTitle(key) {
@@ -846,10 +877,10 @@ function renderGarmentPanels() {
   wrap.innerHTML = GARMENTS.map((g, idx) => {
     const s = garmentTitleState[g.key];
     const variationBtns = g.segments.map((seg, i) => `
-      <button type="button" class="variation-btn" data-insert-garment="${g.key}" data-insert-text="${escapeHtml(seg)}">
+      <button type="button" class="variation-btn" data-insert-text="${escapeHtml(seg)}">
         <span class="vnum">${i + 1}.</span>${escapeHtml(seg)}<span class="vcount">(${seg.length})</span>
       </button>`).join('') + `
-      <button type="button" class="variation-btn" data-insert-garment="${g.key}" data-insert-text="${escapeHtml(g.giftDefault)}">
+      <button type="button" class="variation-btn" data-insert-text="${escapeHtml(g.giftDefault)}">
         <span class="vnum">gift</span>${escapeHtml(g.giftDefault)}<span class="vcount">(${g.giftDefault.length})</span>
       </button>`;
     const remixBoxes = s.remixes.map((r, i) => `
@@ -857,6 +888,7 @@ function renderGarmentPanels() {
         <div class="remix-head">
           <input type="radio" name="titleFinal-${g.key}" id="remixFinal-${g.key}-${i}" ${r.final ? 'checked' : ''} data-final-garment="${g.key}" data-final-idx="${i}" title="Use as the final title">
           <label for="remixFinal-${g.key}-${i}" class="final-label">Remix ${i + 1} \u2014 use as final title</label>
+          <button type="button" class="copy-btn-pill copy-single-remix" data-copy-garment="${g.key}" data-copy-idx="${i}" style="margin-left:auto;" title="Copy this remix">Copy</button>
         </div>
         <textarea id="remixBox-${g.key}-${i}" rows="2" placeholder="Remix ${i + 1} \u2014 starts with your locked keyword" data-remix-garment="${g.key}" data-remix-idx="${i}">${escapeHtml(r.text)}</textarea>
         <div id="remixCount-${g.key}-${i}" style="font-size:11.5px; color:#9a877f; text-align:right;">${r.text.length} / 140 chars</div>
@@ -864,20 +896,7 @@ function renderGarmentPanels() {
 
     return `
     <div class="garment-panel${idx === 0 ? ' active' : ''}" id="garmentPanel-${g.key}">
-      <div style="border-top:1px solid var(--border); margin:4px 0 4px; padding-top:4px;">
-        <label class="first" style="margin-top:0;">Paste your existing ${g.label.toLowerCase()} titles or keywords</label>
-        <div class="hint">For reference, and used as the source material for remixes \u2014 the AI pulls real keyword phrases from here instead of inventing new ones.</div>
-      </div>
-      <div class="orig-titles-box">
-        <textarea id="origPaste-${g.key}" placeholder="Paste your working Etsy titles or keywords here, one per line" data-paste-garment="${g.key}">${escapeHtml(s.pasted)}</textarea>
-      </div>
-
-      <div style="margin-top:14px;">
-        <label class="first" style="margin-top:0;">Front keyword (the product's own naming gets locked right after it, before the first comma \u2014 e.g. "Getting Meowied" here becomes "Getting Meowied ${escapeHtml(g.segments[0])}")</label>
-        <input type="text" id="garmentKeyword-${g.key}" placeholder="e.g. ${escapeHtml(g.segments[0])}" value="${escapeAttr(s.keyword)}" data-keyword-garment="${g.key}">
-      </div>
-
-      <div style="margin-top:14px;">
+      <div style="margin-top:4px;">
         <label class="first" style="margin-top:0;">${g.label} wording pill \u2014 click to see variations, click one to insert it wherever your cursor is</label>
         <div class="tag-list" style="margin-top:8px;">
           <button type="button" class="tag-chip pill" data-toggle-variations="${g.key}" style="cursor:pointer;">${g.label}</button>
@@ -885,15 +904,11 @@ function renderGarmentPanels() {
         <div class="variation-row" id="variations-${g.key}">${variationBtns}</div>
       </div>
 
-      <button class="btn secondary" data-generate-garment="${g.key}" style="margin-top:14px;">\u2728 Generate 3 title remixes</button>
-      <div class="status" id="remixStatus-${g.key}"></div>
-      <div class="error" id="remixError-${g.key}"></div>
-
       <div style="margin-top:14px;">${remixBoxes}</div>
 
       <div class="copy-all-row">
         <button class="btn secondary copy-garment-title" data-garment="${g.key}">Copy final title</button>
-        <button class="btn secondary clear-garment-title" data-garment="${g.key}">Clear this product's title</button>
+        <button class="btn secondary clear-garment-title" data-garment="${g.key}">Clear this product's titles</button>
       </div>
 
       <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:14px;">
@@ -915,16 +930,6 @@ function renderGarmentPanels() {
   }).join('');
 
   GARMENTS.forEach(g => {
-    document.getElementById('origPaste-' + g.key).addEventListener('input', (e) => {
-      garmentTitleState[g.key].pasted = e.target.value;
-      autosaveGarmentState();
-    });
-    document.getElementById('origPaste-' + g.key).addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
-    document.getElementById('garmentKeyword-' + g.key).addEventListener('input', (e) => {
-      garmentTitleState[g.key].keyword = e.target.value;
-      autosaveGarmentState();
-    });
-    document.getElementById('garmentKeyword-' + g.key).addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
     for (let i = 0; i < garmentTitleState[g.key].remixes.length; i++) {
       const box = document.getElementById(`remixBox-${g.key}-${i}`);
       box.addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
@@ -951,6 +956,13 @@ function renderGarmentPanels() {
     autosaveGarmentState();
   }));
 
+  wrap.querySelectorAll('.copy-single-remix').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.copyGarment;
+    const idx = Number(btn.dataset.copyIdx);
+    const text = garmentTitleState[key].remixes[idx].text;
+    copyToClipboard(text, btn, 'Copy');
+  }));
+
   wrap.querySelectorAll('[data-toggle-variations]').forEach(btn => btn.addEventListener('click', () => {
     const key = btn.dataset.toggleVariations;
     const row = document.getElementById('variations-' + key);
@@ -958,18 +970,13 @@ function renderGarmentPanels() {
     row.style.display = (row.style.display === 'flex') ? 'none' : 'flex';
   }));
 
-  wrap.querySelectorAll('[data-insert-garment]').forEach(btn => btn.addEventListener('click', () => {
-    const key = btn.dataset.insertGarment;
+  wrap.querySelectorAll('[data-insert-text]').forEach(btn => btn.addEventListener('click', () => {
     const text = btn.dataset.insertText;
     let targetId = lastFocusedTitleFieldId;
-    if (!targetId || !document.getElementById(targetId) || targetId.indexOf('-' + key) === -1) {
-      targetId = 'garmentKeyword-' + key;
+    if (!targetId || !document.getElementById(targetId)) {
+      targetId = 'sharedKeyword';
     }
     insertAtField(targetId, text);
-  }));
-
-  wrap.querySelectorAll('[data-generate-garment]').forEach(btn => btn.addEventListener('click', () => {
-    generateGarmentRemixes(btn.dataset.generateGarment);
   }));
 
   wrap.querySelectorAll('.add-garment-tag').forEach(btn => btn.addEventListener('click', () => {
@@ -993,7 +1000,7 @@ function renderGarmentPanels() {
 
   wrap.querySelectorAll('.clear-garment-title').forEach(btn => btn.addEventListener('click', () => {
     const key = btn.dataset.garment;
-    const confirmed = confirm(`Clear the pasted titles, keyword, and all 3 remixes for ${GARMENTS.find(x => x.key === key).label}? This won't touch its tags.`);
+    const confirmed = confirm(`Clear all 3 remixes for ${GARMENTS.find(x => x.key === key).label}? This won't touch its tags, or your shared paste box and keyword.`);
     if (!confirmed) return;
     garmentTitleState[key] = blankGarmentTitleState();
     renderGarmentPanels();
@@ -1009,6 +1016,18 @@ function renderGarmentPanels() {
   renderAllGarmentTitles();
 }
 
+document.getElementById('sharedOrigPaste').addEventListener('input', (e) => {
+  sharedTitleInput.pasted = e.target.value;
+  autosaveGarmentState();
+});
+document.getElementById('sharedOrigPaste').addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
+document.getElementById('sharedKeyword').addEventListener('input', (e) => {
+  sharedTitleInput.keyword = e.target.value;
+  syncTrackerNameFromKeyword(e.target.value);
+  autosaveGarmentState();
+});
+document.getElementById('sharedKeyword').addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
+
 document.getElementById('garmentTabNav').addEventListener('click', (e) => {
   const btn = e.target.closest('.garment-tab-btn');
   if (!btn) return;
@@ -1021,7 +1040,7 @@ document.getElementById('garmentTabNav').addEventListener('click', (e) => {
 
 const autosaveGarmentState = debounce(async () => {
   try {
-    await storageAPI.set('session:garmentState', JSON.stringify({ garmentTitleState, garmentTags }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ sharedTitleInput, garmentTitleState, garmentTags }));
     flashSavedIndicator();
   } catch (e) {}
 }, 600);
@@ -1037,10 +1056,14 @@ async function restoreGarmentState() {
     const saved = await storageAPI.get('session:garmentState');
     if (saved && saved.value) {
       const parsed = JSON.parse(saved.value);
+      if (parsed.sharedTitleInput && typeof parsed.sharedTitleInput === 'object') {
+        sharedTitleInput.pasted = parsed.sharedTitleInput.pasted || '';
+        sharedTitleInput.keyword = parsed.sharedTitleInput.keyword || '';
+      }
       if (parsed.garmentTitleState) {
         GARMENTS.forEach(g => {
           const gs = parsed.garmentTitleState[g.key];
-          if (gs && typeof gs === 'object') garmentTitleState[g.key] = gs;
+          if (gs && typeof gs === 'object' && Array.isArray(gs.remixes)) garmentTitleState[g.key] = { remixes: gs.remixes };
         });
       }
       if (parsed.garmentTags) {
@@ -1063,6 +1086,9 @@ async function restoreGarmentState() {
 
 async function initBuilder() {
   await restoreGarmentState();
+  document.getElementById('sharedOrigPaste').value = sharedTitleInput.pasted;
+  document.getElementById('sharedKeyword').value = sharedTitleInput.keyword;
+  if (sharedTitleInput.keyword) syncTrackerNameFromKeyword(sharedTitleInput.keyword);
   renderGarmentPanels();
 
   try {
@@ -1111,7 +1137,7 @@ function flashSavedIndicator() {
 
 async function saveAllNow() {
   try {
-    await storageAPI.set('session:garmentState', JSON.stringify({ garmentTitleState, garmentTags }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ sharedTitleInput, garmentTitleState, garmentTags }));
     await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
     await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages));
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
@@ -1680,6 +1706,7 @@ Rules:
 - Give exactly 3 different title remixes, each distinctly different from the others in wording and structure.
 - Each remix must start with EXACTLY the locked front segment given below, word for word, followed immediately by a comma, then continue with more phrasing. The locked front segment already combines the seller's keyword with this product's own naming, so don't add, remove, or reorder any word in it.
 - Build the rest of each remix from real keyword phrases pulled from the seller's pasted titles or keywords below, rearranged and recombined. Do not invent new claims or keywords that aren't represented there.
+- The pasted source material may already contain product wording for a different garment (like "Comfort Colors" or "Crewneck Sweatshirt"). Ignore that wording entirely and follow this product's own naming rules below instead, pulling only the descriptive theme keywords from the source.
 - Hard limit 140 characters per title. Get as close to 140 as you can by pulling in relevant niche keywords, synonyms, and phrasing variations that already fit, not just repeating words already there.
 - Never use em dashes anywhere, use commas or periods instead.
 - End each title with a gift related keyword such as Gift For Her, Gift For Him, Gift For Women, Funny Gift, or Gift Idea, whichever fits best. Reuse one already present in the pasted material if there is one, otherwise pick the best fit.
@@ -1719,38 +1746,51 @@ function enforceLockedStart(title, keyword, productWording) {
   return t ? `${kw} ${pw}, ${t}` : `${kw} ${pw}`;
 }
 
-async function generateGarmentRemixes(key) {
+// Writes 3 remixes for one garment, using the shared paste box + shared keyword.
+async function generateOneGarmentTitles(key) {
   const s = garmentTitleState[key];
   const g = GARMENTS.find(x => x.key === key);
-  const statusEl = document.getElementById('remixStatus-' + key);
-  const errorEl = document.getElementById('remixError-' + key);
+  const keyword = sharedTitleInput.keyword.trim();
+  const system = REMIX_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[key]);
+  const lockedStart = `${keyword} ${g.segments[0]}`;
+  const userText = `Locked front segment (keyword + this product's naming, must open every title exactly like this): "${lockedStart}"\n\nPasted titles or keywords already working on Etsy (source material \u2014 remix this for THIS specific product, ignoring any other garment's wording in it):\n${sharedTitleInput.pasted.trim()}`;
+  const result = await callClaude(system, [{ type: 'text', text: userText }]);
+  const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(enforceLockedStart(String(t), keyword, g.segments[0])));
+  titles.forEach((t, i) => { if (s.remixes[i]) s.remixes[i].text = t; });
+}
+
+// The single "Generate all 3 products' titles" button: fires all 3 garments' AI
+// calls in parallel from the same shared paste box + keyword, then renders once.
+async function generateAllGarmentRemixes() {
+  const statusEl = document.getElementById('remixStatusAll');
+  const errorEl = document.getElementById('remixErrorAll');
   setError(errorEl, '');
 
-  if (!s.pasted.trim()) { setError(errorEl, 'Paste your existing titles or keywords for this garment first.'); return; }
-  if (!s.keyword.trim()) { setError(errorEl, 'Add a front keyword first, it gets locked to the start of every remix.'); return; }
+  if (!sharedTitleInput.pasted.trim()) { setError(errorEl, 'Paste your existing titles or keywords first.'); return; }
+  if (!sharedTitleInput.keyword.trim()) { setError(errorEl, 'Add a front keyword first, it gets locked to the start of every remix.'); return; }
 
-  const lockedStart = `${s.keyword.trim()} ${g.segments[0]}`;
-
-  const btn = document.querySelector(`[data-generate-garment="${key}"]`);
+  const btn = document.getElementById('generateAllBtn');
   if (btn) btn.disabled = true;
-  setStatus(statusEl, `Writing 3 ${g.label} title remixes...`);
+  setStatus(statusEl, 'Writing titles for Baby Tee, Comfort Colors, and Gildan Sweatshirt...');
 
-  try {
-    const system = REMIX_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[key]);
-    const userText = `Locked front segment (keyword + this product's naming, must open every title exactly like this): "${lockedStart}"\n\nPasted titles or keywords already working on Etsy for this garment:\n${s.pasted.trim()}`;
-    const result = await callClaude(system, [{ type: 'text', text: userText }]);
-    const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(enforceLockedStart(String(t), s.keyword.trim(), g.segments[0])));
-    titles.forEach((t, i) => { if (s.remixes[i]) s.remixes[i].text = t; });
-    renderGarmentPanels();
-    autosaveGarmentState();
-  } catch (err) {
-    console.error(err);
-    setError(errorEl, 'Something went wrong writing remixes: ' + (err.message || 'try again') + '.');
-  } finally {
-    if (btn) btn.disabled = false;
-    setStatus(statusEl, '');
-  }
+  const results = await Promise.allSettled(GARMENTS.map(g => generateOneGarmentTitles(g.key)));
+  const failed = [];
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.error(r.reason);
+      failed.push(GARMENTS[i].label);
+    }
+  });
+
+  renderGarmentPanels();
+  autosaveGarmentState();
+
+  if (btn) btn.disabled = false;
+  setStatus(statusEl, '');
+  if (failed.length) setError(errorEl, `Something went wrong writing titles for ${failed.join(', ')}, try again.`);
 }
+
+document.getElementById('generateAllBtn').addEventListener('click', generateAllGarmentRemixes);
 
 
 
@@ -1758,11 +1798,11 @@ const DESCRIPTION_SYSTEM = `You are a production assistant that writes Etsy list
 
 Sentence 1, the hook: "Celebrate your love for [the theme or subject] with this [adjective] [adjective] design!" Adapt the wording naturally to fit the specific theme, always end this sentence with an exclamation point, keep it warm and inviting.
 
-Sentence 2, the use case: "Perfect for [the target audience for this theme], this [a style descriptor like retro, trendy, vintage, sassy, whatever actually fits] "[the catchy phrase or pun from the title, in quotation marks]" design is available on our Baby Tee, Comfort Colors tee, and cozy Gildan sweatshirt, so you can pick your favorite fit." If nothing in the title or keywords reads like a clear catchy phrase or pun, drop the quoted phrase entirely and just describe the design plainly in its place, keeping the rest of the sentence structure intact.
+Sentence 2, the use case: "Perfect for [the target audience for this theme], this [a style descriptor like retro, trendy, vintage, sassy, whatever actually fits] "[the catchy phrase or pun from the keyword or pasted source material, in quotation marks]" design is available on our Baby Tee, Comfort Colors tee, and cozy Gildan sweatshirt, so you can pick your favorite fit." If nothing in the keyword or pasted material reads like a clear catchy phrase or pun, drop the quoted phrase entirely and just describe the design plainly in its place, keeping the rest of the sentence structure intact.
 
 Sentence 3, the closer, this exact line every time, word for word: "Order yours today and get ready to stand out!"
 
-Base the theme, subject, adjectives, audience, and catchy phrase entirely on the live title, tags, and design context given. Never use em dashes, use commas or periods instead. Keep the tone upbeat and casual, like a seller talking directly to a buyer, not corporate or stiff.
+Base the theme, subject, adjectives, audience, and catchy phrase entirely on the front keyword, pasted source titles or keywords, tags, and design context given. Never use em dashes, use commas or periods instead. Keep the tone upbeat and casual, like a seller talking directly to a buyer, not corporate or stiff.
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
 {"description": "the full 3 sentence description as one string"}`;
@@ -1787,7 +1827,7 @@ async function runDescriptionGeneration() {
       : 'No image prompts generated yet in this session.';
 
     const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
-    const userText = `Title (Baby Tee version): ${getCurrentGarmentTitle('babytee') || 'none built yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+    const userText = `Front keyword / theme: ${sharedTitleInput.keyword.trim() || 'none set yet'}\n\nSource titles or keywords pasted for this design: ${sharedTitleInput.pasted.trim() || 'none yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
 
     const result = await callClaude(DESCRIPTION_SYSTEM, [{ type: 'text', text: userText }]);
     const descText = (result.description || '').trim();
@@ -1827,10 +1867,14 @@ document.getElementById('backToTopBtn').addEventListener('click', () => {
 });
 
 document.getElementById('clearAllBtn').addEventListener('click', async () => {
-  const confirmed = confirm('Clear all 3 titles, tags, screenshots/URLs, description, keywords, and creative direction? This does not touch your Listing Calendar or your API key.');
+  const confirmed = confirm('Clear the shared paste box and keyword, all 3 titles, tags, screenshots/URLs, description, keywords, and creative direction? This does not touch your Listing Calendar or your API key.');
   if (!confirmed) return;
 
   suggestedTagKeys = new Set();
+
+  sharedTitleInput = { pasted: '', keyword: '' };
+  document.getElementById('sharedOrigPaste').value = '';
+  document.getElementById('sharedKeyword').value = '';
 
   GARMENTS.forEach(g => {
     garmentTitleState[g.key] = blankGarmentTitleState();
@@ -1846,7 +1890,7 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   document.getElementById('creativeDirection').value = '';
 
   try {
-    await storageAPI.set('session:garmentState', JSON.stringify({ garmentTitleState, garmentTags }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ sharedTitleInput, garmentTitleState, garmentTags }));
     await storageAPI.set('session:description:' + selectedType, '');
     await storageAPI.set('session:images:' + selectedType, JSON.stringify([]));
     await storageAPI.set('session:designKeywords', '');
