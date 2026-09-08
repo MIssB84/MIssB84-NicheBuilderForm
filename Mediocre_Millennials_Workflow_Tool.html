@@ -1705,16 +1705,18 @@ function enforceTitleLimit(title, limit) {
 }
 
 // Hard safety net: makes sure the title actually starts with "keyword + this
-// product's naming" before the first comma, even if the AI drifted from it.
-function enforceLockedStart(title, lockedStart) {
-  const t = (title || '').trim();
-  const prefix = lockedStart.trim();
-  if (t.toLowerCase().startsWith(prefix.toLowerCase())) {
-    let rest = t.slice(prefix.length).trim().replace(/^,+\s*/, '');
-    return rest ? `${prefix}, ${rest}` : prefix;
-  }
-  const rest = t.replace(/^,+\s*/, '');
-  return rest ? `${prefix}, ${rest}` : prefix;
+// product's naming" as one clean unit before the first comma, even if the AI
+// slipped its own comma in between them or drifted from the wording entirely.
+function enforceLockedStart(title, keyword, productWording) {
+  let t = (title || '').trim();
+  const kw = keyword.trim();
+  const pw = productWording.trim();
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Strip a leading "keyword [,] productWording [,]" or "productWording [,] keyword [,]"
+  // combo, in either order, with or without a comma the AI may have inserted.
+  const leadRe = new RegExp('^\\s*(?:' + esc(kw) + '\\s*,?\\s*' + esc(pw) + '|' + esc(pw) + '\\s*,?\\s*' + esc(kw) + ')\\s*,?\\s*', 'i');
+  t = t.replace(leadRe, '').trim();
+  return t ? `${kw} ${pw}, ${t}` : `${kw} ${pw}`;
 }
 
 async function generateGarmentRemixes(key) {
@@ -1737,7 +1739,7 @@ async function generateGarmentRemixes(key) {
     const system = REMIX_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[key]);
     const userText = `Locked front segment (keyword + this product's naming, must open every title exactly like this): "${lockedStart}"\n\nPasted titles or keywords already working on Etsy for this garment:\n${s.pasted.trim()}`;
     const result = await callClaude(system, [{ type: 'text', text: userText }]);
-    const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(enforceLockedStart(String(t), lockedStart)));
+    const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(enforceLockedStart(String(t), s.keyword.trim(), g.segments[0])));
     titles.forEach((t, i) => { if (s.remixes[i]) s.remixes[i].text = t; });
     renderGarmentPanels();
     autosaveGarmentState();
