@@ -327,6 +327,18 @@
   .garment-warn-dot.show { display: inline-block; }
   .garment-panel { display: none; }
   .garment-panel.active { display: block; }
+  .orig-titles-box textarea { width:100%; background:#fdfbf9; border:1px solid var(--border); border-radius:8px; padding:10px 12px; font-family:'Jost', sans-serif; font-size:13px; color:var(--mid-text); min-height:60px; resize:vertical; }
+  .variation-row { display:none; flex-wrap:wrap; gap:6px; margin:6px 0 4px; }
+  .variation-btn { background:#fff; border:1px solid var(--border); border-radius:7px; padding:5px 10px; font-family:'Jost', sans-serif; font-size:12px; color:var(--mid-text); cursor:pointer; }
+  .variation-btn:hover { border-color:var(--sage); color:var(--bg); }
+  .variation-btn .vnum { font-weight:700; color:var(--sage-dark); margin-right:3px; }
+  .variation-btn .vcount { color:#9a877f; margin-left:4px; }
+  .remix-box { background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+  .remix-box textarea { width:100%; border:none; background:transparent; font-family:'Jost', sans-serif; font-size:14px; color:var(--bg); resize:vertical; min-height:40px; padding:0; }
+  .remix-box textarea:focus { outline:none; }
+  .remix-box .remix-head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .remix-box .remix-head input[type=radio] { accent-color: var(--sage); }
+  .remix-box .remix-head .final-label { font-size:11px; color:#9a877f; }
   .idea-card { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
   .idea-card .idea-thumb-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1; background: var(--sage-tint); }
   .idea-card .idea-thumb-wrap a { display: block; width: 100%; height: 100%; }
@@ -553,45 +565,7 @@
 
   <div class="card">
     <h2><span class="step-tag">Step 2</span> Titles &amp; Tags per Product</h2>
-    <div class="hint" style="margin-top:-8px;">Paste keywords or existing titles below to build a shared keyword pool, then click a pool pill's ① or ② to drop it into all 3 titles at once. Each product keeps its own baked in garment wording, its own character count, and its own tags.</div>
-
-    <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:16px;">
-      <label class="first" style="margin-top:0;">Paste keywords or existing titles</label>
-      <div class="hint">Each line strips out garment wording automatically, keeping just the words that describe the design. Everything lands in the shared pool below, alphabetized, deduped, and split into single words.</div>
-    </div>
-
-    <div class="add-tag-row" style="margin-top:10px;">
-      <input type="text" id="pasteLineBabyTee" placeholder="Keywords or a title...">
-      <button class="btn small" id="pasteLineBabyTeeAddBtn">Add to Pool</button>
-      <button class="btn paste-btn" id="pasteLineBabyTeeBtn">Paste from Clipboard</button>
-    </div>
-    <div class="add-tag-row" style="margin-top:8px;">
-      <input type="text" id="pasteLineTShirt" placeholder="Keywords or a title...">
-      <button class="btn small" id="pasteLineTShirtAddBtn">Add to Pool</button>
-      <button class="btn paste-btn" id="pasteLineTShirtBtn">Paste from Clipboard</button>
-    </div>
-    <div class="add-tag-row" style="margin-top:8px;">
-      <input type="text" id="pasteLineSweatshirt" placeholder="Keywords or a title...">
-      <button class="btn small" id="pasteLineSweatshirtAddBtn">Add to Pool</button>
-      <button class="btn paste-btn" id="pasteLineSweatshirtBtn">Paste from Clipboard</button>
-    </div>
-    <div class="add-tag-row" style="margin-top:8px;">
-      <input type="text" id="pasteLineRandom" placeholder="Random keywords...">
-      <button class="btn small" id="pasteLineRandomAddBtn">Add to Pool</button>
-      <button class="btn paste-btn" id="pasteLineRandomBtn">Paste from Clipboard</button>
-    </div>
-    <div class="status" id="poolStatus" style="margin-top:8px;"></div>
-
-    <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
-      <label class="first" style="margin-top:0;">Shared keyword pool</label>
-      <div class="hint">Click a pill's ① to drop it before the garment name in all 3 titles, or ② to drop it after. Click the pill itself to add it to the end of whichever title tab is active below. Use +Tags to add it to all 3 tag lists at once.</div>
-    </div>
-
-    <div class="tag-list" id="keywordPoolList" style="margin-top:8px;"></div>
-    <div class="add-tag-row" style="margin-top:10px;">
-      <input type="text" id="poolSingleInput" placeholder="Or type one keyword and press Enter">
-      <button class="btn secondary" id="clearPoolBtn">Clear pool</button>
-    </div>
+    <div class="hint" style="margin-top:-8px;">Each product below gets its own paste box, locked front keyword, and 3 AI-written title remixes pulled from your own proven keywords. Click a garment's wording pill to drop in its baked-in variations. Each product keeps its own character count and its own tags.</div>
 
     <div style="border-top:1px solid var(--border); margin:24px 0 4px; padding-top:16px;">
       <label class="first" style="margin-top:0;">Titles &amp; tags by product</label>
@@ -613,15 +587,6 @@
     <button class="btn" id="generateTitlesBtn" style="margin-top:20px;">Suggest More Tags</button>
     <div class="status" id="titlesStatus"></div>
     <div class="error" id="titlesError"></div>
-  </div>
-
-  <div class="card">
-    <h2><span class="step-tag">Step 2.5</span> AI SEO Assist (optional)</h2>
-    <div class="hint">Not sure your 3 titles above are strong enough yet? Let AI take a pass at all 3 at once, filling each out toward 140 characters with extra niche keywords and a gift ending, without you having to hand build them. Review and copy over whichever ones you like, this won't touch your tabs above automatically.</div>
-    <button class="btn secondary" id="aiAssistSeoBtn" style="margin-top:10px;">Let AI Punch Up All 3 Titles</button>
-    <div class="status" id="seoStatus"></div>
-    <div class="error" id="seoError"></div>
-    <div id="seoResults" style="display:none; margin-top:18px;"></div>
   </div>
 
   <div class="card">
@@ -759,7 +724,7 @@ const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const thumbs = document.getElementById('thumbs');
 
-/* ---------- Step 2: 3 garment tabs sharing one keyword pool ---------- */
+/* ---------- Step 2: 3 garment tabs, each with its own title-remix flow ---------- */
 
 const GARMENTS = [
   {
@@ -776,84 +741,56 @@ const GARMENTS = [
   }
 ];
 
-// Shared across all 3 title tabs: keywordSlots[0] prefixes segment 1 of whichever
-// garment is showing it, keywordSlots[1] prefixes segment 2, and so on. Baby Tee and
-// Sweatshirt only have 3 segments, so slot 4 (T Shirt only) simply has nowhere to land
-// on those two, which is expected.
-const MAX_SEGMENTS = Math.max(...GARMENTS.map(g => g.segments.length));
-let keywordSlots = new Array(MAX_SEGMENTS).fill('');
-const CIRCLED_NUMS = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
-function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
-let garmentManualTitles = { babytee: null, tshirt: null, sweatshirt: null }; // non-null once hand-edited, overrides the template
+// Each garment now keeps its own independent title-building state: what you pasted
+// as reference/source material, the front keyword locked to the start of every
+// remix, and 3 editable AI-written remixes.
+function blankGarmentTitleState() {
+  return { pasted: '', keyword: '', remixes: [{ text: '', final: false }, { text: '', final: false }, { text: '', final: false }] };
+}
+let garmentTitleState = { babytee: blankGarmentTitleState(), tshirt: blankGarmentTitleState(), sweatshirt: blankGarmentTitleState() };
 let garmentTags = { babytee: [], tshirt: [], sweatshirt: [] };
 let activeGarment = 'babytee';
+let lastFocusedTitleFieldId = null;
 
-// Undo support: snapshot keywordSlots before every pool-driven add (or reset) so a keyword
-// that pushes a title over 140 characters can be backed out with one click.
-let keywordSlotsHistory = [];
-function pushKeywordSlotsHistory() {
-  keywordSlotsHistory.push([...keywordSlots]);
-  if (keywordSlotsHistory.length > 20) keywordSlotsHistory.shift();
-  updateUndoButtonState();
-}
-function undoKeywordSlots() {
-  if (!keywordSlotsHistory.length) return;
-  keywordSlots = keywordSlotsHistory.pop();
-  GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
-  renderAllGarmentTitles();
-  updateUndoButtonState();
-}
-function updateUndoButtonState() {
-  document.querySelectorAll('.undo-keyword-btn').forEach(btn => {
-    btn.disabled = keywordSlotsHistory.length === 0;
-  });
+// Returns whichever remix is marked final, or the first filled-in one, or '' if none yet.
+function getCurrentGarmentTitle(key) {
+  const s = garmentTitleState[key];
+  const final = s.remixes.find(r => r.final && r.text.trim());
+  if (final) return final.text.trim();
+  const anyFilled = s.remixes.find(r => r.text.trim());
+  return anyFilled ? anyFilled.text.trim() : '';
 }
 
-function buildGarmentTitle(key) {
-  if (garmentManualTitles[key] !== null) return garmentManualTitles[key];
-  const g = GARMENTS.find(x => x.key === key);
-  const clauses = g.segments.map((seg, i) => {
-    const kw = keywordSlots[i] ? keywordSlots[i] + ' ' : '';
-    return `${kw}${slotMarker(i + 1)} ${seg}`;
-  });
-  clauses.push(g.giftDefault);
-  return clauses.join(', ');
-}
-
-// Strips the visual ①②③ markers back out, used anywhere the title is actually copied,
-// sent to the AI, or logged to the Tracker, so the markers never leak out of this tool.
-function cleanTitleText(text) {
-  let cleaned = text;
-  for (let n = 1; n <= 10; n++) {
-    cleaned = cleaned.split(slotMarker(n) + ' ').join('').split(slotMarker(n)).join('');
-  }
-  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s,/g, ',').replace(/,\s*,/g, ',').trim();
-  cleaned = cleaned.replace(/^,\s*/, '').replace(/,\s*$/, '');
-  return cleaned;
-}
-
-function renderGarmentTitle(key) {
-  const box = document.getElementById('garmentTitle-' + key);
-  const countEl = document.getElementById('garmentCount-' + key);
+function renderGarmentTitleBox(key) {
+  const s = garmentTitleState[key];
   const warnDot = document.getElementById('warnDot-' + key);
-  if (!box) return;
-  const value = buildGarmentTitle(key);
-  box.value = value;
-  // Real character count excludes the visual ①②③ markers (2 chars each: symbol + space),
-  // since those never actually go into the real Etsy title.
-  let markerOverhead = 0;
-  for (let n = 1; n <= 10; n++) {
-    if (value.includes(slotMarker(n))) markerOverhead += 2;
-  }
-  const len = value.length - markerOverhead;
-  countEl.textContent = `${len} / 140 chars`;
-  countEl.style.color = len > 140 ? '#c94a3f' : 'var(--sage-dark)';
-  if (warnDot) warnDot.classList.toggle('show', len > 140);
+  let anyOver = false;
+  s.remixes.forEach((r, i) => {
+    const countEl = document.getElementById('remixCount-' + key + '-' + i);
+    if (!countEl) return;
+    const len = r.text.length;
+    if (len > 140) anyOver = true;
+    countEl.textContent = `${len} / 140 chars`;
+    countEl.classList.toggle('over', len > 140);
+  });
+  if (warnDot) warnDot.classList.toggle('show', anyOver);
 }
 
 function renderAllGarmentTitles() {
-  GARMENTS.forEach(g => renderGarmentTitle(g.key));
+  GARMENTS.forEach(g => renderGarmentTitleBox(g.key));
   autosaveGarmentState();
+}
+
+function insertAtField(fieldId, text) {
+  const el = document.getElementById(fieldId);
+  if (!el) return;
+  const start = el.selectionStart ?? el.value.length;
+  const end = el.selectionEnd ?? el.value.length;
+  el.value = el.value.slice(0, start) + text + el.value.slice(end);
+  const newPos = start + text.length;
+  el.focus();
+  el.setSelectionRange(newPos, newPos);
+  el.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function addTagsBulk(key, rawText) {
@@ -906,22 +843,62 @@ function renderTagsForGarment(key) {
 
 function renderGarmentPanels() {
   const wrap = document.getElementById('garmentPanels');
-  wrap.innerHTML = GARMENTS.map((g, idx) => `
+  wrap.innerHTML = GARMENTS.map((g, idx) => {
+    const s = garmentTitleState[g.key];
+    const variationBtns = g.segments.map((seg, i) => `
+      <button type="button" class="variation-btn" data-insert-garment="${g.key}" data-insert-text="${escapeHtml(seg)}">
+        <span class="vnum">${i + 1}.</span>${escapeHtml(seg)}<span class="vcount">(${seg.length})</span>
+      </button>`).join('') + `
+      <button type="button" class="variation-btn" data-insert-garment="${g.key}" data-insert-text="${escapeHtml(g.giftDefault)}">
+        <span class="vnum">gift</span>${escapeHtml(g.giftDefault)}<span class="vcount">(${g.giftDefault.length})</span>
+      </button>`;
+    const remixBoxes = s.remixes.map((r, i) => `
+      <div class="remix-box">
+        <div class="remix-head">
+          <input type="radio" name="titleFinal-${g.key}" id="remixFinal-${g.key}-${i}" ${r.final ? 'checked' : ''} data-final-garment="${g.key}" data-final-idx="${i}" title="Use as the final title">
+          <label for="remixFinal-${g.key}-${i}" class="final-label">Remix ${i + 1} \u2014 use as final title</label>
+        </div>
+        <textarea id="remixBox-${g.key}-${i}" rows="2" placeholder="Remix ${i + 1} \u2014 starts with your locked keyword" data-remix-garment="${g.key}" data-remix-idx="${i}">${escapeHtml(r.text)}</textarea>
+        <div id="remixCount-${g.key}-${i}" style="font-size:11.5px; color:#9a877f; text-align:right;">${r.text.length} / 140 chars</div>
+      </div>`).join('');
+
+    return `
     <div class="garment-panel${idx === 0 ? ' active' : ''}" id="garmentPanel-${g.key}">
-      <div style="background:var(--sage-tint); border-left:4px solid var(--sage); border-radius:8px; padding:16px;">
-        <div style="font-size:11px; letter-spacing:1px; color:var(--sage-dark); font-weight:700;">${g.label.toUpperCase()} TITLE</div>
-        <textarea id="garmentTitle-${g.key}" rows="2" style="width:100%; background:transparent; border:none; color:var(--bg); font-family:'Jost', sans-serif; font-size:15px; margin-top:8px; line-height:1.4; resize:vertical; padding:0;" placeholder="Type here, or click a pool pill above to add it"></textarea>
-        <div id="garmentCount-${g.key}" style="font-size:13px; color:var(--sage-dark); margin-top:10px; font-weight:700;">0 / 140 chars</div>
+      <div style="border-top:1px solid var(--border); margin:4px 0 4px; padding-top:4px;">
+        <label class="first" style="margin-top:0;">Paste your existing ${g.label.toLowerCase()} titles or keywords</label>
+        <div class="hint">For reference, and used as the source material for remixes \u2014 the AI pulls real keyword phrases from here instead of inventing new ones.</div>
       </div>
+      <div class="orig-titles-box">
+        <textarea id="origPaste-${g.key}" placeholder="Paste your working Etsy titles or keywords here, one per line" data-paste-garment="${g.key}">${escapeHtml(s.pasted)}</textarea>
+      </div>
+
+      <div style="margin-top:14px;">
+        <label class="first" style="margin-top:0;">Front keyword (locked to the start of every remix, before the first comma)</label>
+        <input type="text" id="garmentKeyword-${g.key}" placeholder="e.g. ${escapeHtml(g.segments[0])}" value="${escapeAttr(s.keyword)}" data-keyword-garment="${g.key}">
+      </div>
+
+      <div style="margin-top:14px;">
+        <label class="first" style="margin-top:0;">${g.label} wording pill \u2014 click to see variations, click one to insert it wherever your cursor is</label>
+        <div class="tag-list" style="margin-top:8px;">
+          <button type="button" class="tag-chip pill" data-toggle-variations="${g.key}" style="cursor:pointer;">${g.label}</button>
+        </div>
+        <div class="variation-row" id="variations-${g.key}">${variationBtns}</div>
+      </div>
+
+      <button class="btn secondary" data-generate-garment="${g.key}" style="margin-top:14px;">\u2728 Generate 3 title remixes</button>
+      <div class="status" id="remixStatus-${g.key}"></div>
+      <div class="error" id="remixError-${g.key}"></div>
+
+      <div style="margin-top:14px;">${remixBoxes}</div>
+
       <div class="copy-all-row">
-        <button class="btn secondary copy-garment-title" data-garment="${g.key}">Copy this title</button>
-        <button class="btn secondary undo-keyword-btn" data-garment="${g.key}" title="Undo the last keyword you added" disabled>Undo Last Add</button>
-        <button class="btn secondary reset-garment-title" data-garment="${g.key}">Reset all 3 to blank template</button>
+        <button class="btn secondary copy-garment-title" data-garment="${g.key}">Copy final title</button>
+        <button class="btn secondary clear-garment-title" data-garment="${g.key}">Clear this product's title</button>
       </div>
 
       <div style="border-top:1px solid var(--border); margin:20px 0 4px; padding-top:14px;">
         <label class="first" style="margin-top:0;">${g.label} tags</label>
-        <div class="hint">Starts filled in with baked in ${g.label.toLowerCase()} tags. Click × to remove one, or use +Tags on a pool pill above to add it here and to the other 2 products at once.</div>
+        <div class="hint">Starts filled in with baked in ${g.label.toLowerCase()} tags. Click \u00d7 to remove one.</div>
       </div>
       <div class="tag-meta">
         <span class="count-badge" id="garmentTagBadge-${g.key}">0/13 tags</span>
@@ -934,14 +911,30 @@ function renderGarmentPanels() {
         <button class="btn secondary copy-garment-tags" data-garment="${g.key}">Copy all tags</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   GARMENTS.forEach(g => {
-    document.getElementById('garmentTitle-' + g.key).addEventListener('input', (e) => {
-      garmentManualTitles[g.key] = e.target.value;
-      renderGarmentTitle(g.key);
+    document.getElementById('origPaste-' + g.key).addEventListener('input', (e) => {
+      garmentTitleState[g.key].pasted = e.target.value;
       autosaveGarmentState();
     });
+    document.getElementById('origPaste-' + g.key).addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
+    document.getElementById('garmentKeyword-' + g.key).addEventListener('input', (e) => {
+      garmentTitleState[g.key].keyword = e.target.value;
+      autosaveGarmentState();
+    });
+    document.getElementById('garmentKeyword-' + g.key).addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
+    for (let i = 0; i < garmentTitleState[g.key].remixes.length; i++) {
+      const box = document.getElementById(`remixBox-${g.key}-${i}`);
+      box.addEventListener('focus', (e) => { lastFocusedTitleFieldId = e.target.id; });
+      box.addEventListener('input', (e) => {
+        const r = garmentTitleState[g.key].remixes[i];
+        r.text = e.target.value;
+        autosaveGarmentState();
+        renderGarmentTitleBox(g.key);
+      });
+    }
     document.getElementById('garmentAddTag-' + g.key).addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -950,6 +943,34 @@ function renderGarmentPanels() {
       }
     });
   });
+
+  wrap.querySelectorAll('[data-final-garment]').forEach(radio => radio.addEventListener('change', (e) => {
+    const key = e.target.dataset.finalGarment;
+    const idx = Number(e.target.dataset.finalIdx);
+    garmentTitleState[key].remixes.forEach((r, i) => { r.final = (i === idx); });
+    autosaveGarmentState();
+  }));
+
+  wrap.querySelectorAll('[data-toggle-variations]').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.toggleVariations;
+    const row = document.getElementById('variations-' + key);
+    if (!row) return;
+    row.style.display = (row.style.display === 'flex') ? 'none' : 'flex';
+  }));
+
+  wrap.querySelectorAll('[data-insert-garment]').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.insertGarment;
+    const text = btn.dataset.insertText;
+    let targetId = lastFocusedTitleFieldId;
+    if (!targetId || !document.getElementById(targetId) || targetId.indexOf('-' + key) === -1) {
+      targetId = 'garmentKeyword-' + key;
+    }
+    insertAtField(targetId, text);
+  }));
+
+  wrap.querySelectorAll('[data-generate-garment]').forEach(btn => btn.addEventListener('click', () => {
+    generateGarmentRemixes(btn.dataset.generateGarment);
+  }));
 
   wrap.querySelectorAll('.add-garment-tag').forEach(btn => btn.addEventListener('click', () => {
     const key = btn.dataset.garment;
@@ -967,20 +988,16 @@ function renderGarmentPanels() {
 
   wrap.querySelectorAll('.copy-garment-title').forEach(btn => btn.addEventListener('click', () => {
     const key = btn.dataset.garment;
-    copyToClipboard(cleanTitleText(document.getElementById('garmentTitle-' + key).value), btn, 'Copy this title');
+    copyToClipboard(getCurrentGarmentTitle(key), btn, 'Copy final title');
   }));
 
-  wrap.querySelectorAll('.undo-keyword-btn').forEach(btn => btn.addEventListener('click', () => {
-    undoKeywordSlots();
-  }));
-
-  wrap.querySelectorAll('.reset-garment-title').forEach(btn => btn.addEventListener('click', () => {
-    const confirmed = confirm('This clears every keyword you\'ve slotted in so far, on all 3 titles, back to just the bare numbered template. Continue?');
+  wrap.querySelectorAll('.clear-garment-title').forEach(btn => btn.addEventListener('click', () => {
+    const key = btn.dataset.garment;
+    const confirmed = confirm(`Clear the pasted titles, keyword, and all 3 remixes for ${GARMENTS.find(x => x.key === key).label}? This won't touch its tags.`);
     if (!confirmed) return;
-    pushKeywordSlotsHistory();
-    keywordSlots = new Array(MAX_SEGMENTS).fill('');
-    GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
-    renderAllGarmentTitles();
+    garmentTitleState[key] = blankGarmentTitleState();
+    renderGarmentPanels();
+    autosaveGarmentState();
   }));
 
   wrap.querySelectorAll('.copy-garment-tags').forEach(btn => btn.addEventListener('click', () => {
@@ -1002,20 +1019,9 @@ document.getElementById('garmentTabNav').addEventListener('click', (e) => {
   document.getElementById('garmentPanel-' + activeGarment).classList.add('active');
 });
 
-const PASTE_LINE_IDS = ['pasteLineBabyTee', 'pasteLineTShirt', 'pasteLineSweatshirt', 'pasteLineRandom'];
-function getPasteLineValues() {
-  return PASTE_LINE_IDS.map(id => document.getElementById(id).value);
-}
-function setPasteLineValues(values) {
-  if (!Array.isArray(values)) return;
-  PASTE_LINE_IDS.forEach((id, i) => {
-    if (typeof values[i] === 'string') document.getElementById(id).value = values[i];
-  });
-}
-
 const autosaveGarmentState = debounce(async () => {
   try {
-    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags, pasteLines: getPasteLineValues() }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ garmentTitleState, garmentTags }));
     flashSavedIndicator();
   } catch (e) {}
 }, 600);
@@ -1031,11 +1037,12 @@ async function restoreGarmentState() {
     const saved = await storageAPI.get('session:garmentState');
     if (saved && saved.value) {
       const parsed = JSON.parse(saved.value);
-      if (Array.isArray(parsed.keywordSlots)) {
-        keywordSlots = parsed.keywordSlots;
-        while (keywordSlots.length < MAX_SEGMENTS) keywordSlots.push('');
+      if (parsed.garmentTitleState) {
+        GARMENTS.forEach(g => {
+          const gs = parsed.garmentTitleState[g.key];
+          if (gs && typeof gs === 'object') garmentTitleState[g.key] = gs;
+        });
       }
-      if (parsed.garmentManualTitles) garmentManualTitles = parsed.garmentManualTitles;
       if (parsed.garmentTags) {
         GARMENTS.forEach(g => {
           if (Array.isArray(parsed.garmentTags[g.key]) && parsed.garmentTags[g.key].length) {
@@ -1043,7 +1050,6 @@ async function restoreGarmentState() {
           }
         });
       }
-      if (parsed.pasteLines) setPasteLineValues(parsed.pasteLines);
     }
   } catch (e) {}
 
@@ -1058,12 +1064,6 @@ async function restoreGarmentState() {
 async function initBuilder() {
   await restoreGarmentState();
   renderGarmentPanels();
-  try {
-    const savedPool = await storageAPI.get('session:pool:' + selectedType);
-    pastedPool = (savedPool && savedPool.value) ? JSON.parse(savedPool.value) : [];
-  } catch (e) { pastedPool = []; }
-  ensurePersistentPoolWords();
-  renderPool();
 
   try {
     const savedDescription = await storageAPI.get('session:description:' + selectedType);
@@ -1080,171 +1080,14 @@ async function initBuilder() {
     uploadedImages = (savedImages && savedImages.value) ? JSON.parse(savedImages.value) : [];
   } catch (e) { uploadedImages = []; }
   renderThumbs();
-
-  try {
-    const savedSeo = await storageAPI.get('session:seoResults:' + selectedType);
-    if (savedSeo && savedSeo.value) {
-      seoResultsData = JSON.parse(savedSeo.value);
-      renderSeoResults(seoResultsData);
-    }
-  } catch (e) {}
 }
 
-let pastedPool = [];
-
-const PERSISTENT_POOL_WORDS = ['Vintage', 'Retro', 'Trendy'];
-
-function ensurePersistentPoolWords() {
-  PERSISTENT_POOL_WORDS.forEach(w => {
-    const exists = pastedPool.some(item => item.text.trim().toLowerCase() === w.toLowerCase());
-    if (!exists) pastedPool.push({ text: w, pinned: true });
-  });
-}
 
 function debounce(fn, delay) {
   let t;
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
 }
 
-function renderPool() {
-  const hadCommas = pastedPool.some(item => /[,\n，、]/.test(item.text));
-  if (hadCommas) {
-    const flat = pastedPool.map(item => item.text).join(',');
-    pastedPool = [];
-    pushSplit(flat);
-  }
-
-  // Dedupe (case-insensitive, keep pinned entries first) and alphabetize.
-  const seenLower = new Set();
-  const deduped = [];
-  pastedPool.forEach(item => {
-    const key = item.text.trim().toLowerCase();
-    if (!key || seenLower.has(key)) return;
-    seenLower.add(key);
-    deduped.push(item);
-  });
-  deduped.sort((a, b) => a.text.trim().toLowerCase().localeCompare(b.text.trim().toLowerCase()));
-  pastedPool = deduped;
-
-  const listEl = document.getElementById('keywordPoolList');
-  listEl.innerHTML = '';
-  pastedPool.forEach((item, i) => {
-    const chip = document.createElement('div');
-    chip.className = 'tag-chip pill' + (item.pinned ? ' pinned-word' : '');
-    chip.title = 'Click to add to the active title tab';
-
-    const textSpan = document.createElement('span');
-    textSpan.className = 'pill-text';
-    textSpan.contentEditable = 'true';
-    textSpan.textContent = item.text;
-    textSpan.addEventListener('input', () => {
-      item.text = textSpan.textContent;
-      lenSpan.textContent = item.text.length;
-    });
-    textSpan.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); textSpan.blur(); }
-    });
-    textSpan.addEventListener('click', (e) => e.stopPropagation());
-
-    const lenSpan = document.createElement('span');
-    lenSpan.className = 'len';
-    lenSpan.textContent = item.text.length;
-
-    const slotBtns = document.createElement('span');
-    slotBtns.className = 'slot-btns';
-    for (let n = 1; n <= MAX_SEGMENTS; n++) {
-      const sBtn = document.createElement('button');
-      sBtn.className = 'slot-btn';
-      sBtn.textContent = n;
-      sBtn.title = `Drop in front of spot ${n} in every title that has one`;
-      sBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        pushKeywordSlotsHistory();
-        const casedText = toTitleCase(item.text);
-        keywordSlots[n - 1] = keywordSlots[n - 1] ? `${keywordSlots[n - 1]} ${casedText}` : casedText;
-        GARMENTS.forEach(g => { garmentManualTitles[g.key] = null; });
-        renderAllGarmentTitles();
-        if (!item.pinned) pastedPool.splice(i, 1);
-        renderPool();
-      });
-      slotBtns.appendChild(sBtn);
-    }
-
-    const tagAllBtn = document.createElement('button');
-    tagAllBtn.className = 'copy-btn-pill';
-    tagAllBtn.textContent = '+Tags';
-    tagAllBtn.title = 'Add to all 3 tag lists';
-    tagAllBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const cased = toTitleCase(item.text);
-      GARMENTS.forEach(g => {
-        const exists = garmentTags[g.key].some(t => t.toLowerCase() === cased.toLowerCase());
-        if (!exists) garmentTags[g.key].push(cased);
-        renderTagsForGarment(g.key);
-      });
-      autosaveGarmentState();
-      tagAllBtn.textContent = 'Added!';
-      setTimeout(() => { tagAllBtn.textContent = '+Tags'; }, 1200);
-    });
-
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'copy-btn-pill';
-    copyBtn.textContent = 'Copy';
-    copyBtn.title = 'Copy this keyword';
-    copyBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      copyToClipboard(item.text + ' ', copyBtn, 'Copy');
-    });
-
-    const words = item.text.trim().split(/\s+/);
-    let splitBtn = null;
-    if (words.length > 1) {
-      splitBtn = document.createElement('button');
-      splitBtn.className = 'copy-btn-pill';
-      splitBtn.textContent = 'Split';
-      splitBtn.title = 'Split into separate word pills';
-      splitBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        words.forEach(w => pastedPool.push({ text: w }));
-        renderPool();
-      });
-    }
-
-    const removeBtn = document.createElement('button');
-    removeBtn.className = 'remove-btn';
-    removeBtn.textContent = '×';
-    removeBtn.title = 'Remove from pool';
-    removeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      pastedPool.splice(i, 1);
-      renderPool();
-    });
-
-    chip.addEventListener('click', () => {
-      const box = document.getElementById('garmentTitle-' + activeGarment);
-      const casedText = toTitleCase(item.text);
-      garmentManualTitles[activeGarment] = box.value.trim() ? `${box.value.trim()} ${casedText}` : casedText;
-      renderGarmentTitle(activeGarment);
-      autosaveGarmentState();
-      if (!item.pinned) pastedPool.splice(i, 1);
-      renderPool();
-    });
-
-    chip.appendChild(textSpan);
-    chip.appendChild(lenSpan);
-    chip.appendChild(slotBtns);
-    chip.appendChild(tagAllBtn);
-    if (splitBtn) chip.appendChild(splitBtn);
-    chip.appendChild(copyBtn);
-    chip.appendChild(removeBtn);
-    listEl.appendChild(chip);
-  });
-  autosavePool();
-}
-
-const autosavePool = debounce(async () => {
-  try { await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool)); } catch (e) {}
-}, 600);
 
 const autosaveKeywords = debounce(async (val) => {
   try { await storageAPI.set('session:designKeywords', val); } catch (e) {}
@@ -1268,8 +1111,7 @@ function flashSavedIndicator() {
 
 async function saveAllNow() {
   try {
-    await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
-    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags, pasteLines: getPasteLineValues() }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ garmentTitleState, garmentTags }));
     await storageAPI.set('session:description:' + selectedType, document.getElementById('descriptionOutput').value);
     await storageAPI.set('session:images:' + selectedType, JSON.stringify(uploadedImages));
     await storageAPI.set('session:designKeywords', document.getElementById('designKeywords').value);
@@ -1293,146 +1135,6 @@ setInterval(() => { saveAllNow(); }, 30000);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') saveAllNow();
 });
-
-const KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
-
-Break the text into short descriptive keyword phrases, 2 to 4 words each, that the seller could reuse in a new title. Keep small connector words like "I", "a", "for" attached to the phrase they belong with rather than dropping them, for example "I Could Be Meaner" should stay together as one phrase, not become "Could Be Meaner". Skip generic garment or format words like shirt, tee, t shirt, baby tee, comfort colors, sweatshirt, crewneck, unisex, sublimation, DTF, design, gift, unless they are part of a distinctly descriptive phrase. Do not return duplicate phrases.
-
-Respond ONLY with valid JSON, no preamble, no markdown fences:
-{"keywords": ["phrase 1", "phrase 2"]}`;
-
-async function extractKeywords(text) {
-  const result = await callClaude(KEYWORD_EXTRACT_SYSTEM, [{ type: 'text', text }]);
-  return result.keywords || [];
-}
-
-const STRIP_PRODUCT_WORDING_SYSTEM = `You are helping an Etsy seller pull just the descriptive part out of a full title they pasted from a listing.
-
-The pasted text has comma separated segments. Each segment mixes a descriptive phrase with generic garment or format wording tacked onto the end, for example "Salty Heifer Comfort Colors Tee" mixes the descriptive phrase "Salty Heifer" with the generic tail "Comfort Colors Tee".
-
-For every segment, strip off the generic garment or format wording and return only the descriptive lead phrase. Generic wording includes things like: shirt, tee, t shirt, baby tee, comfort colors, sweatshirt, crewneck, pullover, unisex, sublimation, DTF, design, gift. Keep the descriptive phrase exactly as cased in the original. Return one phrase per segment, in the same order, even if a segment turns out to be entirely generic with nothing descriptive left (in that case return an empty string for that segment). Do not merge segments together.
-
-Respond ONLY with valid JSON, no preamble, no markdown fences:
-{"phrases": ["phrase 1", "phrase 2", "phrase 3"]}`;
-
-async function stripProductWording(text) {
-  const result = await callClaude(STRIP_PRODUCT_WORDING_SYSTEM, [{ type: 'text', text }]);
-  return (result.phrases || []).filter(Boolean);
-}
-
-function pushSplit(text) {
-  const normalized = text.replace(/[，、]/g, ',');
-  const parts = normalized.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
-  parts.forEach(p => {
-    pastedPool.push({ text: p });
-    const words = p.split(/\s+/).filter(Boolean);
-    if (words.length > 1) {
-      words.forEach(w => {
-        const exists = pastedPool.some(item => item.text.toLowerCase() === w.toLowerCase());
-        if (!exists) pastedPool.push({ text: w });
-      });
-    }
-  });
-}
-
-async function addToPastedPool(text, allowExtraction) {
-  const trimmed = text.trim();
-  const hasDelimiters = /[,\n，、]/.test(trimmed);
-  const statusEl = document.getElementById('poolStatus');
-  if (hasDelimiters && allowExtraction) {
-    setStatus(statusEl, 'Stripping garment wording, keeping the descriptive part...');
-    try {
-      const phrases = await stripProductWording(trimmed);
-      if (phrases.length) {
-        phrases.forEach(p => pushSplit(p));
-      } else {
-        pushSplit(trimmed);
-      }
-      renderPool();
-    } catch (err) {
-      pushSplit(trimmed);
-      renderPool();
-    } finally {
-      setStatus(statusEl, '');
-    }
-  } else if (hasDelimiters) {
-    pushSplit(trimmed);
-    renderPool();
-  } else if (allowExtraction && trimmed.split(/\s+/).length > 5) {
-    setStatus(statusEl, 'Reading that title for keywords...');
-    try {
-      const keywords = await extractKeywords(trimmed);
-      keywords.forEach(k => pushSplit(k));
-      renderPool();
-    } catch (err) {
-      pushSplit(trimmed);
-      renderPool();
-    } finally {
-      setStatus(statusEl, '');
-    }
-  } else {
-    pushSplit(trimmed);
-    renderPool();
-  }
-}
-
-function wirePasteLine(inputId, btnId, addBtnId) {
-  const input = document.getElementById(inputId);
-  const btn = document.getElementById(btnId);
-  const addBtn = addBtnId ? document.getElementById(addBtnId) : null;
-  input.addEventListener('keydown', async (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (!input.value.trim()) return;
-      await addToPastedPool(input.value, true);
-    }
-  });
-  btn.addEventListener('click', () => {
-    pasteTextFromClipboard(btn, async (text) => {
-      input.value = text;
-      await addToPastedPool(text, true);
-    });
-  });
-  if (addBtn) {
-    addBtn.addEventListener('click', async () => {
-      if (!input.value.trim()) return;
-      await addToPastedPool(input.value, true);
-    });
-  }
-}
-
-wirePasteLine('pasteLineBabyTee', 'pasteLineBabyTeeBtn', 'pasteLineBabyTeeAddBtn');
-wirePasteLine('pasteLineTShirt', 'pasteLineTShirtBtn', 'pasteLineTShirtAddBtn');
-wirePasteLine('pasteLineSweatshirt', 'pasteLineSweatshirtBtn', 'pasteLineSweatshirtAddBtn');
-wirePasteLine('pasteLineRandom', 'pasteLineRandomBtn', 'pasteLineRandomAddBtn');
-
-document.getElementById('poolSingleInput').addEventListener('keydown', async (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    const input = e.target;
-    if (!input.value.trim()) return;
-    await addToPastedPool(input.value, false);
-    input.value = '';
-  }
-});
-
-document.getElementById('clearPoolBtn').addEventListener('click', () => {
-  pastedPool = [];
-  ensurePersistentPoolWords();
-  renderPool();
-});
-
-function toTitleCase(str) {
-  return str.split(' ').map(word => {
-    if (!word) return word;
-    const match = word.match(/^(.*?)([,.:;!?]*)$/);
-    const core = match[1];
-    const trailing = match[2];
-    if (!core) return word;
-    if (/^[A-Z0-9]+$/.test(core) && core.length > 1) return core + trailing;
-    return core.charAt(0).toUpperCase() + core.slice(1).toLowerCase() + trailing;
-  }).join(' ');
-}
 
 dropZone.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
@@ -1795,6 +1497,9 @@ function escapeHtml(str) {
   div.textContent = str;
   return div.innerHTML;
 }
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/"/g, '&quot;');
+}
 
 function renderPromptHistoryButton() {
   const btn = document.getElementById('viewHistoryBtn');
@@ -1923,7 +1628,7 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
       ? lastPromptsText.join('\n\n')
       : 'No image prompts generated yet in this session.';
 
-    const userText = `Garment: ${g.label}\n\nTags already in use: ${garmentTags[key].join(', ') || 'none yet'}\n\nCurrent title for this garment: ${cleanTitleText(buildGarmentTitle(key)) || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+    const userText = `Garment: ${g.label}\n\nTags already in use: ${garmentTags[key].join(', ') || 'none yet'}\n\nCurrent title for this garment: ${getCurrentGarmentTitle(key) || 'none built yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
 
     const result = await callClaude(TAGS_SYSTEM, [{ type: 'text', text: userText }]);
 
@@ -1951,9 +1656,7 @@ document.getElementById('generateTitlesBtn').addEventListener('click', async () 
   }
 });
 
-/* ---------- Step 3: SEO fan-out for all 3 products ---------- */
-
-const SEO_LABELS = { babytee: 'Baby Tee', tshirt: 'Comfort Colors Tee', sweatshirt: 'Gildan Sweatshirt' };
+/* ---------- Step 2: AI title remixes, per garment ---------- */
 
 const SEO_INSTRUCTIONS = {
   babytee: `BABY TEE:
@@ -1971,29 +1674,21 @@ const SEO_INSTRUCTIONS = {
 - Tags: replace any garment tags with Title Case versions like Crewneck Sweatshirt, Pullover Sweatshirt, Unisex Sweatshirt, Cozy Sweatshirt, Sweater.`
 };
 
-const SEO_SYSTEM_BASE = `You are an Etsy SEO expert for a print on demand apparel shop. You are given a master source title and tags describing one design, the theme, niche, and catchy phrase, and must adapt it into a fully SEO'd listing for one specific garment.
+const REMIX_SYSTEM_BASE = `You are an Etsy SEO expert for a print on demand apparel shop, writing comma separated, tag style titles for one specific garment, based on titles or keywords the seller already has proven working on Etsy.
 
 Rules:
-- TITLE: keep every niche keyword from the source title, apply the garment specific instructions below, hard limit 140 characters, never use em dashes. Make the title as full as possible, get as close to 140 characters as you can by pulling in additional relevant niche keywords, synonyms, and phrasing variations that fit naturally, do not just repeat words already there. The title must end with a gift related keyword such as Gift For Her, Gift For Him, Gift For Women, Funny Gift, or Gift Idea, whichever fits the niche best. If a gift keyword already exists in the source title, move it to the end.
-- TAGS: keep the non garment tags from the source as is, replace any garment tags per the instructions below. Each tag 20 characters or fewer including spaces, Title Case.
-- SUGGESTED: 5 new niche tags not already in the tag list, 20 characters or fewer, Title Case.
-- Never use em dashes anywhere in the title or tags, use commas or periods instead.
+- Give exactly 3 different title remixes, each distinctly different from the others in wording and structure.
+- Each remix must start with exactly the locked front keyword given below, followed immediately by a comma, then continue with more phrasing.
+- Build the rest of each remix from real keyword phrases pulled from the seller's pasted titles or keywords below, rearranged and recombined. Do not invent new claims or keywords that aren't represented there.
+- Hard limit 140 characters per title. Get as close to 140 as you can by pulling in relevant niche keywords, synonyms, and phrasing variations that already fit, not just repeating words already there.
+- Never use em dashes anywhere, use commas or periods instead.
+- End each title with a gift related keyword such as Gift For Her, Gift For Him, Gift For Women, Funny Gift, or Gift Idea, whichever fits best. Reuse one already present in the pasted material if there is one, otherwise pick the best fit.
 
-Garment specific instructions:
+Garment specific rules for this product, follow these exactly:
 {INSTRUCTIONS}
 
 Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences:
-{"title": "the full seo title", "tags": ["Tag", "Tag"], "suggestions": ["Tag", "Tag", "Tag", "Tag", "Tag"]}`;
-
-async function generateSeoForType(type, masterTitle, masterTags) {
-  const system = SEO_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[type]);
-  const userText = `Source title: "${masterTitle}"\nSource tags: ${masterTags.join(', ') || 'none'}`;
-  const result = await callClaude(system, [{ type: 'text', text: userText }]);
-  if (result && typeof result.title === 'string') {
-    result.title = enforceTitleLimit(result.title);
-  }
-  return result;
-}
+{"titles": ["title one", "title two", "title three"]}`;
 
 // Hard safety net: the AI is told to stay under 140 characters but doesn't always
 // listen exactly, so trim it back ourselves at a clean word/comma boundary.
@@ -2009,154 +1704,38 @@ function enforceTitleLimit(title, limit) {
   return cut.replace(/[,\s]+$/, '').trim();
 }
 
-let seoResultsData = null;
-
-async function runSeoGeneration() {
-  const statusEl = document.getElementById('seoStatus');
-  const errorEl = document.getElementById('seoError');
+async function generateGarmentRemixes(key) {
+  const s = garmentTitleState[key];
+  const g = GARMENTS.find(x => x.key === key);
+  const statusEl = document.getElementById('remixStatus-' + key);
+  const errorEl = document.getElementById('remixError-' + key);
   setError(errorEl, '');
 
-  // Use the Baby Tee tab's title as the descriptive source (it carries the fullest
-  // theme wording), plus the union of tags already collected across all 3 tabs.
-  const sourceTitle = cleanTitleText(buildGarmentTitle('babytee')).trim();
-  if (!sourceTitle) { setError(errorEl, 'Build at least one title in Step 2 first.'); return; }
-  const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
+  if (!s.pasted.trim()) { setError(errorEl, 'Paste your existing titles or keywords for this garment first.'); return; }
+  if (!s.keyword.trim()) { setError(errorEl, 'Add a front keyword first, it gets locked to the start of every remix.'); return; }
 
-  const genBtn = document.getElementById('aiAssistSeoBtn');
-  genBtn.disabled = true;
-  setStatus(statusEl, 'Writing SEO for Baby Tee, Comfort Colors, and Gildan Sweatshirt...');
+  const btn = document.querySelector(`[data-generate-garment="${key}"]`);
+  if (btn) btn.disabled = true;
+  setStatus(statusEl, `Writing 3 ${g.label} title remixes...`);
 
   try {
-    const [babytee, tshirt, sweatshirt] = await Promise.all([
-      generateSeoForType('babytee', sourceTitle, combinedTags),
-      generateSeoForType('tshirt', sourceTitle, combinedTags),
-      generateSeoForType('sweatshirt', sourceTitle, combinedTags)
-    ]);
-    seoResultsData = { babytee, tshirt, sweatshirt };
-    renderSeoResults(seoResultsData);
-    try { await storageAPI.set('session:seoResults:' + selectedType, JSON.stringify(seoResultsData)); } catch (e) {}
+    const system = REMIX_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[key]);
+    const userText = `Locked front keyword: "${s.keyword.trim()}"\n\nPasted titles or keywords already working on Etsy for this garment:\n${s.pasted.trim()}`;
+    const result = await callClaude(system, [{ type: 'text', text: userText }]);
+    const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(String(t)));
+    titles.forEach((t, i) => { if (s.remixes[i]) s.remixes[i].text = t; });
+    renderGarmentPanels();
+    autosaveGarmentState();
   } catch (err) {
     console.error(err);
-    setError(errorEl, 'Something went wrong writing SEO: ' + (err.message || 'try again') + '.');
+    setError(errorEl, 'Something went wrong writing remixes: ' + (err.message || 'try again') + '.');
   } finally {
-    genBtn.disabled = false;
+    if (btn) btn.disabled = false;
     setStatus(statusEl, '');
   }
 }
 
-function renderSeoResults(data) {
-  const wrap = document.getElementById('seoResults');
-  wrap.innerHTML = '';
-  wrap.style.display = 'block';
 
-  ['babytee', 'tshirt', 'sweatshirt'].forEach(key => {
-    const d = data[key];
-    if (!d) return;
-    const titleLen = (d.title || '').length;
-    const overLen = titleLen > 140;
-
-    const panel = document.createElement('div');
-    panel.style.cssText = 'background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:14px;';
-
-    const heading = document.createElement('div');
-    heading.style.cssText = "font-family:'Playfair Display', serif; font-size:15px; color:var(--bg); margin-bottom:10px;";
-    heading.textContent = SEO_LABELS[key];
-    panel.appendChild(heading);
-
-    const titleLabel = document.createElement('label');
-    titleLabel.className = 'first';
-    titleLabel.style.marginTop = '0';
-    titleLabel.innerHTML = `Title <span style="font-weight:400; text-transform:none; letter-spacing:0; color:${overLen ? 'var(--warn)' : 'var(--sage-dark)'};">(${titleLen} / 140)</span>`;
-    panel.appendChild(titleLabel);
-
-    const titleArea = document.createElement('textarea');
-    titleArea.rows = 2;
-    titleArea.value = d.title || '';
-    titleArea.addEventListener('input', () => {
-      const n = titleArea.value.length;
-      titleLabel.innerHTML = `Title <span style="font-weight:400; text-transform:none; letter-spacing:0; color:${n > 140 ? 'var(--warn)' : 'var(--sage-dark)'};">(${n} / 140)</span>`;
-      seoResultsData[key].title = titleArea.value;
-    });
-    panel.appendChild(titleArea);
-
-    const copyTitleRow = document.createElement('div');
-    copyTitleRow.className = 'copy-all-row';
-    const copyTitleBtn = document.createElement('button');
-    copyTitleBtn.className = 'btn secondary small';
-    copyTitleBtn.textContent = 'Copy title';
-    copyTitleBtn.addEventListener('click', () => copyToClipboard(titleArea.value, copyTitleBtn, 'Copy title'));
-    copyTitleRow.appendChild(copyTitleBtn);
-    const useBtn = document.createElement('button');
-    useBtn.className = 'btn small';
-    useBtn.textContent = `Use for ${SEO_LABELS[key]} tab`;
-    useBtn.addEventListener('click', () => {
-      garmentManualTitles[key] = titleArea.value;
-      garmentTags[key] = [...(seoResultsData[key].tags || [])];
-      renderGarmentTitle(key);
-      renderTagsForGarment(key);
-      autosaveGarmentState();
-      useBtn.textContent = 'Applied!';
-      setTimeout(() => { useBtn.textContent = `Use for ${SEO_LABELS[key]} tab`; }, 1400);
-    });
-    copyTitleRow.appendChild(useBtn);
-    panel.appendChild(copyTitleRow);
-
-    const tagsLabel = document.createElement('label');
-    tagsLabel.textContent = 'Tags';
-    panel.appendChild(tagsLabel);
-
-    const tagsList = document.createElement('div');
-    tagsList.className = 'tag-list';
-    (d.tags || []).forEach(t => {
-      const chip = document.createElement('span');
-      chip.className = 'tag-chip pill';
-      chip.innerHTML = `<span>${escapeHtml(t)}</span><span class="len${t.length > 20 ? ' over' : ''}">${t.length}</span>`;
-      chip.title = 'Click to copy';
-      chip.style.cursor = 'pointer';
-      chip.addEventListener('click', () => copyToClipboard(t, chip, ''));
-      tagsList.appendChild(chip);
-    });
-    panel.appendChild(tagsList);
-
-    const copyTagsRow = document.createElement('div');
-    copyTagsRow.className = 'copy-all-row';
-    const copyTagsBtn = document.createElement('button');
-    copyTagsBtn.className = 'btn secondary small';
-    copyTagsBtn.textContent = 'Copy all tags';
-    copyTagsBtn.addEventListener('click', () => copyToClipboard((d.tags || []).join(', '), copyTagsBtn, 'Copy all tags'));
-    copyTagsRow.appendChild(copyTagsBtn);
-    panel.appendChild(copyTagsRow);
-
-    if (d.suggestions && d.suggestions.length) {
-      const sugLabel = document.createElement('label');
-      sugLabel.textContent = 'Suggested extra tags, click to add';
-      panel.appendChild(sugLabel);
-
-      const sugList = document.createElement('div');
-      sugList.className = 'tag-list';
-      d.suggestions.forEach(t => {
-        const chip = document.createElement('span');
-        chip.className = 'tag-chip pill suggested';
-        chip.innerHTML = `<span>${escapeHtml(t)}</span><span class="len${t.length > 20 ? ' over' : ''}">${t.length}</span>`;
-        chip.style.cursor = 'pointer';
-        chip.title = 'Click to add to tags above';
-        chip.addEventListener('click', () => {
-          if (!seoResultsData[key].tags.map(x => x.toLowerCase()).includes(t.toLowerCase())) {
-            seoResultsData[key].tags.push(t);
-            renderSeoResults(seoResultsData);
-            try { storageAPI.set('session:seoResults:' + selectedType, JSON.stringify(seoResultsData)); } catch (e) {}
-          }
-        });
-        sugList.appendChild(chip);
-      });
-      panel.appendChild(sugList);
-    }
-
-    wrap.appendChild(panel);
-  });
-}
-
-document.getElementById('aiAssistSeoBtn').addEventListener('click', runSeoGeneration);
 
 const DESCRIPTION_SYSTEM = `You are a production assistant that writes Etsy listing descriptions for a seller's own print on demand apparel shop, every single one in this exact 3 sentence structure, never more, never fewer sentences.
 
@@ -2191,7 +1770,7 @@ async function runDescriptionGeneration() {
       : 'No image prompts generated yet in this session.';
 
     const combinedTags = [...new Set([...garmentTags.babytee, ...garmentTags.tshirt, ...garmentTags.sweatshirt])];
-    const userText = `Title (Baby Tee version): ${cleanTitleText(buildGarmentTitle('babytee')) || 'none built yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
+    const userText = `Title (Baby Tee version): ${getCurrentGarmentTitle('babytee') || 'none built yet'}\n\nTags: ${combinedTags.join(', ') || 'none yet'}\n\nDesign context (from image prompts for this specific design):\n${designContext}`;
 
     const result = await callClaude(DESCRIPTION_SYSTEM, [{ type: 'text', text: userText }]);
     const descText = (result.description || '').trim();
@@ -2231,23 +1810,13 @@ document.getElementById('backToTopBtn').addEventListener('click', () => {
 });
 
 document.getElementById('clearAllBtn').addEventListener('click', async () => {
-  const confirmed = confirm('Clear all 3 titles, tags, the keyword pool, screenshots/URLs, description, keywords, and creative direction? This does not touch your Listing Calendar or your API key.');
+  const confirmed = confirm('Clear all 3 titles, tags, screenshots/URLs, description, keywords, and creative direction? This does not touch your Listing Calendar or your API key.');
   if (!confirmed) return;
 
-  pastedPool = [];
-  ensurePersistentPoolWords();
   suggestedTagKeys = new Set();
-  renderPool();
 
-  PASTE_LINE_IDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-
-  keywordSlots = new Array(MAX_SEGMENTS).fill('');
-  keywordSlotsHistory = [];
   GARMENTS.forEach(g => {
-    garmentManualTitles[g.key] = null;
+    garmentTitleState[g.key] = blankGarmentTitleState();
     garmentTags[g.key] = [...g.bakedTags];
   });
   renderGarmentPanels();
@@ -2258,18 +1827,13 @@ document.getElementById('clearAllBtn').addEventListener('click', async () => {
   renderThumbs();
   document.getElementById('designKeywords').value = '';
   document.getElementById('creativeDirection').value = '';
-  seoResultsData = null;
-  document.getElementById('seoResults').style.display = 'none';
-  document.getElementById('seoResults').innerHTML = '';
 
   try {
-    await storageAPI.set('session:pool:' + selectedType, JSON.stringify(pastedPool));
-    await storageAPI.set('session:garmentState', JSON.stringify({ keywordSlots, garmentManualTitles, garmentTags }));
+    await storageAPI.set('session:garmentState', JSON.stringify({ garmentTitleState, garmentTags }));
     await storageAPI.set('session:description:' + selectedType, '');
     await storageAPI.set('session:images:' + selectedType, JSON.stringify([]));
     await storageAPI.set('session:designKeywords', '');
     await storageAPI.set('session:creativeDirection', '');
-    await storageAPI.set('session:seoResults:' + selectedType, '');
   } catch (e) {}
   const statusEl = document.getElementById('bottomBarStatus');
   statusEl.textContent = 'Builder fields cleared';
