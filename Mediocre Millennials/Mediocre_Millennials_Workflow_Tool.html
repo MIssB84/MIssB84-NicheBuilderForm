@@ -873,7 +873,7 @@ function renderGarmentPanels() {
       </div>
 
       <div style="margin-top:14px;">
-        <label class="first" style="margin-top:0;">Front keyword (locked to the start of every remix, before the first comma)</label>
+        <label class="first" style="margin-top:0;">Front keyword (the product's own naming gets locked right after it, before the first comma \u2014 e.g. "Getting Meowied" here becomes "Getting Meowied ${escapeHtml(g.segments[0])}")</label>
         <input type="text" id="garmentKeyword-${g.key}" placeholder="e.g. ${escapeHtml(g.segments[0])}" value="${escapeAttr(s.keyword)}" data-keyword-garment="${g.key}">
       </div>
 
@@ -1678,7 +1678,7 @@ const REMIX_SYSTEM_BASE = `You are an Etsy SEO expert for a print on demand appa
 
 Rules:
 - Give exactly 3 different title remixes, each distinctly different from the others in wording and structure.
-- Each remix must start with exactly the locked front keyword given below, followed immediately by a comma, then continue with more phrasing.
+- Each remix must start with EXACTLY the locked front segment given below, word for word, followed immediately by a comma, then continue with more phrasing. The locked front segment already combines the seller's keyword with this product's own naming, so don't add, remove, or reorder any word in it.
 - Build the rest of each remix from real keyword phrases pulled from the seller's pasted titles or keywords below, rearranged and recombined. Do not invent new claims or keywords that aren't represented there.
 - Hard limit 140 characters per title. Get as close to 140 as you can by pulling in relevant niche keywords, synonyms, and phrasing variations that already fit, not just repeating words already there.
 - Never use em dashes anywhere, use commas or periods instead.
@@ -1704,6 +1704,21 @@ function enforceTitleLimit(title, limit) {
   return cut.replace(/[,\s]+$/, '').trim();
 }
 
+// Hard safety net: makes sure the title actually starts with "keyword + this
+// product's naming" as one clean unit before the first comma, even if the AI
+// slipped its own comma in between them or drifted from the wording entirely.
+function enforceLockedStart(title, keyword, productWording) {
+  let t = (title || '').trim();
+  const kw = keyword.trim();
+  const pw = productWording.trim();
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Strip a leading "keyword [,] productWording [,]" or "productWording [,] keyword [,]"
+  // combo, in either order, with or without a comma the AI may have inserted.
+  const leadRe = new RegExp('^\\s*(?:' + esc(kw) + '\\s*,?\\s*' + esc(pw) + '|' + esc(pw) + '\\s*,?\\s*' + esc(kw) + ')\\s*,?\\s*', 'i');
+  t = t.replace(leadRe, '').trim();
+  return t ? `${kw} ${pw}, ${t}` : `${kw} ${pw}`;
+}
+
 async function generateGarmentRemixes(key) {
   const s = garmentTitleState[key];
   const g = GARMENTS.find(x => x.key === key);
@@ -1714,15 +1729,17 @@ async function generateGarmentRemixes(key) {
   if (!s.pasted.trim()) { setError(errorEl, 'Paste your existing titles or keywords for this garment first.'); return; }
   if (!s.keyword.trim()) { setError(errorEl, 'Add a front keyword first, it gets locked to the start of every remix.'); return; }
 
+  const lockedStart = `${s.keyword.trim()} ${g.segments[0]}`;
+
   const btn = document.querySelector(`[data-generate-garment="${key}"]`);
   if (btn) btn.disabled = true;
   setStatus(statusEl, `Writing 3 ${g.label} title remixes...`);
 
   try {
     const system = REMIX_SYSTEM_BASE.replace('{INSTRUCTIONS}', SEO_INSTRUCTIONS[key]);
-    const userText = `Locked front keyword: "${s.keyword.trim()}"\n\nPasted titles or keywords already working on Etsy for this garment:\n${s.pasted.trim()}`;
+    const userText = `Locked front segment (keyword + this product's naming, must open every title exactly like this): "${lockedStart}"\n\nPasted titles or keywords already working on Etsy for this garment:\n${s.pasted.trim()}`;
     const result = await callClaude(system, [{ type: 'text', text: userText }]);
-    const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(String(t)));
+    const titles = (result.titles || []).slice(0, 3).map(t => enforceTitleLimit(enforceLockedStart(String(t), s.keyword.trim(), g.segments[0])));
     titles.forEach((t, i) => { if (s.remixes[i]) s.remixes[i].text = t; });
     renderGarmentPanels();
     autosaveGarmentState();
