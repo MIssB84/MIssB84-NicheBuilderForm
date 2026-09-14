@@ -122,6 +122,7 @@
     <button class="tab-btn" data-tab="livecall">Monthly Live Call</button>
     <button class="tab-btn" data-tab="recap">Live Call Recap</button>
     <button class="tab-btn" data-tab="adhoc">Ad Hoc Post</button>
+    <button class="tab-btn" data-tab="ytcard">YT Video Card</button>
     <button class="tab-btn" data-tab="keyword">Keyword Report</button>
     <button class="tab-btn" data-tab="email">Email</button>
     <button class="tab-btn" data-tab="settings">Settings</button>
@@ -206,8 +207,7 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="mmGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('mm_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('mmGenerateHTML','mm_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap">
       <label>Plain Text Version (paste into builder, ** = bold)</label>
@@ -300,8 +300,7 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="tipGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('tip_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('tipGenerateHTML','tip_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap">
       <label>Plain Text Version</label>
@@ -365,8 +364,7 @@ Write your own listing description and use your own mockups</textarea>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="plrGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('plr_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('plrGenerateHTML','plr_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="plr_output" rows="10"></textarea></div>
   </div>
@@ -507,8 +505,7 @@ Write your own listing description and use your own mockups</textarea>
     <hr class="divider">
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="dirGenerateHTML()">Generate HTML (All Live Weeks)</button>
-      <button class="btn btn-ghost" onclick="copyOutput('dir_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('dirGenerateHTML','dir_output')">Generate &amp; Copy HTML</button>
       <button class="btn btn-danger" onclick="dirClearAll()">Clear All Data</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="dir_output" rows="10"></textarea></div>
@@ -535,8 +532,7 @@ Write your own listing description and use your own mockups</textarea>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="annGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('ann_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('annGenerateHTML','ann_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="ann_output" rows="10"></textarea></div>
   </div>
@@ -581,8 +577,7 @@ Write your own listing description and use your own mockups</textarea>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="lcGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('lc_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('lcGenerateHTML','lc_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="lc_output" rows="10"></textarea></div>
   </div>
@@ -593,7 +588,9 @@ Write your own listing description and use your own mockups</textarea>
     <p class="sub">Paste raw Google Meet notes — AI turns them into a scannable recap, grouped by topic.</p>
     <div class="row2">
       <div class="field"><label>Month / Year</label><input type="month" id="recap_month"></div>
-      <div class="field"><label>YouTube Embed URL</label><input type="url" id="recap_video" placeholder="https://www.youtube.com/embed/..."></div>
+      <div class="field"><label>YouTube Link</label><input type="url" id="recap_video" placeholder="Paste any YouTube link — auto-converts to embed format" onblur="recapNormalizeVideo()">
+        <div class="hint">Paste the regular youtu.be or youtube.com/watch link — it'll auto-convert to the embed format when you click away.</div>
+      </div>
     </div>
     <div class="field"><label>Raw Meeting Notes</label>
       <textarea id="recap_notes" rows="10" placeholder="Paste raw Google Meet summary notes here..."></textarea>
@@ -619,8 +616,7 @@ Write your own listing description and use your own mockups</textarea>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="recapGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('recap_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('recapGenerateHTML','recap_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="recap_output" rows="10"></textarea></div>
   </div>
@@ -661,10 +657,31 @@ Write your own listing description and use your own mockups</textarea>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="adhocGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('adhoc_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('adhocGenerateHTML','adhoc_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="adhoc_output" rows="10"></textarea></div>
+  </div>
+
+  <!-- ============ YT VIDEO CARD TAB ============ -->
+  <div class="panel" id="panel-ytcard">
+    <h2>YT Video Card</h2>
+    <p class="sub">Drop in a YouTube link, title, and description. Builds a clickable thumbnail card (not an embed) — clicking it opens the video on YouTube instead of autoplaying inline.</p>
+    <div class="field"><label>YouTube Link</label><input type="url" id="ytcard_link" placeholder="Paste any YouTube link" onblur="ytcardNormalizeLink()"></div>
+    <div class="field"><label>Video Title</label><input type="text" id="ytcard_title" placeholder="Video title"></div>
+    <div class="field"><label>Description</label><textarea id="ytcard_desc" rows="3" placeholder="Short description shown under the title"></textarea></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="previewYtcard()">👁 Preview</button>
+      <button class="btn btn-danger" onclick="clearTool('ytcard')">Clear</button>
+    </div>
+    <div class="preview-frame" id="ytcard_preview_wrap" style="display:none;">
+      <iframe id="ytcard_preview_iframe"></iframe>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="generateAndCopy('ytcardGenerateHTML','ytcard_output')">Generate &amp; Copy HTML</button>
+    </div>
+    <div class="output-wrap"><label>Generated HTML</label><textarea id="ytcard_output" rows="10"></textarea></div>
   </div>
 
   <!-- ============ KEYWORD REPORT TAB ============ -->
@@ -690,8 +707,7 @@ Write your own listing description and use your own mockups</textarea>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="kwGenerateHTML()">Generate HTML</button>
-      <button class="btn btn-ghost" onclick="copyOutput('kw_output')">Copy HTML</button>
+      <button class="btn btn-secondary" onclick="generateAndCopy('kwGenerateHTML','kw_output')">Generate &amp; Copy HTML</button>
     </div>
     <div class="output-wrap"><label>Generated HTML</label><textarea id="kw_output" rows="10"></textarea></div>
   </div>
@@ -721,7 +737,7 @@ document.getElementById('tabBar').addEventListener('click', function(e){
 });
 
 /* ============ CORE: STICKY SAVE BAR + BACK TO TOP ============ */
-var TAB_TOOL_MAP = {mm:'mm', tip:'tip', plr:'plr', email:'email', directory:'directory', announce:'ann', livecall:'lc', recap:'recap', adhoc:'adhoc', keyword:'kw'};
+var TAB_TOOL_MAP = {mm:'mm', tip:'tip', plr:'plr', email:'email', directory:'directory', announce:'ann', livecall:'lc', recap:'recap', adhoc:'adhoc', ytcard:'ytcard', keyword:'kw'};
 var currentTab = 'nichebuilder';
 function updateStickyBarForTab(tab){
   currentTab = tab;
@@ -809,6 +825,36 @@ async function callClaude(systemPrompt, userPrompt, maxTokens){
 function escapeHtml(s){
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+/* ============ CORE: YOUTUBE URL HELPERS ============ */
+function extractYoutubeId(url){
+  if(!url) return '';
+  url = url.trim();
+  var patterns = [
+    /youtu\.be\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/live\/([A-Za-z0-9_-]{11})/,
+    /[?&]v=([A-Za-z0-9_-]{11})/
+  ];
+  for(var i=0;i<patterns.length;i++){
+    var m = url.match(patterns[i]);
+    if(m) return m[1];
+  }
+  if(/^[A-Za-z0-9_-]{11}$/.test(url)) return url;
+  return '';
+}
+function toYoutubeEmbed(url){
+  var id = extractYoutubeId(url);
+  return id ? ('https://www.youtube.com/embed/'+id) : (url||'');
+}
+function toYoutubeWatch(url){
+  var id = extractYoutubeId(url);
+  return id ? ('https://www.youtube.com/watch?v='+id) : (url||'');
+}
+function youtubeThumbnail(url){
+  var id = extractYoutubeId(url);
+  return id ? ('https://img.youtube.com/vi/'+id+'/hqdefault.jpg') : '';
+}
 function boldify(s){
   // convert **text** to <strong>text</strong>, escaping everything else
   var escaped = escapeHtml(s);
@@ -830,6 +876,10 @@ function copyOutput(id){
     document.execCommand('copy');
     flashCopied(id);
   });
+}
+function generateAndCopy(genFnName, outputId){
+  window[genFnName]();
+  copyOutput(outputId);
 }
 function showPreview(tool){
   var outputEl = document.getElementById(tool+'_output');
@@ -914,6 +964,7 @@ var TOOL_FIELDS = {
   lc: ['lc_date','lc_start','lc_end','lc_tz','lc_platform','lc_expect','lc_islive','lc_meetlink','lc_formlink','lc_nextdate','lc_output'],
   recap: ['recap_month','recap_video','recap_notes','recap_body','recap_output'],
   adhoc: ['adhoc_mediatype','adhoc_mediaurl','adhoc_title','adhoc_body','adhoc_output'],
+  ytcard: ['ytcard_link','ytcard_title','ytcard_desc','ytcard_output'],
   kw: ['kw_month','kw_photo','kw_output']
 };
 function isCheckboxField(el){ return el && el.type==='checkbox'; }
@@ -1786,6 +1837,12 @@ async function recapGenerateDraft(){
     status.className='status-err'; status.textContent=' error: '+e.message;
   }
 }
+function recapNormalizeVideo(){
+  var el = document.getElementById('recap_video');
+  var embed = toYoutubeEmbed(el.value);
+  if(embed) el.value = embed;
+  saveDraft('recap');
+}
 function recapGenerateHTML(){
   var monthVal = document.getElementById('recap_month').value;
   var month = '';
@@ -1794,7 +1851,7 @@ function recapGenerateHTML(){
     var mDate = new Date(parseInt(mParts[0],10), parseInt(mParts[1],10)-1, 1);
     month = mDate.toLocaleDateString('en-US',{month:'long', year:'numeric'});
   }
-  var video = document.getElementById('recap_video').value || '';
+  var video = toYoutubeEmbed(document.getElementById('recap_video').value || '');
   var body = document.getElementById('recap_body').value;
 
   var lines = body.split('\n');
@@ -1891,6 +1948,38 @@ function adhocGenerateHTML(){
   document.getElementById('adhoc_output').value = html;
   saveDraft('adhoc');
 }
+
+/* ============ YT VIDEO CARD TAB LOGIC ============ */
+function ytcardNormalizeLink(){
+  var el = document.getElementById('ytcard_link');
+  var id = extractYoutubeId(el.value);
+  if(id) el.value = toYoutubeWatch(el.value);
+  saveDraft('ytcard');
+}
+function ytcardGenerateHTML(){
+  var link = document.getElementById('ytcard_link').value || '';
+  var title = document.getElementById('ytcard_title').value || '';
+  var desc = document.getElementById('ytcard_desc').value || '';
+  var id = extractYoutubeId(link);
+  if(!id){ alert('That doesn\'t look like a valid YouTube link.'); return; }
+  var watchUrl = toYoutubeWatch(link);
+  var thumb = youtubeThumbnail(link);
+
+  var html = '<a href="'+escapeHtml(watchUrl)+'" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;max-width:680px;margin:0 auto;font-family:Jost,Arial,sans-serif;background:#fdf7f2;border:1px solid #ead9d5;border-radius:16px;overflow:hidden;">'+
+    '<div style="position:relative;width:100%;padding-top:56.25%;background:#2a1f1c;">'+
+    '<img src="'+escapeHtml(thumb)+'" alt="'+escapeAttr(title)+'" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;">'+
+    '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:68px;background:rgba(42,31,28,.78);border-radius:50%;display:flex;align-items:center;justify-content:center;">'+
+    '<div style="width:0;height:0;border-top:14px solid transparent;border-bottom:14px solid transparent;border-left:22px solid #fff;margin-left:5px;"></div>'+
+    '</div></div>'+
+    '<div style="padding:1.5rem 1.75rem;">'+
+    '<h3 style="font-family:Playfair Display,Georgia,serif;font-size:1.4rem;font-weight:700;color:#2a1f1c;margin:0 0 .5rem;line-height:1.25;">'+escapeHtml(title)+'</h3>'+
+    (desc ? '<p style="font-size:15px;color:#5a4a45;line-height:1.65;margin:0;">'+escapeHtml(desc)+'</p>' : '')+
+    '</div></a>';
+
+  document.getElementById('ytcard_output').value = html;
+  saveDraft('ytcard');
+}
+function previewYtcard(){ ytcardGenerateHTML(); showPreview('ytcard'); }
 
 /* ============ KEYWORD REPORT TAB LOGIC ============ */
 var KW_STANDARD_KEYWORDS = [
