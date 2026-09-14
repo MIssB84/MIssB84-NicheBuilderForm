@@ -1265,7 +1265,7 @@ function renderRefLibrary(sectionKey) {
 
 var REF_NOTE_GENERIC = ' The reference image(s) attached above are your primary style guide for this prompt, lean heavily on them. Closely emulate their rendering technique, line quality, color palette, composition, layout, and overall aesthetic, this should read as clearly influenced by the reference, not a generic interpretation of the theme. The only thing that must differ from the reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference image(s).';
 
-function buildUserContent(sectionKey, count, avoidTexts, anchorPrompts, singleSlotIndex) {
+function buildUserContent(sectionKey, count, avoidTexts, anchorPrompts, singleSlotIndex, skipAutoRefs) {
   var textMsg = buildPromptUserMessage(count, avoidTexts, anchorPrompts);
   var isAutoSection = (sectionKey === 'png' || sectionKey === 'tumbler');
 
@@ -1276,6 +1276,8 @@ function buildUserContent(sectionKey, count, avoidTexts, anchorPrompts, singleSl
     content.push({ type: 'text', text: textMsg + REF_NOTE_GENERIC });
     return content;
   }
+
+  if (skipAutoRefs) return textMsg;
 
   var all3 = getEffectiveRefsForPrompts(sectionKey);
 
@@ -1407,7 +1409,7 @@ async function generateFullCollection() {
       var step = sequence[i];
       status.textContent = ' writing ' + step.label + '...';
       try {
-        var result = await callClaudeWithRetry(step.sys, buildUserContent(step.key, 3, null, waPrompts), 3000, 3);
+        var result = await callClaudeWithRetry(step.sys, buildUserContent(step.key, 3, null, waPrompts, null, true), 3000, 3);
         var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
         step.ids.forEach(function(id, j) { if (prompts[j]) { document.getElementById(id).value = prompts[j]; clearCopied(id); } });
         isDirty = true; updateAllProgress(); saveData();
