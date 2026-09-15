@@ -429,6 +429,11 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('png')" id="genbtn-png">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
+  <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:#8a7268; margin:-6px 0 14px; cursor:pointer;">
+    <input type="checkbox" id="png-anchor-toggle" onchange="setAnchorMode('png', this.checked)">
+    Anchor to Wall Art mood instead of the reference library (skips the baked-in refs, requires Wall Art prompts to exist first)
+  </label>
+  <input type="hidden" id="png-anchor-mode" value="">
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-1" placeholder="Paste or type your PNG prompt here..."></textarea></div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-2" placeholder="Paste or type your PNG prompt here..."></textarea></div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('png','png-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('png-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="png-3" placeholder="Paste or type your PNG prompt here..."></textarea></div>
@@ -453,6 +458,11 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="generateForProduct('tumbler')" id="genbtn-tumbler">✨ Generate 3 with AI</button>
     <span class="gen-status" id="genstatus-tumbler" style="font-size:11.5px; color:#c4b0a8;"></span>
   </div>
+  <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:#8a7268; margin:-6px 0 14px; cursor:pointer;">
+    <input type="checkbox" id="tb-anchor-toggle" onchange="setAnchorMode('tumbler', this.checked)">
+    Anchor to Wall Art mood instead of the reference library (skips the baked-in refs, requires Wall Art prompts to exist first)
+  </label>
+  <input type="hidden" id="tb-anchor-mode" value="">
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-1" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-2" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 3 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('tumbler','tb-3')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('tb-3', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="tb-3" placeholder="Paste or type your tumbler wrap prompt here..."></textarea></div>
@@ -612,8 +622,8 @@ var fields = [
   'wa-ref-1','wa-ref-2','ft-ref-1','ft-ref-2','png-ref-1','png-ref-2','png-ref-3','png-locked','tb-ref-1','tb-ref-2','tb-ref-3','tb-locked',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
-  'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img',
-  'tb-1','tb-1-img','tb-2','tb-2-img','tb-3','tb-3-img'
+  'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img','png-anchor-mode',
+  'tb-1','tb-1-img','tb-2','tb-2-img','tb-3','tb-3-img','tb-anchor-mode'
 ];
 
 var productSections = [
@@ -1040,7 +1050,7 @@ var DEFAULT_REF_LIBRARY = {
     'https://d1yei2z3i6k35z.cloudfront.net/10270628/6a6fe602ad92d9.91966147_il_1588xN.8215291508_b266.webp'
   ]
 };
-var refLibrary = { png: [], tumbler: [] };
+var refLibrary = { png: [], tumbler: [], pngCleared: false, tumblerCleared: false };
 
 var REF_LIBRARY_VERSION_KEY = 'dfy_ref_library_version';
 var PNG_LIBRARY_VERSION = 2;
@@ -1051,14 +1061,14 @@ function loadRefLibrary() {
     if (raw) refLibrary = JSON.parse(raw);
     if (!refLibrary.png) refLibrary.png = [];
     if (!refLibrary.tumbler) refLibrary.tumbler = [];
-  } catch (e) { refLibrary = { png: [], tumbler: [] }; }
+  } catch (e) { refLibrary = { png: [], tumbler: [], pngCleared: false, tumblerCleared: false }; }
   var storedVersion = parseInt(localStorage.getItem(REF_LIBRARY_VERSION_KEY) || '1', 10);
-  if (storedVersion < PNG_LIBRARY_VERSION) {
+  if (storedVersion < PNG_LIBRARY_VERSION && !refLibrary.pngCleared) {
     refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
     try { localStorage.setItem(REF_LIBRARY_VERSION_KEY, String(PNG_LIBRARY_VERSION)); } catch (e) {}
   }
-  if (!refLibrary.png.length) refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
-  if (!refLibrary.tumbler.length) refLibrary.tumbler = DEFAULT_REF_LIBRARY.tumbler.slice();
+  if (!refLibrary.png.length && !refLibrary.pngCleared) refLibrary.png = DEFAULT_REF_LIBRARY.png.slice();
+  if (!refLibrary.tumbler.length && !refLibrary.tumblerCleared) refLibrary.tumbler = DEFAULT_REF_LIBRARY.tumbler.slice();
   saveRefLibrary();
 }
 
@@ -1230,6 +1240,22 @@ function clearLockedPool(sectionKey) {
   showToast('Preferences cleared, back to fully random.');
 }
 
+function clearEntireLibrary(sectionKey) {
+  var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
+  var count = (refLibrary[listKey] || []).length;
+  if (!count) return;
+  if (!confirm('This removes all ' + count + ' images from your ' + (sectionKey === 'png' ? 'PNG' : 'Tumbler') + ' library. This cannot be undone. Continue?')) return;
+  refLibrary[listKey] = [];
+  refLibrary[listKey === 'png' ? 'pngCleared' : 'tumblerCleared'] = true;
+  saveRefLibrary();
+  var prefix = REF_PREFIX_BY_SECTION[sectionKey];
+  var lockedEl = document.getElementById(prefix + '-locked');
+  if (lockedEl) lockedEl.value = '';
+  isDirty = true; saveData();
+  renderRefLibrary(sectionKey);
+  showToast('Library cleared. Paste in new reference links to rebuild it.');
+}
+
 function renderRefLibrary(sectionKey) {
   var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
   var gridId = (sectionKey === 'png' ? 'png' : 'tumbler') + '-lib-grid';
@@ -1245,9 +1271,9 @@ function renderRefLibrary(sectionKey) {
   }
   var locked = getLockedPool(sectionKey);
   if (clearRow) {
-    clearRow.innerHTML = locked.length
-      ? '<button class="paste-btn" type="button" style="text-transform:none;" onclick="clearLockedPool(\'' + sectionKey + '\')">Clear my ' + locked.length + ' preferred pick' + (locked.length === 1 ? '' : 's') + '</button>'
-      : '';
+    clearRow.innerHTML =
+      (locked.length ? '<button class="paste-btn" type="button" style="text-transform:none;" onclick="clearLockedPool(\'' + sectionKey + '\')">Clear my ' + locked.length + ' preferred pick' + (locked.length === 1 ? '' : 's') + '</button>' : '') +
+      '<button class="paste-btn" type="button" style="text-transform:none; color:#b23b3b;" onclick="clearEntireLibrary(\'' + sectionKey + '\')">🗑 Clear Entire Library (' + urls.length + ')</button>';
   }
   grid.innerHTML = urls.map(function(url) {
     var isSelected = locked.indexOf(url) !== -1;
@@ -1313,6 +1339,24 @@ function requirePngStyleInput() {
   return true;
 }
 
+function isAnchorMode(sectionKey) {
+  var id = sectionKey === 'png' ? 'png-anchor-mode' : 'tb-anchor-mode';
+  return val(id) === '1';
+}
+
+function setAnchorMode(sectionKey, checked) {
+  var id = sectionKey === 'png' ? 'png-anchor-mode' : 'tb-anchor-mode';
+  document.getElementById(id).value = checked ? '1' : '';
+  isDirty = true; saveData();
+}
+
+function syncAnchorToggles() {
+  var pngBox = document.getElementById('png-anchor-toggle');
+  var tbBox = document.getElementById('tb-anchor-toggle');
+  if (pngBox) pngBox.checked = isAnchorMode('png');
+  if (tbBox) tbBox.checked = isAnchorMode('tumbler');
+}
+
 async function generateForProduct(sectionKey) {
   var section = getSection(sectionKey);
   if (!requireTheme()) return;
@@ -1320,13 +1364,17 @@ async function generateForProduct(sectionKey) {
   var existing = section.ids.filter(function(id){ return val(id).trim().length > 0; });
   if (existing.length && !confirm('This will overwrite all 3 ' + section.label + ' prompts. Continue?')) return;
 
+  var anchors = sectionKey === 'wall-art' ? null : getWallArtAnchors().some(Boolean) ? getWallArtAnchors() : null;
+  var isAutoSection = (sectionKey === 'png' || sectionKey === 'tumbler');
+  var anchorMode = isAutoSection && isAnchorMode(sectionKey);
+  if (anchorMode && !anchors) { showToast('Generate your Wall Art prompts first, then anchor mode has something to match.'); return; }
+
   var btn = document.getElementById('genbtn-' + sectionKey);
   var status = document.getElementById('genstatus-' + sectionKey);
   btn.disabled = true; status.textContent = ' writing prompts...';
   try {
     var sys = getPromptSystem(sectionKey, 3);
-    var anchors = sectionKey === 'wall-art' ? null : getWallArtAnchors().some(Boolean) ? getWallArtAnchors() : null;
-    var userMsg = buildUserContent(sectionKey, 3, null, anchors);
+    var userMsg = buildUserContent(sectionKey, 3, null, anchors, null, anchorMode);
     var result = await callClaudeWithRetry(sys, userMsg, 3000, 3);
     var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).slice(0, 3);
     section.ids.forEach(function(id, i) {
@@ -1347,6 +1395,11 @@ async function regenerateSingle(sectionKey, slotId) {
   var section = getSection(sectionKey);
   if (!requireTheme()) return;
   if (sectionKey === 'png' && !requirePngStyleInput()) return;
+  var slotIndex = section.ids.indexOf(slotId);
+  var isAutoSection = (sectionKey === 'png' || sectionKey === 'tumbler');
+  var anchorMode = isAutoSection && isAnchorMode(sectionKey);
+  var waAnchorsCheck = sectionKey !== 'wall-art' ? getWallArtAnchors() : null;
+  if (anchorMode && (!waAnchorsCheck || !waAnchorsCheck[slotIndex])) { showToast('Generate the matching Wall Art prompt first, then anchor mode has something to match.'); return; }
   var btn = document.querySelector('button[onclick="regenerateSingle(\'' + sectionKey + '\',\'' + slotId + '\')"]');
   var originalText = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
@@ -1354,12 +1407,11 @@ async function regenerateSingle(sectionKey, slotId) {
     var sys = getPromptSystem(sectionKey, 1);
     var siblingTexts = section.ids.filter(function(id){ return id !== slotId; }).map(function(id){ return val(id).trim(); }).filter(Boolean);
     var anchors = null;
-    var slotIndex = section.ids.indexOf(slotId);
     if (sectionKey !== 'wall-art') {
       var waAnchors = getWallArtAnchors();
       if (waAnchors[slotIndex]) { anchors = [null, null, null]; anchors[slotIndex] = waAnchors[slotIndex]; }
     }
-    var userMsg = buildUserContent(sectionKey, 1, siblingTexts, anchors, slotIndex);
+    var userMsg = buildUserContent(sectionKey, 1, siblingTexts, anchors, slotIndex, anchorMode);
     var result = await callClaudeWithRetry(sys, userMsg, 1200, 1);
     var prompts = Array.isArray(result && result.prompts) ? result.prompts : [];
     if (prompts[0]) {
@@ -1764,6 +1816,7 @@ function loadData() {
   renderAllRefButtonRows();
   renderRefLibrary('png');
   renderRefLibrary('tumbler');
+  syncAnchorToggles();
 }
 
 function saveData() {
