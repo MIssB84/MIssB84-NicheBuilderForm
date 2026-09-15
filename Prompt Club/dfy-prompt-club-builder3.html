@@ -960,8 +960,8 @@ async function callOpenAI(systemPrompt, userContent, maxTokens) {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + savedKey },
     body: JSON.stringify({
       model: OPENAI_MODEL,
-      instructions: systemPrompt,
-      input: userContent,
+      instructions: systemPrompt + '\n\nIMPORTANT OUTPUT FORMAT: Return only valid JSON. Do not include markdown fences, commentary, or any text outside the JSON object.',
+      input: (typeof userContent === 'string' ? userContent : userContent) + (typeof userContent === 'string' ? '\n\nReturn the requested result as valid JSON only.' : ''),
       max_output_tokens: maxTokens || 3000,
       reasoning: { effort: 'medium' },
       text: { format: { type: 'json_object' } }
