@@ -281,6 +281,12 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <p class="card-sub">The AI leans heavily on these as its primary style guide, only the subject matter still comes from your Working Theme above, not the reference. For PNG and Tumbler, your baked-in library is always in play automatically, a different reference matched to each of the 3 prompts at random, no clicking required. Click specific ones to prefer those over the rest of the library, or use Ad Hoc for a one-off image outside the library. Wall Art and Frame TV are Ad Hoc only. Must be a direct image link (.jpg/.png), not an Etsy listing or Pinterest page.</p>
 
   <div class="ref-img-block">
+    <p class="ref-lib-label" style="margin-top:2px;">Brand Style References <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— constant, paste once here and it's automatically included on every generation across all 4 products, no need to repeat it anywhere, paste one direct image link per line, up to 8</span></p>
+    <textarea class="field-input" id="brand-style-refs" placeholder="https://...jpg&#10;https://...png&#10;(one link per line)" style="min-height:70px;"></textarea>
+    <div class="ref-add-thumbs" id="brand-style-refs-thumbs" style="margin-top:6px;"></div>
+  </div>
+
+  <div class="ref-img-block">
     <label class="field-label">Wall Art</label>
     <div class="ref-add-row" id="wa-ref-row"></div>
     <input type="hidden" id="wa-ref-1" value="">
@@ -619,7 +625,7 @@ var isDirty = false;
 
 var fields = [
   'f-theme','f-themehint','f-mood','f-palette','f-coreelements','f-avoid','f-notes','f-collectionname','f-vibe',
-  'wa-ref-1','wa-ref-2','ft-ref-1','ft-ref-2','png-ref-1','png-ref-2','png-ref-3','png-locked','tb-ref-1','tb-ref-2','tb-ref-3','tb-locked',
+  'wa-ref-1','wa-ref-2','ft-ref-1','ft-ref-2','png-ref-1','png-ref-2','png-ref-3','png-locked','tb-ref-1','tb-ref-2','tb-ref-3','tb-locked','brand-style-refs',
   'wa-1','wa-1-img','wa-2','wa-2-img','wa-3','wa-3-img',
   'ft-1','ft-1-img','ft-2','ft-2-img','ft-3','ft-3-img',
   'png-1','png-1-img','png-2','png-2-img','png-3','png-3-img','png-anchor-mode',
@@ -1067,6 +1073,8 @@ var refLibrary = { png: [], tumbler: [], pngCleared: false, tumblerCleared: fals
 
 var REF_LIBRARY_VERSION_KEY = 'dfy_ref_library_version';
 var PNG_LIBRARY_VERSION = 2;
+var LIBRARY_FORCE_RESET_KEY = 'dfy_ref_library_force_reset_v';
+var LIBRARY_FORCE_RESET_VERSION = 1;
 
 function loadRefLibrary() {
   try {
@@ -1269,6 +1277,24 @@ function clearEntireLibrary(sectionKey) {
   showToast('Library cleared. Paste in new reference links to rebuild it.');
 }
 
+function forceResetLibraryOnce() {
+  var stored = parseInt(localStorage.getItem(LIBRARY_FORCE_RESET_KEY) || '0', 10);
+  if (stored >= LIBRARY_FORCE_RESET_VERSION) return;
+  refLibrary.png = [];
+  refLibrary.tumbler = [];
+  refLibrary.pngCleared = true;
+  refLibrary.tumblerCleared = true;
+  saveRefLibrary();
+  var pngLocked = document.getElementById('png-locked');
+  var tbLocked = document.getElementById('tb-locked');
+  if (pngLocked) pngLocked.value = '';
+  if (tbLocked) tbLocked.value = '';
+  isDirty = true; saveData();
+  renderRefLibrary('png');
+  renderRefLibrary('tumbler');
+  try { localStorage.setItem(LIBRARY_FORCE_RESET_KEY, String(LIBRARY_FORCE_RESET_VERSION)); } catch (e) {}
+}
+
 function renderRefLibrary(sectionKey) {
   var listKey = sectionKey === 'png' ? 'png' : 'tumbler';
   var gridId = (sectionKey === 'png' ? 'png' : 'tumbler') + '-lib-grid';
@@ -1303,39 +1329,55 @@ function renderRefLibrary(sectionKey) {
 
 var REF_NOTE_GENERIC = ' The reference image(s) attached above are your primary style guide for this prompt, lean heavily on them. Closely emulate their rendering technique, line quality, color palette, composition, layout, and overall aesthetic, this should read as clearly influenced by the reference, not a generic interpretation of the theme. The only thing that must differ from the reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference image(s).';
 
+function getBrandStyleRefs() {
+  var raw = val('brand-style-refs');
+  if (!raw.trim()) return [];
+  return raw.split(/[\n,]+/).map(function(s){ return s.trim(); }).filter(Boolean).filter(isApiImageFormat).slice(0, 8);
+}
+
+function renderBrandRefThumbs() {
+  var el = document.getElementById('brand-style-refs-thumbs');
+  if (!el) return;
+  var urls = getBrandStyleRefs();
+  el.innerHTML = urls.map(function(u) {
+    return '<img src="' + esc(u) + '" onerror="this.style.display=\'none\';">';
+  }).join('');
+}
+
 function buildUserContent(sectionKey, count, avoidTexts, anchorPrompts, singleSlotIndex, skipAutoRefs) {
   var textMsg = buildPromptUserMessage(count, avoidTexts, anchorPrompts);
   var isAutoSection = (sectionKey === 'png' || sectionKey === 'tumbler');
+  var imgBlocks = [];
+  var noteLines = [];
 
   if (!isAutoSection) {
     var refs = getRefImageUrls(sectionKey);
-    if (!refs.length) return textMsg;
-    var content = refs.map(function(url){ return { type: 'image', source: { type: 'url', url: url } }; });
-    content.push({ type: 'text', text: textMsg + REF_NOTE_GENERIC });
-    return content;
+    refs.forEach(function(url){ imgBlocks.push({ type: 'image', source: { type: 'url', url: url } }); });
+    if (refs.length) noteLines.push(REF_NOTE_GENERIC);
+  } else if (!skipAutoRefs) {
+    var slots = getRefSlotValues(sectionKey);
+    var autoRefs = getAutoRefsPerPrompt(sectionKey, slots);
+    var counter = 0;
+    var mapLines = [];
+    autoRefs.forEach(function(url, i) {
+      if (url) {
+        imgBlocks.push({ type: 'image', source: { type: 'url', url: url } });
+        counter++;
+        mapLines.push('Reference image ' + counter + ' is matched to prompt ' + (i + 1) + ', lean heavily on it specifically for that prompt.');
+      }
+    });
+    if (mapLines.length) noteLines.push('Each rotation reference image above is the primary style guide for one specific prompt, matched in order. ' + mapLines.join(' ') + ' Closely emulate that reference\'s rendering technique, line quality, color palette, composition, and overall aesthetic for its matched prompt only, this should read as clearly influenced by that reference, not a generic interpretation of the theme. The only thing that must differ from each reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference images.');
   }
 
-  if (skipAutoRefs) return textMsg;
+  var brandRefs = getBrandStyleRefs();
+  if (brandRefs.length) {
+    brandRefs.forEach(function(url){ imgBlocks.push({ type: 'image', source: { type: 'url', url: url } }); });
+    noteLines.push('The final ' + brandRefs.length + ' reference image(s) attached are your constant brand style touchstone, always included on every single generation across every product, regardless of week or theme. Treat them as loose overall inspiration for your general aesthetic, boldness, color use, and finish quality, blended across the whole set rather than fixated on any one of them, not as a strict clone to copy exactly.' + (isAutoSection ? ' The specific vibe assigned earlier still governs the exact rendering technique for each individual prompt.' : '') + ' Never copy or reference the specific subject matter shown in these images, subject matter always comes only from the Collection DNA below.');
+  }
 
-  var slots = getRefSlotValues(sectionKey);
-  var autoRefs = getAutoRefsPerPrompt(sectionKey, slots);
-
-  var imgBlocks = [];
-  var mapLines = [];
-  var counter = 0;
-  autoRefs.forEach(function(url, i) {
-    if (url) {
-      imgBlocks.push({ type: 'image', source: { type: 'url', url: url } });
-      counter++;
-      mapLines.push('Reference image ' + counter + ' is matched to prompt ' + (i + 1) + ', lean heavily on it specifically for that prompt.');
-    }
-  });
   if (!imgBlocks.length) return textMsg;
   var contentBlocks = imgBlocks.slice();
-  contentBlocks.push({
-    type: 'text',
-    text: textMsg + '\n\nEach reference image attached above is the primary style guide for one specific prompt, matched in order. ' + mapLines.join(' ') + ' Closely emulate that reference\'s rendering technique, line quality, color palette, composition, and overall aesthetic for its matched prompt only, this should read as clearly influenced by that reference, not a generic interpretation of the theme. The only thing that must differ from each reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference images.'
-  });
+  contentBlocks.push({ type: 'text', text: textMsg + (noteLines.length ? '\n\n' + noteLines.join(' ') : '') });
   return contentBlocks;
 }
 
@@ -1830,6 +1872,7 @@ function loadData() {
   renderRefLibrary('png');
   renderRefLibrary('tumbler');
   syncAnchorToggles();
+  renderBrandRefThumbs();
 }
 
 function saveData() {
@@ -1845,7 +1888,7 @@ function saveData() {
 
 function clearAll() {
   if (!confirm('Clear all data for this week? This cannot be undone.')) return;
-  var preserveIds = ['png-locked', 'tb-locked'];
+  var preserveIds = ['png-locked', 'tb-locked', 'brand-style-refs'];
   fields.forEach(function(id) { if (preserveIds.indexOf(id) !== -1) return; var el = document.getElementById(id); if (el) el.value = ''; });
   localStorage.removeItem(STORAGE_KEY);
   saveData();
@@ -2076,6 +2119,7 @@ fields.forEach(function(id) {
     setStatus('unsaved', 'Unsaved changes');
     updateAllProgress();
     clearCopied(id);
+    if (id === 'brand-style-refs') renderBrandRefThumbs();
   });
 });
 
@@ -2092,6 +2136,7 @@ window.addEventListener('beforeunload', function(e) {
 renderVibeGrid();
 loadRefLibrary();
 loadData();
+forceResetLibraryOnce();
 updateAllProgress();
 attachImgThumbListeners();
 refreshAllImgThumbs();
