@@ -7,166 +7,174 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --db: #2a1f1c;
+  --db: #17151d;
   --cream: #f5eddf;
   --gold: #c9a96e;
-  --rose: #dea193;
-  --border: #ead9d5;
-  --light-bg: #fdf7f2;
-  --mid: #5a4a45;
-  --muted: #c4b0a8;
+  --rose: #8f79b8;
+  --border: #d9d4e4;
+  --light-bg: #f8f7fb;
+  --mid: #4c4657;
+  --turq: #6faeb0;
+  --lavender: #8f79b8;
+  --soft-lavender: #eeeaf6;
+  --muted: #8f879b;
   --success: #7a9e7e;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Jost', sans-serif; background: #2a1f1c; min-height: 100vh; padding: 2rem 1rem 5rem; }
+body { font-family: 'Jost', sans-serif; background: #17151d; min-height: 100vh; padding: 2rem 1rem 5rem; }
 
 .page-header { text-align: center; margin-bottom: 2rem; }
-.page-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #dea193; background: transparent; border: 1px solid rgba(222,161,147,0.4); padding: 5px 16px; border-radius: 20px; margin-bottom: 0.75rem; }
+.page-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #8f79b8; background: transparent; border: 1px solid rgba(111,174,176,0.42); padding: 5px 16px; border-radius: 20px; margin-bottom: 0.75rem; }
 .page-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #f5eddf; margin-bottom: 0.25rem; }
-.page-sub { font-size: 13px; color: #c4b0a8; }
+.page-sub { font-size: 13px; color: #8f879b; }
 
-.card { background: #fff; border-radius: 14px; border: 1px solid #ead9d5; padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto; }
-.card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: #2a1f1c; margin-bottom: 0.2rem; }
-.card-sub { font-size: 12px; color: #c4b0a8; margin-bottom: 1.2rem; }
+.card { background: #fff; border-radius: 14px; border: 1px solid #d9d4e4; padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+.card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: #17151d; margin-bottom: 0.2rem; }
+.card-sub { font-size: 12px; color: #8f879b; margin-bottom: 1.2rem; }
 
-.field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #5a4a45; margin-bottom: 4px; display: block; }
-.field-input { width: 100%; border: 1.5px solid #ead9d5; border-radius: 8px; padding: 9px 13px; font-family: 'Jost', sans-serif; font-size: 13px; color: #2a1f1c; background: #fdf7f2; outline: none; transition: border-color 0.2s; }
-.field-input:focus { border-color: #dea193; }
+.field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #4c4657; margin-bottom: 4px; display: block; }
+.field-input { width: 100%; border: 1.5px solid #d9d4e4; border-radius: 8px; padding: 9px 13px; font-family: 'Jost', sans-serif; font-size: 13px; color: #17151d; background: #f8f7fb; outline: none; transition: border-color 0.2s; }
+.field-input:focus { border-color: #8f79b8; }
 textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
-.section-divider { height: 1px; background: #ead9d5; margin: 1.5rem 0; max-width: 700px; margin-left: auto; margin-right: auto; }
+.section-divider { height: 1px; background: #d9d4e4; margin: 1.5rem 0; max-width: 700px; margin-left: auto; margin-right: auto; }
 
-.product-card { background: #fff; border-radius: 14px; border: 1px solid #ead9d5; padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto; }
+.product-card { background: #fff; border-radius: 14px; border: 1px solid #d9d4e4; padding: 1.5rem; margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto; }
 .product-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
 .product-title-wrap { display: flex; align-items: center; gap: 10px; }
-.product-icon { width: 32px; height: 32px; border-radius: 8px; background: #2a1f1c; display: flex; align-items: center; justify-content: center; }
-.product-icon svg { width: 16px; height: 16px; fill: #dea193; }
-.product-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: #2a1f1c; }
+.product-icon { width: 32px; height: 32px; border-radius: 8px; background: #17151d; display: flex; align-items: center; justify-content: center; }
+.product-icon svg { width: 16px; height: 16px; fill: #8f79b8; }
+.product-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: #17151d; }
 .progress-wrap { display: flex; align-items: center; gap: 8px; }
 .progress-dots { display: flex; gap: 4px; }
-.progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #ead9d5; transition: background 0.2s; }
-.progress-dot.filled { background: #dea193; }
+.progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #d9d4e4; transition: background 0.2s; }
+.progress-dot.filled { background: #8f79b8; }
 .progress-dot.complete { background: #7a9e7e; }
-.progress-label { font-size: 11px; font-weight: 600; color: #c4b0a8; letter-spacing: 0.05em; }
+.progress-label { font-size: 11px; font-weight: 600; color: #8f879b; letter-spacing: 0.05em; }
 
-.prompt-slot { background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; transition: border-color 0.2s; }
-.prompt-slot:focus-within { border-color: #dea193; }
-.prompt-slot-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #c4b0a8; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
-.slot-regen-btn { font-size: 13px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
-.slot-regen-btn:hover { color: #dea193; }
+.prompt-slot { background: #f8f7fb; border: 1.5px solid #d9d4e4; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; transition: border-color 0.2s; }
+.prompt-slot:focus-within { border-color: #8f79b8; }
+.prompt-slot-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8f879b; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+.slot-regen-btn { font-size: 13px; background: transparent; border: none; color: #8f879b; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
+.slot-regen-btn:hover { color: #8f79b8; }
 .slot-regen-btn:disabled { opacity: 0.4; cursor: wait; }
-.slot-copy-btn { font-size: 12px; background: transparent; border: none; color: #c4b0a8; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
-.slot-copy-btn:hover { color: #dea193; }
+.slot-copy-btn { font-size: 12px; background: transparent; border: none; color: #8f879b; cursor: pointer; padding: 0 2px; line-height: 1; text-transform: none; letter-spacing: normal; }
+.slot-copy-btn:hover { color: #8f79b8; }
 .field-input.copied-prompt { opacity: 0.5; background: #ece3dc; color: #8a7a72; }
 .prompt-slot.is-copied .prompt-slot-label { color: #b0a49d; }
 .gen-actions-row .btn-generate:disabled { opacity: 0.6; cursor: wait; }
-.prompt-slot textarea { width: 100%; border: none; background: transparent; font-family: 'Jost', sans-serif; font-size: 13px; color: #2a1f1c; outline: none; resize: vertical; min-height: 70px; line-height: 1.6; }
+.prompt-slot textarea { width: 100%; border: none; background: transparent; font-family: 'Jost', sans-serif; font-size: 13px; color: #17151d; outline: none; resize: vertical; min-height: 70px; line-height: 1.6; }
 
 .gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #2a1f1c; border-top: 1px solid rgba(222,161,147,0.3); padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
-.back-to-top-btn { position: fixed; right: 20px; bottom: 90px; width: 46px; height: 46px; border-radius: 50%; background: #dea193; color: #2a1f1c; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 99; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.25s; }
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #17151d; border-top: 1px solid rgba(143,121,184,0.32); padding: 0.85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+.back-to-top-btn { position: fixed; right: 20px; bottom: 90px; width: 46px; height: 46px; border-radius: 50%; background: #8f79b8; color: #17151d; border: none; font-size: 18px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; z-index: 99; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.25s; }
 .back-to-top-btn.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.back-to-top-btn:hover { background: #bb7d72; }
-.save-status { font-size: 12px; color: #c4b0a8; display: flex; align-items: center; gap: 6px; }
-.save-dot { width: 6px; height: 6px; border-radius: 50%; background: #c4b0a8; }
+.back-to-top-btn:hover { background: #6faeb0; }
+.save-status { font-size: 12px; color: #8f879b; display: flex; align-items: center; gap: 6px; }
+.save-dot { width: 6px; height: 6px; border-radius: 50%; background: #8f879b; }
 .save-dot.saved { background: #7a9e7e; }
-.save-dot.unsaved { background: #dea193; }
+.save-dot.unsaved { background: #8f79b8; }
 .save-actions { display: flex; gap: 10px; }
 .btn { font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 20px; border-radius: 30px; cursor: pointer; border: 1.5px solid; transition: all 0.2s; }
-.btn-save { background: transparent; color: #dea193; border-color: #dea193; }
-.btn-save:hover { background: #dea193; color: #2a1f1c; }
-.btn-generate { background: #dea193; color: #2a1f1c; border-color: #dea193; }
-.btn-generate:hover { background: #bb7d72; border-color: #bb7d72; color: #fff; }
-.btn-clear { background: transparent; color: #c4b0a8; border-color: rgba(196,176,168,0.4); font-size: 11px; padding: 7px 14px; }
-.btn-clear:hover { border-color: #c4b0a8; color: #fff; }
-.btn-clear-light { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 18px; border-radius: 30px; cursor: pointer; border: 1.5px solid rgba(196,176,168,0.5); background: transparent; color: #5a4a45; transition: all 0.2s; }
-.btn-clear-light:hover { border-color: #dea193; color: #bb7d72; }
+.btn-save { background: transparent; color: #8f79b8; border-color: #8f79b8; }
+.btn-save:hover { background: #8f79b8; color: #17151d; }
+.btn-generate { background: #8f79b8; color: #17151d; border-color: #8f79b8; }
+.btn-generate:hover { background: #6faeb0; border-color: #6faeb0; color: #fff; }
+.btn-clear { background: transparent; color: #8f879b; border-color: rgba(196,176,168,0.4); font-size: 11px; padding: 7px 14px; }
+.btn-clear:hover { border-color: #8f879b; color: #fff; }
+.btn-clear-light { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 18px; border-radius: 30px; cursor: pointer; border: 1.5px solid rgba(143,121,184,0.38); background: transparent; color: #4c4657; transition: all 0.2s; }
+.btn-clear-light:hover { border-color: #8f79b8; color: #6faeb0; }
+.idea-tab.active { background:#eeeaf6; border-color:#8f79b8; color:#17151d; box-shadow:0 0 0 1px rgba(143,121,184,.12) inset; }
+.idea-tab:hover { border-color:#6faeb0; color:#4c4657; }
+.btn-generate:hover { background:#6faeb0; border-color:#6faeb0; color:#17151d; }
+.page-badge { color:#8fd0d0; border-color:rgba(111,174,176,.5); }
+.field-input:focus { border-color:#6faeb0; box-shadow:0 0 0 2px rgba(111,174,176,.10); }
 
 #output-section { display: none; max-width: 700px; margin: 0 auto; }
 .output-actions { display: flex; gap: 12px; margin-bottom: 1.5rem; justify-content: center; flex-wrap: wrap; }
-.action-btn { font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 24px; border-radius: 30px; cursor: pointer; border: 2px solid #2a1f1c; transition: all 0.2s; }
-.action-btn.primary { background: #2a1f1c; color: #dea193; }
-.action-btn.primary:hover { background: #dea193; color: #2a1f1c; border-color: #dea193; }
-.action-btn.secondary { background: transparent; color: #2a1f1c; }
-.action-btn.secondary:hover { background: #2a1f1c; color: #dea193; }
+.action-btn { font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 24px; border-radius: 30px; cursor: pointer; border: 2px solid #17151d; transition: all 0.2s; }
+.action-btn.primary { background: #17151d; color: #8f79b8; }
+.action-btn.primary:hover { background: #8f79b8; color: #17151d; border-color: #8f79b8; }
+.action-btn.secondary { background: transparent; color: #17151d; }
+.action-btn.secondary:hover { background: #17151d; color: #8f79b8; }
 
-.output-block { background: #fff; border-radius: 14px; border: 1px solid #ead9d5; overflow: hidden; margin-bottom: 1.5rem; }
-.output-block-header { background: #2a1f1c; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
-.output-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #dea193; }
-.copy-block-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 1px solid rgba(222,161,147,0.4); color: #dea193; padding: 5px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
-.copy-block-btn:hover { background: #dea193; color: #2a1f1c; }
+.output-block { background: #fff; border-radius: 14px; border: 1px solid #d9d4e4; overflow: hidden; margin-bottom: 1.5rem; }
+.output-block-header { background: #17151d; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+.output-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #8f79b8; }
+.copy-block-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 1px solid rgba(111,174,176,0.42); color: #8f79b8; padding: 5px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+.copy-block-btn:hover { background: #8f79b8; color: #17151d; }
 .output-preview { padding: 1.25rem; }
 
-.toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: #2a1f1c; color: #dea193; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; padding: 10px 24px; border-radius: 30px; border: 1px solid #dea193; display: none; z-index: 9999; white-space: nowrap; }
+.toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: #17151d; color: #8f79b8; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; padding: 10px 24px; border-radius: 30px; border: 1px solid #8f79b8; display: none; z-index: 9999; white-space: nowrap; }
 
 .img-row { display: flex; gap: 8px; margin-top: 8px; }
 .img-url-input { flex: 1; font-size: 12px; padding: 7px 11px; background: #fff; }
-.paste-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: transparent; border: 1.5px solid #ead9d5; color: #5a4a45; border-radius: 8px; padding: 0 12px; cursor: pointer; transition: all 0.2s; }
-.paste-btn:hover { border-color: #dea193; color: #dea193; }
-.img-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #ead9d5; margin-top: 6px; }
+.paste-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: transparent; border: 1.5px solid #d9d4e4; color: #4c4657; border-radius: 8px; padding: 0 12px; cursor: pointer; transition: all 0.2s; }
+.paste-btn:hover { border-color: #8f79b8; color: #8f79b8; }
+.img-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid #d9d4e4; margin-top: 6px; }
 .img-batch-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0e6de; }
 .img-batch-row:last-child { border-bottom: none; }
-.img-batch-label { font-size: 11.5px; font-weight: 600; color: #5a4a45; width: 165px; flex-shrink: 0; line-height: 1.3; }
+.img-batch-label { font-size: 11.5px; font-weight: 600; color: #4c4657; width: 165px; flex-shrink: 0; line-height: 1.3; }
 .img-batch-row .img-url-input { margin: 0; }
 .img-batch-row .img-thumb { margin-top: 0; flex-shrink: 0; width: 44px; height: 44px; }
 .dna-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-.idea-card { background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 8px; }
+.idea-card { background: #f8f7fb; border: 1.5px solid #d9d4e4; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 8px; }
 .idea-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
-.idea-theme { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: #2a1f1c; }
-.idea-detail { font-size: 12px; color: #5a4a45; line-height: 1.6; }
-.idea-detail b { color: #2a1f1c; }
-.use-idea-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: #dea193; color: #2a1f1c; border: none; border-radius: 20px; padding: 6px 16px; cursor: pointer; transition: all 0.2s; }
-.use-idea-btn:hover { background: #bb7d72; color: #fff; }
+.idea-theme { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: #17151d; }
+.idea-detail { font-size: 12px; color: #4c4657; line-height: 1.6; }
+.idea-detail b { color: #17151d; }
+.use-idea-btn { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; background: #8f79b8; color: #17151d; border: none; border-radius: 20px; padding: 6px 16px; cursor: pointer; transition: all 0.2s; }
+.use-idea-btn:hover { background: #6faeb0; color: #fff; }
 .field-with-paste { display: flex; gap: 8px; align-items: flex-start; }
 .field-with-paste .field-input { flex: 1; }
 .api-key-corner { position: fixed; top: 16px; right: 20px; z-index: 200; text-align: right; }
-.api-key-corner-link { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #c4b0a8; text-decoration: underline; cursor: pointer; }
-.api-key-corner-link:hover { color: #dea193; }
-.api-key-panel { margin-top: 8px; background: #fff; border: 1px solid #ead9d5; border-radius: 10px; padding: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
+.api-key-corner-link { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #8f879b; text-decoration: underline; cursor: pointer; }
+.api-key-corner-link:hover { color: #8f79b8; }
+.api-key-panel { margin-top: 8px; background: #fff; border: 1px solid #d9d4e4; border-radius: 10px; padding: 14px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
 
 .vibe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.vibe-chip { text-align: left; cursor: pointer; background: #fdf7f2; border: 1.5px solid #ead9d5; border-radius: 10px; padding: 10px 12px; transition: all 0.2s; }
-.vibe-chip:hover { border-color: #dea193; }
-.vibe-chip.selected { border-color: #dea193; background: #fbeee8; box-shadow: 0 0 0 1px #dea193 inset; }
-.vibe-chip-name { font-family: 'Playfair Display', serif; font-size: 13.5px; font-weight: 700; color: #2a1f1c; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-.vibe-chip-check { font-size: 12px; color: #dea193; opacity: 0; }
+.vibe-chip { text-align: left; cursor: pointer; background: #f8f7fb; border: 1.5px solid #d9d4e4; border-radius: 10px; padding: 10px 12px; transition: all 0.2s; }
+.vibe-chip:hover { border-color: #8f79b8; }
+.vibe-chip.selected { border-color: #8f79b8; background: #eeeaf6; box-shadow: 0 0 0 1px #8f79b8 inset; }
+.vibe-chip-name { font-family: 'Playfair Display', serif; font-size: 13.5px; font-weight: 700; color: #17151d; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.vibe-chip-check { font-size: 12px; color: #8f79b8; opacity: 0; }
 .vibe-chip.selected .vibe-chip-check { opacity: 1; }
 .vibe-chip-desc { font-size: 11px; color: #8a7a72; line-height: 1.4; }
-.vibe-selected-note { font-size: 11.5px; color: #5a4a45; margin-top: 12px; padding: 8px 12px; background: #fdf7f2; border-radius: 8px; border: 1px solid #ead9d5; display: none; }
+.vibe-selected-note { font-size: 11.5px; color: #4c4657; margin-top: 12px; padding: 8px 12px; background: #f8f7fb; border-radius: 8px; border: 1px solid #d9d4e4; display: none; }
 
 .season-warning { display: none; font-size: 12px; color: #8a5a2a; background: #fdf1de; border: 1px solid #ecd2a3; border-radius: 8px; padding: 9px 13px; margin-top: 10px; line-height: 1.5; }
 .season-warning.show { display: block; }
 
-.ref-img-block { margin-bottom: 14px; padding: 10px 12px; background: #fdf7f2; border: 1px solid #ead9d5; border-radius: 10px; }
+.ref-img-block { margin-bottom: 14px; padding: 10px 12px; background: #f8f7fb; border: 1px solid #d9d4e4; border-radius: 10px; }
 .ref-img-block .field-label { margin-bottom: 8px; }
 .ref-img-block .img-batch-row { padding: 6px 0; }
-.ref-img-hint { font-size: 10.5px; color: #c4b0a8; margin-top: 6px; line-height: 1.4; }
+.ref-img-hint { font-size: 10.5px; color: #8f879b; margin-top: 6px; line-height: 1.4; }
 
-.ref-lib-block { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ead9d5; }
-.ref-lib-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #5a4a45; margin-bottom: 6px; }
+.ref-lib-block { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #d9d4e4; }
+.ref-lib-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #4c4657; margin-bottom: 6px; }
 .ref-lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 8px; }
 .ref-lib-thumb-wrap { position: relative; cursor: pointer; border-radius: 10px; overflow: visible; }
-.ref-lib-thumb { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #ead9d5; display: block; transition: all 0.15s; }
-.ref-lib-thumb-wrap:hover .ref-lib-thumb { border-color: #dea193; }
-.ref-lib-thumb-wrap.selected .ref-lib-thumb { border-color: #dea193; box-shadow: 0 0 0 2px #dea193; }
-.ref-lib-check { position: absolute; top: -6px; left: -6px; background: #dea193; color: #2a1f1c; font-size: 12px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; line-height: 1; }
+.ref-lib-thumb { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #d9d4e4; display: block; transition: all 0.15s; }
+.ref-lib-thumb-wrap:hover .ref-lib-thumb { border-color: #8f79b8; }
+.ref-lib-thumb-wrap.selected .ref-lib-thumb { border-color: #8f79b8; box-shadow: 0 0 0 2px #8f79b8; }
+.ref-lib-check { position: absolute; top: -6px; left: -6px; background: #8f79b8; color: #17151d; font-size: 12px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; line-height: 1; }
 .ref-lib-thumb-wrap.selected .ref-lib-check { display: flex; }
-.ref-lib-remove { position: absolute; top: -6px; right: -6px; background: #2a1f1c; color: #fff; font-size: 12px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; cursor: pointer; border: none; padding: 0; }
+.ref-lib-remove { position: absolute; top: -6px; right: -6px; background: #17151d; color: #fff; font-size: 12px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; cursor: pointer; border: none; padding: 0; }
 .ref-lib-thumb-wrap.unsupported .ref-lib-thumb { opacity: 0.4; filter: grayscale(60%); }
 .ref-lib-badge { position: absolute; bottom: 4px; left: 4px; right: 4px; background: rgba(42,31,28,0.85); color: #f5eddf; font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; padding: 2px 0; border-radius: 4px; }
-.ref-lib-empty { font-size: 11px; color: #c4b0a8; font-style: italic; }
+.ref-lib-empty { font-size: 11px; color: #8f879b; font-style: italic; }
 
 .ref-add-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .ref-add-thumbs { display: flex; gap: 6px; align-items: center; }
-.ref-add-thumbs img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; border: 1.5px solid #ead9d5; }
+.ref-add-thumbs img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; border: 1.5px solid #d9d4e4; }
 
 .ref-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,31,28,0.55); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
 .ref-modal-overlay.show { display: flex; }
 .ref-modal { background: #fff; border-radius: 14px; padding: 26px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; }
-.ref-modal-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #2a1f1c; margin-bottom: 6px; padding-right: 20px; }
+.ref-modal-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #17151d; margin-bottom: 6px; padding-right: 20px; }
 .ref-modal-sub { font-size: 11.5px; color: #8a7a72; margin-bottom: 18px; line-height: 1.5; }
-.ref-modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 22px; color: #c4b0a8; cursor: pointer; line-height: 1; }
+.ref-modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 22px; color: #8f879b; cursor: pointer; line-height: 1; }
 .ref-modal-row { margin-bottom: 14px; }
 .ref-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
 </style>
@@ -176,14 +184,14 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 <div class="api-key-corner">
   <a href="#" id="apiKeyToggleLink" class="api-key-corner-link">API Key</a>
   <div class="api-key-panel" id="apiKeyPanel" style="display:none;">
-    <p class="card-sub" style="margin-bottom:10px;">Only needed outside Claude.ai, like on GitHub Pages. Stored only in this browser.</p>
+    <p class="card-sub" style="margin-bottom:10px;">Enter your OpenAI API key once. It is saved in this browser on this device and automatically reused in future sessions. Use Change Key anytime to replace it. Your key is never hard-coded into this file.</p>
     <div id="apiKeyInputWrap" style="display:none;">
       <div style="display:flex; gap:8px;">
-        <input class="field-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." style="flex:1;">
+        <input class="field-input" type="password" id="apiKeyInput" placeholder="sk-..." style="flex:1;">
         <button class="btn btn-save" id="saveApiKeyBtn" type="button">Save</button>
       </div>
     </div>
-    <div id="apiKeySavedMsg" style="display:none; font-size:12.5px; color:#5a4a45;">
+    <div id="apiKeySavedMsg" style="display:none; font-size:12.5px; color:#4c4657;">
       API key saved. <button class="btn btn-clear" id="changeApiKeyBtn" type="button" style="margin-left:6px;">Change key</button>
     </div>
   </div>
@@ -210,10 +218,10 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <div class="btn-row" style="margin-bottom:14px;">
     <button class="btn btn-generate" type="button" onclick="suggestThemes()" id="genbtn-themes">✨ Suggest Themes</button>
-    <button class="btn-clear-light" type="button" onclick="toggleThemeIdeasWrap()" id="toggleIdeasBtn">📂 Saved Ideas (0)</button>
-    <button class="btn-clear-light" type="button" onclick="toggleSavedForLaterWrap()" id="toggleSavedForLaterBtn">💤 Saved for Later (0)</button>
-    <button class="btn-clear-light" type="button" onclick="toggleUsedIdeasWrap()" id="toggleUsedBtn">✓ Used (0)</button>
-    <span class="gen-status" id="genstatus-themes" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <button class="btn-clear-light idea-tab active" type="button" onclick="showIdeaBucket('ideas')" id="toggleIdeasBtn">Ideas (0)</button>
+    <button class="btn-clear-light idea-tab" type="button" onclick="showIdeaBucket('saved')" id="toggleSavedForLaterBtn">Saved (0)</button>
+    <button class="btn-clear-light idea-tab" type="button" onclick="showIdeaBucket('used')" id="toggleUsedBtn">Used (0)</button>
+    <span class="gen-status" id="genstatus-themes" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
   <div id="theme-ideas-wrap" style="display:none; margin-bottom:16px;"></div>
   <div id="saved-for-later-wrap" style="display:none; margin-bottom:16px;"></div>
@@ -281,7 +289,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <p class="card-sub">The AI leans heavily on these as its primary style guide, only the subject matter still comes from your Working Theme above, not the reference. For PNG and Tumbler, your baked-in library is always in play automatically, a different reference matched to each of the 3 prompts at random, no clicking required. Click specific ones to prefer those over the rest of the library, or use Ad Hoc for a one-off image outside the library. Wall Art and Frame TV are Ad Hoc only. Must be a direct image link (.jpg/.png), not an Etsy listing or Pinterest page.</p>
 
   <div class="ref-img-block">
-    <p class="ref-lib-label" style="margin-top:2px;">Brand Style References <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— constant, paste once here and it's automatically included on every generation across all 4 products, no need to repeat it anywhere, paste one direct image link per line, up to 8</span></p>
+    <p class="ref-lib-label" style="margin-top:2px;">Brand Style References <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#8f879b;">— constant, paste once here and it's automatically included on every generation across all 4 products, no need to repeat it anywhere, paste one direct image link per line, up to 8</span></p>
     <textarea class="field-input" id="brand-style-refs" placeholder="https://...jpg&#10;https://...png&#10;(one link per line)" style="min-height:70px;"></textarea>
     <div class="ref-add-thumbs" id="brand-style-refs-thumbs" style="margin-top:6px;"></div>
   </div>
@@ -302,7 +310,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <div class="ref-img-block">
     <label class="field-label">PNG</label>
-    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
+    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#8f879b;">— always in play automatically, click any number to prefer those over the rest</span></p>
     <div class="ref-lib-grid" id="png-lib-grid"></div>
     <div id="png-lib-clear-row" style="margin-top:8px;"></div>
     <div class="ref-add-row" id="png-ref-row" style="margin-top:10px;"></div>
@@ -314,7 +322,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
   <div class="ref-img-block" style="margin-bottom:0;">
     <label class="field-label">Tumbler Wrap</label>
-    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#c4b0a8;">— always in play automatically, click any number to prefer those over the rest</span></p>
+    <p class="ref-lib-label" style="margin-top:2px;">Baked-In Library <span style="font-weight:400; text-transform:none; letter-spacing:normal; color:#8f879b;">— always in play automatically, click any number to prefer those over the rest</span></p>
     <div class="ref-lib-grid" id="tumbler-lib-grid"></div>
     <div id="tumbler-lib-clear-row" style="margin-top:8px;"></div>
     <div class="ref-add-row" id="tb-ref-row" style="margin-top:10px;"></div>
@@ -363,7 +371,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <p class="card-sub">Generates Wall Art first, then coordinates Frame TV, PNG, and Tumbler to match the mood of each numbered Wall Art prompt (Prompt 1s share a treatment, Prompt 2s share a treatment, Prompt 3s share a treatment).</p>
   <div class="btn-row" style="margin-bottom:0;">
     <button class="btn btn-generate" type="button" onclick="generateFullCollection()" id="genbtn-full">✨ Generate Full Collection (12, Coordinated)</button>
-    <span class="gen-status" id="genstatus-full" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <span class="gen-status" id="genstatus-full" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
 </div>
 
@@ -372,7 +380,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="product-header">
     <div class="product-title-wrap">
       <div class="product-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#dea193" stroke-width="2"/><path d="M3 9h18" stroke="#dea193" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#8f79b8" stroke-width="2"/><path d="M3 9h18" stroke="#8f79b8" stroke-width="1.5"/></svg>
       </div>
       <span class="product-name">Wall Art</span>
     </div>
@@ -385,7 +393,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('wall-art')" id="genbtn-wall-art">✨ Generate 3 with AI</button>
-    <span class="gen-status" id="genstatus-wall-art" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <span class="gen-status" id="genstatus-wall-art" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-1" placeholder="Paste or type your wall art prompt here..."></textarea></div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('wall-art','wa-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('wa-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="wa-2" placeholder="Paste or type your wall art prompt here..."></textarea></div>
@@ -396,7 +404,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="product-header">
     <div class="product-title-wrap">
       <div class="product-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="14" rx="2" fill="none" stroke="#dea193" stroke-width="2"/><path d="M8 21h8M12 18v3" stroke="#dea193" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="14" rx="2" fill="none" stroke="#8f79b8" stroke-width="2"/><path d="M8 21h8M12 18v3" stroke="#8f79b8" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
       <span class="product-name">Frame TV Art</span>
     </div>
@@ -409,7 +417,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('frame-tv')" id="genbtn-frame-tv">✨ Generate 3 with AI</button>
-    <span class="gen-status" id="genstatus-frame-tv" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <span class="gen-status" id="genstatus-frame-tv" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 1 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-1')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-1', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-1" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
   <div class="prompt-slot"><span class="prompt-slot-label">Prompt 2 <span style="display:flex;gap:6px;align-items:center;"><button class="slot-regen-btn" type="button" onclick="regenerateSingle('frame-tv','ft-2')" title="Regenerate just this one with AI">🔄</button><button class="slot-copy-btn" type="button" onclick="copyPromptSlot('ft-2', this)" title="Copy this prompt">📋</button></span></span><textarea class="field-input" id="ft-2" placeholder="Paste or type your Frame TV art prompt here..."></textarea></div>
@@ -420,7 +428,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="product-header">
     <div class="product-title-wrap">
       <div class="product-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" fill="none" stroke="#dea193" stroke-width="2"/><path d="M13 2v7h7" stroke="#dea193" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" fill="none" stroke="#8f79b8" stroke-width="2"/><path d="M13 2v7h7" stroke="#8f79b8" stroke-width="1.5"/></svg>
       </div>
       <span class="product-name">PNG</span>
     </div>
@@ -433,7 +441,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('png')" id="genbtn-png">✨ Generate 3 with AI</button>
-    <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <span class="gen-status" id="genstatus-png" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
   <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:#8a7268; margin:-6px 0 14px; cursor:pointer;">
     <input type="checkbox" id="png-anchor-toggle" onchange="setAnchorMode('png', this.checked)">
@@ -449,7 +457,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <div class="product-header">
     <div class="product-title-wrap">
       <div class="product-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 3h10l-1 16a2 2 0 01-2 2H10a2 2 0 01-2-2L7 3z" fill="none" stroke="#dea193" stroke-width="2"/><path d="M6 7h12" stroke="#dea193" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 3h10l-1 16a2 2 0 01-2 2H10a2 2 0 01-2-2L7 3z" fill="none" stroke="#8f79b8" stroke-width="2"/><path d="M6 7h12" stroke="#8f79b8" stroke-width="1.5"/></svg>
       </div>
       <span class="product-name">Tumbler Wraps</span>
     </div>
@@ -462,7 +470,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
   <div class="gen-actions-row" style="display:flex; align-items:center; gap:10px; margin-bottom:1rem;">
     <button class="btn btn-generate" type="button" onclick="generateForProduct('tumbler')" id="genbtn-tumbler">✨ Generate 3 with AI</button>
-    <span class="gen-status" id="genstatus-tumbler" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <span class="gen-status" id="genstatus-tumbler" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
   <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:#8a7268; margin:-6px 0 14px; cursor:pointer;">
     <input type="checkbox" id="tb-anchor-toggle" onchange="setAnchorMode('tumbler', this.checked)">
@@ -564,7 +572,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
   <div class="btn-row" style="margin-top:10px; margin-bottom:0;">
     <button class="btn btn-generate" type="button" onclick="suggestCollectionName()" id="genbtn-collectionname">✨ Suggest Collection Name</button>
-    <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#c4b0a8;"></span>
+    <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
   <div id="collectionname-options" style="display:none; margin-top:12px;"></div>
 </div>
@@ -575,8 +583,8 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <div id="output-section">
   <div style="max-width:700px;margin:0 auto 1rem;">
-    <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#2a1f1c;margin-bottom:0.25rem;">Preview</p>
-    <p style="font-size:12px;color:#c4b0a8;">Check it over, then copy the whole thing and paste it into your Systeme.io lesson.</p>
+    <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#17151d;margin-bottom:0.25rem;">Preview</p>
+    <p style="font-size:12px;color:#8f879b;">Check it over, then copy the whole thing and paste it into your Systeme.io lesson.</p>
   </div>
 
   <div class="output-block">
@@ -584,7 +592,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
       <span class="output-block-title">Collection Title</span>
       <button class="copy-block-btn" onclick="copyCollectionName(this)">Copy</button>
     </div>
-    <div class="output-preview" id="collection-title-preview" style="padding:12px 16px; font-family:'Playfair Display',serif; font-weight:700; font-size:16px; color:#2a1f1c;"></div>
+    <div class="output-preview" id="collection-title-preview" style="padding:12px 16px; font-family:'Playfair Display',serif; font-weight:700; font-size:16px; color:#17151d;"></div>
   </div>
 
   <div class="output-block">
@@ -620,6 +628,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <script>
 var STORAGE_KEY = 'dfy_prompt_club_builder';
+var OPENAI_MODEL = 'gpt-5.6-luna';
 
 var isDirty = false;
 
@@ -723,21 +732,27 @@ function vibeStyleBlock(vibeKeysCsv, forPng) {
 
 var VARY_STYLE_PER_PROMPT = "Give each individual prompt its own distinct artistic style or rendering technique (for example one prompt might be loose gouache painting, another fine watercolor, another bold linocut print, another soft colored pencil, chosen to fit that specific scene) so the set feels like a curated, varied collection rather than the same treatment repeated. All prompts must still clearly share the same working theme, mood, and palette from the Collection DNA, the variety is in technique and rendering only, not in departing from the theme.";
 
+function creativeDirectorCore() {
+  return "You are the senior creative director for Dania's DFY Prompt Club. Your job is not to produce generic AI prompts. Your job is to art-direct commercially strong, visually specific concepts that generate polished, desirable Etsy-ready artwork. Think like a human designer before writing. Every prompt must make deliberate decisions about focal subject, composition, supporting details, palette relationships, lighting, materials, texture, depth, and finish. Prefer concrete visual nouns and specific art direction over vague aesthetic adjectives. Build one clear visual hierarchy, not a pile of unrelated objects. Add enough environmental or decorative detail to make the image feel designed, but never clutter it. Avoid generic AI defaults, empty compositions, muddy palettes, random flowers, meaningless sparkles, excessive tiny props, awkward symmetry, plastic-looking 3D rendering, and vague phrases such as 'whimsical aesthetic' unless the prompt immediately defines what that means visually. Each prompt should be detailed enough that an image model has very little left to guess. The final three prompts must feel like three genuinely different designer concepts within one cohesive collection, not the same scene with swapped objects. ";
+}
+
+var PREMIUM_PROMPT_FINISH = "Write each final image prompt as one natural, richly descriptive paragraph. Lead with the strongest visual idea, then describe composition and supporting elements, then palette, lighting, surface/texture, and artistic rendering. Use concrete spatial language such as foreground, behind, framing, clustered, spilling across, cropped at the edge, centered, asymmetrical, or viewed from above when useful. Name materials and textures when they matter. Do not use camera jargon unless it materially improves the image. Never pad the prompt with empty quality buzzwords. ";
+
 function buildWallArtSystem() {
-  return "You are a production assistant writing AI image generation prompts for premium Etsy Printable Wall Art, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. " + VARY_STYLE_PER_PROMPT + " Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no printable, wall art, poster, frame, canvas, print). Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+  return creativeDirectorCore() + "You are creating premium decorative art concepts for a weekly Etsy prompt collection. Design images people would actually want to display in a stylish home. Prioritize a strong focal point, intentional negative space, layered depth, sophisticated color relationships, and a finished editorial feel. A prompt may describe an interior moment, still life, portrait-like subject, botanical arrangement, narrative vignette, or graphic composition when appropriate to the Collection DNA. Give each prompt a distinct composition AND a distinct rendering approach chosen because it suits that concept, such as richly layered gouache, loose expressive oil, fine watercolor and ink, block print, vintage editorial illustration, soft pastel, textured acrylic, or another specific medium. Do not randomly rotate media just for variety. Never mention printable, wall art, poster, frame, canvas, or print in the prompt body. " + PREMIUM_PROMPT_FINISH + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape: {\"prompts\":[\"prompt 1\",\"prompt 2\",\"prompt 3\"]}";
 }
 
 function buildFrameTVSystem() {
-  return "You are a production assistant writing AI image generation prompts for premium Etsy Frame TV Art (screensaver art for smart TVs), for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of image prompts. Rules: Each prompt is a rich descriptive paragraph focused on subject, setting, mood, atmosphere, color palette, lighting, composition, texture, overall feeling. " + VARY_STYLE_PER_PROMPT + " Avoid product format language and prompt syntax. Never write words describing the physical product format anywhere in the prompt body (no tv, television, smart tv, screensaver, frame, screen, printable, wall art, poster, canvas, print). Never mention any TV or electronics brand name. Describe only the artwork content itself. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+  return creativeDirectorCore() + "You are creating premium wide-format decorative artwork meant to live naturally in a sophisticated room. Compose horizontally with visual interest spread across the width, a calm but intentional focal structure, breathing room, and edge-to-edge balance. Favor immersive landscapes, panoramic interiors, long tablescapes, architectural scenes, broad botanical arrangements, or horizontally staged narrative moments when they fit the theme. Avoid a tiny centered object floating in empty space. Choose a specific artistic medium and finish that strengthens each concept. Never mention TV, television, smart TV, screensaver, frame, screen, printable, wall art, poster, canvas, print, or electronics brands in the prompt body. " + PREMIUM_PROMPT_FINISH + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape: {\"prompts\":[\"prompt 1\",\"prompt 2\",\"prompt 3\"]}";
 }
 
 function buildPNGSystem(vibeKey) {
   var vibeBlock = vibeStyleBlock(vibeKey, true);
-  return "You are a production assistant writing AI image generation prompts for bestselling Etsy PNG and shirt design graphics, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Every prompt must clearly and recognizably stay anchored to that exact working theme, palette, and mood, the variety between prompts comes from composition, objects chosen, and rendering technique only, never from drifting to a different subject or theme. " + vibeBlock + " Write the requested number of prompts, all following this one format:\n\nTHE CORE GOAL: every prompt must chase a bold, playful, bestselling Etsy boutique aesthetic that matches the aesthetic vibe above, the kind of design that feels instantly cute, trendy, and giftable on a shirt, never a delicate fine art plate. The overall era of every design should read current, modern, and youthful, in the visual language a Gen Z or younger Millennial woman would actually wear, not antique, granny-chic, farmhouse-country, or dusty vintage boutique in feeling, unless the Working Theme itself explicitly calls for a vintage or antique look. Confident bold outlines, an intentional and finished-looking composition, and playful energy with personality and charm are non negotiable regardless of which vibe is active. Small decorative filler details like scattered stars, dots, ribbon or bow accents, or a light background pattern such as pinstripes or a simple repeating motif are encouraged when they fit the theme, since they read as intentional and finished rather than sparse. A design that looks like generic AI clipart, a muted single subject floating alone with nothing else going on, or a busy scene overloaded with too many small competing elements is a failure state, it must feel like it belongs in a bestselling Etsy shop.\n\nILLUSTRATED CLUSTER FORMAT: Name 2 to 4 specific objects only that group together as one tight cluster (for example a themed icon plus a small creature plus one decorative accent). Each object keeps its own clean, distinct silhouette rather than overlapping into a solid mass. Thin decorative linework such as curling vines, stems, ribbon ties, or tendrils may extend outward from the cluster into the open space around it, since this creates an airy, breathing edge rather than adding visual density. Say explicitly that the cluster is surrounded by open space and does not feel cramped, even if a light background pattern is used.\n\nSTRICT NO TEXT RULE: The design must never contain any text, words, letters, numbers, banners, signs, patches, pennants, or lettering of any kind, under any circumstances, with zero exceptions, even if it would seem to fit the theme or add personality. Words and phrases on Etsy shirt designs are a legal risk since they frequently duplicate phrasing that is already trademarked by another seller, so every design must be built entirely from illustrated objects, shapes, and icons, never from typography. Do not describe, imply, or leave room for any lettered element anywhere in the prompt.\n\nNever write words describing the physical product format anywhere in the prompt body (no png, shirt, tee, sublimation, digital download). Describe only the artwork content itself. Avoid one isolated object with nothing else going on, avoid a focal element crowded by too many small supporting elements, avoid basic clip art appearance, generic AI artwork, realistic scenes, and landscapes. Each prompt must end exactly: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+  return creativeDirectorCore() + "You are creating bold illustrated POD graphics for Etsy. " + vibeBlock + " Treat the selected vibe as art direction, not a checklist. Build a clean, instantly readable silhouette with one dominant focal idea and a small number of purposeful supporting elements. The design should feel like something a strong boutique apparel brand would release, not clip art assembled on a page. Use confident shape language, deliberate overlap, balanced scale changes, and interesting internal detail. Keep the outer silhouette clean. If pattern, distress, linework, bows, stars, vines, florals, checkerboard, or other accents are used, they must support the concept rather than appear automatically. No text, letters, numbers, banners, signs, labels, patches, pennants, or typography of any kind. Do not mention PNG, shirt, tee, digital download, or product mockups. Do not create realistic scenes or landscapes. " + PREMIUM_PROMPT_FINISH + "End every prompt exactly with: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape: {\"prompts\":[\"prompt 1\",\"prompt 2\",\"prompt 3\"]}";
 }
 
 function buildTumblerSystem() {
-  return "You are a production assistant writing AI image generation prompts for bestselling Etsy tumbler wrap designs, for a themed weekly prompt club drop. You will be given this week's Collection DNA (working theme, mood, palette, core elements, avoid list). Write the requested number of prompts. Rules: Create full wrap artwork, focused on seamless patterns, edge to edge coverage, layered composition, rich backgrounds, movement across the canvas, repeating elements, full design coverage. " + VARY_STYLE_PER_PROMPT + " Avoid single centered graphics, empty space, plain backgrounds, cups, mugs, containers, mockups, oz wording unless requested. Never write the words tumbler or wrap anywhere in the prompt body itself, describe the seamless edge to edge artwork only. Each prompt must feel like a distinct scene or angle within the theme, not a reworded repeat of the others. " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"prompts\": [\"prompt 1\", \"prompt 2\"]}";
+  return creativeDirectorCore() + "You are creating premium seamless-style surface designs for Etsy. Think like a surface pattern designer. Fill the entire composition with intentional movement and visual rhythm. Establish a hero motif, secondary motifs, and small connecting details, varying scale and direction so the design feels rich rather than stamped. Use overlapping layers, cropped edge elements, winding paths, scattered clusters, or interlocking motifs when appropriate. Backgrounds should be deliberately designed with color, texture, pattern, or atmosphere, never left plain unless the Collection DNA explicitly calls for minimalism. Make each of the three concepts structurally different, for example one may be a dense tossed repeat, another a flowing diagonal composition, another a scenic all-over pattern. Never depict cups, mugs, drinkware, containers, mockups, or ounce wording. Never use the words tumbler or wrap in the prompt body. " + PREMIUM_PROMPT_FINISH + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape: {\"prompts\":[\"prompt 1\",\"prompt 2\",\"prompt 3\"]}";
 }
 
 function getEffectivePngVibeKeys(count) {
@@ -760,7 +775,7 @@ function getPromptSystem(sectionKey, count) {
 
 var COLLECTION_NAME_SYSTEM = "You name premium weekly AI prompt collections for an Etsy seller membership called DFY Prompt Club. You will be given the Collection DNA, including the Working Theme, and the actual finished prompts. Suggest 3 final collection name options. Rules: the Working Theme is the anchor, every option must clearly and recognizably contain or reflect the actual words or subject of the Working Theme, this is not optional. Do not invent a different angle, subject, or concept that departs from the Working Theme, even if the finished prompts suggest other directions, a person skimming the name should immediately recognize it as the same theme they typed in. Light, minimal variation is fine (reordering the theme's own words, adding one fitting adjective, adjusting capitalization or punctuation), but the core subject and wording of the Working Theme must stay intact and recognizable in all 3 options. Never start any option with the word The, go straight into the theme wording itself. Each option must end with the word Collection. The 3 options should feel like light variations on presentation, not different concepts. Pick which one is your favorite. Respond ONLY with valid JSON, no preamble, no markdown fences: {\"names\": [\"X Collection\", \"Y Collection\", \"Z Collection\"], \"favorite\": 0}";
 
-var THEME_BRAINSTORM_SYSTEM = "You are a creative director and Etsy marketplace consultant for DFY Prompt Club, a $17/month membership where Etsy sellers get a themed AI image prompt collection every Monday covering Wall Art, Frame TV Art, PNG, and Tumbler Wraps. When asked to brainstorm, immediately provide a curated list of collection ideas based on current Etsy trends, upcoming seasons and holidays, popular aesthetics, buyer behavior, POD opportunities, and digital product demand. Do not ask clarifying questions, just give strong ideas. For each idea provide: a short working theme name (2-4 words), a one-line mood description, a short color palette (3-5 colors or tones), 2-4 core visual elements, and one thing to avoid. Give a mix of safe bestseller-style ideas and a couple of more original, less obvious directions. Respond ONLY with valid JSON in this exact shape, no preamble, no markdown fences: {\"ideas\": [{\"theme\": \"...\", \"mood\": \"...\", \"palette\": \"...\", \"coreElements\": \"...\", \"avoid\": \"...\"}]}";
+var THEME_BRAINSTORM_SYSTEM = "You are the creative director for Dania's DFY Prompt Club, a weekly membership for Etsy sellers covering Wall Art, Frame TV Art, PNG graphics, and Tumbler surface designs. Brainstorm collection directions with strong visual potential across all four products. Do not give generic aesthetic labels with no concept behind them. Each idea needs a recognizable subject world, a specific mood, an intentional palette, and concrete motifs that can produce at least 12 distinct designs. Favor concepts that feel current, giftable, visually rich, and easy to niche down, while mixing commercially familiar directions with a few fresher unexpected ideas. Account for the current month and upcoming seasonal shopping windows supplied by the user, but do not claim live Etsy trend data. Avoid copyrighted characters, franchises, celebrity likenesses, logos, and trademark-dependent concepts. Respond ONLY with valid JSON in this exact shape: {\"ideas\":[{\"theme\":\"...\",\"mood\":\"...\",\"palette\":\"...\",\"coreElements\":\"...\",\"avoid\":\"...\"}]}";
 
 var THEME_BANK_KEY = 'dfy_prompt_club_theme_bank';
 var lastThemeIdeas = loadThemeBank();
@@ -795,6 +810,7 @@ async function suggestThemes() {
       if (key && !seen[key]) { lastThemeIdeas.push(idea); seen[key] = true; }
     });
     saveThemeBank();
+    activeIdeaBucket = 'ideas';
     renderThemeIdeas(true);
     status.textContent = newIdeas.length ? ' added ' + newIdeas.length + ' new ideas ✓' : ' no ideas returned, try again';
   } catch (e) {
@@ -805,85 +821,81 @@ async function suggestThemes() {
   }
 }
 
+var activeIdeaBucket = 'ideas';
+
+function normalizeIdeaStatuses() {
+  lastThemeIdeas.forEach(function(idea) {
+    // Legacy "saved for later" records are now simply Saved.
+    if (idea.status === 'saved-for-later' || idea.status === 'later') idea.status = 'saved';
+  });
+}
+
+function ideaCount(bucket) {
+  if (bucket === 'ideas') return lastThemeIdeas.filter(function(idea){ return !idea.status || idea.status === 'active'; }).length;
+  return lastThemeIdeas.filter(function(idea){ return idea.status === bucket; }).length;
+}
+
+function updateIdeaTabs() {
+  var labels = { ideas:'Ideas', saved:'Saved', used:'Used' };
+  var ids = { ideas:'toggleIdeasBtn', saved:'toggleSavedForLaterBtn', used:'toggleUsedBtn' };
+  Object.keys(ids).forEach(function(bucket) {
+    var btn = document.getElementById(ids[bucket]);
+    if (!btn) return;
+    btn.textContent = labels[bucket] + ' (' + ideaCount(bucket) + ')';
+    btn.classList.toggle('active', activeIdeaBucket === bucket);
+  });
+}
+
+function ideaCardHtml(idea, i, bucket) {
+  var actions = '';
+  if (bucket === 'ideas') {
+    actions = '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button>' +
+      '<button class="use-idea-btn" type="button" style="background:transparent;color:#4c4657;border:1px solid #d9d4e4;" onclick="saveIdeaForLater(' + i + ')">Save</button>';
+  } else if (bucket === 'saved') {
+    actions = '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button>' +
+      '<button class="use-idea-btn" type="button" style="background:transparent;color:#4c4657;border:1px solid #d9d4e4;" onclick="restoreIdeaToActive(' + i + ')">Move to Ideas</button>';
+  } else {
+    actions = '<button class="use-idea-btn" type="button" style="background:transparent;color:#4c4657;border:1px solid #d9d4e4;" onclick="restoreIdeaToActive(' + i + ')">Reuse</button>';
+  }
+  actions += '<button class="use-idea-btn" type="button" style="background:transparent;color:#8f879b;border:1px solid #d9d4e4;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>';
+  return '<div class="idea-card">' +
+    '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span><span style="display:flex;gap:6px;flex-wrap:wrap;">' + actions + '</span></div>' +
+    '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
+    '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
+    (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') + '</div>';
+}
+
 function renderThemeIdeas(forceOpen) {
-  var wrap = document.getElementById('theme-ideas-wrap');
-  var toggleBtn = document.getElementById('toggleIdeasBtn');
-  var wasOpen = wrap.style.display === 'block';
-  var activeIdeas = lastThemeIdeas.filter(function(idea){ return !idea.status; });
-  if (toggleBtn) toggleBtn.textContent = '📂 Saved Ideas (' + activeIdeas.length + ')';
-  if (!activeIdeas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; renderSavedForLaterIdeas(); renderUsedIdeas(); return; }
-  wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">Saved ideas — pick one now or come back later for another.</p>' +
-    activeIdeas.map(function(idea) {
-    var i = lastThemeIdeas.indexOf(idea);
-    return '<div class="idea-card">' +
-      '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
-      '<span style="display:flex;gap:6px;">' +
-      '<button class="use-idea-btn" type="button" onclick="useThemeIdea(' + i + ')">Use This</button>' +
-      '<button class="use-idea-btn" type="button" style="background:transparent;color:#5a4a45;border:1px solid #ead9d5;" onclick="saveIdeaForLater(' + i + ')" title="Move to Saved for Later">💤</button>' +
-      '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
-      '</span></div>' +
-      '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
-      '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
-      (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
-      '</div>';
-  }).join('');
-  wrap.style.display = (forceOpen || wasOpen) ? 'block' : 'none';
-  renderSavedForLaterIdeas();
-  renderUsedIdeas();
+  normalizeIdeaStatuses();
+  updateIdeaTabs();
+  var configs = {
+    ideas: { wrap:'theme-ideas-wrap', note:'Fresh suggestions. Use one now or save it for later.' },
+    saved: { wrap:'saved-for-later-wrap', note:'Ideas you saved for later.' },
+    used: { wrap:'used-ideas-wrap', note:'Your used-theme archive. These stay out of Ideas and Saved.' }
+  };
+  Object.keys(configs).forEach(function(bucket) {
+    var cfg = configs[bucket], wrap = document.getElementById(cfg.wrap);
+    var ideas = bucket === 'ideas'
+      ? lastThemeIdeas.filter(function(idea){ return !idea.status || idea.status === 'active'; })
+      : lastThemeIdeas.filter(function(idea){ return idea.status === bucket; });
+    wrap.innerHTML = ideas.length
+      ? '<p class="card-sub" style="margin-bottom:8px;">' + cfg.note + '</p>' + ideas.map(function(idea){ return ideaCardHtml(idea, lastThemeIdeas.indexOf(idea), bucket); }).join('')
+      : '<p class="card-sub" style="margin-bottom:8px;">Nothing here yet.</p>';
+    wrap.style.display = activeIdeaBucket === bucket ? 'block' : 'none';
+  });
+  saveThemeBank();
 }
 
-function renderIdeaBucket(status, wrapId, btnId, btnLabel, emptyText) {
-  var wrap = document.getElementById(wrapId);
-  var btn = document.getElementById(btnId);
-  var wasOpen = wrap.style.display === 'block';
-  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === status; });
-  if (btn) btn.textContent = btnLabel + ' (' + ideas.length + ')';
-  if (!ideas.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
-  wrap.innerHTML = '<p class="card-sub" style="margin-bottom:8px;">' + emptyText + '</p>' +
-    ideas.map(function(idea) {
-      var i = lastThemeIdeas.indexOf(idea);
-      return '<div class="idea-card">' +
-        '<div class="idea-header"><span class="idea-theme">' + esc(idea.theme || 'Untitled') + '</span>' +
-        '<span style="display:flex;gap:6px;">' +
-        '<button class="use-idea-btn" type="button" onclick="restoreIdeaToActive(' + i + ')">↩ Move to Active</button>' +
-        '<button class="use-idea-btn" type="button" style="background:transparent;color:#c4b0a8;border:1px solid #ead9d5;" onclick="removeThemeIdea(' + i + ')" title="Remove this idea">✕</button>' +
-        '</span></div>' +
-        '<div class="idea-detail"><b>Mood:</b> ' + esc(idea.mood || '') + ' &nbsp;&bull;&nbsp; <b>Palette:</b> ' + esc(idea.palette || '') + '</div>' +
-        '<div class="idea-detail"><b>Core elements:</b> ' + esc(idea.coreElements || '') + '</div>' +
-        (idea.avoid ? '<div class="idea-detail"><b>Avoid:</b> ' + esc(idea.avoid) + '</div>' : '') +
-        '</div>';
-    }).join('');
-  wrap.style.display = wasOpen ? 'block' : 'none';
-}
+function renderSavedForLaterIdeas() { renderThemeIdeas(); }
+function renderUsedIdeas() { renderThemeIdeas(); }
 
-function renderSavedForLaterIdeas() {
-  renderIdeaBucket('saved', 'saved-for-later-wrap', 'toggleSavedForLaterBtn', '💤 Saved for Later', 'Tucked away so they are not in your face — move one back to Active whenever you want it.');
+function showIdeaBucket(bucket) {
+  activeIdeaBucket = bucket;
+  renderThemeIdeas();
 }
-
-function renderUsedIdeas() {
-  renderIdeaBucket('used', 'used-ideas-wrap', 'toggleUsedBtn', '✓ Used', 'Already used this week — move one back to Active if you change your mind.');
-}
-
-function toggleThemeIdeasWrap() {
-  var wrap = document.getElementById('theme-ideas-wrap');
-  var activeIdeas = lastThemeIdeas.filter(function(idea){ return !idea.status; });
-  if (!activeIdeas.length) { showToast('No active ideas — click Suggest Themes first.'); return; }
-  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
-}
-
-function toggleSavedForLaterWrap() {
-  var wrap = document.getElementById('saved-for-later-wrap');
-  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === 'saved'; });
-  if (!ideas.length) { showToast('Nothing saved for later yet.'); return; }
-  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
-}
-
-function toggleUsedIdeasWrap() {
-  var wrap = document.getElementById('used-ideas-wrap');
-  var ideas = lastThemeIdeas.filter(function(idea){ return idea.status === 'used'; });
-  if (!ideas.length) { showToast('No used ideas yet.'); return; }
-  wrap.style.display = (wrap.style.display === 'block') ? 'none' : 'block';
-}
+function toggleThemeIdeasWrap() { showIdeaBucket('ideas'); }
+function toggleSavedForLaterWrap() { showIdeaBucket('saved'); }
+function toggleUsedIdeasWrap() { showIdeaBucket('used'); }
 
 function useThemeIdea(i) {
   var idea = lastThemeIdeas[i];
@@ -897,9 +909,10 @@ function useThemeIdea(i) {
   document.getElementById('f-avoid').value = idea.avoid || '';
   isDirty = true; updateAllProgress(); saveData();
   idea.status = 'used';
+  activeIdeaBucket = 'ideas';
   saveThemeBank();
   renderThemeIdeas();
-  showToast('Collection DNA filled in from "' + (idea.theme || 'idea') + '" — moved to Used, tap ✓ Used to put it back.');
+  showToast('Theme moved to Used.');
   document.getElementById('f-theme').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
@@ -909,16 +922,17 @@ function saveIdeaForLater(i) {
   idea.status = 'saved';
   saveThemeBank();
   renderThemeIdeas();
-  showToast('Moved to Saved for Later.');
+  showToast('Saved for later.');
 }
 
 function restoreIdeaToActive(i) {
   var idea = lastThemeIdeas[i];
   if (!idea) return;
   delete idea.status;
+  activeIdeaBucket = 'ideas';
   saveThemeBank();
   renderThemeIdeas();
-  showToast('Back in your active ideas.');
+  showToast('Moved to Ideas.');
 }
 
 function removeThemeIdea(i) {
@@ -927,35 +941,46 @@ function removeThemeIdea(i) {
   renderThemeIdeas();
 }
 
+function getApiKey() { return localStorage.getItem('nicheclub_openai_api_key') || localStorage.getItem('nicheclub_api_key'); }
 
-function getApiKey() { return localStorage.getItem('nicheclub_api_key'); }
+function extractOpenAIText(data) {
+  if (data && typeof data.output_text === 'string' && data.output_text.trim()) return data.output_text.trim();
+  var parts = [];
+  (data && data.output || []).forEach(function(item) {
+    (item.content || []).forEach(function(c) {
+      if ((c.type === 'output_text' || c.type === 'text') && c.text) parts.push(c.text);
+    });
+  });
+  return parts.join('\n').trim();
+}
 
-async function callClaude(systemPrompt, userContent, maxTokens) {
+async function callOpenAI(systemPrompt, userContent, maxTokens) {
   var savedKey = getApiKey();
   if (!savedKey) {
     document.getElementById('apiKeyPanel').style.display = 'block';
     checkApiKeyUI();
-    throw new Error('Add your Anthropic API key (top right) first.');
+    throw new Error('Add your OpenAI API key (top right) first.');
   }
-  var headers = {
-    'Content-Type': 'application/json',
-    'x-api-key': savedKey,
-    'anthropic-version': '2023-06-01',
-    'anthropic-dangerous-direct-browser-access': 'true'
-  };
-  var response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST', headers: headers,
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: maxTokens || 2000, system: systemPrompt, messages: [{ role: 'user', content: userContent }] })
+  var response = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + savedKey },
+    body: JSON.stringify({
+      model: OPENAI_MODEL,
+      instructions: systemPrompt + '\n\nIMPORTANT OUTPUT FORMAT: Return only valid JSON. Do not include markdown fences, commentary, or any text outside the JSON object.',
+      input: (typeof userContent === 'string' ? userContent : userContent) + (typeof userContent === 'string' ? '\n\nReturn the requested result as valid JSON only.' : ''),
+      max_output_tokens: maxTokens || 3000,
+      reasoning: { effort: 'medium' },
+      text: { format: { type: 'json_object' } }
+    })
   });
   if (!response.ok) {
     var detail = '';
     try { var errBody = await response.json(); detail = (errBody && errBody.error && errBody.error.message) || ''; } catch (e) {}
-    throw new Error('API request failed (' + response.status + ')' + (detail ? ': ' + detail : ''));
+    throw new Error('OpenAI request failed (' + response.status + ')' + (detail ? ': ' + detail : ''));
   }
   var data = await response.json();
-  var textBlock = (data.content || []).filter(function(b){ return b.type === 'text'; })[0];
-  if (!textBlock) throw new Error('Response had no text content to parse.');
-  var raw = textBlock.text.trim();
+  var raw = extractOpenAIText(data);
+  if (!raw) throw new Error('OpenAI returned no text to parse.');
   var cleaned = raw.replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
   try { return JSON.parse(cleaned); }
   catch (e) {
@@ -963,19 +988,20 @@ async function callClaude(systemPrompt, userContent, maxTokens) {
     if (fb !== -1 && lb !== -1 && lb > fb) {
       try { return JSON.parse(cleaned.slice(fb, lb + 1)); } catch (e2) {}
     }
-    throw new Error('Could not parse the AI response, try again.');
+    throw new Error('Could not parse the OpenAI response, try again.');
   }
 }
 
+async function callClaude(systemPrompt, userContent, maxTokens) { return callOpenAI(systemPrompt, userContent, maxTokens); }
 async function callClaudeWithRetry(systemPrompt, userContent, maxTokens, expectedCount) {
-  var result = await callClaude(systemPrompt, userContent, maxTokens);
+  var result = await callOpenAI(systemPrompt, userContent, maxTokens);
   var prompts = (Array.isArray(result && result.prompts) ? result.prompts : []).filter(function(p){ return typeof p === 'string' && p.trim().length > 0; });
   if (prompts.length < expectedCount) {
     try {
-      var retryResult = await callClaude(systemPrompt, userContent, maxTokens);
+      var retryResult = await callOpenAI(systemPrompt, userContent, maxTokens);
       var retryPrompts = (Array.isArray(retryResult && retryResult.prompts) ? retryResult.prompts : []).filter(function(p){ return typeof p === 'string' && p.trim().length > 0; });
       if (retryPrompts.length > prompts.length) return { prompts: retryPrompts };
-    } catch (e) { /* keep the original partial result if the retry itself fails */ }
+    } catch (e) {}
   }
   return { prompts: prompts };
 }
@@ -1567,7 +1593,7 @@ function renderCollectionNameOptions(names, favIdx) {
     var isFav = i === favIdx;
     return '<div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">' +
       '<button type="button" class="use-idea-btn" style="display:block; flex:1; text-align:left; text-transform:none; letter-spacing:normal; font-weight:600; padding:8px 14px; ' +
-      (isFav ? 'background:#dea193;' : 'background:#fdf7f2;color:#5a4a45;border:1px solid #ead9d5;') + '" ' +
+      (isFav ? 'background:#8f79b8;' : 'background:#f8f7fb;color:#4c4657;border:1px solid #d9d4e4;') + '" ' +
       'onclick="selectCollectionName(' + i + ')" data-name="' + esc(name) + '">' +
       (isFav ? '⭐ ' : '') + esc(name) +
       '</button>' +
@@ -1734,12 +1760,14 @@ document.getElementById('apiKeyToggleLink').addEventListener('click', function(e
 document.getElementById('saveApiKeyBtn').addEventListener('click', function(){
   var v = document.getElementById('apiKeyInput').value.trim();
   if (!v) return;
-  localStorage.setItem('nicheclub_api_key', v);
+  localStorage.setItem('nicheclub_openai_api_key', v);
+  localStorage.removeItem('nicheclub_api_key');
   document.getElementById('apiKeyInput').value = '';
   checkApiKeyUI();
   showToast('API key saved!');
 });
 document.getElementById('changeApiKeyBtn').addEventListener('click', function(){
+  localStorage.removeItem('nicheclub_openai_api_key');
   localStorage.removeItem('nicheclub_api_key');
   checkApiKeyUI();
 });
@@ -1932,7 +1960,7 @@ function updateProgress(sectionKey, ids) {
     d.className = 'progress-dot' + (i < filled ? (filled === 3 ? ' complete' : ' filled') : '');
   });
   label.textContent = filled + '/3';
-  label.style.color = filled === 3 ? '#7a9e7e' : '#c4b0a8';
+  label.style.color = filled === 3 ? '#7a9e7e' : '#8f879b';
 }
 
 function updateAllProgress() {
@@ -1956,7 +1984,7 @@ function productPill(label, anchor, small) {
   var pad = small ? '9px 18px' : '12px 22px';
   var fs = small ? '11px' : '13px';
   var nowrap = small ? 'white-space:nowrap;' : '';
-  return '<a href="#'+anchor+'" style="font-family:Jost,sans-serif;font-size:'+fs+';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:'+pad+';border-radius:30px;text-decoration:none;'+(small?'':'margin:4px;display:inline-block;')+nowrap+'">'+esc(label)+'</a>';
+  return '<a href="#'+anchor+'" style="font-family:Jost,sans-serif;font-size:'+fs+';font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#17151d;color:#8f79b8;padding:'+pad+';border-radius:30px;text-decoration:none;'+(small?'':'margin:4px;display:inline-block;')+nowrap+'">'+esc(label)+'</a>';
 }
 
 function buildIntroHTML() {
@@ -1965,17 +1993,17 @@ function buildIntroHTML() {
 
   var productPills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor); }).join('');
 
-  return '<div style="background:#fdf7f2;border-radius:12px;overflow:hidden;border:1px solid #ead9d5;margin-bottom:2rem;">' +
-    '<div style="background:#2a1f1c;padding:2.25rem 2rem 1.75rem;text-align:center;">' +
-    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
+  return '<div style="background:#f8f7fb;border-radius:12px;overflow:hidden;border:1px solid #d9d4e4;margin-bottom:2rem;">' +
+    '<div style="background:#17151d;padding:2.25rem 2rem 1.75rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8f879b;margin:0 0 0.6rem;">DFY Prompt Club</p>' +
     '<h2 style="font-family:Playfair Display,serif;font-size:2rem;font-weight:700;color:#f5eddf;margin:0;line-height:1.2;">'+(collectionName ? esc(collectionName) : 'This Week\'s Prompt Drop')+'</h2>' +
     '</div>' +
-    '<div style="padding:2rem;background:#fff;border-bottom:1px solid #ead9d5;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#5a4a45;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#2a1f1c;font-weight:600;">'+esc(theme)+'.</strong><br>Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>' +
-    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#2a1f1c;padding:11px 0;">Let\'s Create!</span>' +
+    '<div style="padding:2rem;background:#fff;border-bottom:1px solid #d9d4e4;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:16px;font-weight:400;color:#4c4657;line-height:1.8;margin:0 0 1.25rem;">This week\'s theme is <strong style="color:#17151d;font-weight:600;">'+esc(theme)+'.</strong><br>Every prompt is built around this aesthetic so your designs feel cohesive. Copy any prompt, drop it into your favorite generator, and have fun with it.</p>' +
+    '<span style="display:inline-block;font-family:Jost,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#17151d;padding:11px 0;">Let\'s Create!</span>' +
     '</div>' +
-    '<div style="padding:1.75rem 2rem 2rem;background:#fdf7f2;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">Jump to a Product Type</p>' +
+    '<div style="padding:1.75rem 2rem 2rem;background:#f8f7fb;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8f879b;margin:0 0 1rem;">Jump to a Product Type</p>' +
     productPills +
     '</div></div>';
 }
@@ -1983,15 +2011,15 @@ function buildIntroHTML() {
 function buildProductSectionHeaderHTML(productType, anchor) {
   return '<div id="'+anchor+'" style="padding:2rem 0 0.5rem;text-align:center;">' +
     '<span style="font-size:11px;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#c9a96e;display:block;margin-bottom:0.5rem;">Product Type</span>' +
-    '<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#2a1f1c;margin-bottom:1.5rem;line-height:1.2;">'+esc(productType)+'</h2>' +
+    '<h2 style="font-family:Playfair Display,serif;font-size:1.8rem;font-weight:600;color:#17151d;margin-bottom:1.5rem;line-height:1.2;">'+esc(productType)+'</h2>' +
     '<div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:2rem;"><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span><div style="width:5px;height:5px;border-radius:50%;background:#c9a96e;opacity:0.6;"></div><span style="display:block;height:1px;width:70px;background:rgba(201,169,110,0.3);"></span></div>';
 }
 
 function buildJumpBarHTML() {
   var pills = PRODUCT_SECTIONS_EXPORT.map(function(p){ return productPill(p.type, p.anchor, true); }).join('');
-  var backToTop = '<a href="#lesson-top" style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#dea193;color:#2a1f1c;padding:9px 18px;border-radius:30px;text-decoration:none;white-space:nowrap;">&#8593; Back to Top</a>';
-  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1rem 1.5rem;margin:2rem 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;">' +
-    '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;white-space:nowrap;">Jump to:</span>' +
+  var backToTop = '<a href="#lesson-top" style="font-family:Jost,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#8f79b8;color:#17151d;padding:9px 18px;border-radius:30px;text-decoration:none;white-space:nowrap;">&#8593; Back to Top</a>';
+  return '<div style="background:#f8f7fb;border:1px solid #d9d4e4;border-radius:12px;padding:1rem 1.5rem;margin:2rem 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;">' +
+    '<span style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8f879b;white-space:nowrap;">Jump to:</span>' +
     pills + backToTop +
     '</div></div>';
 }
@@ -2001,12 +2029,12 @@ function buildPromptHTML(promptNumInProduct, promptText, imgUrl, idPrefix) {
   var imgHtml = imgUrl ?
     '<div style="display:flex;flex-direction:column;align-items:center;">' +
     '<div style="width:2px;height:16px;background:rgba(201,169,110,0.4);"></div>' +
-    '<img src="'+esc(imgUrl)+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #ead9d5;display:block;">' +
+    '<img src="'+esc(imgUrl)+'" alt="Example result" style="width:100%;border-radius:12px;border:1px solid #d9d4e4;display:block;">' +
     '</div>'
     : '';
   return '<div style="margin-bottom:3rem;">' +
     '<p style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#c9a96e;margin-bottom:1rem;text-align:center;">Prompt '+promptNumInProduct+'</p>' +
-    '<div style="background:#2a1f1c;border-radius:16px;padding:2.25rem 2.5rem 2rem;">' +
+    '<div style="background:#17151d;border-radius:16px;padding:2.25rem 2.5rem 2rem;">' +
     '<p style="font-family:Jost,sans-serif;font-size:17px;font-weight:400;font-style:italic;color:#f5eddf;line-height:2;text-align:center;margin-bottom:1.75rem;letter-spacing:0.01em;" id="p'+uid+'">'+esc(promptText)+'</p>' +
     '<div style="text-align:center;">' +
     '<button onclick="var el=document.getElementById(\'p'+uid+'\');var r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);try{document.execCommand(\'copy\');var b=this;b.textContent=\'Copied!\';b.style.background=\'#7a9e7e\';setTimeout(function(){b.textContent=\'Copy Prompt\';b.style.background=\'#d4968a\';},2200);}catch(e){}window.getSelection().removeAllRanges();" style="background:#d4968a;color:#fff;border:none;border-radius:10px;font-family:Jost,sans-serif;font-size:14px;font-weight:500;padding:12px 36px;cursor:pointer;transition:all 0.2s;">Copy Prompt</button>' +
@@ -2024,11 +2052,11 @@ var TOOLS_FOOTER_LINKS = [
 
 function buildToolsFooterHTML() {
   var toolLinks = TOOLS_FOOTER_LINKS.map(function(t) {
-    return '<a href="'+esc(t.link)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#2a1f1c;color:#dea193;padding:10px 24px;border-radius:30px;border:1.5px solid #dea193;text-decoration:none;">'+esc(t.name)+'</a>';
+    return '<a href="'+esc(t.link)+'" target="_blank" style="font-family:Jost,sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#17151d;color:#8f79b8;padding:10px 24px;border-radius:30px;border:1.5px solid #8f79b8;text-decoration:none;">'+esc(t.name)+'</a>';
   }).join('');
-  return '<div style="font-family:Jost,sans-serif;background:#fdf7f2;border-radius:12px;border:1px solid #ead9d5;padding:2rem;margin-top:2rem;text-align:center;">' +
-    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 0.75rem;">Tools I Use</p>' +
-    '<p style="font-size:15px;color:#5a4a45;line-height:1.7;margin:0 0 1.5rem;">'+esc(TOOLS_FOOTER_BLURB)+'</p>' +
+  return '<div style="font-family:Jost,sans-serif;background:#f8f7fb;border-radius:12px;border:1px solid #d9d4e4;padding:2rem;margin-top:2rem;text-align:center;">' +
+    '<p style="font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8f879b;margin:0 0 0.75rem;">Tools I Use</p>' +
+    '<p style="font-size:15px;color:#4c4657;line-height:1.7;margin:0 0 1.5rem;">'+esc(TOOLS_FOOTER_BLURB)+'</p>' +
     '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">'+toolLinks+'</div>' +
     '</div>';
 }
@@ -2039,11 +2067,11 @@ function buildAestheticSummaryHTML() {
   var coreElements = val('f-coreelements').trim();
   if (!mood && !palette && !coreElements) return '';
   var rows = [];
-  if (mood) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#2a1f1c;">Mood</strong> &mdash; ' + esc(mood) + '</p>');
-  if (palette) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#2a1f1c;">Palette</strong> &mdash; ' + esc(palette) + '</p>');
-  if (coreElements) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#5a4a45;line-height:1.8;margin:0;"><strong style="color:#2a1f1c;">Elements</strong> &mdash; ' + esc(coreElements) + '</p>');
-  return '<div style="background:#fdf7f2;border:1px solid #ead9d5;border-radius:12px;padding:1.75rem 2rem;margin-bottom:2rem;text-align:center;">' +
-    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#c4b0a8;margin:0 0 1rem;">The Vibe</p>' +
+  if (mood) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#4c4657;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#17151d;">Mood</strong> &mdash; ' + esc(mood) + '</p>');
+  if (palette) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#4c4657;line-height:1.8;margin:0 0 0.5rem;"><strong style="color:#17151d;">Palette</strong> &mdash; ' + esc(palette) + '</p>');
+  if (coreElements) rows.push('<p style="font-family:Jost,sans-serif;font-size:14px;color:#4c4657;line-height:1.8;margin:0;"><strong style="color:#17151d;">Elements</strong> &mdash; ' + esc(coreElements) + '</p>');
+  return '<div style="background:#f8f7fb;border:1px solid #d9d4e4;border-radius:12px;padding:1.75rem 2rem;margin-bottom:2rem;text-align:center;">' +
+    '<p style="font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8f879b;margin:0 0 1rem;">The Vibe</p>' +
     rows.join('') +
     '</div>';
 }
