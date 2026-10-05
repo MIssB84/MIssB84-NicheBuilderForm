@@ -142,6 +142,11 @@
     <div class="hint">Pick the date, formats automatically.</div>
     <input type="date" id="weekDateInput">
     <div id="weekDateDisplay" style="margin-top:6px; font-size:12.5px; color:#9a877f;"></div>
+    <div id="lastWeekBanner" style="display:none; margin-top:14px; padding:10px 14px; border-radius:10px; background:#fbe9e4; border:1.5px solid var(--rose); color:var(--bg); font-size:13px; font-weight:600;"></div>
+    <div class="add-row" style="margin-top:12px; align-items:center;">
+      <button class="btn secondary" id="switchWeekBtn">↺ Switch to Last Week</button>
+      <span id="lastWeekNote" style="font-size:11.5px; color:#9a877f;"></span>
+    </div>
   </div>
 
   <div class="card" id="apiKeyCard">
@@ -577,9 +582,9 @@ function slotMarker(n) { return CIRCLED_NUMS[n - 1] || `(${n})`; }
 const PRODUCT_TYPES = ['Wall Art', 'PNG / Shirt Design', 'Frame TV Art', 'Tumbler Wrap', 'Other'];
 const DEFAULT_BAKED = {
   'Wall Art': 'Home Decor, Poster',
-  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic, PNG',
+  'PNG / Shirt Design': 'Sublimation Design, Shirt Graphic',
   'Frame TV Art': 'Smart Television Screensaver, Home Decor',
-  'Tumbler Wrap': 'PNG, 20oz Skinny Tumbler Sublimation Design'
+  'Tumbler Wrap': '20oz Skinny Tumbler Sublimation Design'
 };
 const DEFAULT_BAKED_TAGS = {
   'Wall Art': ['printable wall art', 'digital download', 'trendy home decor'],
@@ -612,6 +617,7 @@ function makeNicheState() {
     proTip: '',
     pool: [],
     wordPool: [],
+    hiddenWords: [],
     tags: [],
     suggestedTags: [],
     titles: ['', '', ''],
@@ -738,8 +744,11 @@ function renderNicheList() {
       setNicheCollapsed(niche, false);
       const label = niche.isBonus ? 'Bonus' : 'Niche ' + niche.num;
       bbStatus(`${label} title rebuilt for ${niche.type}`, 2500);
-      const section = document.getElementById('section-' + niche.num);
-      if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const staysPut = (niche.num === '4' || niche.isBonus);
+      if (!staysPut) {
+        const section = document.getElementById('section-' + niche.num);
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
 
       namePicker.innerHTML = '';
       namePicker.style.display = 'none';
@@ -1002,10 +1011,18 @@ function buildBasicsSubcard(niche) {
 /* ================= SCREENSHOTS SUBCARD ================= */
 const SHOT_LABELS = ['Screenshot 1', 'Screenshot 2', 'Screenshot 3'];
 
+// Trims Etsy's long tracking junk off a listing link, keeps it clickable
+function cleanEtsyListingUrl(raw) {
+  const url = (raw || '').trim();
+  if (!url) return '';
+  const m = url.match(/^(https?:\/\/(?:www\.)?etsy\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?listing\/\d+(?:\/[^?#\s]*)?)/i);
+  return m ? m[1] : url;
+}
+
 function buildScreenshotsSubcard(niche) {
   const sc = document.createElement('div');
   sc.className = 'subcard';
-  sc.innerHTML = '<h3>Screenshots</h3><div class="hint">Right click each listing image on Etsy, click "Copy Image Address," and paste that URL below. The thumbnail shows automatically, and the AI reads it straight from the URL, no upload needed.</div>';
+  sc.innerHTML = '<h3>Screenshots</h3><div class="hint">Right click each listing image on Etsy, click "Copy Image Address," and paste that URL below. The thumbnail shows automatically, and the AI reads it straight from the URL, no upload needed. Paste the listing page link too so members can click the image to open it on Etsy.</div>';
   const listDiv = document.createElement('div');
   sc.appendChild(listDiv);
 
@@ -1045,16 +1062,41 @@ function buildScreenshotsSubcard(niche) {
       }
 
       urlInput.addEventListener('input', () => {
-        niche.state.shots[i] = { url: urlInput.value };
+        niche.state.shots[i] = Object.assign({}, niche.state.shots[i] || {}, { url: urlInput.value });
         refreshThumb();
         autosaveNicheState(niche.num);
       });
       urlPasteBtn.addEventListener('click', () => pasteTextClip(urlPasteBtn, async (text) => {
         urlInput.value = text.trim();
-        niche.state.shots[i] = { url: urlInput.value };
+        niche.state.shots[i] = Object.assign({}, niche.state.shots[i] || {}, { url: urlInput.value });
         refreshThumb();
         autosaveNicheState(niche.num);
       }));
+
+      // Listing link (makes the image clickable in the member output)
+      const linkLbl = document.createElement('div'); linkLbl.className = 'name'; linkLbl.style.marginTop = '12px';
+      linkLbl.textContent = label.replace('Screenshot', 'Listing') + ' Link';
+      slot.appendChild(linkLbl);
+      const linkRow = document.createElement('div'); linkRow.className = 'add-row';
+      const linkInput = document.createElement('input');
+      linkInput.type = 'text';
+      linkInput.placeholder = 'https://www.etsy.com/listing/...';
+      linkInput.value = data.link || '';
+      const linkPasteBtn = document.createElement('button'); linkPasteBtn.className = 'btn secondary'; linkPasteBtn.textContent = 'Paste from Clipboard';
+      linkRow.appendChild(linkInput); linkRow.appendChild(linkPasteBtn);
+      slot.appendChild(linkRow);
+      function saveLink(val) {
+        const cleaned = cleanEtsyListingUrl(val);
+        linkInput.value = cleaned;
+        niche.state.shots[i] = Object.assign({}, niche.state.shots[i] || {}, { link: cleaned });
+        autosaveNicheState(niche.num);
+      }
+      linkInput.addEventListener('change', () => saveLink(linkInput.value));
+      linkInput.addEventListener('input', () => {
+        niche.state.shots[i] = Object.assign({}, niche.state.shots[i] || {}, { link: linkInput.value.trim() });
+        autosaveNicheState(niche.num);
+      });
+      linkPasteBtn.addEventListener('click', () => pasteTextClip(linkPasteBtn, async (text) => { saveLink(text); }));
 
       refreshThumb();
       listDiv.appendChild(slot);
@@ -1252,9 +1294,19 @@ function stripParenthetical(text) {
   return text.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+// "Digital Download" is already baked into every title, so it never goes in the pool
+function stripDigitalDownload(text) {
+  return String(text || '')
+    .replace(/\b(instant\s+)?(digital\s+)?download(s)?\b/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 function pushSplitInto(pool, text) {
   const normalized = stripParenthetical(text).replace(/[，、]/g, ',');
-  normalized.split(/[,\n|]/).map(s => s.trim()).filter(Boolean).forEach(p => pool.push({ text: p }));
+  normalized.split(/[,\n|]/)
+    .map(s => stripDigitalDownload(s))
+    .filter(Boolean)
+    .forEach(p => pool.push({ text: p }));
 }
 
 const WALLART_KEYWORD_EXTRACT_SYSTEM = `You are helping an Etsy seller pull reusable keyword phrases out of pasted text, which is a full product title pasted with no punctuation separating the pieces.
@@ -1413,7 +1465,7 @@ function buildTitlesTagsSubcard(niche) {
 
   const wordPoolDivider = document.createElement('div');
   wordPoolDivider.style.cssText = 'border-top:1px solid var(--border); margin:16px 0 4px; padding-top:12px;';
-  wordPoolDivider.innerHTML = '<label class="first" style="margin-top:0;">Single words</label><div class="hint">Auto-generated from every phrase above, broken into individual words. Kept separate from the phrase pool on purpose, deduped on its own.</div>';
+  wordPoolDivider.innerHTML = '<label class="first" style="margin-top:0;">Single words</label><div class="hint">Auto-generated from every phrase above, broken into individual words. Hit × to remove a word you won\'t use, it stays gone for this niche.</div>';
   poolWrap.appendChild(wordPoolDivider);
   const wordPoolList = document.createElement('div'); wordPoolList.className = 'tag-list'; poolWrap.appendChild(wordPoolList);
 
@@ -1520,12 +1572,14 @@ function buildTitlesTagsSubcard(niche) {
   niche._renderPool = renderPool;
 
   function renderWordPool() {
+    if (!Array.isArray(niche.state.hiddenWords)) niche.state.hiddenWords = [];
+    const hidden = new Set(niche.state.hiddenWords.map(w => w.toLowerCase()));
     const seen = new Set();
     const words = [];
     niche.state.pool.forEach(item => {
       item.text.trim().split(/\s+/).filter(Boolean).forEach(w => {
         const key = w.toLowerCase();
-        if (seen.has(key)) return;
+        if (seen.has(key) || hidden.has(key)) return;
         seen.add(key);
         words.push(w);
       });
@@ -1567,16 +1621,24 @@ function buildTitlesTagsSubcard(niche) {
         autosaveNicheState(niche.num);
       });
 
+      const rm = document.createElement('button'); rm.className = 'rmv-btn'; rm.textContent = '×'; rm.title = 'Remove this word';
+      rm.addEventListener('click', (e) => {
+        e.stopPropagation();
+        niche.state.hiddenWords.push(item.text.toLowerCase());
+        renderWordPool();
+        autosaveNicheState(niche.num);
+      });
+
       chip.appendChild(textSpan); chip.appendChild(lenSpan);
       if (openSlots.length) chip.appendChild(slotBtns);
-      chip.appendChild(copyBtn);
+      chip.appendChild(copyBtn); chip.appendChild(rm);
       wordPoolList.appendChild(chip);
     });
   }
   niche._renderWordPool = renderWordPool;
 
   poolSingle.addEventListener('keydown', async (e) => { if (e.key === 'Enter') { e.preventDefault(); if (!poolSingle.value.trim()) return; await addToPool(poolSingle.value, false); poolSingle.value = ''; } });
-  poolClearBtn.addEventListener('click', () => { niche.state.pool = []; renderPool(); });
+  poolClearBtn.addEventListener('click', () => { niche.state.pool = []; niche.state.hiddenWords = []; renderPool(); });
   poolPasteBtn.addEventListener('click', () => pasteTextClip(poolPasteBtn, async (text) => { await addToPool(text, true); }));
 
   sc.appendChild(poolWrap);
@@ -2232,8 +2294,16 @@ document.getElementById('clearAllNichesBtnBottom').addEventListener('click', () 
 });
 
 document.getElementById('clearAllNichesBtn').addEventListener('click', async () => {
-  const ok = await customConfirm('Clear everything for the whole week? This cannot be undone.');
+  if (viewingLastWeek) {
+    bbStatus('You are on Last Week, switch back to This Week before clearing', 3500);
+    return;
+  }
+  const ok = await customConfirm('Clear everything for the whole week? A copy gets saved as Last Week first, so you can switch back to it if something needs fixing.');
   if (!ok) return;
+  if (weekHasWork()) {
+    try { await storageAPI.set('archive:lastWeek', JSON.stringify(snapshotWeek())); } catch (e) { console.error(e); }
+  }
+  hideWeeklyOutput();
   nicheOrder = JSON.parse(JSON.stringify(DEFAULT_NICHE_ORDER));
   nicheOrder.forEach(n => { n.state = makeNicheState(); n.complete = false; n.collapsed = true; seedDefaultTagsIfEmpty(n); });
   weekDateInput.value = '';
@@ -2245,7 +2315,107 @@ document.getElementById('clearAllNichesBtn').addEventListener('click', async () 
     await storageAPI.set('nicheOrder', JSON.stringify(nicheOrder.map(n => ({ num:n.num, name:n.name, type:n.type, isBonus:n.isBonus, bonusOn:n.bonusOn, complete:n.complete }))));
     for (const n of nicheOrder) await storageAPI.set('nichestate:' + n.num, JSON.stringify(n.state));
   } catch (e) {}
-  bbStatus('Whole week cleared', 2500);
+  bbStatus('Whole week cleared, saved as Last Week', 3000);
+  refreshLastWeekUI();
+});
+
+/* ================= LAST WEEK SAVE + SWITCH ================= */
+let viewingLastWeek = false;
+
+function orderMeta() {
+  return nicheOrder.map(n => ({ num:n.num, name:n.name, type:n.type, isBonus:n.isBonus, bonusOn:n.bonusOn, complete:n.complete }));
+}
+function snapshotWeek() {
+  const states = {};
+  nicheOrder.forEach(n => { states[n.num] = n.state; });
+  return JSON.parse(JSON.stringify({ weekDate: weekDateInput.value, order: orderMeta(), states }));
+}
+function weekHasWork() {
+  if (weekDateInput.value) return true;
+  return nicheOrder.some(n => {
+    const st = n.state || {};
+    return n.complete
+      || (st.prompts && st.prompts.length)
+      || (st.valueSections && st.valueSections.length)
+      || (st.pool && st.pool.length)
+      || (st.shots && st.shots.some(x => x && x.url))
+      || (st.basics && (st.basics.comp || '').trim());
+  });
+}
+function hideWeeklyOutput() {
+  window._weeklyHtml = '';
+  document.getElementById('outBlock').classList.remove('show');
+  document.getElementById('outPreview').innerHTML = '';
+}
+function loadSnapshotIntoMemory(snap) {
+  weekDateInput.value = snap.weekDate || '';
+  updateWeekDateDisplay();
+  const order = (snap.order && snap.order.length) ? snap.order : DEFAULT_NICHE_ORDER;
+  nicheOrder = order.map(m => {
+    const defaults = DEFAULT_NICHE_ORDER.find(d => d.num === m.num) || {};
+    const st = (snap.states && snap.states[m.num]) || {};
+    return Object.assign({}, defaults, m, { state: Object.assign(makeNicheState(), st), collapsed: true });
+  });
+  nicheOrder.forEach(n => seedDefaultTagsIfEmpty(n));
+  renderNicheList();
+  renderAllNicheSections();
+}
+async function persistWholeWeek() {
+  await storageAPI.set('weekDate', weekDateInput.value);
+  await storageAPI.set('nicheOrder', JSON.stringify(orderMeta()));
+  for (const n of nicheOrder) await storageAPI.set('nichestate:' + n.num, JSON.stringify(n.state));
+}
+async function refreshLastWeekUI() {
+  const btn = document.getElementById('switchWeekBtn');
+  const note = document.getElementById('lastWeekNote');
+  const banner = document.getElementById('lastWeekBanner');
+  let other = null;
+  try {
+    const saved = await storageAPI.get('archive:lastWeek');
+    if (saved && saved.value) other = JSON.parse(saved.value);
+  } catch (e) {}
+  if (viewingLastWeek) {
+    btn.textContent = '↻ Switch to This Week';
+    btn.disabled = false;
+    note.textContent = '';
+    banner.style.display = 'block';
+    banner.textContent = `You are viewing LAST WEEK${weekDateInput.value ? ' (' + formatWeekDate(weekDateInput.value) + ')' : ''}. Fix anything you need and regenerate the HTML, your edits save to last week. Switch back when you are done.`;
+  } else {
+    btn.textContent = '↺ Switch to Last Week';
+    btn.disabled = !other;
+    banner.style.display = 'none';
+    note.textContent = other
+      ? (other.weekDate ? 'Saved: ' + formatWeekDate(other.weekDate) : 'Last week is saved')
+      : 'Nothing saved yet, last week gets saved when you hit Clear All';
+  }
+}
+document.getElementById('switchWeekBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('switchWeekBtn');
+  let other;
+  try {
+    const saved = await storageAPI.get('archive:lastWeek');
+    if (!saved || !saved.value) { bbStatus('No last week saved yet', 2500); return; }
+    other = JSON.parse(saved.value);
+  } catch (e) { bbStatus('Could not load last week, try again', 3000); return; }
+  btn.disabled = true;
+  markSaving();
+  try {
+    const current = snapshotWeek();
+    await storageAPI.set('archive:lastWeek', JSON.stringify(current));
+    viewingLastWeek = !viewingLastWeek;
+    await storageAPI.set('viewingLastWeek', viewingLastWeek ? 'true' : 'false');
+    hideWeeklyOutput();
+    loadSnapshotIntoMemory(other);
+    await persistWholeWeek();
+    markSaved();
+    bbStatus(viewingLastWeek ? 'Now viewing Last Week' : 'Back to This Week', 2500);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) {
+    console.error(e);
+    bbStatus('Something went wrong switching weeks, try again', 3500);
+  }
+  btn.disabled = false;
+  refreshLastWeekUI();
 });
 
 /* ================= HTML EXPORT (matches master builder template exactly) ================= */
@@ -2280,6 +2450,7 @@ var S = {
   listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
   listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;display:block;border-radius:8px;background:#ead9d5;',
   listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;',
+  listingLink:'font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#dea193;text-align:center;margin:4px 0 0;font-family:Jost,sans-serif;',
   backTop:'text-align:center;padding:1.5rem 0 0.5rem;',
   backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;',
   sectionNav:'text-align:right;padding:6px 4px 14px;'
@@ -2333,7 +2504,16 @@ function buildNicheHTMLExport(niche) {
   const hasShot = shotUrls.some(Boolean);
   if (hasShot) {
     html += '<div style="'+S.listingsSec+'"><p style="'+S.listingsLbl+'">Real Etsy Listing Examples</p><div style="'+S.listingsGrid+'">';
-    shotUrls.forEach((img, i) => { if (!img) return; html += '<div><img style="'+S.listingImg+'" src="'+img+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p></div>'; });
+    shotUrls.forEach((img, i) => {
+      if (!img) return;
+      const shot = niche.state.shots[i] || {};
+      const link = cleanEtsyListingUrl(shot.link || '');
+      if (link) {
+        html += '<div><a href="'+escAttr(link)+'" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><img style="'+S.listingImg+'" src="'+escAttr(img)+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p><p style="'+S.listingLink+'">View on Etsy ↗</p></a></div>';
+      } else {
+        html += '<div><img style="'+S.listingImg+'" src="'+escAttr(img)+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p></div>';
+      }
+    });
     html += '</div></div>';
   }
 
@@ -2517,8 +2697,14 @@ function cleanupOrphanedStorage() {
     seedDefaultTagsIfEmpty(niche);
   }
 
+  try {
+    const flag = await storageAPI.get('viewingLastWeek');
+    viewingLastWeek = !!(flag && flag.value === 'true');
+  } catch (e) {}
+
   renderNicheList();
   renderAllNicheSections();
+  refreshLastWeekUI();
 })();
 </script>
 </body>
