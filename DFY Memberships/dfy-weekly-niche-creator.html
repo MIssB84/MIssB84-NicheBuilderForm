@@ -835,19 +835,18 @@ function updateNicheSectionTitle(niche) {
   if (badge) badge.style.display = niche.complete ? 'inline-block' : 'none';
 }
 
-function buildListingNoteTextFor(niche) {
-  const b = niche.state.basics;
-  const listingNum = (b.noteListing || '').trim();
-  if (!listingNum) return '';
-  const age = (b.noteAge || '').trim();
-  const carts = (b.noteCarts || '').trim();
-  const buyers = (b.noteBuyers || '').trim();
-  const bestseller = !!b.noteBestseller;
-  const sales = (b.noteSales || '').trim();
+// Builds the sentence for one listing's stats. Returns '' when nothing is filled in.
+function buildNoteSentence(f, subject) {
+  f = f || {};
+  const age = String(f.age || '').trim();
+  const carts = String(f.carts || '').trim();
+  const buyers = String(f.buyers || '').trim();
+  const bestseller = !!f.bestseller;
+  const sales = String(f.sales || '').trim();
 
   const verbless = [];
   if (age) { const a = parseFloat(age); verbless.push(age + (a === 1 ? ' month old' : ' months old')); }
-  if (b.noteCarts20Plus) { verbless.push('in over 20 carts'); }
+  if (f.carts20Plus) { verbless.push('in over 20 carts'); }
   else if (carts) { const c = parseFloat(carts); verbless.push((!isNaN(c) && c < 20 ? 'in ' : 'in over ') + carts + ' carts'); }
 
   const verbed = [];
@@ -863,12 +862,46 @@ function buildListingNoteTextFor(niche) {
   else {
     const last = all[all.length - 1];
     const rest = all.slice(0, -1);
-    const joinedRest = rest.join(', ');
     const sep = (all.length === 2 ? ' and ' : ', and ');
-    body = (verbless.length > 0 ? 'is ' + joinedRest : joinedRest) + sep + last;
+    body = (verbless.length > 0 ? 'is ' + rest.join(', ') : rest.join(', ')) + sep + last;
   }
   const connector = /^(is |has )/.test(body) ? ' ' : ': ';
-  return 'Listing ' + listingNum + connector + body + '.';
+  return subject + connector + body + '.';
+}
+function shotNoteText(niche, i) {
+  const shot = niche.state.shots[i];
+  return buildNoteSentence(shot && shot.note, 'This listing');
+}
+// Moves the old single "Listing Notes" (from Basics) into the matching listing slot, once
+function migrateOldListingNote(niche) {
+  const b = niche.state.basics || {};
+  if (b._noteMigrated) return;
+  const n = parseInt(String(b.noteListing || '').trim(), 10);
+  const has = (b.noteAge || b.noteCarts || b.noteCarts20Plus || b.noteBuyers || b.noteSales || b.noteBestseller);
+  if (n >= 1 && n <= 3 && has) {
+    const i = n - 1;
+    const shot = Object.assign({}, niche.state.shots[i] || {});
+    if (!shot.note) {
+      shot.note = { age: b.noteAge || '', carts: b.noteCarts || '', carts20Plus: !!b.noteCarts20Plus, buyers: b.noteBuyers || '', sales: b.noteSales || '', bestseller: !!b.noteBestseller };
+      niche.state.shots[i] = shot;
+    }
+  }
+  b._noteMigrated = true;
+}
+// Problems with listing links for one niche, as readable strings
+function listingLinkProblems(niche) {
+  const label = niche.isBonus ? 'Bonus' : 'Niche ' + niche.num;
+  const out = [];
+  (niche.state.shots || []).forEach((shot, i) => {
+    if (!shot || !String(shot.url || '').trim()) return;
+    const link = String(shot.link || '').trim();
+    if (!link) out.push(label + ', Listing ' + (i + 1) + ' needs a listing link');
+    else if (!isListingPageUrl(link)) out.push(label + ', Listing ' + (i + 1) + ' link is not an Etsy listing page');
+  });
+  return out;
+}
+function isListingPageUrl(u) {
+  return /^https?:\/\/(www\.)?etsy\.com\/([a-z]{2}(-[a-z]{2})?\/)?listing\/\d+/i.test(String(u || '').trim());
 }
 
 function buildBasicsSubcard(niche) {
@@ -930,81 +963,6 @@ function buildBasicsSubcard(niche) {
   priceRow.appendChild(lo); priceRow.appendChild(hi);
   sc.appendChild(priceRow);
 
-  const noteDivider = document.createElement('div');
-  noteDivider.style.cssText = 'border-top:1px solid var(--border); margin:14px 0 4px; padding-top:12px;';
-  noteDivider.innerHTML = '<label class="first" style="margin-top:0;">Listing Notes</label><div class="hint">Fill in what applies, leave the rest blank</div>';
-  sc.appendChild(noteDivider);
-
-  const row1 = document.createElement('div'); row1.style.cssText = 'display:flex;gap:10px;';
-  const c1 = document.createElement('div'); c1.style.flex = '1';
-  const c1l = document.createElement('label'); c1l.style.fontSize = '10.5px'; c1l.textContent = 'Listing #'; c1.appendChild(c1l);
-  const c1i = document.createElement('input'); c1i.type = 'text'; c1i.placeholder = 'e.g. 2'; c1i.value = b.noteListing || '';
-  c1.appendChild(c1i);
-  const c2 = document.createElement('div'); c2.style.flex = '1';
-  const c2l = document.createElement('label'); c2l.style.fontSize = '10.5px'; c2l.textContent = 'Months Old'; c2.appendChild(c2l);
-  const c2i = document.createElement('input'); c2i.type = 'text'; c2i.placeholder = 'e.g. 7'; c2i.value = b.noteAge || '';
-  c2.appendChild(c2i);
-  row1.appendChild(c1); row1.appendChild(c2);
-  sc.appendChild(row1);
-
-  const row2 = document.createElement('div'); row2.style.cssText = 'display:flex;gap:10px;';
-  const c3 = document.createElement('div'); c3.style.flex = '1';
-  const c3l = document.createElement('label'); c3l.style.fontSize = '10.5px'; c3l.textContent = 'Carts'; c3.appendChild(c3l);
-  const c3i = document.createElement('input'); c3i.type = 'text'; c3i.placeholder = 'e.g. 12'; c3i.value = b.noteCarts || '';
-  c3.appendChild(c3i);
-  const c3check = document.createElement('div'); c3check.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:6px;';
-  const c3checkbox = document.createElement('input'); c3checkbox.type = 'checkbox'; c3checkbox.checked = !!b.noteCarts20Plus;
-  c3checkbox.style.cssText = 'width:14px;height:14px;accent-color:var(--rose);cursor:pointer;';
-  const c3checkLbl = document.createElement('label'); c3checkLbl.style.cssText = 'margin:0;font-size:10px;font-weight:400;'; c3checkLbl.textContent = 'Etsy shows 20+';
-  c3check.appendChild(c3checkbox); c3check.appendChild(c3checkLbl);
-  c3.appendChild(c3check);
-  const c4 = document.createElement('div'); c4.style.flex = '1';
-  const c4l = document.createElement('label'); c4l.style.fontSize = '10.5px'; c4l.textContent = 'Bought Last 24 Hrs'; c4.appendChild(c4l);
-  const c4i = document.createElement('input'); c4i.type = 'text'; c4i.placeholder = 'e.g. 5'; c4i.value = b.noteBuyers || '';
-  c4.appendChild(c4i);
-  row2.appendChild(c3); row2.appendChild(c4);
-  sc.appendChild(row2);
-
-  const salesLbl = document.createElement('label'); salesLbl.className = 'first'; salesLbl.style.fontSize = '10.5px'; salesLbl.textContent = 'Approx. Sales';
-  sc.appendChild(salesLbl);
-  const salesInput = document.createElement('input'); salesInput.type = 'text'; salesInput.placeholder = 'e.g. 173'; salesInput.value = b.noteSales || '';
-  sc.appendChild(salesInput);
-
-  const bsRow = document.createElement('div'); bsRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:12px;';
-  const bsCheck = document.createElement('input'); bsCheck.type = 'checkbox'; bsCheck.checked = !!b.noteBestseller;
-  bsCheck.style.cssText = 'width:15px;height:15px;accent-color:var(--rose);cursor:pointer;';
-  const bsLbl = document.createElement('label'); bsLbl.style.cssText = 'margin:0;font-size:10.5px;'; bsLbl.textContent = 'Bestseller?';
-  bsRow.appendChild(bsCheck); bsRow.appendChild(bsLbl);
-  sc.appendChild(bsRow);
-
-  const preview = document.createElement('div');
-  preview.style.cssText = 'margin-top:12px; font-size:12px; color:#c4b0a8;';
-  sc.appendChild(preview);
-
-  function refreshPreview() {
-    const text = buildListingNoteTextFor(niche);
-    preview.textContent = text || 'No listing note yet, fill in a field above.';
-    preview.style.color = text ? '#5a4a45' : '#c4b0a8';
-  }
-  [c1i, c2i, c3i, c4i, salesInput].forEach(el => {
-    const keys = { }; // map below
-  });
-  function refreshBuyersDisabled() {
-    const cartsActive = !!(c3i.value || '').trim() || c3checkbox.checked;
-    c4i.disabled = cartsActive;
-    c4i.style.opacity = cartsActive ? '0.5' : '';
-    c4i.style.cursor = cartsActive ? 'not-allowed' : '';
-  }
-  refreshBuyersDisabled();
-  c1i.addEventListener('input', () => { b.noteListing = c1i.value; refreshPreview(); autosaveNicheState(niche.num); });
-  c2i.addEventListener('input', () => { b.noteAge = c2i.value; refreshPreview(); autosaveNicheState(niche.num); });
-  c3i.addEventListener('input', () => { b.noteCarts = c3i.value; refreshPreview(); autosaveNicheState(niche.num); refreshBuyersDisabled(); });
-  c3checkbox.addEventListener('change', () => { b.noteCarts20Plus = c3checkbox.checked; refreshPreview(); autosaveNicheState(niche.num); refreshBuyersDisabled(); });
-  c4i.addEventListener('input', () => { b.noteBuyers = c4i.value; refreshPreview(); autosaveNicheState(niche.num); });
-  salesInput.addEventListener('input', () => { b.noteSales = salesInput.value; refreshPreview(); autosaveNicheState(niche.num); });
-  bsCheck.addEventListener('change', () => { b.noteBestseller = bsCheck.checked; refreshPreview(); autosaveNicheState(niche.num); });
-  refreshPreview();
-
   return sc;
 }
 
@@ -1019,10 +977,71 @@ function cleanEtsyListingUrl(raw) {
   return m ? m[1] : url;
 }
 
+function buildShotNoteFields(niche, i) {
+  const box = document.createElement('div');
+  box.style.cssText = 'margin-top:14px; padding-top:12px; border-top:1px dashed var(--border);';
+  const head = document.createElement('label'); head.className = 'first'; head.style.marginTop = '0';
+  head.textContent = 'Listing ' + (i + 1) + ' Notes';
+  const hint = document.createElement('div'); hint.className = 'hint'; hint.textContent = 'Fill in what applies, leave it all blank and nothing shows for this listing.';
+  box.appendChild(head); box.appendChild(hint);
+
+  function getNote() {
+    const shot = niche.state.shots[i] = Object.assign({}, niche.state.shots[i] || {});
+    if (!shot.note) shot.note = {};
+    return shot.note;
+  }
+  const f = (niche.state.shots[i] && niche.state.shots[i].note) || {};
+  function mk(labelText, key, ph) {
+    const c = document.createElement('div'); c.style.flex = '1'; c.style.minWidth = '110px';
+    const l = document.createElement('label'); l.style.fontSize = '10.5px'; l.textContent = labelText; c.appendChild(l);
+    const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = ph; inp.value = f[key] || '';
+    inp.addEventListener('input', () => { getNote()[key] = inp.value; refresh(); autosaveNicheState(niche.num); });
+    c.appendChild(inp); c._input = inp;
+    return c;
+  }
+  const row = document.createElement('div'); row.style.cssText = 'display:flex; gap:10px; flex-wrap:wrap;';
+  const age = mk('Months Old', 'age', 'e.g. 7');
+  const carts = mk('Carts', 'carts', 'e.g. 12');
+  const buyers = mk('Bought Last 24 Hrs', 'buyers', 'e.g. 5');
+  const sales = mk('Approx. Sales', 'sales', 'e.g. 173');
+  const c20 = document.createElement('div'); c20.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:6px;';
+  const c20box = document.createElement('input'); c20box.type = 'checkbox'; c20box.checked = !!f.carts20Plus;
+  c20box.style.cssText = 'width:14px;height:14px;accent-color:var(--rose);cursor:pointer;';
+  const c20lbl = document.createElement('label'); c20lbl.style.cssText = 'margin:0;font-size:10px;font-weight:400;'; c20lbl.textContent = 'Etsy shows 20+';
+  c20.appendChild(c20box); c20.appendChild(c20lbl); carts.appendChild(c20);
+  [age, carts, buyers, sales].forEach(c => row.appendChild(c));
+  box.appendChild(row);
+
+  const bsRow = document.createElement('div'); bsRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-top:10px;';
+  const bs = document.createElement('input'); bs.type = 'checkbox'; bs.checked = !!f.bestseller;
+  bs.style.cssText = 'width:15px;height:15px;accent-color:var(--rose);cursor:pointer;';
+  const bsl = document.createElement('label'); bsl.style.cssText = 'margin:0;font-size:10.5px;'; bsl.textContent = 'Bestseller?';
+  bsRow.appendChild(bs); bsRow.appendChild(bsl);
+  box.appendChild(bsRow);
+
+  const preview = document.createElement('div'); preview.style.cssText = 'margin-top:10px; font-size:12px;';
+  box.appendChild(preview);
+
+  function refresh() {
+    const t = shotNoteText(niche, i);
+    preview.textContent = t || 'No note for this listing.';
+    preview.style.color = t ? '#5a4a45' : '#c4b0a8';
+    const cartsActive = !!(carts._input.value || '').trim() || c20box.checked;
+    buyers._input.disabled = cartsActive;
+    buyers._input.style.opacity = cartsActive ? '0.5' : '';
+    buyers._input.style.cursor = cartsActive ? 'not-allowed' : '';
+  }
+  c20box.addEventListener('change', () => { getNote().carts20Plus = c20box.checked; refresh(); autosaveNicheState(niche.num); });
+  bs.addEventListener('change', () => { getNote().bestseller = bs.checked; refresh(); autosaveNicheState(niche.num); });
+  refresh();
+  return box;
+}
+
 function buildScreenshotsSubcard(niche) {
+  migrateOldListingNote(niche);
   const sc = document.createElement('div');
   sc.className = 'subcard';
-  sc.innerHTML = '<h3>Screenshots</h3><div class="hint">Right click each listing image on Etsy, click "Copy Image Address," and paste that URL below. The thumbnail shows automatically, and the AI reads it straight from the URL, no upload needed. Paste the listing page link too so members can click the image to open it on Etsy.</div>';
+  sc.innerHTML = '<h3>Screenshots</h3><div class="hint">Right click each listing image on Etsy, click "Copy Image Address," and paste that URL below. The thumbnail shows automatically, and the AI reads it straight from the URL, no upload needed. Paste the listing page link too (required) so members can click the image to open it on Etsy. Each listing has its own notes, fill in any that apply.</div>';
   const listDiv = document.createElement('div');
   sc.appendChild(listDiv);
 
@@ -1097,6 +1116,29 @@ function buildScreenshotsSubcard(niche) {
         autosaveNicheState(niche.num);
       });
       linkPasteBtn.addEventListener('click', () => pasteTextClip(linkPasteBtn, async (text) => { saveLink(text); }));
+      const linkErr = document.createElement('div');
+      linkErr.style.cssText = 'font-size:12px; color:var(--warn); margin-top:6px; display:none;';
+      slot.appendChild(linkErr);
+      function refreshLinkCheck() {
+        const hasImg = !!urlInput.value.trim();
+        const link = linkInput.value.trim();
+        let msg = '';
+        if (hasImg && !link) msg = 'Required: paste the listing page link so members can click through.';
+        else if (link && /etsystatic\.com/i.test(link)) msg = 'This is an image address. Paste the listing page link instead (etsy.com/listing/...).';
+        else if (link && !isListingPageUrl(link)) msg = 'This does not look like an Etsy listing page link (etsy.com/listing/...).';
+        linkErr.textContent = msg;
+        linkErr.style.display = msg ? 'block' : 'none';
+        linkInput.style.borderColor = msg ? 'var(--warn)' : '';
+        linkInput.style.boxShadow = msg ? '0 0 0 2px rgba(200,80,70,0.15)' : '';
+      }
+      linkInput.addEventListener('input', refreshLinkCheck);
+      linkInput.addEventListener('change', refreshLinkCheck);
+      urlInput.addEventListener('input', refreshLinkCheck);
+      linkPasteBtn.addEventListener('click', () => setTimeout(refreshLinkCheck, 300));
+      urlPasteBtn.addEventListener('click', () => setTimeout(refreshLinkCheck, 300));
+      refreshLinkCheck();
+
+      slot.appendChild(buildShotNoteFields(niche, i));
 
       refreshThumb();
       listDiv.appendChild(slot);
@@ -2450,6 +2492,8 @@ var S = {
   listingsGrid:'display:grid;grid-template-columns:repeat(3,1fr);gap:10px;',
   listingImg:'width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center;display:block;border-radius:8px;background:#ead9d5;',
   listingLbl:'font-size:11px;font-weight:500;color:#c4b0a8;text-align:center;margin-top:6px;font-family:Jost,sans-serif;',
+  bsBadge:'display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#2a1f1c;background:#dea193;padding:3px 10px;border-radius:20px;margin-top:8px;font-family:Jost,sans-serif;',
+  listingNote:'font-size:13px;color:#f5eddf;line-height:1.55;text-align:center;margin:8px 4px 0;font-family:Jost,sans-serif;',
   listingLink:'font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#dea193;text-align:center;margin:4px 0 0;font-family:Jost,sans-serif;',
   backTop:'text-align:center;padding:1.5rem 0 0.5rem;',
   backTopLink:'font-family:Jost,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#c4b0a8;text-decoration:none;',
@@ -2472,7 +2516,7 @@ function buildNicheHTMLExport(niche) {
   const comp = (b.comp || '').trim();
   const plo = (b.priceLo || '').trim(), phi = (b.priceHi || '').trim();
   const price = (plo && phi) ? '$'+plo+' - $'+phi : (plo ? '$'+plo : (phi ? '$'+phi : ''));
-  const note = buildListingNoteTextFor(niche);
+  migrateOldListingNote(niche);
   const shotUrls = niche.state.shots.map(nicheImageDataUrl);
   const tipsHtml = niche.state.valueSections.map(sec => '<div style="'+S.tipBox+'"><strong>'+esc(sec.heading)+':</strong> '+esc(sec.text)+'</div>').join('') +
     (niche.state.proTip ? '<div style="'+S.tipBox+'"><strong>Pro Tip:</strong> '+esc(niche.state.proTip)+'</div>' : '');
@@ -2508,10 +2552,14 @@ function buildNicheHTMLExport(niche) {
       if (!img) return;
       const shot = niche.state.shots[i] || {};
       const link = cleanEtsyListingUrl(shot.link || '');
+      const noteText = shotNoteText(niche, i);
+      const isBs = !!(shot.note && shot.note.bestseller);
+      const badge = isBs ? '<span style="'+S.bsBadge+'">★ Bestseller</span>' : '';
+      const noteHtml = noteText ? '<p style="'+S.listingNote+'">'+esc(noteText)+'</p>' : '';
       if (link) {
-        html += '<div><a href="'+escAttr(link)+'" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><img style="'+S.listingImg+'" src="'+escAttr(img)+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p><p style="'+S.listingLink+'">View on Etsy ↗</p></a></div>';
+        html += '<div><a href="'+escAttr(link)+'" target="_blank" rel="noopener" style="text-decoration:none;display:block;"><img style="'+S.listingImg+'" src="'+escAttr(img)+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p><p style="'+S.listingLink+'">View on Etsy ↗</p></a>'+(badge ? '<div style="text-align:center;">'+badge+'</div>' : '')+noteHtml+'</div>';
       } else {
-        html += '<div><img style="'+S.listingImg+'" src="'+escAttr(img)+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p></div>';
+        html += '<div><img style="'+S.listingImg+'" src="'+escAttr(img)+'" alt="Listing '+(i+1)+'"><p style="'+S.listingLbl+'">Listing '+(i+1)+'</p>'+(badge ? '<div style="text-align:center;">'+badge+'</div>' : '')+noteHtml+'</div>';
       }
     });
     html += '</div></div>';
@@ -2526,7 +2574,6 @@ function buildNicheHTMLExport(niche) {
 
   const hasImg = GEN_TOOLS.some(g => { const gi = niche.state.genImages[g.id]; return gi && gi.url; });
   const jumpItems = [];
-  if (note) jumpItems.push({ id: anchorId+'-notes', label: 'Listing Notes' });
   if (tipsHtml) jumpItems.push({ id: anchorId+'-tips', label: 'How to Add Value' });
   if (titlesHtml) jumpItems.push({ id: anchorId+'-titles', label: 'Titles' });
   if (tagsHtml) jumpItems.push({ id: anchorId+'-tags', label: 'Tags' });
@@ -2541,7 +2588,6 @@ function buildNicheHTMLExport(niche) {
     html += '</div>';
   }
 
-  if (note) html += '<div id="'+anchorId+'-notes" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Listing Notes</p></div><div style="'+S.blockBody+'"><div style="'+S.noteBox+'">'+esc(note)+'</div></div></div>'+backLink;
   if (tipsHtml) html += '<div id="'+anchorId+'-tips" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">How to Add Value</p></div><div style="'+S.blockBody+'">'+tipsHtml+'</div></div>'+backLink;
   if (titlesHtml) html += '<div id="'+anchorId+'-titles" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Titles</p></div><div style="'+S.blockBody+'">'+titlesHtml+'</div></div>'+backLink;
   if (tagsHtml) html += '<div id="'+anchorId+'-tags" style="'+S.block+'"><div style="'+S.blockHead+'"><p style="'+S.blockLbl+'">Tags</p></div><div style="'+S.blockBody+'"><div style="'+S.tagsWrap+'">'+tagsHtml+'</div><button style="'+S.copyAll+'" data-copy="'+escAttr(allTagsStr)+'" onclick="dCp(this)">Copy All Tags</button></div></div>'+backLink;
@@ -2610,6 +2656,25 @@ function buildIntroHTMLExport() {
 }
 
 function previewNiche(niche) {
+  const problems = listingLinkProblems(niche);
+  if (problems.length) {
+    const msgEl = document.getElementById('confirmMessage');
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+    const okBtn = document.getElementById('confirmOkBtn');
+    const okText = okBtn.textContent;
+    msgEl.style.whiteSpace = 'pre-line';
+    cancelBtn.style.display = 'none';
+    okBtn.textContent = 'Got it';
+    customConfirm('Fix before previewing:\n\n' + problems.join('\n')).then(() => {
+      msgEl.style.whiteSpace = '';
+      cancelBtn.style.display = '';
+      okBtn.textContent = okText;
+      const sec = document.getElementById('section-' + niche.num);
+      const sc = sec && [...sec.querySelectorAll('h3')].find(h => h.textContent === 'Screenshots');
+      if (sc) sc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return;
+  }
   const html = DCP_SCRIPT + buildNicheHTMLExport(niche);
   document.getElementById('modalTitle').textContent = (niche.isBonus ? 'Bonus' : 'Niche ' + niche.num) + ' Preview';
   document.getElementById('modalBody').innerHTML = html;
@@ -2637,6 +2702,22 @@ document.getElementById('generateAllBtn').addEventListener('click', () => {
     setErr(errEl, 'Set the Week Date up top before generating, so you never forget it.');
     weekDateInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
     weekDateInput.focus();
+    return;
+  }
+  const problems = [];
+  nicheOrder.forEach(niche => {
+    if (niche.isBonus && !niche.bonusOn) return;
+    problems.push(...listingLinkProblems(niche));
+  });
+  if (problems.length) {
+    errEl.innerHTML = '<strong>Fix these before generating:</strong><br>' + problems.map(esc).join('<br>');
+    errEl.classList.add('show');
+    const first = nicheOrder.find(n => !(n.isBonus && !n.bonusOn) && listingLinkProblems(n).length);
+    if (first) {
+      setNicheCollapsed(first, false);
+      const sec = document.getElementById('section-' + first.num);
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
     return;
   }
   setErr(errEl, '');
