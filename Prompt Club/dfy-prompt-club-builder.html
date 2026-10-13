@@ -489,6 +489,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 <div class="card" id="example-images-card">
   <p class="card-title">Example Images (Batch)</p>
   <p class="card-sub">Once all 12 prompts are generated: run them through your generator, mock them up in Canva, upload to Systeme.io, then paste all 12 URLs here in one pass. <span class="img-url-count" id="img-url-count">12 left</span></p>
+  <div style="margin:-6px 0 10px;"><button class="btn-clear-light" type="button" onclick="clearAllImageUrls()">🗑 Clear All URLs</button></div>
     <div class="img-batch-row">
       <span class="img-batch-label">1 - Wall Art — Prompt 1</span>
       <input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Paste mockup URL from Systeme.io">
@@ -658,12 +659,6 @@ var PROMPT_RULES_COMMON = "Never use em dashes, use commas, colons, periods, or 
 
 /* ============ AESTHETIC VIBES ============ */
 var VIBE_DEFINITIONS = {
-  'bold-varsity': {
-    name: 'Bold Varsity / Collegiate',
-    desc: 'Chunky graphic badge/crest shapes, pattern-fill, distressed sporty energy',
-    block: "Every prompt should render in a bold varsity or collegiate style: a graphic badge, crest, or shield-style shape as a dominant visual element, filled with a bold pattern such as leopard print, checkerboard, plaid, or gingham where it fits the theme, confident thick outlines, and a distressed or slightly worn vintage texture across the whole piece. The overall feel should be sporty, confident, and bold, like a varsity letter jacket patch or a collegiate crest, built entirely from shapes and icons, never from lettering.",
-    pngBlock: "On a shirt this should read at a glance, so keep the central shape large and dominant, with only one or two small supporting accents, never a busy multi-element scene."
-  },
   'whimsical-brush': {
     name: 'Whimsical Brushstroke',
     desc: 'Loose painterly brush strokes, bright candy-pop color, playful energy',
@@ -713,8 +708,8 @@ var VIBE_DEFINITIONS = {
     pngBlock: "Keep the composition punchy and colorful on a shirt, glossy rounded shapes read best bold and simple, avoid muted or dusty tones entirely."
   }
 };
-var VIBE_ORDER = ['bold-varsity','whimsical-brush','vintage-engraved','cute-doodle','distressed-vintage-type','boho-floral','pattern-fill-max','modern-flat','y2k-pop'];
-var DEFAULT_RANDOM_VIBES = ['bold-varsity','whimsical-brush','cute-doodle','pattern-fill-max','modern-flat','y2k-pop'];
+var VIBE_ORDER = ['whimsical-brush','vintage-engraved','cute-doodle','distressed-vintage-type','boho-floral','pattern-fill-max','modern-flat','y2k-pop'];
+var DEFAULT_RANDOM_VIBES = ['whimsical-brush','pattern-fill-max','modern-flat','y2k-pop'];
 
 function vibeStyleBlock(vibeKeysCsv, forPng) {
   var keys = (vibeKeysCsv || '').split(',').map(function(s){ return s.trim(); }).filter(function(k){ return VIBE_DEFINITIONS[k]; });
@@ -731,7 +726,7 @@ function vibeStyleBlock(vibeKeysCsv, forPng) {
     if (forPng && vv.pngBlock) t += " " + vv.pngBlock;
     return t;
   });
-  return "AESTHETIC VIBES FOR THIS COLLECTION, there are " + keys.length + " selected. Assign a different one of these vibes to each individual prompt so the set has real visual variety, rotate through the list if there are more prompts than vibes, and never blend two vibes together within a single prompt, each prompt commits fully to just one: " + parts.join(" || ");
+  return "AESTHETIC VIBES FOR THIS COLLECTION, there are " + keys.length + " selected. Assign these vibes to the prompts in the exact order listed (first vibe to prompt 1, second to prompt 2, third to prompt 3) so the set has real visual variety, rotate through the list if there are more prompts than vibes, and never blend two vibes together within a single prompt, each prompt commits fully to just one: " + parts.join(" || ");
 }
 
 var VARY_STYLE_PER_PROMPT = "Give each individual prompt its own distinct artistic style or rendering technique (for example one prompt might be loose gouache painting, another fine watercolor, another bold linocut print, another soft colored pencil, chosen to fit that specific scene) so the set feels like a curated, varied collection rather than the same treatment repeated. All prompts must still clearly share the same working theme, mood, and palette from the Collection DNA, the variety is in technique and rendering only, not in departing from the theme.";
@@ -752,7 +747,7 @@ function buildFrameTVSystem() {
 
 function buildPNGSystem(vibeKey) {
   var vibeBlock = vibeStyleBlock(vibeKey, true);
-  return creativeDirectorCore() + "You are creating bold illustrated POD graphics for Etsy. " + vibeBlock + " Treat the selected vibe as art direction, not a checklist. Build a clean, instantly readable silhouette with one dominant focal idea and a small number of purposeful supporting elements. The design should feel like something a strong boutique apparel brand would release, not clip art assembled on a page. Use confident shape language, deliberate overlap, balanced scale changes, and interesting internal detail. Keep the outer silhouette clean. If pattern, distress, linework, bows, stars, vines, florals, checkerboard, or other accents are used, they must support the concept rather than appear automatically. No text, letters, numbers, banners, signs, labels, patches, pennants, or typography of any kind. Do not mention PNG, shirt, tee, digital download, or product mockups. Do not create realistic scenes or landscapes. " + PREMIUM_PROMPT_FINISH + "End every prompt exactly with: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape: {\"prompts\":[\"prompt 1\",\"prompt 2\",\"prompt 3\"]}";
+  return creativeDirectorCore() + "You are creating bold illustrated POD graphics for Etsy. " + vibeBlock + " Treat the selected vibe as art direction, not a checklist. Build a clean, instantly readable silhouette with one dominant focal idea and a small number of purposeful supporting elements. The design should feel like something a strong boutique apparel brand would release, not clip art assembled on a page. Use confident shape language, deliberate overlap, balanced scale changes, and interesting internal detail. Keep the outer silhouette clean. If pattern, distress, linework, bows, stars, vines, florals, checkerboard, or other accents are used, they must support the concept rather than appear automatically. No text, letters, numbers, banners, signs, labels, patches, pennants, or typography of any kind. Never build the design inside or around a shield, crest, badge, medallion, emblem, seal, coin, circular frame, or any other enclosing frame shape, the subject itself should be the design, standing freely on its own. Do not mention PNG, shirt, tee, digital download, or product mockups. Do not create realistic scenes or landscapes. " + PREMIUM_PROMPT_FINISH + "End every prompt exactly with: \"Centered design, fully visible and contained within the canvas edges, solid white background. The design should be suitable for POD or sublimation.\" " + PROMPT_RULES_COMMON + " Respond ONLY with valid JSON in this exact shape: {\"prompts\":[\"prompt 1\",\"prompt 2\",\"prompt 3\"]}";
 }
 
 function buildTumblerSystem() {
@@ -766,7 +761,7 @@ function getEffectivePngVibeKeys(count) {
     return manual;
   }
   var shuffled = shuffleArr(DEFAULT_RANDOM_VIBES);
-  return count === 1 ? [shuffled[0]] : shuffled.slice(0, 3);
+  return count === 1 ? [shuffled[0]] : [shuffled[0], 'cute-doodle', shuffled[1]];
 }
 
 function getPromptSystem(sectionKey, count) {
@@ -1841,6 +1836,20 @@ function attachImgThumbListeners() {
     });
   });
 }
+function clearAllImageUrls() {
+  var ids = getBatchImageIds();
+  var anyFilled = ids.some(function(id){ return val(id).trim(); });
+  if (!anyFilled) { showToast('Nothing to clear.'); return; }
+  if (!confirm('Clear all 12 image URLs?')) return;
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) { el.value = ''; el.readOnly = false; el.classList.remove('url-filled','url-duplicate'); }
+  });
+  refreshAllImgThumbs();
+  isDirty = true; saveData();
+  showToast('All image URLs cleared.');
+}
+
 function refreshAllImgThumbs() {
   getBatchImageIds().forEach(refreshImgThumb);
   updateImageUrlState();
@@ -1898,7 +1907,7 @@ function renderVibeGrid() {
 }
 
 function getSelectedVibes() {
-  return val('f-vibe').trim() ? val('f-vibe').trim().split(',').filter(Boolean) : [];
+  return val('f-vibe').trim() ? val('f-vibe').trim().split(',').filter(function(k){ return VIBE_DEFINITIONS[k]; }) : [];
 }
 
 function toggleVibe(key) {
