@@ -121,6 +121,15 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .img-url-input.url-filled { background:#eeeaf2 !important; color:#6b6575; border-color:#d7d1df; cursor:default; }
 .img-url-input.url-duplicate { border-color:#b84b62 !important; box-shadow:0 0 0 2px rgba(184,75,98,.10); }
 .img-url-count { display:inline-flex; align-items:center; margin-left:8px; padding:4px 9px; border-radius:999px; background:#eeeaf2; color:#625a70; font-size:11px; font-weight:700; }
+.repeat-warning { display:none; margin-top:8px; padding:9px 12px; background:#fbeff2; border:1px solid #ecc6d0; border-left:4px solid #b84b62; border-radius:10px; font-size:12.5px; line-height:1.55; color:#4c4657; }
+.repeat-warning .rw-head { font-weight:700; color:#b84b62; margin-bottom:2px; }
+.repeat-warning .rw-row { display:flex; justify-content:space-between; gap:10px; }
+.repeat-warning .rw-date { color:#8f879b; white-space:nowrap; }
+.history-row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid #eeeaf2; font-size:13px; color:#4c4657; }
+.history-row:last-child { border-bottom:none; }
+.history-row .h-sub { color:#8f879b; font-size:11.5px; }
+.history-row button { background:none; border:none; color:#b0a8bb; font-size:17px; cursor:pointer; padding:0 4px; }
+.history-row button:hover { color:#b84b62; }
 .img-drop-all { margin:4px 0 12px; padding:20px 14px; border:2px dashed #8f79b8; border-radius:12px; text-align:center; font-size:13px; font-weight:600; color:#4c4657; cursor:pointer; background:#f6f3fa; outline:none; transition:background .15s; }
 .img-drop-all.over { background:#ece5f6; }
 .img-drop-report { font-size:12.5px; line-height:1.6; margin:-4px 0 12px; display:none; }
@@ -248,6 +257,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
         <button class="paste-btn" type="button" onclick="pasteInto('f-theme', this)">📋</button>
       </div>
       <div class="season-warning" id="season-warning"></div>
+      <div class="repeat-warning" id="theme-repeat-warning"></div>
     </div>
     <div>
       <label class="field-label" for="f-mood">Mood</label>
@@ -289,6 +299,22 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   </div>
 </div>
 
+<div class="card" id="history-card">
+  <p class="card-title">Past Collections <span class="img-url-count" id="history-count">0</span></p>
+  <p class="card-sub">Every finished collection gets saved here automatically when you hit Clear Week. The Working Theme and Collection Name boxes warn you if something looks like one you've already done, and Suggest Themes steers away from all of these.</p>
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+    <button class="btn-clear-light" type="button" onclick="toggleHistoryList()" id="history-toggle-btn">Show list</button>
+    <button class="btn-clear-light" type="button" onclick="toggleHistoryPaste()">+ Add past collections</button>
+  </div>
+  <div id="history-paste-wrap" style="display:none; margin-bottom:12px;">
+    <label class="field-label">Paste past collections, one per line</label>
+    <p class="card-sub" style="margin:0 0 6px;">Collection names, themes, or both (like "Moonlit Orchard — Cottagecore"). Anything already on the list gets skipped.</p>
+    <textarea class="field-input" id="history-paste-input" style="min-height:110px;" placeholder="Moonlit Orchard Collection&#10;Retro Halloween Diner&#10;Coastal Grandmother Summer"></textarea>
+    <div class="btn-row" style="margin:8px 0 0;"><button class="btn btn-generate" type="button" onclick="addPastedHistory()">Add to Past Collections</button></div>
+  </div>
+  <div id="history-list" style="display:none;"></div>
+</div>
+
 <div class="card">
   <p class="card-title">PNG Aesthetic Vibe</p>
   <p class="card-sub">This only locks the rendering style for PNG shirt designs, so they read as bold and sellable instead of generic AI art. Leave this blank and 3 vibes are auto-picked at random every time, one matched to each prompt, no clicking required. Click 1-3 to lock in specific ones instead. Wall Art, Frame TV, and Tumbler each get their own varied artistic treatment per prompt automatically, all still unified by your Working Theme above.</p>
@@ -297,7 +323,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
   <input type="hidden" id="f-vibe" value="">
 </div>
 
-<div class="card">
+<div class="card" id="ref-images-card" style="display:none;">
   <p class="card-title">Reference Images</p>
   <p class="card-sub">The AI leans heavily on these as its primary style guide, only the subject matter still comes from your Working Theme above, not the reference. For PNG and Tumbler, your baked-in library is always in play automatically, a different reference matched to each of the 3 prompts at random, no clicking required. Click specific ones to prefer those over the rest of the library, or use Ad Hoc for a one-off image outside the library. Wall Art and Frame TV are Ad Hoc only. Must be a direct image link (.jpg/.png), not an Etsy listing or Pinterest page.</p>
 
@@ -595,6 +621,7 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
     <button class="btn btn-generate" type="button" onclick="suggestCollectionName()" id="genbtn-collectionname">✨ Suggest Collection Name</button>
     <span class="gen-status" id="genstatus-collectionname" style="font-size:11.5px; color:#8f879b;"></span>
   </div>
+  <div class="repeat-warning" id="name-repeat-warning"></div>
   <div id="collectionname-options" style="display:none; margin-top:12px;"></div>
 </div>
 
@@ -813,6 +840,8 @@ async function suggestThemes() {
     var seasonHint = 'Today is roughly ' + new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + ', keep upcoming seasons/holidays in mind.';
     var existingThemes = lastThemeIdeas.map(function(idea){ return idea.theme; }).filter(Boolean);
     var existingNote = existingThemes.length ? ('Avoid repeating or closely resembling these already-suggested themes: ' + existingThemes.join(', ') + '.') : '';
+    var pastList = historyAvoidList();
+    if (pastList.length) existingNote += ' These collections have ALREADY been made in past weeks, do not suggest anything the same as or closely resembling them: ' + pastList.join(', ') + '.';
     var userHint = val('f-themehint').trim();
     var hintNote = userHint ? ('The user gave this direction to build around: "' + userHint + '". Make roughly half the ideas directly based on this direction (it can include holidays, seasons, or specific subjects like animals or objects), and let the rest be your own fresh picks unrelated to it, so there is still variety to choose from.') : '';
     var userMsg = 'Give me 8 fresh collection ideas for the next weekly drop. ' + seasonHint + ' ' + existingNote + ' ' + hintNote;
@@ -1368,6 +1397,7 @@ function renderRefLibrary(sectionKey) {
   }).join('');
 }
 
+var REFERENCE_IMAGES_ENABLED = false;
 var REF_NOTE_GENERIC = ' The reference image(s) attached above are your primary style guide for this prompt, lean heavily on them. Closely emulate their rendering technique, line quality, color palette, composition, layout, and overall aesthetic, this should read as clearly influenced by the reference, not a generic interpretation of the theme. The only thing that must differ from the reference is the subject matter itself, which comes only from the Collection DNA below, never copy or reference the subject shown in the reference image(s).';
 
 function getBrandStyleRefs() {
@@ -1387,6 +1417,8 @@ function renderBrandRefThumbs() {
 
 function buildUserContent(sectionKey, count, avoidTexts, anchorPrompts, singleSlotIndex, skipAutoRefs) {
   var textMsg = buildPromptUserMessage(count, avoidTexts, anchorPrompts);
+  // Reference Images section is retired: prompts are built from the Collection DNA only.
+  if (!REFERENCE_IMAGES_ENABLED) return textMsg;
   var isAutoSection = (sectionKey === 'png' || sectionKey === 'tumbler');
   var imgBlocks = [];
   var noteLines = [];
@@ -2037,6 +2069,7 @@ function loadData() {
 }
 
 function saveData() {
+  try { refreshRepeatWarnings(); } catch (e) {}
   var data = {};
   fields.forEach(function(id) { data[id] = val(id); });
   try {
@@ -2048,7 +2081,9 @@ function saveData() {
 }
 
 function clearAll() {
-  if (!confirm('Clear all data for this week? This cannot be undone.')) return;
+  if (!confirm('Clear all data for this week? This week\'s theme and collection name get saved to Past Collections first.')) return;
+  archiveCurrentCollection();
+  renderHistory();
   var preserveIds = ['png-locked', 'tb-locked', 'brand-style-refs'];
   fields.forEach(function(id) { if (preserveIds.indexOf(id) !== -1) return; var el = document.getElementById(id); if (el) el.value = ''; });
   localStorage.removeItem(STORAGE_KEY);
@@ -2235,6 +2270,7 @@ function buildFullPageHTML() {
 function previewOutput() {
   var theme = val('f-theme');
   if (!theme) { showToast('Please fill in the working theme first.'); return; }
+  if (!passesFinalCheck()) return;
   var fullPage = buildFullPageHTML();
   document.getElementById('full-page-html').value = fullPage;
   document.getElementById('full-page-preview').innerHTML = fullPage;
@@ -2246,6 +2282,7 @@ function previewOutput() {
 function generateHTML() {
   var theme = val('f-theme');
   if (!theme) { showToast('Please fill in the working theme first.'); return; }
+  if (!passesFinalCheck()) return;
 
   var fullPage = buildFullPageHTML();
 
@@ -2301,6 +2338,9 @@ forceResetLibraryOnce();
 updateAllProgress();
 attachImgThumbListeners();
 attachImageDropTargets();
+renderHistory();
+['f-theme','f-collectionname'].forEach(function(id){ var el = document.getElementById(id); if (el) { el.addEventListener('input', refreshRepeatWarnings); el.addEventListener('change', refreshRepeatWarnings); } });
+refreshRepeatWarnings();
 refreshAllImgThumbs();
 renderRefLibrary('png');
 renderRefLibrary('tumbler');
@@ -2509,6 +2549,157 @@ function attachImageDropTargets() {
   zone.addEventListener('dragleave', function(){ zone.classList.remove('over'); });
   zone.addEventListener('drop', function(e){ e.preventDefault(); zone.classList.remove('over'); handleBulk(e.dataTransfer.files); });
   refreshImgbbUI();
+}
+
+/* ============ PAST COLLECTIONS + REPEAT CHECK ============ */
+function getHistory() {
+  try { var raw = localStorage.getItem('dfy_prompt_club_history'); var h = raw ? JSON.parse(raw) : []; return Array.isArray(h) ? h : []; } catch (e) { return []; }
+}
+function setHistory(h) { try { localStorage.setItem('dfy_prompt_club_history', JSON.stringify(h)); } catch (e) {} }
+function historyKey(entry) { return ((entry.name || '') + '|' + (entry.theme || '')).toLowerCase().replace(/\s+/g, ' ').trim(); }
+function formatHistDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso + 'T00:00:00');
+  return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function archiveCurrentCollection() {
+  var theme = val('f-theme').trim();
+  var name = val('f-collectionname').trim();
+  if (!theme && !name) return false;
+  var h = getHistory();
+  var now = new Date(); var entry = { name: name, theme: theme, date: now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') };
+  var k = historyKey(entry);
+  if (h.some(function(e){ return historyKey(e) === k; })) return false;
+  h.unshift(entry); setHistory(h);
+  return true;
+}
+var HIST_STOP = ['collection','collections','theme','themed','the','a','an','and','of','for','with','in','on','to','my','your','set','bundle','series','edition','vibe','vibes','aesthetic','style','inspired','art','design','designs'];
+function collectionTokens(text) {
+  var out = [];
+  String(text || '').toLowerCase().split(/[^a-z0-9]+/).forEach(function(w){
+    if (!w || HIST_STOP.indexOf(w) !== -1) return;
+    if (w.length > 3 && /s$/.test(w) && !/ss$/.test(w)) w = w.slice(0, -1);
+    if (out.indexOf(w) === -1) out.push(w);
+  });
+  return out;
+}
+function findRepeatCollections(text) {
+  var mine = collectionTokens(text);
+  if (!mine.length) return [];
+  var hits = [];
+  getHistory().forEach(function(e){
+    var best = null;
+    [e.theme, e.name].forEach(function(field){
+      var theirs = collectionTokens(field);
+      if (!theirs.length) return;
+      var shared = mine.filter(function(t){ return theirs.indexOf(t) !== -1; }).length;
+      if (!shared) return;
+      var exact = shared === mine.length && shared === theirs.length;
+      var ratio = shared / Math.min(mine.length, theirs.length);
+      if (exact || (ratio >= 0.6 && (shared >= 2 || Math.min(mine.length, theirs.length) === 1))) {
+        var score = exact ? 2 : ratio;
+        if (!best || score > best.score) best = { entry: e, exact: exact, score: score };
+      }
+    });
+    if (best) hits.push(best);
+  });
+  hits.sort(function(a, b){ return b.score - a.score; });
+  return hits;
+}
+function renderRepeatWarning(fieldId, boxId) {
+  var box = document.getElementById(boxId); if (!box) return;
+  var hits = findRepeatCollections(val(fieldId));
+  if (!hits.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  var rows = hits.slice(0, 4).map(function(h){
+    var e = h.entry;
+    var label = e.name && e.theme ? esc(e.name) + ' <span style="color:#8f879b;">(' + esc(e.theme) + ')</span>' : esc(e.name || e.theme);
+    return '<div class="rw-row"><span><b style="color:' + (h.exact ? '#b84b62' : '#4c4657') + ';">' + (h.exact ? 'Same' : 'Similar') + ':</b> ' + label + '</span><span class="rw-date">' + esc(formatHistDate(e.date)) + '</span></div>';
+  }).join('');
+  var more = hits.length > 4 ? '<div style="color:#8f879b;">+ ' + (hits.length - 4) + ' more in Past Collections</div>' : '';
+  box.innerHTML = '<div class="rw-head">⚠ You may have done this one already</div>' + rows + more;
+  box.style.display = 'block';
+}
+var _repeatTimer = null;
+function refreshRepeatWarnings() {
+  clearTimeout(_repeatTimer);
+  _repeatTimer = setTimeout(function(){
+    renderRepeatWarning('f-theme', 'theme-repeat-warning');
+    renderRepeatWarning('f-collectionname', 'name-repeat-warning');
+  }, 250);
+}
+function renderHistory() {
+  var h = getHistory();
+  document.getElementById('history-count').textContent = h.length;
+  var list = document.getElementById('history-list');
+  if (!h.length) { list.innerHTML = '<p class="card-sub" style="margin:0;">Nothing here yet. Add your past collections above, or they\'ll start filling in each time you hit Clear Week.</p>'; return; }
+  list.innerHTML = h.map(function(e, i){
+    var main = esc(e.name || e.theme);
+    var sub = (e.name && e.theme ? esc(e.theme) : '') + (e.date ? (e.name && e.theme ? ' · ' : '') + esc(formatHistDate(e.date)) : '');
+    return '<div class="history-row"><div><div>' + main + '</div>' + (sub ? '<div class="h-sub">' + sub + '</div>' : '') + '</div><button type="button" title="Remove from Past Collections" onclick="removeHistory(' + i + ')">&times;</button></div>';
+  }).join('');
+}
+function toggleHistoryList() {
+  var list = document.getElementById('history-list');
+  var open = list.style.display !== 'none';
+  list.style.display = open ? 'none' : 'block';
+  document.getElementById('history-toggle-btn').textContent = open ? 'Show list' : 'Hide list';
+}
+function toggleHistoryPaste() {
+  var w = document.getElementById('history-paste-wrap');
+  w.style.display = w.style.display === 'none' ? 'block' : 'none';
+  if (w.style.display === 'block') document.getElementById('history-paste-input').focus();
+}
+function addPastedHistory() {
+  var raw = val('history-paste-input');
+  var lines = raw.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  if (!lines.length) { showToast('Paste at least one collection first.'); return; }
+  var h = getHistory();
+  var keys = h.map(historyKey);
+  var added = 0;
+  lines.forEach(function(line){
+    var parts = line.split(/\s+[—–-]\s+|\s*\|\s*/);
+    var entry = { name: (parts[0] || '').trim(), theme: (parts[1] || '').trim(), date: '' };
+    var k = historyKey(entry);
+    if (keys.indexOf(k) !== -1) return;
+    keys.push(k); h.push(entry); added++;
+  });
+  setHistory(h);
+  document.getElementById('history-paste-input').value = '';
+  document.getElementById('history-paste-wrap').style.display = 'none';
+  renderHistory(); refreshRepeatWarnings();
+  showToast(added ? 'Added ' + added + ' past collection' + (added === 1 ? '' : 's') : 'Those were already on the list');
+}
+function removeHistory(i) {
+  var h = getHistory(); var e = h[i]; if (!e) return;
+  if (!confirm('Remove "' + (e.name || e.theme) + '" from Past Collections?')) return;
+  h.splice(i, 1); setHistory(h); renderHistory(); refreshRepeatWarnings();
+}
+function historyAvoidList() {
+  var out = [];
+  getHistory().forEach(function(e){ [e.name, e.theme].forEach(function(x){ x = (x || '').trim(); if (x && out.indexOf(x) === -1) out.push(x); }); });
+  return out;
+}
+
+/* ============ FINAL CHECK BEFORE PAGE HTML ============ */
+function missingBeforeOutput() {
+  var missing = [];
+  if (!val('f-collectionname').trim()) missing.push('Final Collection Name');
+  var labels = { wa: 'Wall Art', ft: 'Frame TV', png: 'PNG', tb: 'Tumbler' };
+  var emptyPrompts = [], emptyImgs = [];
+  ['wa','ft','png','tb'].forEach(function(p){
+    [1,2,3].forEach(function(n){
+      if (!val(p + '-' + n).trim()) emptyPrompts.push(labels[p] + ' ' + n);
+      if (!val(p + '-' + n + '-img').trim()) emptyImgs.push(labels[p] + ' ' + n);
+    });
+  });
+  if (emptyPrompts.length) missing.push('Prompts: ' + emptyPrompts.join(', '));
+  if (emptyImgs.length) missing.push('Example images: ' + emptyImgs.join(', '));
+  return missing;
+}
+function passesFinalCheck() {
+  var m = missingBeforeOutput();
+  if (!m.length) return true;
+  return confirm('Heads up, these are still missing:\n\n• ' + m.join('\n• ') + '\n\nGenerate the page anyway?');
 }
 
 var backToTopBtn = document.getElementById('backToTopBtn');
