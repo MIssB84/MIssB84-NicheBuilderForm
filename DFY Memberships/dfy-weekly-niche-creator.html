@@ -206,6 +206,15 @@
   <div id="nicheSectionsContainer"></div>
 
   <div class="card">
+    <div id="sendDirBlock" style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:14px;">
+      <label class="first" style="margin-top:0;">Send This Week to Your Niche Directory</label>
+      <div class="hint">Adds this week's niche names and product types straight into the hub's directory, no bulk paste. Sending again later updates the same week, so you can add the drop link whenever it's ready.</div>
+      <div class="add-row">
+        <input type="url" id="dirDropLinkInput" placeholder="Weekly Drop Link (https://www.thrivewithdania.com/...)">
+        <button class="btn" id="sendToDirBtn">📤 Send to Directory</button>
+      </div>
+      <div id="sendDirStatus" style="font-size:12.5px; margin-top:8px; line-height:1.5;"></div>
+    </div>
     <button class="btn secondary" id="copyAllNichesBtn" style="width:100%; text-align:center; justify-content:center; margin-bottom:12px;">📋 Copy All Niches (for Directory)</button>
     <button class="btn" id="generateAllBtn" style="width:100%; text-align:center; justify-content:center;">Generate Complete Weekly HTML</button>
     <div class="error" id="generateAllErr" style="text-align:center; margin-top:8px;"></div>
@@ -657,7 +666,7 @@ function formatWeekDate(isoDate) {
   return 'Week of ' + months[m] + ' ' + d + ', ' + y;
 }
 function updateWeekDateDisplay() { document.getElementById('weekDateDisplay').textContent = formatWeekDate(weekDateInput.value); }
-weekDateInput.addEventListener('input', () => { updateWeekDateDisplay(); storageAPI.set('weekDate', weekDateInput.value).catch(() => {}); });
+weekDateInput.addEventListener('input', () => { updateWeekDateDisplay(); storageAPI.set('weekDate', weekDateInput.value).catch(() => {}); try { nicheOrder.forEach(refreshDupWarning); } catch (e) {} });
 
 /* ================= NICHE DATA MODEL ================= */
 const CIRCLED_NUMS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
@@ -818,7 +827,9 @@ function renderNicheList() {
     namePicker.className = 'niche-name-picker';
     namePicker.style.cssText = 'display:none; margin:6px 0 2px 0; padding:8px 10px; background:#fdf7f2; border:1px solid var(--border); border-radius:10px; font-size:12.5px;';
     wrap.appendChild(row);
+    wrap.appendChild(makeDupEl(niche));
     wrap.appendChild(namePicker);
+    refreshDupWarning(niche);
 
     typeSelect.addEventListener('change', () => {
       niche.type = typeSelect.value;
@@ -912,7 +923,107 @@ function setNicheCollapsed(niche, collapsed) {
   if (icon) icon.classList.toggle('open', !collapsed);
 }
 
+/* ================= NICHE DIRECTORY LINK (shared with the hub on the same site) ================= */
+const DIR_STORE_KEY = 'dfyhub_directory_weeks';
+function loadDirectoryWeeks() {
+  try { const raw = localStorage.getItem(DIR_STORE_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+}
+function dirDateFromIso(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+function isPlaceholderNicheName(niche) {
+  const d = DEFAULT_NICHE_ORDER.find(x => x.num === niche.num);
+  const nm = (niche.name || '').trim().toLowerCase();
+  return !nm || (d && d.name.toLowerCase() === nm);
+}
+const DUP_TYPE_PHRASES = ['printable wall art','tumbler wrap png','tumbler wrap','frame tv art','frame tv','wall art','digital download','instant download','sublimation design','sublimation','shirt design','shirt graphic','home decor','t-shirt','tshirt'];
+const DUP_STOP = new Set(['png','svg','printable','print','prints','poster','art','design','designs','decor','tumbler','wrap','shirt','tee','the','a','an','and','of','for','with','in','on','to','my','your','our','is','it','i','me','you','set','bundle','digital','download',
+  'vintage','retro','whimsical','cute','funny','boho','minimalist','modern','aesthetic','trendy','watercolor','hand','drawn','style','inspired','unique','cool']);
+function nicheCoreTokens(name) {
+  let n = ' ' + String(name || '').toLowerCase() + ' ';
+  DUP_TYPE_PHRASES.forEach(ph => { n = n.split(ph).join(' '); });
+  const out = [];
+  n.split(/[^a-z0-9]+/).filter(Boolean).forEach(w => {
+    if (DUP_STOP.has(w)) return;
+    if (w.length > 3 && /s$/.test(w) && !/ss$/.test(w)) w = w.slice(0, -1);
+    if (!out.includes(w)) out.push(w);
+  });
+  return out;
+}
+function findSimilarNiches(name, excludeDate) {
+  const weeks = loadDirectoryWeeks();
+  if (!weeks) return null;
+  const mine = nicheCoreTokens(name);
+  if (!mine.length) return [];
+  const ex = (excludeDate || '').toLowerCase().trim();
+  const hits = [];
+  weeks.forEach(w => {
+    if (ex && (w.date || '').toLowerCase().trim() === ex) return;
+    (w.niches || []).forEach(n => {
+      const theirs = nicheCoreTokens(n.name);
+      if (!theirs.length) return;
+      const shared = mine.filter(t => theirs.includes(t)).length;
+      if (!shared) return;
+      const exact = shared === mine.length && shared === theirs.length;
+      const ratio = shared / Math.min(mine.length, theirs.length);
+      if (exact || (ratio >= 0.6 && (shared >= 2 || Math.min(mine.length, theirs.length) === 1))) {
+        hits.push({ name: n.name, type: n.type, date: w.date, exact, score: exact ? 2 : ratio });
+      }
+    });
+  });
+  hits.sort((a, b) => b.score - a.score);
+  return hits;
+}
+const _dupTimers = {};
+function refreshDupWarning(niche) {
+  clearTimeout(_dupTimers[niche.num]);
+  _dupTimers[niche.num] = setTimeout(() => {
+    const els = (niche._dupEls || []).filter(el => el.isConnected);
+    niche._dupEls = els;
+    if (!els.length) return;
+    let html = '';
+    if (!isPlaceholderNicheName(niche)) {
+      const hits = findSimilarNiches(niche.name, dirDateFromIso(weekDateInput.value));
+      if (hits && hits.length) {
+        const shown = hits.slice(0, 4).map(h =>
+          '<div style="display:flex;justify-content:space-between;gap:10px;padding:3px 0;">' +
+            '<span><b style="color:' + (h.exact ? 'var(--warn)' : 'var(--mid-text)') + ';">' + (h.exact ? 'Same' : 'Similar') + ':</b> ' + esc(h.name) + '</span>' +
+            '<span style="white-space:nowrap;color:#9a877f;">' + esc(h.type || '') + ' · ' + esc(h.date || '') + '</span></div>').join('');
+        const more = hits.length > 4 ? '<div style="color:#9a877f;">+ ' + (hits.length - 4) + ' more, search the directory to see them all</div>' : '';
+        html = '<div style="font-weight:700;color:var(--warn);margin-bottom:3px;">⚠ Already in your directory</div>' + shown + more;
+      }
+    }
+    els.forEach(el => { el.innerHTML = html; el.style.display = html ? 'block' : 'none'; });
+  }, 250);
+}
+function makeDupEl(niche) {
+  const el = document.createElement('div');
+  el.style.cssText = 'display:none; margin:6px 0 2px; padding:8px 12px; background:#fdf1ee; border:1px solid #efc9c0; border-left:4px solid var(--warn); border-radius:10px; font-size:12.5px; line-height:1.5;';
+  niche._dupEls = (niche._dupEls || []).filter(e => e.isConnected).concat(el);
+  return el;
+}
+const PRODUCT_TO_DIR_TYPE = { 'Wall Art': 'Printable Wall Art', 'PNG / Shirt Design': 'PNG', 'Frame TV Art': 'Frame TV Art', 'Tumbler Wrap': 'Tumbler Wrap' };
+function guessDirType(niche) {
+  if (PRODUCT_TO_DIR_TYPE[niche.type]) return PRODUCT_TO_DIR_TYPE[niche.type];
+  const n = (niche.name || '').toLowerCase();
+  if (n.includes('tumbler wrap png')) return 'Tumbler Wrap PNG';
+  if (n.includes('tumbler')) return 'Tumbler Wrap';
+  if (n.includes('frame tv')) return 'Frame TV Art';
+  if (n.includes('wall art')) return 'Printable Wall Art';
+  if (n.includes('invitation') || n.includes('invite')) return 'Invitation';
+  if (n.includes('checklist')) return 'Checklist';
+  if (n.includes('planner')) return 'Planner';
+  if (n.includes('journal')) return 'Journal';
+  if (n.includes('template')) return 'Template';
+  if (n.includes('png')) return 'PNG';
+  if (n.includes('printable') || n.includes('coloring')) return 'Printable';
+  return 'Other';
+}
+
 function updateNicheSectionTitle(niche) {
+  refreshDupWarning(niche);
   const t = document.getElementById('title-' + niche.num);
   if (t) t.textContent = niche.name || '(untitled)';
   const badge = document.getElementById('donebadge-' + niche.num);
@@ -1014,6 +1125,8 @@ function buildBasicsSubcard(niche) {
     if (niche._topNameInputEl) niche._topNameInputEl.value = niche.name;
   });
   sc.appendChild(kwInput);
+  sc.appendChild(makeDupEl(niche));
+  refreshDupWarning(niche);
   niche._keywordInputEl = kwInput;
 
   function field(labelText, key, placeholder, type) {
@@ -2533,6 +2646,61 @@ function moveNicheDataTo(sourceNiche, targetNiche) {
   bbStatus(`Moved ${sourceLabel}'s work into ${targetLabel}`, 3000);
 }
 
+(function initSendToDirectory() {
+  const linkInput = document.getElementById('dirDropLinkInput');
+  const statusEl = document.getElementById('sendDirStatus');
+  try { linkInput.value = localStorage.getItem('nicheclub_dir_drop_link') || ''; } catch (e) {}
+  linkInput.addEventListener('input', () => { try { localStorage.setItem('nicheclub_dir_drop_link', linkInput.value.trim()); } catch (e) {} });
+  function say(html, bad) { statusEl.innerHTML = html; statusEl.style.color = bad ? 'var(--warn)' : '#3d7a4f'; }
+  function refreshDirNote() {
+    const weeks = loadDirectoryWeeks();
+    if (!weeks) { statusEl.style.color = '#9a877f'; statusEl.textContent = 'No directory found in this browser yet. Open the hub\'s Niche Directory tab once (same site), then come back.'; return; }
+    const date = dirDateFromIso(weekDateInput.value);
+    const exists = date && weeks.some(w => (w.date || '').toLowerCase().trim() === date.toLowerCase());
+    statusEl.style.color = '#9a877f';
+    statusEl.textContent = exists ? date + ' is already in your directory. Sending again updates it.' : 'Directory connected: ' + weeks.length + ' weeks saved.';
+  }
+  window._refreshDirNote = refreshDirNote;
+  weekDateInput.addEventListener('input', refreshDirNote);
+  setTimeout(refreshDirNote, 600);
+
+  document.getElementById('sendToDirBtn').addEventListener('click', async () => {
+    const date = dirDateFromIso(weekDateInput.value);
+    if (!date) { say('Set the Week Date at the top first.', true); weekDateInput.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    const weeks = loadDirectoryWeeks();
+    if (!weeks) { say('No directory found in this browser. Open the hub\'s Niche Directory tab once on this same site, then try again. (This keeps your existing niches safe.)', true); return; }
+    const seen = new Set();
+    const niches = [];
+    nicheOrder.forEach(n => {
+      if (n.isBonus && !n.bonusOn) return;
+      if (isPlaceholderNicheName(n)) return;
+      const name = n.name.trim();
+      const key = name.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      niches.push({ name, type: guessDirType(n) });
+    });
+    if (!niches.length) { say('Name your niches first, there\'s nothing to send yet.', true); return; }
+    let link = linkInput.value.trim();
+    const idx = weeks.findIndex(w => (w.date || '').toLowerCase().trim() === date.toLowerCase());
+    if (idx > -1) {
+      const ok = await customConfirm(date + ' is already in your directory (' + weeks[idx].niches.length + ' niches). Update it with what\'s in the Creator now?');
+      if (!ok) return;
+      if (!link) link = weeks[idx].link || '';
+      weeks[idx] = { date, link, niches, live: weeks[idx].live !== false };
+    } else {
+      const newTime = new Date(date).getTime();
+      let at = weeks.findIndex(w => { const t = new Date(w.date).getTime(); return !isNaN(t) && t < newTime; });
+      if (at === -1) at = weeks.length;
+      weeks.splice(at, 0, { date, link, niches, live: true });
+    }
+    try { localStorage.setItem(DIR_STORE_KEY, JSON.stringify(weeks)); }
+    catch (e) { say('Your browser blocked saving. Open the Creator from your GitHub link, not a downloaded file.', true); return; }
+    try { if (window.parent && window.parent !== window && typeof window.parent.dirRenderWeeksList === 'function') window.parent.dirRenderWeeksList(); } catch (e) {}
+    say('✓ ' + (idx > -1 ? 'Updated ' : 'Added ') + date + ' in your directory (' + niches.length + ' niches' + (link ? '' : ', no drop link yet, send again once you have it') + '). When you\'re ready to publish, open the hub\'s Niche Directory tab and Generate &amp; Copy HTML.');
+  });
+})();
+
 document.getElementById('copyAllNichesBtn').addEventListener('click', (e) => {
   const seen = new Set();
   const names = [];
@@ -2624,6 +2792,7 @@ document.getElementById('clearAllNichesBtn').addEventListener('click', async () 
     await storageAPI.set('nicheOrder', JSON.stringify(nicheOrder.map(n => ({ num:n.num, name:n.name, type:n.type, isBonus:n.isBonus, bonusOn:n.bonusOn, complete:n.complete }))));
     for (const n of nicheOrder) await storageAPI.set('nichestate:' + n.num, JSON.stringify(n.state));
   } catch (e) {}
+  try { localStorage.removeItem('nicheclub_dir_drop_link'); document.getElementById('dirDropLinkInput').value = ''; if (window._refreshDirNote) window._refreshDirNote(); } catch (e) {}
   bbStatus('Whole week cleared, saved as Last Week', 3000);
   refreshLastWeekUI();
 });
