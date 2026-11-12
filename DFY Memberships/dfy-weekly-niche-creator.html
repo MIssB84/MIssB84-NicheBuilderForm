@@ -166,6 +166,23 @@
     <a href="#" id="apiKeyRevealLinkA" style="color:#9a877f; text-decoration:underline;">API Key settings</a>
   </div>
 
+  <div class="card" id="imgbbCard">
+    <h2><span class="step-tag">Image Uploads</span></h2>
+    <div class="hint">One-time setup so you can drag mockups straight into the Generator Result Images slots. Get a free key at <a href="https://api.imgbb.com/" target="_blank" rel="noopener" style="color:var(--rose);">api.imgbb.com</a> (sign in, then "Get API key"). Stored only in this browser.</div>
+    <div id="imgbbInputWrap" style="display:none; margin-top:8px;">
+      <div class="add-row">
+        <input type="password" id="imgbbKeyInput" placeholder="Paste your ImgBB API key">
+        <button class="btn small" id="saveImgbbKeyBtn">Save Key</button>
+      </div>
+    </div>
+    <div id="imgbbSavedMsg" style="display:none; margin-top:8px; font-size:12.5px;">
+      ImgBB key saved, drag and drop is on. <button class="btn secondary" id="changeImgbbKeyBtn" style="margin-left:6px;">Change key</button>
+    </div>
+  </div>
+  <div id="imgbbRevealLink" style="display:none; text-align:right; margin:-14px 4px 18px; font-size:11px;">
+    <a href="#" id="imgbbRevealLinkA" style="color:#9a877f; text-decoration:underline;">Image upload settings</a>
+  </div>
+
   <div class="card">
     <h2><span class="step-tag">This Week</span> Niche List</h2>
     <div class="hint">Edit any niche name, product type auto stays fixed per slot. Jump links scroll straight to that niche's full section below.</div>
@@ -560,6 +577,73 @@ document.getElementById('changeApiKeyBtn').addEventListener('click', () => {
   checkApiKeyUI();
 });
 checkApiKeyUI();
+
+/* ================= IMGBB IMAGE UPLOADS ================= */
+function getImgbbKey() { try { return localStorage.getItem('nicheclub_imgbb_key') || ''; } catch (e) { return ''; } }
+function checkImgbbUI() {
+  const key = getImgbbKey();
+  document.getElementById('imgbbInputWrap').style.display = key ? 'none' : 'block';
+  document.getElementById('imgbbSavedMsg').style.display = key ? 'block' : 'none';
+  document.getElementById('imgbbCard').style.display = key ? 'none' : 'block';
+  document.getElementById('imgbbRevealLink').style.display = key ? 'block' : 'none';
+}
+document.getElementById('imgbbRevealLinkA').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('imgbbCard').style.display = 'block';
+  document.getElementById('imgbbRevealLink').style.display = 'none';
+});
+document.getElementById('saveImgbbKeyBtn').addEventListener('click', () => {
+  const val = document.getElementById('imgbbKeyInput').value.trim();
+  if (!val) return;
+  try { localStorage.setItem('nicheclub_imgbb_key', val); } catch (e) {}
+  document.getElementById('imgbbKeyInput').value = '';
+  checkImgbbUI();
+  try { renderAllNicheSections(); } catch (e) {}
+});
+document.getElementById('changeImgbbKeyBtn').addEventListener('click', () => {
+  try { localStorage.removeItem('nicheclub_imgbb_key'); } catch (e) {}
+  checkImgbbUI();
+});
+checkImgbbUI();
+
+// Shrinks big Canva exports so the members' page loads fast. Returns base64 JPEG (no prefix).
+function shrinkImageFile(file, maxSide, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read that file'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('That file is not an image'));
+      img.onload = () => {
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', quality).split(',')[1]);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function uploadToImgbb(file, name) {
+  const key = getImgbbKey();
+  if (!key) throw new Error('Add your ImgBB key in Image upload settings first');
+  const b64 = await shrinkImageFile(file, 1600, 0.88);
+  const fd = new FormData();
+  fd.append('image', b64);
+  if (name) fd.append('name', name);
+  const res = await fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(key), { method: 'POST', body: fd });
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok || !data || !data.success) {
+    const msg = data && data.error && data.error.message ? data.error.message : ('Upload failed (' + res.status + ')');
+    throw new Error(/key/i.test(msg) ? 'ImgBB says the key is invalid, check it in Image upload settings' : msg);
+  }
+  return data.data.url;
+}
 
 /* ================= WEEK DATE ================= */
 const weekDateInput = document.getElementById('weekDateInput');
@@ -2056,10 +2140,136 @@ function buildPromptsSubcard(niche) {
 }
 
 /* ================= GENERATOR IMAGES SUBCARD ================= */
+// Words in a file name that point to each generator. Canva is checked last so "Canva" in a
+// file name doesn't steal images meant for another generator.
+const GEN_FILE_KEYWORDS = {
+  recraft: ['recraft'], ideogram: ['ideogram'], midj: ['midjourney', 'midj', 'mj'], kittl: ['kittl'],
+  nano: ['nanobanana', 'nano', 'banana'], flux: ['flux'], gpt2: ['gptimage', 'chatgpt', 'gpt', 'openai'],
+  canva: ['dreamlab', 'canva']
+};
+function matchGenToolForFile(fileName) {
+  const base = String(fileName || '').split('/').pop().replace(/\.[a-z0-9]+$/i, '').toLowerCase();
+  const squashed = base.replace(/[^a-z0-9]/g, '');
+  const tokens = base.split(/[^a-z0-9]+/).filter(Boolean);
+  const order = ['recraft', 'ideogram', 'midj', 'kittl', 'nano', 'flux', 'gpt2', 'canva'];
+  for (const id of order) {
+    for (const kw of GEN_FILE_KEYWORDS[id]) {
+      if (kw.length <= 3 ? tokens.includes(kw) : squashed.includes(kw)) return id;
+    }
+  }
+  return null;
+}
+let _jszipPromise = null;
+function loadJSZip() {
+  if (window.JSZip) return Promise.resolve(window.JSZip);
+  if (!_jszipPromise) {
+    _jszipPromise = new Promise((resolve, reject) => {
+      const el = document.createElement('script');
+      el.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      el.onload = () => resolve(window.JSZip);
+      el.onerror = () => { _jszipPromise = null; reject(new Error('Could not open the zip, unzip it and drop the images instead')); };
+      document.head.appendChild(el);
+    });
+  }
+  return _jszipPromise;
+}
+// Turns dropped files (images or Canva zips) into a flat list of image Files
+async function expandDroppedFiles(fileList) {
+  const out = [];
+  for (const f of Array.from(fileList || [])) {
+    if (/\.zip$/i.test(f.name) || f.type === 'application/zip' || f.type === 'application/x-zip-compressed') {
+      const JSZip = await loadJSZip();
+      const zip = await JSZip.loadAsync(f);
+      const entries = Object.values(zip.files).filter(e => !e.dir && /\.(png|jpe?g|webp)$/i.test(e.name) && !/__MACOSX/.test(e.name));
+      for (const e of entries) {
+        const blob = await e.async('blob');
+        const ext = e.name.split('.').pop().toLowerCase();
+        out.push(new File([blob], e.name.split('/').pop(), { type: ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg' }));
+      }
+    } else if (/^image\//.test(f.type)) {
+      out.push(f);
+    }
+  }
+  return out;
+}
+
 function buildGenImagesSubcard(niche) {
   const sc = document.createElement('div');
   sc.className = 'subcard';
-  sc.innerHTML = '<h3>Generator Result Images</h3><div class="hint">Upload each image to your Systeme.io media library (or wherever you host), then paste that URL below. The thumbnail shows automatically.</div>';
+  sc.innerHTML = '<h3>Generator Result Images</h3><div class="hint">Drop all your Canva mockups in the big box and each one goes to the generator its file name matches (like Ideogram.png). Or drop one at a time on its own slot. You can still paste a link by hand.</div>';
+  // Bulk drop: all mockups at once, matched by file name
+  const bulk = document.createElement('div');
+  bulk.tabIndex = 0;
+  bulk.style.cssText = 'margin:4px 0 14px; padding:22px 14px; border:2px dashed var(--rose); border-radius:12px; text-align:center; font-size:13px; font-weight:600; color:var(--mid-text, #5a4a45); cursor:pointer; background:#fdf2ee; outline:none;';
+  const bulkIdle = () => getImgbbKey()
+    ? '⬆ Drop ALL your Canva mockups here at once (or the Canva zip). Each one goes to the generator its file name matches.'
+    : 'Add your ImgBB key in Image upload settings (top of page) to turn on drag and drop';
+  bulk.textContent = bulkIdle();
+  const bulkInput = document.createElement('input'); bulkInput.type = 'file'; bulkInput.multiple = true; bulkInput.accept = 'image/*,.zip'; bulkInput.style.display = 'none';
+  const bulkReport = document.createElement('div'); bulkReport.style.cssText = 'font-size:12.5px; margin:-6px 0 14px; line-height:1.6; display:none;';
+  sc.appendChild(bulk); sc.appendChild(bulkInput); sc.appendChild(bulkReport);
+  let bulkBusy = false;
+  async function handleBulk(fileList) {
+    if (bulkBusy) return;
+    if (!getImgbbKey()) { bulkReport.style.display = 'block'; bulkReport.style.color = 'var(--warn)'; bulkReport.textContent = 'Add your ImgBB key in Image upload settings first.'; return; }
+    bulkBusy = true;
+    bulkReport.style.display = 'none';
+    bulk.textContent = 'Reading files...';
+    let files = [];
+    try { files = await expandDroppedFiles(fileList); }
+    catch (e) { bulkReport.style.display = 'block'; bulkReport.style.color = 'var(--warn)'; bulkReport.textContent = e.message; bulk.textContent = bulkIdle(); bulkBusy = false; return; }
+
+    const jobs = [], unmatched = [], dupes = [];
+    const taken = new Set();
+    files.forEach(f => {
+      const id = matchGenToolForFile(f.name);
+      if (!id) { unmatched.push(f.name); return; }
+      if (taken.has(id)) { dupes.push(f.name); return; }
+      taken.add(id); jobs.push({ id, file: f });
+    });
+    let done = 0;
+    const ok = [], failed = [];
+    bulk.textContent = 'Uploading 0 of ' + jobs.length + '...';
+    const queue = jobs.slice();
+    async function worker() {
+      while (queue.length) {
+        const job = queue.shift();
+        const tool = GEN_TOOLS.find(t => t.id === job.id);
+        try {
+          const label = (niche.isBonus ? 'bonus' : 'niche' + niche.num) + '-' + job.id;
+          const url = await uploadToImgbb(job.file, label);
+          niche.state.genImages[job.id] = { url };
+          ok.push(tool.name);
+        } catch (e) {
+          failed.push(tool.name + ' (' + (e.message || 'failed') + ')');
+        }
+        done++;
+        bulk.textContent = 'Uploading ' + done + ' of ' + jobs.length + '...';
+      }
+    }
+    await Promise.all([worker(), worker(), worker()]);
+    autosaveNicheState(niche.num);
+    render();
+
+    const lines = [];
+    if (ok.length) lines.push('<span style="color:#3d7a4f;">✓ Uploaded ' + ok.length + ': ' + ok.map(esc).join(', ') + '</span>');
+    if (failed.length) lines.push('<span style="color:var(--warn);">✕ Failed: ' + failed.map(esc).join(', ') + '</span>');
+    if (unmatched.length) lines.push('<span style="color:var(--warn);">? No generator name in: ' + unmatched.map(esc).join(', ') + ' (drop these on the right slot below)</span>');
+    if (dupes.length) lines.push('<span style="color:var(--warn);">Skipped extra copies: ' + dupes.map(esc).join(', ') + '</span>');
+    if (!files.length) lines.push('<span style="color:var(--warn);">No images found in what you dropped.</span>');
+    const missing = GEN_TOOLS.filter(t => !(niche.state.genImages[t.id] && niche.state.genImages[t.id].url)).map(t => t.name);
+    if (missing.length && files.length) lines.push('<span style="color:#9a877f;">Still empty: ' + missing.map(esc).join(', ') + '</span>');
+    bulkReport.innerHTML = lines.join('<br>');
+    bulkReport.style.display = 'block';
+    bulk.textContent = bulkIdle();
+    bulkBusy = false;
+  }
+  bulk.addEventListener('click', () => { if (getImgbbKey()) bulkInput.click(); else handleBulk([]); });
+  bulkInput.addEventListener('change', () => { handleBulk(bulkInput.files); bulkInput.value = ''; });
+  bulk.addEventListener('dragover', (e) => { e.preventDefault(); bulk.style.background = '#fae3dc'; });
+  bulk.addEventListener('dragleave', () => { bulk.style.background = '#fdf2ee'; });
+  bulk.addEventListener('drop', (e) => { e.preventDefault(); bulk.style.background = '#fdf2ee'; handleBulk(e.dataTransfer.files); });
+
   const container = document.createElement('div'); sc.appendChild(container);
 
   function render() {
@@ -2087,6 +2297,63 @@ function buildGenImagesSubcard(niche) {
       thumb.title = 'Click to view larger';
       thumb.addEventListener('click', () => openImgLightbox(thumb.src));
       slot.appendChild(thumb);
+
+      // Drag and drop / click / paste upload
+      const drop = document.createElement('div');
+      drop.tabIndex = 0;
+      drop.className = 'gen-drop';
+      drop.style.cssText = 'margin-top:8px; padding:14px; border:2px dashed var(--border); border-radius:10px; text-align:center; font-size:12.5px; color:#9a877f; cursor:pointer; background:#fff; outline:none; transition:border-color .15s, background .15s;';
+      const dropIdle = () => getImgbbKey()
+        ? (urlInput.value.trim() ? '⬆ Drop a new image here to replace' : '⬆ Drop image here, click to choose, or click and press Cmd+V')
+        : 'Add your ImgBB key in Image upload settings (top of page) to turn on drag and drop';
+      drop.textContent = dropIdle();
+      const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
+      slot.insertBefore(drop, errMsg); slot.appendChild(fileInput);
+      let busy = false;
+      async function handleFile(file) {
+        if (!file || busy) return;
+        if (!/^image\//.test(file.type)) { setErr(errMsg, 'That file is not an image'); return; }
+        busy = true;
+        drop.textContent = 'Uploading...'; drop.style.borderColor = 'var(--rose)';
+        setErr(errMsg, '');
+        try {
+          const label = (niche.isBonus ? 'bonus' : 'niche' + niche.num) + '-' + tool.id;
+          const url = await uploadToImgbb(file, label);
+          urlInput.value = url;
+          niche.state.genImages[tool.id] = { url };
+          refreshThumb();
+          autosaveNicheState(niche.num);
+          drop.textContent = '✓ Uploaded';
+          setTimeout(() => { drop.textContent = dropIdle(); }, 1800);
+        } catch (e) {
+          setErr(errMsg, e.message || 'Upload failed, try again');
+          drop.textContent = dropIdle();
+        }
+        drop.style.borderColor = ''; drop.style.background = '#fff';
+        busy = false;
+      }
+      drop.addEventListener('click', () => { if (getImgbbKey()) fileInput.click(); });
+      fileInput.addEventListener('change', () => { handleFile(fileInput.files[0]); fileInput.value = ''; });
+      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.style.borderColor = 'var(--rose)'; drop.style.background = '#fdf2ee'; });
+      drop.addEventListener('dragleave', () => { drop.style.borderColor = ''; drop.style.background = '#fff'; });
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.style.borderColor = ''; drop.style.background = '#fff';
+        if (!getImgbbKey()) { setErr(errMsg, 'Add your ImgBB key in Image upload settings first'); return; }
+        handleFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+      });
+      drop.addEventListener('paste', (e) => {
+        const items = (e.clipboardData && e.clipboardData.items) || [];
+        for (const it of items) {
+          if (it.kind === 'file' && /^image\//.test(it.type)) {
+            e.preventDefault();
+            if (!getImgbbKey()) { setErr(errMsg, 'Add your ImgBB key in Image upload settings first'); return; }
+            handleFile(it.getAsFile()); return;
+          }
+        }
+      });
+      drop.addEventListener('focus', () => { drop.style.borderColor = 'var(--rose)'; });
+      drop.addEventListener('blur', () => { if (!busy) drop.style.borderColor = ''; });
 
       function refreshThumb() {
         const url = urlInput.value.trim();
