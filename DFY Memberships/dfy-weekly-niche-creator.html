@@ -206,18 +206,18 @@
   <div id="nicheSectionsContainer"></div>
 
   <div class="card">
-    <div id="sendDirBlock" style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:14px;">
+    <button class="btn secondary" id="copyAllNichesBtn" style="width:100%; text-align:center; justify-content:center; margin-bottom:12px;">📋 Copy All Niches (for Directory)</button>
+    <button class="btn" id="generateAllBtn" style="width:100%; text-align:center; justify-content:center;">Generate Complete Weekly HTML</button>
+    <div class="error" id="generateAllErr" style="text-align:center; margin-top:8px;"></div>
+    <div id="sendDirBlock" style="background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-top:14px;">
       <label class="first" style="margin-top:0;">Send This Week to Your Niche Directory</label>
       <div class="hint">Adds this week's niche names and product types straight into the hub's directory, no bulk paste. Sending again later updates the same week, so you can add the drop link whenever it's ready.</div>
       <div class="add-row">
-        <input type="url" id="dirDropLinkInput" placeholder="Weekly Drop Link (https://www.thrivewithdania.com/...)">
+        <input type="text" id="dirDropLinkInput" placeholder="Weekly Drop Link (https://www.thrivewithdania.com/...)">
         <button class="btn" id="sendToDirBtn">📤 Send to Directory</button>
       </div>
       <div id="sendDirStatus" style="font-size:12.5px; margin-top:8px; line-height:1.5;"></div>
     </div>
-    <button class="btn secondary" id="copyAllNichesBtn" style="width:100%; text-align:center; justify-content:center; margin-bottom:12px;">📋 Copy All Niches (for Directory)</button>
-    <button class="btn" id="generateAllBtn" style="width:100%; text-align:center; justify-content:center;">Generate Complete Weekly HTML</button>
-    <div class="error" id="generateAllErr" style="text-align:center; margin-top:8px;"></div>
     <div class="out-block" id="outBlock">
       <div class="add-row" style="margin-top:14px;">
         <button class="btn" id="copyAllHtmlBtn" style="background:var(--rose); color:#fff; font-size:14px; padding:12px 28px;">📋 Copy HTML</button>
