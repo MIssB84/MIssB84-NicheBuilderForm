@@ -121,6 +121,15 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 .img-url-input.url-filled { background:#eeeaf2 !important; color:#6b6575; border-color:#d7d1df; cursor:default; }
 .img-url-input.url-duplicate { border-color:#b84b62 !important; box-shadow:0 0 0 2px rgba(184,75,98,.10); }
 .img-url-count { display:inline-flex; align-items:center; margin-left:8px; padding:4px 9px; border-radius:999px; background:#eeeaf2; color:#625a70; font-size:11px; font-weight:700; }
+.img-drop-all { margin:4px 0 12px; padding:20px 14px; border:2px dashed #8f79b8; border-radius:12px; text-align:center; font-size:13px; font-weight:600; color:#4c4657; cursor:pointer; background:#f6f3fa; outline:none; transition:background .15s; }
+.img-drop-all.over { background:#ece5f6; }
+.img-drop-report { font-size:12.5px; line-height:1.6; margin:-4px 0 12px; display:none; }
+.img-batch-row.drop-over { background:#f3eff9; border-radius:8px; }
+.img-batch-row.uploading .img-url-input { opacity:.6; }
+.upload-btn { font-family:'Jost',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap; background:#f6f3fa; border:1.5px solid #d9d4e4; color:#4c4657; border-radius:8px; padding:4px 12px; cursor:pointer; }
+.upload-btn:hover { border-color:#8f79b8; color:#8f79b8; }
+.imgbb-setup { background:#fff; border:1px solid #d9d4e4; border-radius:10px; padding:12px 14px; margin:0 0 12px; font-size:12.5px; color:#4c4657; }
+.imgbb-setup .img-row input { flex:1; }
 .paste-btn.clear-url-btn { background:#f3eff5; color:#625a70; border-color:#d7d1df; }
 .dna-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .idea-card { background: #f8f7fb; border: 1.5px solid #d9d4e4; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 8px; }
@@ -488,77 +497,84 @@ textarea.field-input { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <div class="card" id="example-images-card">
   <p class="card-title">Example Images (Batch)</p>
-  <p class="card-sub">Once all 12 prompts are generated: run them through your generator, mock them up in Canva, upload to Systeme.io, then paste all 12 URLs here in one pass. <span class="img-url-count" id="img-url-count">12 left</span></p>
-  <div style="margin:-6px 0 10px;"><button class="btn-clear-light" type="button" onclick="clearAllImageUrls()">🗑 Clear All URLs</button></div>
+  <p class="card-sub">Once all 12 prompts are generated: run them through your generator and mock them up in Canva, then drop all 12 mockups (or the Canva zip) in the box below. Each one lands in its row by file name. You can also drop one image on any row, use its Upload button, or paste a link by hand. <span class="img-url-count" id="img-url-count">12 left</span></p>
+  <div class="imgbb-setup" id="imgbb-setup" style="display:none;">
+    <strong>One-time setup:</strong> paste your free ImgBB key to turn on uploads. Get it at <a href="https://api.imgbb.com/" target="_blank" rel="noopener" style="color:#8f79b8;">api.imgbb.com</a> (sign in, then "Get API key"). If you already saved it in the Niche Creator on the same site, it shows up here automatically.
+    <div class="img-row"><input class="field-input" type="password" id="imgbb-key-input" placeholder="Paste your ImgBB API key"><button class="paste-btn" type="button" onclick="saveImgbbKey()">Save Key</button></div>
+  </div>
+  <div class="img-drop-all" id="img-drop-all" tabindex="0"></div>
+  <input type="file" id="img-drop-all-input" multiple accept="image/*,.zip" style="display:none;">
+  <div class="img-drop-report" id="img-drop-report"></div>
+  <div style="margin:-6px 0 10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;"><button class="btn-clear-light" type="button" onclick="clearAllImageUrls()">🗑 Clear All URLs</button><a href="#" id="imgbb-change-link" onclick="changeImgbbKey(event)" style="display:none; font-size:11px; color:#8f79b8;">Change ImgBB key</a></div>
     <div class="img-batch-row">
       <span class="img-batch-label">1 - Wall Art — Prompt 1</span>
-      <input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="wa-1-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('wa-1-img', this)">📋 Paste</button>
       <img class="img-thumb" id="wa-1-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">1 - Wall Art — Prompt 2</span>
-      <input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="wa-2-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('wa-2-img', this)">📋 Paste</button>
       <img class="img-thumb" id="wa-2-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">1 - Wall Art — Prompt 3</span>
-      <input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="wa-3-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('wa-3-img', this)">📋 Paste</button>
       <img class="img-thumb" id="wa-3-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">2 - Frame TV Art — Prompt 1</span>
-      <input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="ft-1-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('ft-1-img', this)">📋 Paste</button>
       <img class="img-thumb" id="ft-1-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">2 - Frame TV Art — Prompt 2</span>
-      <input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="ft-2-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('ft-2-img', this)">📋 Paste</button>
       <img class="img-thumb" id="ft-2-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">2 - Frame TV Art — Prompt 3</span>
-      <input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="ft-3-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('ft-3-img', this)">📋 Paste</button>
       <img class="img-thumb" id="ft-3-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">3 - PNG — Prompt 1</span>
-      <input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="png-1-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('png-1-img', this)">📋 Paste</button>
       <img class="img-thumb" id="png-1-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">3 - PNG — Prompt 2</span>
-      <input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="png-2-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('png-2-img', this)">📋 Paste</button>
       <img class="img-thumb" id="png-2-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">3 - PNG — Prompt 3</span>
-      <input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="png-3-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('png-3-img', this)">📋 Paste</button>
       <img class="img-thumb" id="png-3-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">4 - Tumbler — Prompt 1</span>
-      <input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="tb-1-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('tb-1-img', this)">📋 Paste</button>
       <img class="img-thumb" id="tb-1-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">4 - Tumbler — Prompt 2</span>
-      <input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="tb-2-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('tb-2-img', this)">📋 Paste</button>
       <img class="img-thumb" id="tb-2-img-thumb" style="display:none;">
     </div>
     <div class="img-batch-row">
       <span class="img-batch-label">4 - Tumbler — Prompt 3</span>
-      <input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Paste mockup URL from Systeme.io">
+      <input class="field-input img-url-input" type="url" id="tb-3-img" placeholder="Drop image, Upload, or paste a link">
       <button class="paste-btn" type="button" onclick="pasteInto('tb-3-img', this)">📋 Paste</button>
       <img class="img-thumb" id="tb-3-img-thumb" style="display:none;">
     </div>
@@ -2284,6 +2300,7 @@ loadData();
 forceResetLibraryOnce();
 updateAllProgress();
 attachImgThumbListeners();
+attachImageDropTargets();
 refreshAllImgThumbs();
 renderRefLibrary('png');
 renderRefLibrary('tumbler');
@@ -2291,6 +2308,208 @@ renderAllRefButtonRows();
 renderThemeIdeas(true);
 loadCopiedPrompts();
 applyAllCopiedClasses();
+
+/* ============ IMGBB UPLOADS (shares the key with the Niche Creator) ============ */
+function getImgbbKey() { try { return localStorage.getItem('nicheclub_imgbb_key') || ''; } catch (e) { return ''; } }
+function saveImgbbKey() {
+  var el = document.getElementById('imgbb-key-input');
+  var v = el.value.trim(); if (!v) return;
+  try { localStorage.setItem('nicheclub_imgbb_key', v); } catch (e) {}
+  el.value = ''; refreshImgbbUI(); showToast('ImgBB key saved');
+}
+function changeImgbbKey(e) {
+  if (e) e.preventDefault();
+  try { localStorage.removeItem('nicheclub_imgbb_key'); } catch (err) {}
+  refreshImgbbUI();
+}
+function refreshImgbbUI() {
+  var has = !!getImgbbKey();
+  document.getElementById('imgbb-setup').style.display = has ? 'none' : 'block';
+  document.getElementById('imgbb-change-link').style.display = has ? 'inline' : 'none';
+  document.getElementById('img-drop-all').textContent = has
+    ? '⬆ Drop ALL 12 mockups here at once (or the Canva zip). Each one goes to its row by file name.'
+    : 'Save your ImgBB key above to turn on drag and drop';
+}
+function shrinkImageFile(file, maxSide, quality) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onerror = function(){ reject(new Error('Could not read that file')); };
+    reader.onload = function() {
+      var img = new Image();
+      img.onerror = function(){ reject(new Error('That file is not an image')); };
+      img.onload = function() {
+        var scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        var ctx = c.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', quality).split(',')[1]);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function uploadToImgbb(file, name) {
+  var key = getImgbbKey();
+  if (!key) throw new Error('Save your ImgBB key first');
+  var b64 = await shrinkImageFile(file, 1600, 0.88);
+  var fd = new FormData(); fd.append('image', b64); if (name) fd.append('name', name);
+  var res = await fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(key), { method: 'POST', body: fd });
+  var data = null; try { data = await res.json(); } catch (e) {}
+  if (!res.ok || !data || !data.success) {
+    var msg = data && data.error && data.error.message ? data.error.message : ('Upload failed (' + res.status + ')');
+    throw new Error(/key/i.test(msg) ? 'ImgBB says the key is invalid, use Change ImgBB key' : msg);
+  }
+  return data.data.url;
+}
+var _jszipPromise = null;
+function loadJSZip() {
+  if (window.JSZip) return Promise.resolve(window.JSZip);
+  if (!_jszipPromise) {
+    _jszipPromise = new Promise(function(resolve, reject) {
+      var el = document.createElement('script');
+      el.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      el.onload = function(){ resolve(window.JSZip); };
+      el.onerror = function(){ _jszipPromise = null; reject(new Error('Could not open the zip, unzip it and drop the images instead')); };
+      document.head.appendChild(el);
+    });
+  }
+  return _jszipPromise;
+}
+async function expandDroppedFiles(fileList) {
+  var out = [];
+  var arr = Array.prototype.slice.call(fileList || []);
+  for (var i = 0; i < arr.length; i++) {
+    var f = arr[i];
+    if (/\.zip$/i.test(f.name) || /zip/.test(f.type)) {
+      var JSZip = await loadJSZip();
+      var zip = await JSZip.loadAsync(f);
+      var entries = Object.keys(zip.files).map(function(k){ return zip.files[k]; })
+        .filter(function(e){ return !e.dir && /\.(png|jpe?g|webp)$/i.test(e.name) && !/__MACOSX/.test(e.name); });
+      for (var j = 0; j < entries.length; j++) {
+        var blob = await entries[j].async('blob');
+        var ext = entries[j].name.split('.').pop().toLowerCase();
+        out.push(new File([blob], entries[j].name.split('/').pop(), { type: ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg' }));
+      }
+    } else if (/^image\//.test(f.type)) out.push(f);
+  }
+  return out;
+}
+
+// File name -> row id. Works with "Wall Art 1", "Frame TV 2", "PNG 3", "Tumbler 1" (any spacing/case),
+// or plain numbers 1-12 in row order (how Canva names pages when you download a multi-page design).
+function matchImageRowForFile(fileName) {
+  var base = String(fileName || '').split('/').pop().replace(/\.[a-z0-9]+$/i, '').replace(/\s*\(\d+\)\s*$/, '').toLowerCase();
+  var squashed = base.replace(/[^a-z0-9]/g, '');
+  var tokens = base.split(/[^a-z0-9]+/).filter(Boolean);
+  var prefix = null;
+  if (/wallart/.test(squashed) || tokens.indexOf('wa') !== -1) prefix = 'wa';
+  else if (/frametv|frame/.test(squashed) || tokens.indexOf('ft') !== -1 || tokens.indexOf('tv') !== -1) prefix = 'ft';
+  else if (/tumbler/.test(squashed) || tokens.indexOf('tb') !== -1) prefix = 'tb';
+  else if (/png|shirt/.test(squashed)) prefix = 'png';
+  var nums = (base.match(/\d+/g) || []).map(Number);
+  if (prefix) {
+    var n = nums.filter(function(x){ return x >= 1 && x <= 3; }).pop();
+    return n ? prefix + '-' + n + '-img' : null;
+  }
+  if (nums.length === 1 && nums[0] >= 1 && nums[0] <= 12) return getBatchImageIds()[nums[0] - 1];
+  return null;
+}
+function setRowImageUrl(id, url) {
+  var el = document.getElementById(id); if (!el) return;
+  el.value = url;
+  isDirty = true; updateAllProgress(); saveData(); refreshImgThumb(id); updateImageUrlState();
+}
+async function uploadIntoRow(id, file) {
+  var el = document.getElementById(id);
+  var row = el && el.closest('.img-batch-row');
+  if (!getImgbbKey()) { showToast('Save your ImgBB key first'); return false; }
+  if (!file || !/^image\//.test(file.type)) { showToast('That file is not an image'); return false; }
+  if (row) row.classList.add('uploading');
+  var prevPh = el.placeholder; el.value = ''; el.placeholder = 'Uploading...';
+  try {
+    var url = await uploadToImgbb(file, 'prompt-club-' + id.replace('-img', ''));
+    setRowImageUrl(id, url);
+    return true;
+  } catch (e) {
+    showToast(e.message || 'Upload failed');
+    updateImageUrlState();
+    return false;
+  } finally {
+    el.placeholder = prevPh;
+    if (row) row.classList.remove('uploading');
+  }
+}
+function attachImageDropTargets() {
+  getBatchImageIds().forEach(function(id) {
+    var el = document.getElementById(id); if (!el) return;
+    var row = el.closest('.img-batch-row'); if (!row || row.dataset.dropReady) return;
+    row.dataset.dropReady = '1';
+    var pasteBtn = row.querySelector('.paste-btn');
+    var up = document.createElement('button'); up.type = 'button'; up.className = 'upload-btn'; up.textContent = '⬆ Upload';
+    var fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.style.display = 'none';
+    pasteBtn.parentNode.insertBefore(up, pasteBtn.nextSibling); row.appendChild(fi);
+    up.addEventListener('click', function(){ if (!getImgbbKey()) { showToast('Save your ImgBB key first'); return; } fi.click(); });
+    fi.addEventListener('change', function(){ uploadIntoRow(id, fi.files[0]); fi.value = ''; });
+    row.addEventListener('dragover', function(e){ e.preventDefault(); row.classList.add('drop-over'); });
+    row.addEventListener('dragleave', function(){ row.classList.remove('drop-over'); });
+    row.addEventListener('drop', function(e){
+      e.preventDefault(); row.classList.remove('drop-over');
+      var f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) uploadIntoRow(id, f);
+    });
+  });
+
+  var zone = document.getElementById('img-drop-all');
+  var input = document.getElementById('img-drop-all-input');
+  var report = document.getElementById('img-drop-report');
+  var busy = false;
+  async function handleBulk(fileList) {
+    if (busy) return;
+    if (!getImgbbKey()) { showToast('Save your ImgBB key first'); return; }
+    busy = true; report.style.display = 'none';
+    zone.textContent = 'Reading files...';
+    var files = [];
+    try { files = await expandDroppedFiles(fileList); }
+    catch (e) { report.style.display = 'block'; report.innerHTML = '<span style="color:#b84b62;">' + esc(e.message) + '</span>'; refreshImgbbUI(); busy = false; return; }
+    var jobs = [], unmatched = [], dupes = [], taken = {};
+    files.forEach(function(f){
+      var id = matchImageRowForFile(f.name);
+      if (!id) { unmatched.push(f.name); return; }
+      if (taken[id]) { dupes.push(f.name); return; }
+      taken[id] = true; jobs.push({ id: id, file: f });
+    });
+    var done = 0, ok = [], failed = [];
+    zone.textContent = 'Uploading 0 of ' + jobs.length + '...';
+    var queue = jobs.slice();
+    async function worker() {
+      while (queue.length) {
+        var job = queue.shift();
+        var label = getImageRowLabel(job.id);
+        try { var url = await uploadToImgbb(job.file, 'prompt-club-' + job.id.replace('-img', '')); setRowImageUrl(job.id, url); ok.push(label); }
+        catch (e) { failed.push(label + ' (' + (e.message || 'failed') + ')'); }
+        done++; zone.textContent = 'Uploading ' + done + ' of ' + jobs.length + '...';
+      }
+    }
+    await Promise.all([worker(), worker(), worker()]);
+    var lines = [];
+    if (ok.length) lines.push('<span style="color:#3d7a4f;">✓ Uploaded ' + ok.length + '</span>');
+    if (failed.length) lines.push('<span style="color:#b84b62;">✕ Failed: ' + failed.map(esc).join(', ') + '</span>');
+    if (unmatched.length) lines.push('<span style="color:#b84b62;">? Couldn\'t tell where these go: ' + unmatched.map(esc).join(', ') + ' (drop them on the right row)</span>');
+    if (dupes.length) lines.push('<span style="color:#b84b62;">Skipped extra copies: ' + dupes.map(esc).join(', ') + '</span>');
+    if (!files.length) lines.push('<span style="color:#b84b62;">No images found in what you dropped.</span>');
+    var empty = getBatchImageIds().filter(function(id){ return !val(id).trim(); }).map(getImageRowLabel);
+    if (empty.length && files.length) lines.push('<span style="color:#8f879b;">Still empty: ' + empty.map(esc).join(', ') + '</span>');
+    report.innerHTML = lines.join('<br>'); report.style.display = 'block';
+    refreshImgbbUI(); busy = false;
+  }
+  zone.addEventListener('click', function(){ if (!getImgbbKey()) { showToast('Save your ImgBB key first'); return; } input.click(); });
+  input.addEventListener('change', function(){ handleBulk(input.files); input.value = ''; });
+  zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', function(){ zone.classList.remove('over'); });
+  zone.addEventListener('drop', function(e){ e.preventDefault(); zone.classList.remove('over'); handleBulk(e.dataTransfer.files); });
+  refreshImgbbUI();
+}
 
 var backToTopBtn = document.getElementById('backToTopBtn');
 window.addEventListener('scroll', function() {
